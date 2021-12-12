@@ -6,6 +6,7 @@ plugins {
 	id 'com.github.spotbugs' version '4.7.1' // code check, working on byte code
 	id "org.sonarqube" version "3.2.0" // sonarqube
 	id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
+	id 'jacoco' // java code coverage plugin
 }
 
 ext {
