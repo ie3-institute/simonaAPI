@@ -14,7 +14,7 @@
 String javaVersionId = 'jdk-8' // id that matches the java tool with the java version that should be used set as jenkins property
 
 /* git configuration */
-String projectName = 'simona' // name of the repository, is case insensitive
+String projectName = 'simonaAPI' // name of the repository, is case insensitive
 String orgName = 'ie3-institute' // name of the github organization
 String gitCheckoutUrl = "git@github.com:$orgName/${projectName}.git"
 String sshCredentialsId = '19f16959-8a0d-4a60-bd1f-5adb4572b702' // id that matches the ssh credentials to interact with the git set as jenkins property
