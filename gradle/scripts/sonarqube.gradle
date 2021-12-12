@@ -1,0 +1,27 @@
+sonarqube {
+	properties {
+		// general stuff
+		property 'sonar.projectName', 'simonaAPI'
+		property 'sonar.projectKey', 'edu.ie3:simonaAPI'
+		property 'sonar.verbose', 'false' // WARNING: There is the potential for this setting to expose sensitive information such as passwords if they are stored as server-side environment variables.
+		property 'sonar.sourceEncoding', 'UTF-8' // encoding
+		property 'sonar.sources', [
+			'src/main/java'] // src dirs
+		// spotbugs report dir
+		property "sonar.java.spotbugs.reportPaths", [
+			"build/reports/spotbugs/main.xml",
+			"build/reports/spotbugs/test.xml"] // Comma-delimited list of paths to reports from SpotBugs
+		// java specific stuff
+		property "sonar.java.pmd.reportPaths", [
+			"build/reports/pmd/test.xml",
+			"build/reports/pmd/main.xml"] // Comma-delimited list of paths to PMD Apex XML reports
+	}
+}
+
+// forces sonarqube to execute integration tests
+project.tasks["sonarqube"].dependsOn "pmdMain"
+project.tasks["sonarqube"].dependsOn "pmdTest"
+project.tasks["sonarqube"].dependsOn "spotbugsMain"
+project.tasks["sonarqube"].dependsOn "spotbugsTest"
+project.tasks["sonarqube"].dependsOn "test"
+
