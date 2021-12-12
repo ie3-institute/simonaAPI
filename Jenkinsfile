@@ -164,11 +164,11 @@ node {
                 )
 
             String deployGradleTasks = "--refresh-dependencies test " +
-                "publish -Puser=\${env.mavencentral_username} " +
-                "-Ppassword=\${env.mavencentral_password} " +
-                "-Psigning.keyId=\${env.signingKeyId} " +
-                "-Psigning.password=\${env.signingPassword} " +
-                "-Psigning.secretKeyRingFile=\${env.mavenCentralKeyFile} " +
+                "publish -Puser=${env.mavencentral_username} " +
+                "-Ppassword=${env.mavencentral_password} " +
+                "-Psigning.keyId=${env.signingKeyId} " +
+                "-Psigning.password=${env.signingPassword} " +
+                "-Psigning.secretKeyRingFile=${env.mavenCentralKeyFile} " +
                 "-PdeployVersion='$projectVersion'"
 
             // see https://docs.gradle.org/6.0.1/release-notes.html "Publication of SHA256 and SHA512 checksums"
