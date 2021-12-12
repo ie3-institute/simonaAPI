@@ -42,8 +42,7 @@ dependencies{
 
 }
 
-group = 'edu.ie3'
-version = '0.1-SNAPSHOT'
-description = 'simona'
+group = 'com.github.ie3-institute'
+description = 'simonaAPI'
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
