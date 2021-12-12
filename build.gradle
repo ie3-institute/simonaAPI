@@ -1,21 +1,21 @@
 plugins {
-	id 'groovy' // groovy support
-	id 'java' // java support
-	id 'com.diffplug.spotless' version '6.0.0'//code format
-	id 'pmd' // code check, working on source code
-	id 'com.github.spotbugs' version '4.7.1' // code check, working on byte code
-	id "org.sonarqube" version "3.2.0" // sonarqube
-	id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
-	id 'jacoco' // java code coverage plugin
+  id 'groovy' // groovy support
+  id 'java' // java support
+  id 'com.diffplug.spotless' version '6.0.0'//code format
+  id 'pmd' // code check, working on source code
+  id 'com.github.spotbugs' version '4.7.1' // code check, working on byte code
+  id "org.sonarqube" version "3.2.0" // sonarqube
+  id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
+  id 'jacoco' // java code coverage plugin
 }
 
 ext {
-	javaVersion = JavaVersion.VERSION_1_8
-	scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
+  javaVersion = JavaVersion.VERSION_1_8
+  scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
-	// required for akka
-	scalaVersion = "2.13"
-	akkaVersion = '2.6.17'
+  // required for akka
+  scalaVersion = "2.13"
+  akkaVersion = '2.6.17'
 }
 
 apply from: scriptsLocation + 'spotless.gradle'
@@ -28,14 +28,14 @@ apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 dependencies{
 
-	implementation 'tech.units:indriya:2.1.2' // quantities
-	implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.14")
-	implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
+  implementation 'tech.units:indriya:2.1.2' // quantities
+  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.14")
+  implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
 
 }
 
