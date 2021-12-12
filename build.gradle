@@ -26,6 +26,7 @@ apply from: scriptsLocation + 'checkJavaVersion.gradle'
 apply from: scriptsLocation + 'semVer.gradle'
 apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
+apply from: scriptsLocation + 'documentation.gradle'
 
 repositories {
   mavenCentral()
