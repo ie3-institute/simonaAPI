@@ -42,7 +42,7 @@ repositories {
 dependencies{
 
   implementation 'tech.units:indriya:2.1.2' // quantities
-  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.17")
+  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.18")
   implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
 
 }
