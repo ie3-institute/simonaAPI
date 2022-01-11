@@ -12,6 +12,7 @@ import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger;
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage;
 import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
+import edu.ie3.simona.api.simulation.ontology.SimTerminated;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,8 @@ public abstract class ExtSimulation implements Runnable {
           data.send(new CompletionMessage(newTriggers));
 
           if (newTriggers.isEmpty()) simulationFinished = true;
+        } else if (msg.getClass().equals(SimTerminated.class)) {
+          terminated();
         } else {
           throw new IllegalArgumentException("Invalid message " + msg + " received.");
         }
@@ -57,6 +60,11 @@ public abstract class ExtSimulation implements Runnable {
    * @return a list of future ticks at which this external simulation wants to be triggered.
    */
   protected abstract List<Long> doActivity(long tick);
+
+  /** This method is called when the main simulation has terminated successfully or with failure. */
+  protected void terminated() {
+    // to be overwritten in subclass
+  }
 
   public final List<Class<? extends ExtData>> getRequiredAdapters() {
     ArrayList<Class<? extends ExtData>> classes = new ArrayList<>();
