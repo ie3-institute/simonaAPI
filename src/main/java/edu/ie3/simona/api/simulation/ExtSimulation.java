@@ -11,7 +11,7 @@ import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger;
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage;
-import edu.ie3.simona.api.simulation.ontology.ExtTrigger;
+import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +33,16 @@ public abstract class ExtSimulation implements Runnable {
       while (!simulationFinished) {
 
         // take() will block until an object is ready for us
-        ExtTrigger trigger = data.receiveTriggerQueue.take();
+        ExtSimMessage msg = data.receiveMessageQueue.take();
 
-        if (trigger.getClass().equals(ActivityStartTrigger.class)) {
-          final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) trigger;
-          List<Long> newTriggers = doActivity(activityStartTrigger.getTick()); // this is blocking
+        if (msg.getClass().equals(ActivityStartTrigger.class)) {
+          final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
+          List<Long> newTriggers = doActivity(activityStartTrigger.tick()); // this is blocking
           data.send(new CompletionMessage(newTriggers));
 
           if (newTriggers.isEmpty()) simulationFinished = true;
         } else {
-          throw new IllegalArgumentException("Invalid Trigger " + trigger + " received.");
+          throw new IllegalArgumentException("Invalid message " + msg + " received.");
         }
       }
     } catch (InterruptedException ie) {
