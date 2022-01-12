@@ -115,7 +115,7 @@ node {
         gradle('--refresh-dependencies clean spotlessCheck pmdMain pmdTest ' +
             'test jacocoTestReport jacocoTestCoverageVerification', projectName)
 
-        sh(script: """set +x && cd $projectName""" + ''' set +x; ./gradlew clean javadoc''', returnStdout: true)
+        sh(script: """set +x && cd $projectName""" + ''' set +x; ./gradlew javadoc''', returnStdout: true)
       }
 
       // sonarqube analysis
@@ -455,7 +455,7 @@ def determineDisplayName(String currentBranchName, String commitHash, String org
 
 def publishReports(String relativeProjectDir) {
   // publish test reports
-  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/tests/allTests', reportFiles: 'index.html', reportName: "${relativeProjectDir}_java_tests_report", reportTitles: ''])
+  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/tests/test', reportFiles: 'index.html', reportName: "${relativeProjectDir}_java_tests_report", reportTitles: ''])
 
   // publish jacoco report for main project only
   publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/jacoco', reportFiles: 'index.html', reportName: "${relativeProjectDir}_jacoco_report", reportTitles: ''])
