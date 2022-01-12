@@ -34,6 +34,7 @@ apply from: scriptsLocation + 'semVer.gradle'
 apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
+apply from: scriptsLocation + 'test.gradle'
 
 repositories {
   mavenCentral()

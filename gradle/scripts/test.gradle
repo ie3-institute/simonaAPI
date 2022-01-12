@@ -1,0 +1,6 @@
+test {
+  useJUnitPlatform()
+  testLogging {
+    events "skipped", "failed"
+  }
+}
