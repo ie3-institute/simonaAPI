@@ -27,29 +27,39 @@ public abstract class ExtSimulation implements Runnable {
   protected ExtSimulation() {}
 
   public void run() {
-
-    // now we can start the loop
     try {
+      // now we can start the loop
       boolean simulationFinished = false;
       while (!simulationFinished) {
-
-        // take() will block until an object is ready for us
-        ExtSimMessage msg = data.receiveMessageQueue.take();
-
-        if (msg.getClass().equals(ActivityStartTrigger.class)) {
-          final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
-          List<Long> newTriggers = doActivity(activityStartTrigger.tick()); // this is blocking
-          data.send(new CompletionMessage(newTriggers));
-
-          if (newTriggers.isEmpty()) simulationFinished = true;
-        } else if (msg.getClass().equals(SimTerminated.class)) {
-          terminated();
-        } else {
-          throw new IllegalArgumentException("Invalid message " + msg + " received.");
-        }
+        simulationFinished = takeAndHandleMessage();
       }
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
+    }
+  }
+
+  /**
+   * Blocks until the next message is received and handles it.
+   *
+   * @return true if simulation is terminated after handling this message
+   * @throws InterruptedException if the thread running this has been interrupted (possibly during
+   *     blocking)
+   */
+  private boolean takeAndHandleMessage() throws InterruptedException {
+    // take() will block until an object is ready for us
+    final ExtSimMessage msg = data.receiveMessageQueue.take();
+
+    if (msg.getClass().equals(ActivityStartTrigger.class)) {
+      final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
+      List<Long> newTriggers = doActivity(activityStartTrigger.tick()); // this is blocking
+      data.send(new CompletionMessage(newTriggers));
+
+      return newTriggers.isEmpty();
+    } else if (msg.getClass().equals(SimTerminated.class)) {
+      terminated();
+      return true;
+    } else {
+      throw new IllegalArgumentException("Invalid message " + msg + " received.");
     }
   }
 
