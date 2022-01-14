@@ -1,9 +1,9 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '6.0.5'//code format
+  id 'com.diffplug.spotless' version '6.2.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '5.0.3' // code check, working on byte code
+  id 'com.github.spotbugs' version '5.0.4' // code check, working on byte code
   id "org.sonarqube" version "3.3" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
@@ -12,7 +12,7 @@ plugins {
 }
 
 ext {
-  javaVersion = JavaVersion.VERSION_1_8
+  javaVersion = JavaVersion.VERSION_17
   scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
   // required for akka
@@ -34,6 +34,7 @@ apply from: scriptsLocation + 'semVer.gradle'
 apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
+apply from: scriptsLocation + 'test.gradle'
 
 repositories {
   mavenCentral()
@@ -46,6 +47,11 @@ dependencies{
   // akka
   implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:${akkaVersion}")
   implementation "com.typesafe.akka:akka-actor_${scalaVersion}"
+  testImplementation "com.typesafe.akka:akka-testkit_${scalaVersion}"
+
+  // TESTING
+  testImplementation 'org.spockframework:spock-core:2.1-M2-groovy-3.0'
+  testImplementation 'org.mockito:mockito-core:4.2.0'
 }
 
 task printVersion {

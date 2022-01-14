@@ -6,30 +6,6 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 
-public class CompletionMessage implements ExtTriggerResponse {
-  private final List<Long> newTriggers;
-
-  public CompletionMessage(List<Long> newTriggers) {
-    this.newTriggers = newTriggers;
-  }
-
-  public List<Long> getNewTriggers() {
-    return newTriggers;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    CompletionMessage that = (CompletionMessage) o;
-    return newTriggers.equals(that.newTriggers);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(newTriggers);
-  }
-}
+public record CompletionMessage(Collection<Long> newTriggers) implements ExtSimMessageResponse {}
