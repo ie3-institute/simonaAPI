@@ -9,10 +9,7 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
-import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger;
-import edu.ie3.simona.api.simulation.ontology.CompletionMessage;
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
-import edu.ie3.simona.api.simulation.ontology.Terminate;
+import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +53,10 @@ public abstract class ExtSimulation implements Runnable {
 
       return newTriggers.isEmpty();
     } else if (msg.getClass().equals(Terminate.class)) {
-      terminate();
+      final Terminate terminateMsg = (Terminate) msg;
+      terminate(terminateMsg.simulationSuccessful());
+      data.send(new TerminationCompleted());
+
       return true;
     } else {
       throw new IllegalArgumentException("Invalid message " + msg + " received.");
@@ -71,8 +71,13 @@ public abstract class ExtSimulation implements Runnable {
    */
   protected abstract List<Long> doActivity(long tick);
 
-  /** This method is called when the main simulation wants to terminate. */
-  protected void terminate() {
+  /**
+   * This method is called when the main simulation wants to terminate.
+   *
+   * @param simulationSuccessful whether the simulation was run successfully or has ended with an
+   *     error
+   */
+  protected void terminate(Boolean simulationSuccessful) {
     // to be overwritten in subclass
   }
 
