@@ -71,8 +71,8 @@ public abstract class ExtSimulation implements Runnable {
    */
   protected abstract List<Long> doActivity(long tick);
 
-  /** This method is called when the main simulation has terminated successfully or with failure. */
-  protected void terminated() {
+  /** This method is called when the main simulation wants to terminate. */
+  protected void terminate() {
     // to be overwritten in subclass
   }
 
