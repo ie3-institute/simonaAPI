@@ -7,13 +7,13 @@
 package edu.ie3.simona.api.simulation;
 
 import akka.actor.ActorRef;
-import edu.ie3.simona.api.simulation.ontology.ExtTrigger;
-import edu.ie3.simona.api.simulation.ontology.ExtTriggerResponse;
+import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
+import edu.ie3.simona.api.simulation.ontology.ExtSimMessageResponse;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtSimAdapterData {
 
-  public final LinkedBlockingQueue<ExtTrigger> receiveTriggerQueue = new LinkedBlockingQueue<>();
+  public final LinkedBlockingQueue<ExtSimMessage> receiveMessageQueue = new LinkedBlockingQueue<>();
   private final ActorRef extSimAdapter;
 
   private final String[] mainArgs;
@@ -25,15 +25,15 @@ public class ExtSimAdapterData {
     this.mainArgs = mainArgs;
   }
 
-  public void queueExtMsg(ExtTrigger trigger) {
+  public void queueExtMsg(ExtSimMessage msg) {
     try {
-      receiveTriggerQueue.put(trigger);
+      receiveMessageQueue.put(msg);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
 
-  public void send(ExtTriggerResponse msg) {
+  public void send(ExtSimMessageResponse msg) {
     extSimAdapter.tell(msg, ActorRef.noSender());
   }
 

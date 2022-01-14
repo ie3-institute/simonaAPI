@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-public record ActivityStartTrigger(long tick) implements ExtSimMessage {}
+public interface ExtSimMessageResponse {}
