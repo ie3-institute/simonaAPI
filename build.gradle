@@ -17,7 +17,7 @@ ext {
 
   // required for akka
   scalaVersion = "2.13"
-  akkaVersion = '2.6.17'
+  akkaVersion = '2.6.18'
 }
 
 group = 'com.github.ie3-institute'
@@ -42,9 +42,10 @@ repositories {
 dependencies{
 
   implementation 'tech.units:indriya:2.1.2' // quantities
-  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.18")
-  implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
 
+  // akka
+  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:${akkaVersion}")
+  implementation "com.typesafe.akka:akka-actor_${scalaVersion}"
 }
 
 task printVersion {
