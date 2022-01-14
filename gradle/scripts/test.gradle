@@ -3,8 +3,8 @@ test {
   testLogging {
     events "skipped", "failed"
 
-   testLogging {
-		exceptionFormat "full"
-	}
-   }
+    testLogging {
+      exceptionFormat "full"
+    }
+  }
 }

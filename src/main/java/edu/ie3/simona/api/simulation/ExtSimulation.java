@@ -12,7 +12,7 @@ import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger;
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage;
 import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
-import edu.ie3.simona.api.simulation.ontology.SimTerminated;
+import edu.ie3.simona.api.simulation.ontology.Terminate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +55,8 @@ public abstract class ExtSimulation implements Runnable {
       data.send(new CompletionMessage(newTriggers));
 
       return newTriggers.isEmpty();
-    } else if (msg.getClass().equals(SimTerminated.class)) {
-      terminated();
+    } else if (msg.getClass().equals(Terminate.class)) {
+      terminate();
       return true;
     } else {
       throw new IllegalArgumentException("Invalid message " + msg + " received.");

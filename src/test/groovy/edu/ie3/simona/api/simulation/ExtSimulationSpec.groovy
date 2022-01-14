@@ -7,7 +7,7 @@ import edu.ie3.simona.api.data.ExtData
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
 import edu.ie3.simona.api.simulation.ontology.ExtSimMessage
-import edu.ie3.simona.api.simulation.ontology.SimTerminated
+import edu.ie3.simona.api.simulation.ontology.Terminate
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -72,13 +72,13 @@ class ExtSimulationSpec extends Specification {
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new SimTerminated())
+            extSimData.queueExtMsg(new Terminate())
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == true
             testProbe.expectNoMessage()
-            verify(extSim).terminated() // terminated() has been called exactly once
+            verify(extSim).terminate() // terminate() has been called exactly once
     }
 
     class UnknownMessage implements ExtSimMessage {}
