@@ -51,7 +51,7 @@ dependencies{
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.1-M2-groovy-3.0'
-  testImplementation 'org.mockito:mockito-core:4.2.0'
+  testImplementation 'org.mockito:mockito-core:4.3.0'
 }
 
 task printVersion {
