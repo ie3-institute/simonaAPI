@@ -17,7 +17,6 @@ ext {
 
   // required for akka
   scalaVersion = "2.13"
-  akkaVersion = '2.6.19'
 }
 
 group = 'com.github.ie3-institute'
@@ -45,7 +44,7 @@ dependencies{
   implementation 'tech.units:indriya:2.1.3' // quantities
 
   // akka
-  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:${akkaVersion}")
+  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.19")
   implementation "com.typesafe.akka:akka-actor_${scalaVersion}"
   testImplementation "com.typesafe.akka:akka-testkit_${scalaVersion}"
 
