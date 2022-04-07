@@ -39,6 +39,26 @@ class ExtSimulationSpec extends Specification {
         actorSystem = null
     }
 
+    def "An ExtSimulation should handle initialization"() {
+        given:
+            def tick = -1L
+            def newTicks = [0L]
+            def testProbe = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSim = mock(ExtSimulation)
+            extSim.setup(extSimData, new ArrayList<ExtData>())
+
+            when(extSim.initialize()).thenReturn(newTicks)
+
+        when:
+            extSimData.queueExtMsg(new ActivityStartTrigger(tick))
+            def finishedActual = handleMessage.invoke(extSim)
+
+        then:
+            finishedActual == false
+            testProbe.expectMsg(new CompletionMessage(newTicks))
+    }
+
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
             def testProbe = new TestProbe(actorSystem)
