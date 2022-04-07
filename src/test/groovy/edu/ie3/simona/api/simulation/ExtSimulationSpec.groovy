@@ -78,7 +78,6 @@ class ExtSimulationSpec extends Specification {
 
         where:
             tick   | newTicks      || finished
-            -1L    | [450L]        || false
             0L     | [900L, 1800L] || false
             3600L  | [7200L]       || false
             7200L  | []            || true
