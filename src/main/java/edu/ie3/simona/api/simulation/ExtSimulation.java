@@ -51,9 +51,12 @@ public abstract class ExtSimulation implements Runnable {
       List<Long> newTriggers;
 
       if (activityStartTrigger.tick() == -1L) {
-        newTriggers = initialize();
+        newTriggers = initialize(); // this is blocking until initialization has finished
       } else {
-        newTriggers = doActivity(activityStartTrigger.tick()); // this is blocking
+        newTriggers =
+            doActivity(
+                activityStartTrigger
+                    .tick()); // this is blocking until processing of this tick has finished
       }
       data.send(new CompletionMessage(newTriggers));
 
