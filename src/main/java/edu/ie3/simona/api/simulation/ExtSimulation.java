@@ -48,7 +48,16 @@ public abstract class ExtSimulation implements Runnable {
 
     if (msg.getClass().equals(ActivityStartTrigger.class)) {
       final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
-      List<Long> newTriggers = doActivity(activityStartTrigger.tick()); // this is blocking
+      List<Long> newTriggers;
+
+      if (activityStartTrigger.tick() == -1L) {
+        newTriggers = initialize(); // this is blocking until initialization has finished
+      } else {
+        newTriggers =
+            doActivity(
+                activityStartTrigger
+                    .tick()); // this is blocking until processing of this tick has finished
+      }
       data.send(new CompletionMessage(newTriggers));
 
       return newTriggers.isEmpty();
@@ -62,6 +71,13 @@ public abstract class ExtSimulation implements Runnable {
       throw new IllegalArgumentException("Invalid message " + msg + " received.");
     }
   }
+
+  /**
+   * This method is called when the external simulation needs to be initialized
+   *
+   * @return a list of future ticks at which this external simulation wants to be triggered.
+   */
+  protected abstract List<Long> initialize();
 
   /**
    * This method is called for every tick of the external simulation that is triggered.
