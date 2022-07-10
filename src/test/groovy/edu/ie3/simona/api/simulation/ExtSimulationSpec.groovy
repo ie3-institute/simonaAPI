@@ -3,10 +3,10 @@ package edu.ie3.simona.api.simulation
 import akka.actor.ActorSystem
 import akka.testkit.TestProbe
 import akka.testkit.javadsl.TestKit
-import edu.ie3.simona.api.data.ExtData
+import edu.ie3.simona.api.data.ExtDataInterface
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessage
+import edu.ie3.simona.api.simulation.ontology.ToExtSimControlMessage
 import edu.ie3.simona.api.simulation.ontology.Terminate
 import edu.ie3.simona.api.simulation.ontology.TerminationCompleted
 import spock.lang.Shared
@@ -46,7 +46,7 @@ class ExtSimulationSpec extends Specification {
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def extSim = mock(ExtSimulation)
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData, new ArrayList<ExtDataInterface>())
 
             when(extSim.initialize()).thenReturn(newTicks)
 
@@ -64,7 +64,7 @@ class ExtSimulationSpec extends Specification {
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def extSim = mock(ExtSimulation)
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData, new ArrayList<ExtDataInterface>())
 
             when(extSim.doActivity(tick)).thenReturn(newTicks)
 
@@ -89,7 +89,7 @@ class ExtSimulationSpec extends Specification {
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def extSim = mock(ExtSimulation)
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData, new ArrayList<ExtDataInterface>())
 
         when:
             extSimData.queueExtMsg(new Terminate(simlulationSuccessful))
@@ -106,17 +106,17 @@ class ExtSimulationSpec extends Specification {
             true                  || true
     }
 
-    class UnknownMessage implements ExtSimMessage {}
+    class UnknownControlMessage implements ToExtSimControlMessage {}
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def extSim = mock(ExtSimulation)
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData, new ArrayList<ExtDataInterface>())
 
         when:
-            extSimData.queueExtMsg(new UnknownMessage())
+            extSimData.queueExtMsg(new UnknownControlMessage())
             handleMessage.invoke(extSim)
 
         then:

@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ev.ExtEvData;
+import edu.ie3.simona.api.data.ExtDataInterface;
+import edu.ie3.simona.api.data.ev.ExtEvDataInterface;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public abstract class ExtSimulation implements Runnable {
    */
   private boolean takeAndHandleMessage() throws InterruptedException {
     // take() will block until an object is ready for us
-    final ExtSimMessage msg = data.receiveMessageQueue.take();
+    final ToExtSimControlMessage msg = data.receiveMessageQueue.take();
 
     if (msg.getClass().equals(ActivityStartTrigger.class)) {
       final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
@@ -97,21 +97,21 @@ public abstract class ExtSimulation implements Runnable {
     // to be overwritten in subclass
   }
 
-  public final List<Class<? extends ExtData>> getRequiredAdapters() {
-    ArrayList<Class<? extends ExtData>> classes = new ArrayList<>();
+  public final List<Class<? extends ExtDataInterface>> getRequiredAdapters() {
+    ArrayList<Class<? extends ExtDataInterface>> classes = new ArrayList<>();
 
-    if (this instanceof ExtEvSimulation) classes.add(ExtEvData.class);
+    if (this instanceof ExtEvSimulation) classes.add(ExtEvDataInterface.class);
 
     return classes;
   }
 
-  public final void setup(ExtSimAdapterData data, List<ExtData> adapters) {
+  public final void setup(ExtSimAdapterData data, List<ExtDataInterface> adapters) {
     this.data = data;
 
     // todo sanity check if all required data is available
-    for (ExtData adapter : adapters) {
-      if (adapter instanceof ExtEvData && this instanceof ExtEvSimulation)
-        ((ExtEvSimulation) this).setExtEvData((ExtEvData) adapter);
+    for (ExtDataInterface adapter : adapters) {
+      if (adapter instanceof ExtEvDataInterface && this instanceof ExtEvSimulation)
+        ((ExtEvSimulation) this).setExtEvData((ExtEvDataInterface) adapter);
     }
   }
 

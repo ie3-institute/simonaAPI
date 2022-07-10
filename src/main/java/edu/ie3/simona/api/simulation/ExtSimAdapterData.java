@@ -7,15 +7,18 @@
 package edu.ie3.simona.api.simulation;
 
 import akka.actor.ActorRef;
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessageResponse;
+import edu.ie3.simona.api.simulation.ontology.FromExtSimControlMessage;
+import edu.ie3.simona.api.simulation.ontology.ToExtSimControlMessage;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtSimAdapterData {
 
-  public final LinkedBlockingQueue<ExtSimMessage> receiveMessageQueue = new LinkedBlockingQueue<>();
+  /** Queue of triggers the external simulation needs to handle. */
+  public final LinkedBlockingQueue<ToExtSimControlMessage> receiveMessageQueue =
+      new LinkedBlockingQueue<>();
+  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
-
+  /** CLI arguments with which SIMON is initiated */
   private final String[] mainArgs;
 
   // important trigger queue must be the same as held in actor
@@ -25,7 +28,12 @@ public class ExtSimAdapterData {
     this.mainArgs = mainArgs;
   }
 
-  public void queueExtMsg(ExtSimMessage msg) {
+  /**
+   * Called within SIMONA to queue activity of the external simulation
+   *
+   * @param msg the message to queue
+   */
+  public void queueExtMsg(ToExtSimControlMessage msg) {
     try {
       receiveMessageQueue.put(msg);
     } catch (InterruptedException e) {
@@ -33,7 +41,12 @@ public class ExtSimAdapterData {
     }
   }
 
-  public void send(ExtSimMessageResponse msg) {
+  /**
+   * Sends a
+   *
+   * @param msg
+   */
+  public void send(FromExtSimControlMessage msg) {
     extSimAdapter.tell(msg, ActorRef.noSender());
   }
 

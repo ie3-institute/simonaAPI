@@ -19,5 +19,5 @@ public interface ExtEvSimulation extends ExtDataSimulation {
    *
    * @param evData the ev data
    */
-  void setExtEvData(ExtEvData evData);
+  void setExtEvData(ExtEvDataInterface evData);
 }

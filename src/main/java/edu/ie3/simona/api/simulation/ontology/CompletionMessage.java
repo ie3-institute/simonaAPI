@@ -8,4 +8,4 @@ package edu.ie3.simona.api.simulation.ontology;
 
 import java.util.Collection;
 
-public record CompletionMessage(Collection<Long> newTriggers) implements ExtSimMessageResponse {}
+public record CompletionMessage(Collection<Long> newTriggers) implements FromExtSimControlMessage {}

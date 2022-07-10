@@ -6,6 +6,6 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-import edu.ie3.simona.api.data.ontology.ExtDataMessage;
+import edu.ie3.simona.api.data.ontology.ToExtSimDataMessage;
 
-public interface ExtEvMessage extends ExtDataMessage {}
+public interface ToExtEvSimDataMessage extends ToExtSimDataMessage {}
