@@ -7,6 +7,8 @@
 package edu.ie3.simona.api.simulation;
 
 import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.dcopf.ExtOpfData;
+import edu.ie3.simona.api.data.dcopf.ExtOpfSimulation;
 import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.*;
@@ -99,9 +101,8 @@ public abstract class ExtSimulation implements Runnable {
 
   public final List<Class<? extends ExtData>> getRequiredAdapters() {
     ArrayList<Class<? extends ExtData>> classes = new ArrayList<>();
-
     if (this instanceof ExtEvSimulation) classes.add(ExtEvData.class);
-
+    if (this instanceof ExtOpfSimulation) classes.add(ExtOpfData.class);
     return classes;
   }
 
@@ -112,6 +113,8 @@ public abstract class ExtSimulation implements Runnable {
     for (ExtData adapter : adapters) {
       if (adapter instanceof ExtEvData && this instanceof ExtEvSimulation)
         ((ExtEvSimulation) this).setExtEvData((ExtEvData) adapter);
+      if (adapter instanceof ExtOpfData && this instanceof ExtOpfSimulation)
+        ((ExtOpfSimulation) this).setExtOpfData((ExtOpfData) adapter);
     }
   }
 

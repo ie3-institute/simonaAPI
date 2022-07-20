@@ -37,11 +37,15 @@ apply from: scriptsLocation + 'test.gradle'
 
 repositories {
   mavenCentral()
+  maven { url "https://www.jitpack.io" } // allows github repos as dependencies
+  maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies{
 
   implementation 'tech.units:indriya:2.1.3' // quantities
+  implementation 'com.github.ie3-institute:PowerSystemDataModel:3.0-SNAPSHOT'
+  implementation 'com.github.ie3-institute:PowerSystemUtils:2.0-SNAPSHOT'
 
   // akka
   implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.19")
@@ -51,6 +55,7 @@ dependencies{
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
   testImplementation 'org.mockito:mockito-core:4.4.0'
+
 }
 
 task printVersion {
