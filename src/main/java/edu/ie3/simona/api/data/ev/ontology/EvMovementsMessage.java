@@ -24,8 +24,7 @@ public record EvMovementsMessage(Map<UUID, EvcsMovements> movements) implements 
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      EvcsMovements that = (EvcsMovements) o;
+      if (!(o instanceof EvcsMovements that)) return false;
       return departures.equals(that.departures) && arrivals.equals(that.arrivals);
     }
   }
