@@ -116,6 +116,11 @@ public class ExtEvData implements ExtData {
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
+  /**
+   * Queues message that should be
+   *
+   * @param extEvResponse
+   */
   public void queueExtResponseMsg(ExtEvResponseMessage extEvResponse) {
     try {
       receiveTriggerQueue.put(extEvResponse);

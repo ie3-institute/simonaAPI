@@ -6,5 +6,5 @@
 
 package edu.ie3.simona.api.data.ontology;
 
-/** Messages that are sent from the external simulation to SIMONA requesting or delivering data */
+/** Data related messages that are sent from SIMONA to the external simulation */
 public interface ExtDataResponseMessage {}
