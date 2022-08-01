@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-public class RequestCurrentPrices implements ExtEvMessage {}
+public class RequestCurrentPrices implements FromExtEvSimDataMessage {}

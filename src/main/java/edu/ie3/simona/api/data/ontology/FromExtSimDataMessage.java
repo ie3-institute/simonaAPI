@@ -4,6 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation.ontology;
+package edu.ie3.simona.api.data.ontology;
 
-public interface ExtSimMessage {}
+/** Data related messages that are sent from the external simulation to SIMONA */
+public interface FromExtSimDataMessage {}

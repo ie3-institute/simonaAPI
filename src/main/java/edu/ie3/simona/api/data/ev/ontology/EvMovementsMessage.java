@@ -9,7 +9,7 @@ package edu.ie3.simona.api.data.ev.ontology;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import java.util.*;
 
-public class EvMovementsMessage implements ExtEvMessage {
+public class EvMovementsMessage implements FromExtEvSimDataMessage {
   private final Map<UUID, EvcsMovements> movements;
 
   public EvMovementsMessage(Map<UUID, EvcsMovements> movements) {

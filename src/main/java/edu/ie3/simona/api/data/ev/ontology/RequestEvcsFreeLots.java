@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-public class RequestEvcsFreeLots implements ExtEvMessage {}
+public class RequestEvcsFreeLots implements FromExtEvSimDataMessage {}
