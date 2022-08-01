@@ -31,9 +31,7 @@ public class ExtEvData implements ExtData {
   }
 
   /**
-   * Requests available evcs charging stations.
-   *
-   * <p>todo: What does available mean exactly? Currently vs. Generally available
+   * Requests currently available evcs charging stations.
    *
    * @return a mapping from evcs uuid to the amount of available charging stations
    */
