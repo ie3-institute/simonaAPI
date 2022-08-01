@@ -41,9 +41,9 @@ public class ExtSimAdapterData {
   }
 
   /**
-   * Sends a k
+   * Sends a control message to SIMONA
    *
-   * @param msg
+   * @param msg the message to send
    */
   public void send(ExtSimMessageResponse msg) {
     extSimAdapter.tell(msg, ActorRef.noSender());
