@@ -13,9 +13,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtSimAdapterData {
 
+  /** Queue of triggers the external simulation needs to handle. */
   public final LinkedBlockingQueue<ExtSimMessage> receiveMessageQueue = new LinkedBlockingQueue<>();
+  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
-
+  /** CLI arguments with which SIMON is initiated */
   private final String[] mainArgs;
 
   // important trigger queue must be the same as held in actor
@@ -25,6 +27,11 @@ public class ExtSimAdapterData {
     this.mainArgs = mainArgs;
   }
 
+  /**
+   * Called within SIMONA to queue activity of the external simulation
+   *
+   * @param msg the message to queue
+   */
   public void queueExtMsg(ExtSimMessage msg) {
     try {
       receiveMessageQueue.put(msg);
@@ -33,6 +40,11 @@ public class ExtSimAdapterData {
     }
   }
 
+  /**
+   * Sends a
+   *
+   * @param msg
+   */
   public void send(ExtSimMessageResponse msg) {
     extSimAdapter.tell(msg, ActorRef.noSender());
   }

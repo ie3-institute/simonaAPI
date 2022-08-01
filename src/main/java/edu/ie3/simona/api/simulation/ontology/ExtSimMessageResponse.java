@@ -6,4 +6,5 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
+/** Interface for control messages to the external simulation */
 public interface ExtSimMessageResponse {}

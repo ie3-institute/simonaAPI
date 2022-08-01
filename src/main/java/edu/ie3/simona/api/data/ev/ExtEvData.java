@@ -15,9 +15,12 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtEvData implements ExtData {
+  /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ExtEvResponseMessage> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
+  /** Actor reference to service that handles ev data within SIMONA */
   private final ActorRef dataService;
+  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
   // important trigger queue must be the same as hold in actor
@@ -27,6 +30,13 @@ public class ExtEvData implements ExtData {
     this.extSimAdapter = extSimAdapter;
   }
 
+  /**
+   * Requests available evcs charging stations.
+   *
+   * <p>todo: What does available mean exactly? Currently vs. Generally available
+   *
+   * @return a mapping from evcs uuid to the amount of available charging stations
+   */
   public Map<UUID, Integer> requestAvailablePublicEvCs() {
     sendExtMsg(new RequestEvcsFreeLots());
 
@@ -45,7 +55,17 @@ public class ExtEvData implements ExtData {
     return new HashMap<>();
   }
 
-  public List<EvModel> sendEvPositions(EvMovementsMessage evMovementsMessage) {
+  /**
+   * Exchange all ev movements with SIMONA which consists of departing and arriving evs at a certain
+   * tick. SIMONA takes over arrived parking vehicles and returns charged departing vehicles.
+   *
+   * <p>todo: How is the information about the current tick conveyed? EvModels only carry departure
+   * not arrival tick.
+   *
+   * @param evMovementsMessage the ev movements for ev exchange
+   * @return all charged departed vehicles
+   */
+  public List<EvModel> exchangeEvArrivalsAndDepartures(EvMovementsMessage evMovementsMessage) {
     sendExtMsg(evMovementsMessage);
 
     try {
@@ -63,6 +83,11 @@ public class ExtEvData implements ExtData {
     return new ArrayList<>();
   }
 
+  /**
+   * Requests prices at all EVCS station at current tick.
+   *
+   * @return mapping from evcs uuid to current price
+   */
   public Map<UUID, Double> requestCurrentPrices() {
     sendExtMsg(new RequestCurrentPrices());
 
@@ -81,6 +106,12 @@ public class ExtEvData implements ExtData {
     return new HashMap<>();
   }
 
+  /**
+   * Sends information from the external ev simulation to SIMONAs ev data service. Furthermore
+   * instructs the ext sim adapter within SIMONA to activate the ev data service.
+   *
+   * @param msg the data/information that is sent to SIMONA's ev data service
+   */
   public void sendExtMsg(ExtEvMessage msg) {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler

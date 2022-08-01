@@ -6,4 +6,5 @@
 
 package edu.ie3.simona.api.data.ontology;
 
+/** Interface for data messages to the external simulation */
 public interface ExtDataMessage {}
