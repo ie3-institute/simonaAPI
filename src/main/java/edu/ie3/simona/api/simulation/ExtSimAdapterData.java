@@ -41,7 +41,7 @@ public class ExtSimAdapterData {
   }
 
   /**
-   * Sends a
+   * Sends a k
    *
    * @param msg
    */
