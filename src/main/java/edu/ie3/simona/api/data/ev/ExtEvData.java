@@ -117,9 +117,9 @@ public class ExtEvData implements ExtData {
   }
 
   /**
-   * Queues message that should be
+   * Queues message from SIMONA that should be handled by the external ev simulation.
    *
-   * @param extEvResponse
+   * @param extEvResponse the message to be handled
    */
   public void queueExtResponseMsg(ExtEvResponseMessage extEvResponse) {
     try {
