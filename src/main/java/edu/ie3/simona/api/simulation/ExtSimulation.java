@@ -14,8 +14,7 @@ import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-//import org.slf4j.LoggerFactory;
+// import org.slf4j.LoggerFactory;
 
 /**
  * Every external simulation must extend this class in order to get triggered by the main
@@ -25,7 +24,7 @@ public abstract class ExtSimulation implements Runnable {
 
   private ExtSimAdapterData data;
 
-  //private final Logger log = (Logger) LoggerFactory.getLogger("ExtSimulation");
+  // private final Logger log = (Logger) LoggerFactory.getLogger("ExtSimulation");
 
   protected ExtSimulation() {}
 
@@ -51,7 +50,7 @@ public abstract class ExtSimulation implements Runnable {
   private boolean takeAndHandleMessage() throws InterruptedException {
     // take() will block until an object is ready for us
     final ExtSimMessage msg = data.receiveMessageQueue.take();
-    //log.info("data received and placed on MessageQueue");
+    // log.info("data received and placed on MessageQueue");
 
     if (msg.getClass().equals(ActivityStartTrigger.class)) {
       final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
@@ -121,7 +120,7 @@ public abstract class ExtSimulation implements Runnable {
       if (adapter instanceof ExtOpfData && this instanceof ExtOpfSimulation)
         ((ExtOpfSimulation) this).setExtOpfData((ExtOpfData) adapter);
     }
-    //log.info("setup complete...");
+    // log.info("setup complete...");
   }
 
   /**
