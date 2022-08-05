@@ -37,14 +37,14 @@ public class EvMovementsMessageBuilder {
    * @return an {@link EvMovementsMessage}
    */
   public EvMovementsMessage build() {
-    final Map<UUID, EvMovementsMessage.EvcsMovements> map = new HashMap<>();
+    final Map<UUID, EvMovementsMessage.EvMovements> map = new HashMap<>();
 
     for (Map.Entry<UUID, List<UUID>> entry : departures.entrySet()) {
       List<UUID> dep = entry.getValue();
       List<EvModel> arr = arrivals.get(entry.getKey());
       if (arr == null) arr = new LinkedList<>();
 
-      map.put(entry.getKey(), new EvMovementsMessage.EvcsMovements(dep, arr));
+      map.put(entry.getKey(), new EvMovementsMessage.EvMovements(dep, arr));
     }
 
     // all arrivals of evcs that have no departures
@@ -52,7 +52,7 @@ public class EvMovementsMessageBuilder {
       if (!map.containsKey(entry.getKey()))
         map.put(
             entry.getKey(),
-            new EvMovementsMessage.EvcsMovements(new LinkedList<>(), entry.getValue()));
+            new EvMovementsMessage.EvMovements(new LinkedList<>(), entry.getValue()));
     }
 
     return new EvMovementsMessage(map);

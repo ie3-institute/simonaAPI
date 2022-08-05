@@ -17,14 +17,14 @@ import java.util.*;
  *
  * @param movements the movements which are communicated
  */
-public record EvMovementsMessage(Map<UUID, EvcsMovements> movements) implements ExtEvMessage {
+public record EvMovementsMessage(Map<UUID, EvMovements> movements) implements ExtEvMessage {
 
-  public record EvcsMovements(List<UUID> departures, List<EvModel> arrivals) {
+  public record EvMovements(List<UUID> departures, List<EvModel> arrivals) {
 
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof EvcsMovements that)) return false;
+      if (!(o instanceof EvMovements that)) return false;
       return departures.equals(that.departures) && arrivals.equals(that.arrivals);
     }
   }
