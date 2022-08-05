@@ -35,7 +35,7 @@ public class ExtEvData implements ExtData {
    *
    * @return a mapping from evcs uuid to the amount of available charging stations
    */
-  public Map<UUID, Integer> requestAvailablePublicEvCs() {
+  public Map<UUID, Integer> requestAvailablePublicEvcs() {
     sendExtMsg(new RequestEvcsFreeLots());
 
     try {
@@ -60,11 +60,12 @@ public class ExtEvData implements ExtData {
    * <p>todo: How is the information about the current tick conveyed? EvModels only carry departure
    * not arrival tick.
    *
-   * @param evMovementsMessage the ev movements for ev exchange
+   * @param evcsMovementsMessage the ev movements for ev exchange
    * @return all charged departed vehicles
    */
-  public List<EvModel> exchangeEvArrivalsAndDepartures(EvMovementsMessage evMovementsMessage) {
-    sendExtMsg(evMovementsMessage);
+  public List<EvModel> exchangeEvcsArrivalsAndDepartures(
+      EvcsMovementsMessage evcsMovementsMessage) {
+    sendExtMsg(evcsMovementsMessage);
 
     try {
       // blocks until actor puts something here
