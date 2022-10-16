@@ -7,10 +7,10 @@
 package edu.ie3.simona.api.data.ev.ontology.builder;
 
 import edu.ie3.simona.api.data.ev.model.EvModel;
-import edu.ie3.simona.api.data.ev.ontology.EvcsMovementsMessage;
+import edu.ie3.simona.api.data.ev.ontology.EvMovementsMessage;
 import java.util.*;
 
-/** Builder for {@link EvcsMovementsMessage} */
+/** Builder for {@link EvMovementsMessage} */
 public class EvcsMovementsMessageBuilder {
   private final Map<UUID, List<UUID>> departures;
   private final Map<UUID, List<EvModel>> arrivals;
@@ -31,20 +31,20 @@ public class EvcsMovementsMessageBuilder {
   }
 
   /**
-   * Create an {@link EvcsMovementsMessage} from all departures and arrivals that have been supplied
+   * Create an {@link EvMovementsMessage} from all departures and arrivals that have been supplied
    * before.
    *
-   * @return an {@link EvcsMovementsMessage}
+   * @return an {@link EvMovementsMessage}
    */
-  public EvcsMovementsMessage build() {
-    final Map<UUID, EvcsMovementsMessage.EvcsMovements> map = new HashMap<>();
+  public EvMovementsMessage build() {
+    final Map<UUID, EvMovementsMessage.EvcsMovements> map = new HashMap<>();
 
     for (Map.Entry<UUID, List<UUID>> entry : departures.entrySet()) {
       List<UUID> dep = entry.getValue();
       List<EvModel> arr = arrivals.get(entry.getKey());
       if (arr == null) arr = new LinkedList<>();
 
-      map.put(entry.getKey(), new EvcsMovementsMessage.EvcsMovements(dep, arr));
+      map.put(entry.getKey(), new EvMovementsMessage.EvcsMovements(dep, arr));
     }
 
     // all arrivals of evcs that have no departures
@@ -52,9 +52,9 @@ public class EvcsMovementsMessageBuilder {
       if (!map.containsKey(entry.getKey()))
         map.put(
             entry.getKey(),
-            new EvcsMovementsMessage.EvcsMovements(new LinkedList<>(), entry.getValue()));
+            new EvMovementsMessage.EvcsMovements(new LinkedList<>(), entry.getValue()));
     }
 
-    return new EvcsMovementsMessage(map);
+    return new EvMovementsMessage(map);
   }
 }

@@ -12,12 +12,12 @@ import java.util.*;
 /**
  * Message that contains a mapping from evcs uuid all ev movements for a certain tick. These consist
  * of arrivals and departures. Departures are cars (represented by their uuids) that leave their
- * parking space so have to be handed back from SIMONA to the EvSimulation. Arrivals are cars which
- * are parking at this certain and are handed over to SIMONA.
+ * parking space, thus have to be handed back from SIMONA to the EvSimulation. Arrivals are cars
+ * which are parking at this charging station and are handed over to SIMONA.
  *
  * @param movements the movements which are communicated
  */
-public record EvcsMovementsMessage(Map<UUID, EvcsMovements> movements) implements ExtEvMessage {
+public record EvMovementsMessage(Map<UUID, EvcsMovements> movements) implements ExtEvMessage {
 
   public record EvcsMovements(List<UUID> departures, List<EvModel> arrivals) {
 

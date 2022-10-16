@@ -31,9 +31,9 @@ public class ExtEvData implements ExtData {
   }
 
   /**
-   * Requests currently available evcs charging stations.
+   * Requests currently available evcs charging stations lots from SIMONA.
    *
-   * @return a mapping from evcs uuid to the amount of available charging stations
+   * @return a mapping from evcs uuid to the amount of available charging station lots
    */
   public Map<UUID, Integer> requestAvailablePublicEvcs() {
     sendExtMsg(new RequestEvcsFreeLots());
@@ -54,18 +54,15 @@ public class ExtEvData implements ExtData {
   }
 
   /**
-   * Exchange all ev movements with SIMONA which consists of departing and arriving evs at a certain
-   * tick. SIMONA takes over arrived parking vehicles and returns charged departing vehicles.
+   * Exchange all ev movements with SIMONA, which consist of departing and arriving evs at the
+   * current tick. SIMONA receives and handles arriving parking vehicles and returns charged
+   * departing vehicles.
    *
-   * <p>todo: How is the information about the current tick conveyed? EvModels only carry departure
-   * not arrival tick.
-   *
-   * @param evcsMovementsMessage the ev movements for ev exchange
+   * @param evMovementsMessage the ev movements for ev exchange
    * @return all charged departed vehicles
    */
-  public List<EvModel> exchangeEvcsArrivalsAndDepartures(
-      EvcsMovementsMessage evcsMovementsMessage) {
-    sendExtMsg(evcsMovementsMessage);
+  public List<EvModel> exchangeEvcsArrivalsAndDepartures(EvMovementsMessage evMovementsMessage) {
+    sendExtMsg(evMovementsMessage);
 
     try {
       // blocks until actor puts something here
@@ -106,8 +103,9 @@ public class ExtEvData implements ExtData {
   }
 
   /**
-   * Sends information from the external ev simulation to SIMONAs ev data service. Furthermore
-   * instructs the ext sim adapter within SIMONA to activate the ev data service.
+   * Send information from the external ev simulation to SIMONA's ev data service. Furthermore,
+   * ExtSimAdapter within SIMONA is instructed to activate the ev data service with the current
+   * tick.
    *
    * @param msg the data/information that is sent to SIMONA's ev data service
    */
