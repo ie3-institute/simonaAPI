@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.ev.ontology;
 
 import java.util.*;
 
-public class ProvideEvcsFreeLots implements ExtEvResponseMessage {
+public class ProvideEvcsFreeLots implements EvDataResponseMessageToExt {
   private final Map<UUID, Integer> evcs;
 
   /** No evcs available */

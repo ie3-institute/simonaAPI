@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtEvData implements ExtData {
   /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<ExtEvResponseMessage> receiveTriggerQueue =
+  public final LinkedBlockingQueue<EvDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
   /** Actor reference to service that handles ev data within SIMONA */
   private final ActorRef dataService;
@@ -40,7 +40,7 @@ public class ExtEvData implements ExtData {
 
     try {
       // blocks until actor puts something here
-      ExtEvResponseMessage evMessage = receiveTriggerQueue.take();
+      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
       if (evMessage.getClass().equals(ProvideEvcsFreeLots.class)) {
         final ProvideEvcsFreeLots provideEvcsFreeLots = (ProvideEvcsFreeLots) evMessage;
@@ -66,7 +66,7 @@ public class ExtEvData implements ExtData {
 
     try {
       // blocks until actor puts something here
-      ExtEvResponseMessage evMessage = receiveTriggerQueue.take();
+      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
       if (evMessage.getClass().equals(AllDepartedEvsResponse.class)) {
         final AllDepartedEvsResponse departedEvsResponse = (AllDepartedEvsResponse) evMessage;
@@ -89,7 +89,7 @@ public class ExtEvData implements ExtData {
 
     try {
       // blocks until actor puts something here
-      ExtEvResponseMessage evMessage = receiveTriggerQueue.take();
+      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
       if (evMessage.getClass().equals(ProvideCurrentPrices.class)) {
         final ProvideCurrentPrices provideCurrentPrices = (ProvideCurrentPrices) evMessage;
@@ -109,7 +109,7 @@ public class ExtEvData implements ExtData {
    *
    * @param msg the data/information that is sent to SIMONA's ev data service
    */
-  public void sendExtMsg(ExtEvMessage msg) {
+  public void sendExtMsg(EvDataMessageFromExt msg) {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
@@ -120,7 +120,7 @@ public class ExtEvData implements ExtData {
    *
    * @param extEvResponse the message to be handled
    */
-  public void queueExtResponseMsg(ExtEvResponseMessage extEvResponse) {
+  public void queueExtResponseMsg(EvDataResponseMessageToExt extEvResponse) {
     try {
       receiveTriggerQueue.put(extEvResponse);
     } catch (InterruptedException e) {

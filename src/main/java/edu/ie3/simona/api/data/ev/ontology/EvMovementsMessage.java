@@ -17,7 +17,8 @@ import java.util.*;
  *
  * @param movements the movements which are communicated
  */
-public record EvMovementsMessage(Map<UUID, EvcsMovements> movements) implements ExtEvMessage {
+public record EvMovementsMessage(Map<UUID, EvcsMovements> movements)
+    implements EvDataMessageFromExt {
 
   public record EvcsMovements(List<UUID> departures, List<EvModel> arrivals) {
 

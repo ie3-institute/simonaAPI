@@ -6,7 +6,7 @@ import akka.testkit.javadsl.TestKit
 import edu.ie3.simona.api.data.ExtData
 import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessage
+import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt
 import edu.ie3.simona.api.simulation.ontology.Terminate
 import edu.ie3.simona.api.simulation.ontology.TerminationCompleted
 import spock.lang.Shared
@@ -106,7 +106,7 @@ class ExtSimulationSpec extends Specification {
             true                  || true
     }
 
-    class UnknownMessage implements ExtSimMessage {}
+    class UnknownMessage implements ControlMessageToExt {}
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
