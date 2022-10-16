@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,4 +15,5 @@ import java.util.UUID;
  *
  * @param departures the departing EVs' UUIDs per charging station UUID
  */
-public record RequestDepartingEvs(Map<UUID, UUID> departures) implements EvDataMessageFromExt {}
+public record RequestDepartingEvs(Map<UUID, List<UUID>> departures)
+    implements EvDataMessageFromExt {}

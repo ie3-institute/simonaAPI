@@ -86,7 +86,7 @@ public class ExtEvData implements ExtData {
    * @param departures the departing EV UUIDs per charging station UUID
    * @return all charged departing vehicles
    */
-  public List<EvModel> requestDepartingEvs(Map<UUID, UUID> departures) {
+  public List<EvModel> requestDepartingEvs(Map<UUID, List<UUID>> departures) {
     sendExtMsg(new RequestDepartingEvs(departures));
 
     try {
@@ -110,7 +110,7 @@ public class ExtEvData implements ExtData {
    *
    * @param arrivals the arriving EV models per charging station UUID
    */
-  public void provideArrivingEvs(Map<UUID, EvModel> arrivals) {
+  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals) {
     sendExtMsg(new ProvideArrivingEvs(arrivals));
   }
 
