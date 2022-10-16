@@ -11,21 +11,21 @@ import edu.ie3.simona.api.data.ev.ontology.EvMovementsMessage;
 import java.util.*;
 
 /** Builder for {@link EvMovementsMessage} */
-public class EvcsMovementsMessageBuilder {
+public class EvMovementsMessageBuilder {
   private final Map<UUID, List<UUID>> departures;
   private final Map<UUID, List<EvModel>> arrivals;
 
-  public EvcsMovementsMessageBuilder() {
+  public EvMovementsMessageBuilder() {
     this.departures = new HashMap<>();
     this.arrivals = new HashMap<>();
   }
 
-  public EvcsMovementsMessageBuilder addDeparture(UUID evcs, UUID ev) {
+  public EvMovementsMessageBuilder addDeparture(UUID evcs, UUID ev) {
     departures.computeIfAbsent(evcs, k -> new LinkedList<>()).add(ev);
     return this;
   }
 
-  public EvcsMovementsMessageBuilder addArrival(UUID evcs, EvModel ev) {
+  public EvMovementsMessageBuilder addArrival(UUID evcs, EvModel ev) {
     arrivals.computeIfAbsent(evcs, k -> new LinkedList<>()).add(ev);
     return this;
   }
