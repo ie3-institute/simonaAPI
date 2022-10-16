@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-public record Terminate(Boolean simulationSuccessful) implements ToExtSimControlMessage {}
+public record Terminate(Boolean simulationSuccessful) implements ControlMessageToExt {}

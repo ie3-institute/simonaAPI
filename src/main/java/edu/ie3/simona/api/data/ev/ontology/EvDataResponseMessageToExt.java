@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-import edu.ie3.simona.api.data.ontology.FromExtSimDataMessage;
+import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 
-public interface FromExtEvSimDataMessage extends FromExtSimDataMessage {}
+/** Messages that are sent from SIMONA to the external ev simulation */
+public interface EvDataResponseMessageToExt extends DataResponseMessageToExt {}

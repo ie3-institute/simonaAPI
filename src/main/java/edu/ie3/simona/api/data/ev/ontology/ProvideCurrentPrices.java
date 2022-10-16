@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.ev.ontology;
 
 import java.util.*;
 
-public class ProvideCurrentPrices implements ToExtEvSimDataResponseMessage {
+public class ProvideCurrentPrices implements EvDataResponseMessageToExt {
   private final Map<UUID, Double> prices;
 
   /** No prices available */

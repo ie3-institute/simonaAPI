@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-public interface ToExtSimControlMessage {}
+public interface ControlMessageToExt {}

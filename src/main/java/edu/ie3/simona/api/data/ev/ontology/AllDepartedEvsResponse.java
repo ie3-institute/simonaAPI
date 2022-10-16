@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AllDepartedEvsResponse implements ToExtEvSimDataResponseMessage {
+public class AllDepartedEvsResponse implements EvDataResponseMessageToExt {
   private final List<EvModel> departedEvs;
 
   /** No departed evs during current tick */
