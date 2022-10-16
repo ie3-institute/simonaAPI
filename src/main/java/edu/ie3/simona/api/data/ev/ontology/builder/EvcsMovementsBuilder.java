@@ -10,7 +10,7 @@ import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.EvMovementsMessage;
 import java.util.*;
 
-/** Builder for {@link edu.ie3.simona.api.data.ev.ontology.EvMovementsMessage.EvcsMovements} */
+/** Builder for {@link EvMovementsMessage.EvcsMovements} */
 public class EvcsMovementsBuilder {
   private final List<UUID> departures;
   private final List<EvModel> arrivals;
@@ -33,7 +33,7 @@ public class EvcsMovementsBuilder {
   /**
    * Create an EvcsMovements from all departures and arrivals that have been supplied before.
    *
-   * @return an {@link edu.ie3.simona.api.data.ev.ontology.EvMovementsMessage.EvcsMovements}
+   * @return an {@link EvMovementsMessage.EvcsMovements}
    */
   public EvMovementsMessage.EvcsMovements build() {
     return new EvMovementsMessage.EvcsMovements(departures, arrivals);
