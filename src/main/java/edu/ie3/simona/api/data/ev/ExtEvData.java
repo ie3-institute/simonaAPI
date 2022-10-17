@@ -41,15 +41,7 @@ public class ExtEvData implements ExtData {
   public Map<UUID, Integer> requestAvailablePublicEvcs() throws InterruptedException {
     sendExtMsg(new RequestEvcsFreeLots());
 
-    // blocks until actor puts something here
-    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
-
-    if (evMessage.getClass().equals(ProvideEvcsFreeLots.class)) {
-      final ProvideEvcsFreeLots provideEvcsFreeLots = (ProvideEvcsFreeLots) evMessage;
-      return provideEvcsFreeLots.evcs();
-    }
-
-    return new HashMap<>();
+    return receiveWithType(ProvideEvcsFreeLots.class).evcs();
   }
 
   /**
@@ -63,15 +55,7 @@ public class ExtEvData implements ExtData {
   public Map<UUID, Double> requestCurrentPrices() throws InterruptedException {
     sendExtMsg(new RequestCurrentPrices());
 
-    // blocks until actor puts something here
-    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
-
-    if (evMessage.getClass().equals(ProvideCurrentPrices.class)) {
-      final ProvideCurrentPrices provideCurrentPrices = (ProvideCurrentPrices) evMessage;
-      return provideCurrentPrices.prices();
-    }
-
-    return new HashMap<>();
+    return receiveWithType(ProvideCurrentPrices.class).prices();
   }
 
   /**
@@ -88,15 +72,7 @@ public class ExtEvData implements ExtData {
       throws InterruptedException {
     sendExtMsg(new RequestDepartingEvs(departures));
 
-    // blocks until actor puts something here
-    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
-
-    if (evMessage.getClass().equals(ProvideDepartingEvs.class)) {
-      final ProvideDepartingEvs departedEvsResponse = (ProvideDepartingEvs) evMessage;
-      return departedEvsResponse.departedEvs();
-    }
-
-    return new ArrayList<>();
+    return receiveWithType(ProvideDepartingEvs.class).departedEvs();
   }
 
   /**
@@ -132,5 +108,33 @@ public class ExtEvData implements ExtData {
   public void queueExtResponseMsg(EvDataResponseMessageToExt extEvResponse)
       throws InterruptedException {
     receiveTriggerQueue.put(extEvResponse);
+  }
+
+  /**
+   * Waits until a message of given type is added to the queue. If the message has a different type,
+   * a RuntimeException is thrown. This method blocks until having received a response from SIMONA.
+   *
+   * @param expectedMessageClass the expected class of the message to be received
+   * @return a message of the expected type once it has been received
+   * @param <T> the type of the expected message
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
+   */
+  @SuppressWarnings("unchecked")
+  private <T extends EvDataResponseMessageToExt> T receiveWithType(Class<T> expectedMessageClass)
+      throws InterruptedException {
+
+    // blocks until actor puts something here
+    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
+
+    if (evMessage.getClass().equals(expectedMessageClass)) {
+      return (T) evMessage;
+    } else
+      throw new RuntimeException(
+          "Received unexpected message '"
+              + evMessage
+              + "', expected type '"
+              + expectedMessageClass
+              + "'");
   }
 }
