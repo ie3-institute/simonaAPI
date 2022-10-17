@@ -4,8 +4,6 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.ev.ontology;
+package edu.ie3.simona.api.simulation.ontology;
 
-import edu.ie3.simona.api.data.ontology.ExtDataMessage;
-
-public interface ExtEvMessage extends ExtDataMessage {}
+public interface ControlMessageToExt {}

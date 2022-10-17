@@ -6,4 +6,4 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-public record TerminationCompleted() implements ExtSimMessageResponse {}
+public record TerminationCompleted() implements ControlResponseMessageFromExt {}

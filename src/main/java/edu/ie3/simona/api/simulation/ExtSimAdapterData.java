@@ -7,15 +7,18 @@
 package edu.ie3.simona.api.simulation;
 
 import akka.actor.ActorRef;
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessage;
-import edu.ie3.simona.api.simulation.ontology.ExtSimMessageResponse;
+import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtSimAdapterData {
 
-  public final LinkedBlockingQueue<ExtSimMessage> receiveMessageQueue = new LinkedBlockingQueue<>();
+  /** Queue of triggers the external simulation needs to handle. */
+  public final LinkedBlockingQueue<ControlMessageToExt> receiveMessageQueue =
+      new LinkedBlockingQueue<>();
+  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
-
+  /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
   // important trigger queue must be the same as held in actor
@@ -25,15 +28,24 @@ public class ExtSimAdapterData {
     this.mainArgs = mainArgs;
   }
 
-  public void queueExtMsg(ExtSimMessage msg) {
-    try {
-      receiveMessageQueue.put(msg);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
+  /**
+   * Called within SIMONA to queue messages for the external simulation
+   *
+   * @param msg the message to queue
+   * @throws InterruptedException if the thread running this has been interrupted during waiting for
+   *     the message to be queued
+   */
+  public void queueExtMsg(ControlMessageToExt msg) throws InterruptedException {
+    receiveMessageQueue.put(msg);
   }
 
-  public void send(ExtSimMessageResponse msg) {
+  /**
+   * Sends a response message to SIMONA for some message that was received by the external
+   * simulation
+   *
+   * @param msg the message to send
+   */
+  public void send(ControlResponseMessageFromExt msg) {
     extSimAdapter.tell(msg, ActorRef.noSender());
   }
 

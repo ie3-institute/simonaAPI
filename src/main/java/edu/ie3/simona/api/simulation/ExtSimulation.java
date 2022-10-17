@@ -31,6 +31,8 @@ public abstract class ExtSimulation implements Runnable {
         simulationFinished = takeAndHandleMessage();
       }
     } catch (InterruptedException ie) {
+      // This is the topmost method in the thread call stack,
+      // so we handle the exception ourselves
       Thread.currentThread().interrupt();
     }
   }
@@ -44,7 +46,7 @@ public abstract class ExtSimulation implements Runnable {
    */
   private boolean takeAndHandleMessage() throws InterruptedException {
     // take() will block until an object is ready for us
-    final ExtSimMessage msg = data.receiveMessageQueue.take();
+    final ControlMessageToExt msg = data.receiveMessageQueue.take();
 
     if (msg.getClass().equals(ActivityStartTrigger.class)) {
       final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
