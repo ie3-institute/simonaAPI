@@ -32,13 +32,11 @@ public class ExtSimAdapterData {
    * Called within SIMONA to queue messages for the external simulation
    *
    * @param msg the message to queue
+   * @throws InterruptedException if the thread running this has been interrupted during waiting for
+   *     the message to be queued
    */
-  public void queueExtMsg(ControlMessageToExt msg) {
-    try {
-      receiveMessageQueue.put(msg);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
+  public void queueExtMsg(ControlMessageToExt msg) throws InterruptedException {
+    receiveMessageQueue.put(msg);
   }
 
   /**

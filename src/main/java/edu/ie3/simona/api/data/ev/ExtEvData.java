@@ -35,20 +35,18 @@ public class ExtEvData implements ExtData {
    * having received a response from SIMONA.
    *
    * @return a mapping from evcs uuid to the amount of available charging station lots
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
    */
-  public Map<UUID, Integer> requestAvailablePublicEvcs() {
+  public Map<UUID, Integer> requestAvailablePublicEvcs() throws InterruptedException {
     sendExtMsg(new RequestEvcsFreeLots());
 
-    try {
-      // blocks until actor puts something here
-      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
+    // blocks until actor puts something here
+    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
-      if (evMessage.getClass().equals(ProvideEvcsFreeLots.class)) {
-        final ProvideEvcsFreeLots provideEvcsFreeLots = (ProvideEvcsFreeLots) evMessage;
-        return provideEvcsFreeLots.evcs();
-      }
-    } catch (InterruptedException ie) {
-      Thread.currentThread().interrupt();
+    if (evMessage.getClass().equals(ProvideEvcsFreeLots.class)) {
+      final ProvideEvcsFreeLots provideEvcsFreeLots = (ProvideEvcsFreeLots) evMessage;
+      return provideEvcsFreeLots.evcs();
     }
 
     return new HashMap<>();
@@ -59,20 +57,18 @@ public class ExtEvData implements ExtData {
    * response from SIMONA.
    *
    * @return mapping from evcs uuid to current price
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
    */
-  public Map<UUID, Double> requestCurrentPrices() {
+  public Map<UUID, Double> requestCurrentPrices() throws InterruptedException {
     sendExtMsg(new RequestCurrentPrices());
 
-    try {
-      // blocks until actor puts something here
-      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
+    // blocks until actor puts something here
+    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
-      if (evMessage.getClass().equals(ProvideCurrentPrices.class)) {
-        final ProvideCurrentPrices provideCurrentPrices = (ProvideCurrentPrices) evMessage;
-        return provideCurrentPrices.prices();
-      }
-    } catch (InterruptedException ie) {
-      Thread.currentThread().interrupt();
+    if (evMessage.getClass().equals(ProvideCurrentPrices.class)) {
+      final ProvideCurrentPrices provideCurrentPrices = (ProvideCurrentPrices) evMessage;
+      return provideCurrentPrices.prices();
     }
 
     return new HashMap<>();
@@ -85,20 +81,19 @@ public class ExtEvData implements ExtData {
    *
    * @param departures the departing EV UUIDs per charging station UUID
    * @return all charged departing vehicles
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
    */
-  public List<EvModel> requestDepartingEvs(Map<UUID, List<UUID>> departures) {
+  public List<EvModel> requestDepartingEvs(Map<UUID, List<UUID>> departures)
+      throws InterruptedException {
     sendExtMsg(new RequestDepartingEvs(departures));
 
-    try {
-      // blocks until actor puts something here
-      EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
+    // blocks until actor puts something here
+    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
 
-      if (evMessage.getClass().equals(ProvideDepartingEvs.class)) {
-        final ProvideDepartingEvs departedEvsResponse = (ProvideDepartingEvs) evMessage;
-        return departedEvsResponse.departedEvs();
-      }
-    } catch (InterruptedException ie) {
-      Thread.currentThread().interrupt();
+    if (evMessage.getClass().equals(ProvideDepartingEvs.class)) {
+      final ProvideDepartingEvs departedEvsResponse = (ProvideDepartingEvs) evMessage;
+      return departedEvsResponse.departedEvs();
     }
 
     return new ArrayList<>();
@@ -131,12 +126,11 @@ public class ExtEvData implements ExtData {
    * Queues message from SIMONA that should be handled by the external ev simulation.
    *
    * @param extEvResponse the message to be handled
+   * @throws InterruptedException if the thread running this has been interrupted during waiting for
+   *     the message to be queued
    */
-  public void queueExtResponseMsg(EvDataResponseMessageToExt extEvResponse) {
-    try {
-      receiveTriggerQueue.put(extEvResponse);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
+  public void queueExtResponseMsg(EvDataResponseMessageToExt extEvResponse)
+      throws InterruptedException {
+    receiveTriggerQueue.put(extEvResponse);
   }
 }
