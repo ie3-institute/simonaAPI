@@ -32,7 +32,7 @@ public abstract class ExtSimulation implements Runnable {
       }
     } catch (InterruptedException ie) {
       // This is the topmost method in the thread call stack,
-      // so handle we handle the exception ourselves
+      // so we handle the exception ourselves
       Thread.currentThread().interrupt();
     }
   }
