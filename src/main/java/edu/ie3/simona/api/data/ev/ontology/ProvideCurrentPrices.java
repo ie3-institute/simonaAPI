@@ -6,21 +6,19 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class ProvideCurrentPrices implements EvDataResponseMessageToExt {
-  private final Map<UUID, Double> prices;
+/**
+ * Provides charging prices as a response to a {@link RequestCurrentPrices}.
+ *
+ * @param prices the charging prices per charging station
+ */
+public record ProvideCurrentPrices(Map<UUID, Double> prices) implements EvDataResponseMessageToExt {
 
   /** No prices available */
   public ProvideCurrentPrices() {
-    this.prices = new HashMap<>(0);
-  }
-
-  public ProvideCurrentPrices(Map<UUID, Double> prices) {
-    this.prices = prices;
-  }
-
-  public Map<UUID, Double> getPrices() {
-    return prices;
+    this(new HashMap<>(0));
   }
 }

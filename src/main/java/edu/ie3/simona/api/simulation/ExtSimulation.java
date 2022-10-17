@@ -31,6 +31,8 @@ public abstract class ExtSimulation implements Runnable {
         simulationFinished = takeAndHandleMessage();
       }
     } catch (InterruptedException ie) {
+      // This is the topmost method in the thread call stack,
+      // so we handle the exception ourselves
       Thread.currentThread().interrupt();
     }
   }

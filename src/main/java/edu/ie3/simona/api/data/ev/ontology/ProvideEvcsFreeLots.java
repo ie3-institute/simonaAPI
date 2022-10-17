@@ -6,34 +6,20 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class ProvideEvcsFreeLots implements EvDataResponseMessageToExt {
-  private final Map<UUID, Integer> evcs;
+/**
+ * Provides the number of available lots per charging station to the external simulation as a
+ * response to a {@link RequestEvcsFreeLots}.
+ *
+ * @param evcs the number of free lots per charging station UUID
+ */
+public record ProvideEvcsFreeLots(Map<UUID, Integer> evcs) implements EvDataResponseMessageToExt {
 
-  /** No evcs available */
+  /** No EVCS lots available */
   public ProvideEvcsFreeLots() {
-    this.evcs = new HashMap<>(0);
-  }
-
-  public ProvideEvcsFreeLots(Map<UUID, Integer> evcs) {
-    this.evcs = evcs;
-  }
-
-  public Map<UUID, Integer> getEvcs() {
-    return evcs;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ProvideEvcsFreeLots that = (ProvideEvcsFreeLots) o;
-    return evcs.equals(that.evcs);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(evcs);
+    this(new HashMap<>(0));
   }
 }

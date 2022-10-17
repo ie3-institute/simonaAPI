@@ -6,4 +6,5 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-public class RequestCurrentPrices implements EvDataMessageFromExt {}
+/** Request current charging prices per charging station. */
+public record RequestCurrentPrices() implements EvDataMessageFromExt {}
