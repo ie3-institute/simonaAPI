@@ -194,7 +194,6 @@ node {
           sh "curl -s https://codecov.io/bash | bash -s - -t ${env.codeCovToken} -C ${commitHash}"
         }
       }
-
     } catch (Exception e) {
       // set build result to failure
       currentBuild.result = 'FAILURE'
@@ -206,7 +205,6 @@ node {
       Date date = new Date()
       println("[ERROR] [${date.format("dd/MM/yyyy")} - ${date.format("HH:mm:ss")}] " + e)
     }
-
   }
 }
 
@@ -251,7 +249,6 @@ def handleDevPr(String sshCredentialsId, String orgName, String projectName, Str
     "git fetch && git checkout $currentBranchName && git pull\"", returnStdout: false)
 
     gitLogLatestMergeString = sh(script: "cd $projectName && set +x && git log --merges -n 1", returnStdout: true)
-
   }
 
   // only create pr if the last merge has been a hotfix or a release branch merge
@@ -284,7 +281,6 @@ def handleDevPr(String sshCredentialsId, String orgName, String projectName, Str
         "git fetch && git checkout $currentBranchName && git pull && " +
         "git checkout -b $latestMergeBranchName $latestMergeCommitSHA && " +
         "git push --set-upstream origin $latestMergeBranchName\"")
-
       }
     } catch (Exception e) {
       println "No need to create a new branch. Can reuse old one."
@@ -370,7 +366,6 @@ def deployJavaDocs(String projectName, String sshCredentialsId, String gitChecko
   } catch (Exception e) {
     println "Error when deploying javadocs! Exception: $e"
   }
-
 }
 
 /* gradle */
@@ -434,7 +429,6 @@ def publishReports(String relativeProjectDir) {
 
   // publish pmd report for main project only
   publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/pmd', reportFiles: 'main.html', reportName: "${relativeProjectDir}_pmd_report", reportTitles: ''])
-
 }
 
 def prFromFork() {
@@ -552,7 +546,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "mainVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else if (targetBranchType == "dev") {
 
         boolean major = sourceBranchVersion[0].toInteger() == targetBranchVersion[0].toInteger()
@@ -568,7 +561,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "devVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else {
         // invalid branch type for hotfix merge
         return -1
@@ -589,7 +581,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "devVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else {
         // invalid branch type for feature merge
         println "Invalid target branch type '$targetBranchType' for feature branch. Feature branches can only" +
@@ -663,8 +654,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
       return -1
       break
   }
-
-
 }
 
 def getBranchType(String branchName) {
