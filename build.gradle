@@ -3,7 +3,7 @@ plugins {
   id 'java' // java support
   id 'com.diffplug.spotless' version '6.16.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '5.0.13' // code check, working on byte code
+  id 'com.github.spotbugs' version '5.0.14' // code check, working on byte code
   id "org.sonarqube" version "4.0.0.2929" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
