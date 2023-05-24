@@ -18,8 +18,10 @@ public class ExtEvData implements ExtData {
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<EvDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
+
   /** Actor reference to service that handles ev data within SIMONA */
   private final ActorRef dataService;
+
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
