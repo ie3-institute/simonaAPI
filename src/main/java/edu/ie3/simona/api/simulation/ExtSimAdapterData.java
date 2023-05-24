@@ -16,8 +16,10 @@ public class ExtSimAdapterData {
   /** Queue of triggers the external simulation needs to handle. */
   public final LinkedBlockingQueue<ControlMessageToExt> receiveMessageQueue =
       new LinkedBlockingQueue<>();
+
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
+
   /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
