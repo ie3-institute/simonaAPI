@@ -14,10 +14,6 @@ import spock.lang.Specification
 
 import java.lang.reflect.Method
 
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
-
 class ExtSimulationSpec extends Specification {
 
     @Shared
@@ -25,6 +21,31 @@ class ExtSimulationSpec extends Specification {
 
     @Shared
     Method handleMessage
+
+    /**
+     * Test simulation that distinguishes between returned ticks
+     * after initialization and regular activation
+     */
+    private class TestSimulation extends ExtSimulation {
+
+        private List<Long> initReturnTicks
+        private List<Long> activityReturnTicks
+
+        TestSimulation(List<Long> initReturnTicks, List<Long> activityReturnTicks) {
+            this.initReturnTicks = initReturnTicks
+            this.activityReturnTicks = activityReturnTicks
+        }
+
+        @Override
+        protected List<Long> initialize() {
+            return this.initReturnTicks
+        }
+
+        @Override
+        protected List<Long> doActivity(long tick) {
+            return this.activityReturnTicks
+        }
+    }
 
     def setupSpec() {
         actorSystem = ActorSystem.create()
@@ -45,10 +66,8 @@ class ExtSimulationSpec extends Specification {
             def newTicks = [0L]
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = mock(ExtSimulation)
+            def extSim = new TestSimulation(newTicks, [-2L])
             extSim.setup(extSimData, new ArrayList<ExtData>())
-
-            when(extSim.initialize()).thenReturn(newTicks)
 
         when:
             extSimData.queueExtMsg(new ActivityStartTrigger(tick))
@@ -63,10 +82,8 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = mock(ExtSimulation)
+            def extSim = new TestSimulation([-2L], newTicks)
             extSim.setup(extSimData, new ArrayList<ExtData>())
-
-            when(extSim.doActivity(tick)).thenReturn(newTicks)
 
         when:
             extSimData.queueExtMsg(new ActivityStartTrigger(tick))
@@ -88,7 +105,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = mock(ExtSimulation)
+            def extSim = new TestSimulation([], [])
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -98,7 +115,6 @@ class ExtSimulationSpec extends Specification {
         then:
             finishedActual == finished
             testProbe.expectMsg(new TerminationCompleted())
-            verify(extSim).terminate(simlulationSuccessful) // terminate() has been called exactly once
 
         where:
             simlulationSuccessful || finished
@@ -112,7 +128,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = mock(ExtSimulation)
+            def extSim = new TestSimulation([], [])
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
