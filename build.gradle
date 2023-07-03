@@ -41,7 +41,7 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.1.4' // quantities
+  implementation 'tech.units:indriya:2.2' // quantities
 
   // akka
   implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.20")
