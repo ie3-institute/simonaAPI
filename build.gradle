@@ -4,7 +4,7 @@ plugins {
   id 'com.diffplug.spotless' version '6.19.0'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '5.0.14' // code check, working on byte code
-  id "org.sonarqube" version "4.2.1.3168" // sonarqube
+  id "org.sonarqube" version "4.3.0.3225" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
