@@ -12,25 +12,39 @@ import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
 public interface EvModel {
-  /** @return the uuid of this ev */
+  /**
+   * @return the uuid of this ev
+   */
   UUID getUuid();
 
-  /** @return the id of this ev */
+  /**
+   * @return the id of this ev
+   */
   String getId();
 
-  /** @return the maximum AC charging power of this ev */
+  /**
+   * @return the maximum AC charging power of this ev
+   */
   ComparableQuantity<Power> getSRatedAC();
 
-  /** @return the maximum DC charging power of this ev */
+  /**
+   * @return the maximum DC charging power of this ev
+   */
   ComparableQuantity<Power> getSRatedDC();
 
-  /** @return the storage capacity of this ev's battery */
+  /**
+   * @return the storage capacity of this ev's battery
+   */
   ComparableQuantity<Energy> getEStorage();
 
-  /** @return the current energy charge of this ev's battery */
+  /**
+   * @return the current energy charge of this ev's battery
+   */
   ComparableQuantity<Energy> getStoredEnergy();
 
-  /** @return the departure tick of this ev */
+  /**
+   * @return the departure tick of this ev
+   */
   Long getDepartureTick();
 
   /**

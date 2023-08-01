@@ -9,9 +9,7 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
-import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger;
-import edu.ie3.simona.api.simulation.ontology.CompletionMessage;
-import edu.ie3.simona.api.simulation.ontology.ExtTrigger;
+import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,29 +24,62 @@ public abstract class ExtSimulation implements Runnable {
   protected ExtSimulation() {}
 
   public void run() {
-
-    // now we can start the loop
     try {
+      // now we can start the loop
       boolean simulationFinished = false;
       while (!simulationFinished) {
-
-        // take() will block until an object is ready for us
-        ExtTrigger trigger = data.receiveTriggerQueue.take();
-
-        if (trigger.getClass().equals(ActivityStartTrigger.class)) {
-          final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) trigger;
-          List<Long> newTriggers = doActivity(activityStartTrigger.getTick()); // this is blocking
-          data.send(new CompletionMessage(newTriggers));
-
-          if (newTriggers.isEmpty()) simulationFinished = true;
-        } else {
-          throw new IllegalArgumentException("Invalid Trigger " + trigger + " received.");
-        }
+        simulationFinished = takeAndHandleMessage();
       }
     } catch (InterruptedException ie) {
+      // This is the topmost method in the thread call stack,
+      // so we handle the exception ourselves
       Thread.currentThread().interrupt();
     }
   }
+
+  /**
+   * Blocks until the next message is received and handles it.
+   *
+   * @return true if simulation is terminated after handling this message
+   * @throws InterruptedException if the thread running this has been interrupted (possibly during
+   *     blocking)
+   */
+  private boolean takeAndHandleMessage() throws InterruptedException {
+    // take() will block until an object is ready for us
+    final ControlMessageToExt msg = data.receiveMessageQueue.take();
+
+    if (msg.getClass().equals(ActivityStartTrigger.class)) {
+      final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
+      List<Long> newTriggers;
+
+      if (activityStartTrigger.tick() == -1L) {
+        newTriggers = initialize(); // this is blocking until initialization has finished
+      } else {
+        newTriggers =
+            doActivity(
+                activityStartTrigger
+                    .tick()); // this is blocking until processing of this tick has finished
+      }
+      data.send(new CompletionMessage(newTriggers));
+
+      return newTriggers.isEmpty();
+    } else if (msg.getClass().equals(Terminate.class)) {
+      final Terminate terminateMsg = (Terminate) msg;
+      terminate(terminateMsg.simulationSuccessful());
+      data.send(new TerminationCompleted());
+
+      return true;
+    } else {
+      throw new IllegalArgumentException("Invalid message " + msg + " received.");
+    }
+  }
+
+  /**
+   * This method is called when the external simulation needs to be initialized
+   *
+   * @return a list of future ticks at which this external simulation wants to be triggered.
+   */
+  protected abstract List<Long> initialize();
 
   /**
    * This method is called for every tick of the external simulation that is triggered.
@@ -57,6 +88,16 @@ public abstract class ExtSimulation implements Runnable {
    * @return a list of future ticks at which this external simulation wants to be triggered.
    */
   protected abstract List<Long> doActivity(long tick);
+
+  /**
+   * This method is called when the main simulation wants to terminate.
+   *
+   * @param simulationSuccessful whether the simulation was run successfully or has ended with an
+   *     error
+   */
+  protected void terminate(Boolean simulationSuccessful) {
+    // to be overwritten in subclass
+  }
 
   public final List<Class<? extends ExtData>> getRequiredAdapters() {
     ArrayList<Class<? extends ExtData>> classes = new ArrayList<>();

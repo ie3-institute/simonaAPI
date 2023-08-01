@@ -4,6 +4,8 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation.ontology;
+package edu.ie3.simona.api.data.ev.ontology;
 
-public interface ExtTrigger {}
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
+
+public interface EvDataMessageFromExt extends DataMessageFromExt {}

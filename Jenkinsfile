@@ -11,7 +11,7 @@
 ////////////////////////////////
 
 /* project configuration */
-String javaVersionId = 'jdk-8' // id that matches the java tool with the java version that should be used set as jenkins property
+String javaVersionId = 'jdk-17' // id that matches the java tool with the java version that should be used set as jenkins property
 
 /* git configuration */
 String projectName = 'simonaAPI' // name of the repository, is case insensitive
@@ -27,9 +27,6 @@ String codeCovTokenId = 'simonaAPI-codecov-token' // id that matches the code co
 String mavenCentralCredentialsId = '87bfb2d4-7613-4816-9fe1-70dfd7e6dec2' // id that matches the maven central credentials set as jenkins property
 String mavenCentralSignKeyFileId = 'dc96216c-d20a-48ff-98c0-1c7ba096d08d' // id that matches the maven central sign key file set as jenkins property
 String mavenCentralSignKeyId = 'a1357827-1516-4fa2-ab8e-72cdea07a692' // id that matches the maven central sign key id set as jenkins property
-
-/* Rocket.Chat configuration */
-String rocketChatChannel = 'jenkins'
 
 /**
  * pipeline configuration
@@ -61,9 +58,6 @@ node {
 
       /* prs from forks require a special handling*/
       String headGitCheckoutUrl = prJsonObj == null ? gitCheckoutUrl : prJsonObj.head.repo.ssh_url
-
-      // notify rocket chat
-      notifyRocketChat(rocketChatChannel, ':jenkins_triggered:', buildStartMsg(currentBranchName, targetBranchName, projectName))
 
       // checkout scm
       String commitHash = ""
@@ -115,8 +109,7 @@ node {
         gradle('--refresh-dependencies clean spotlessCheck pmdMain pmdTest ' +
             'test jacocoTestReport jacocoTestCoverageVerification', projectName)
 
-        // due to an issue with openjdk-8 we use openjdk-11 for javadocs generation
-        sh(script: """set +x && cd $projectName""" + ''' set +x; ./gradlew clean javadoc -Dorg.gradle.java.home=/opt/java/openjdk''', returnStdout: true)
+        sh(script: """set +x && cd $projectName""" + ''' set +x; ./gradlew javadoc''', returnStdout: true)
       }
 
       // sonarqube analysis
@@ -159,7 +152,7 @@ node {
              */
             sh(
                 script: """set +x && cd $projectName""" +
-                ''' set +x; ./gradlew clean javadoc -Dorg.gradle.java.home=/opt/java/openjdk''',
+                ''' set +x; ./gradlew clean javadoc''',
                 returnStdout: true
                 )
 
@@ -185,15 +178,6 @@ node {
             // deploy java docs
             deployJavaDocs(projectName, sshCredentialsId, gitCheckoutUrl)
           }
-
-          // notify rocket chat
-          String successMsg = "deployment of version $projectVersion from branch '$currentBranchName' to sonatype " +
-              "successful. If this is a deployment from 'main' pls remember visiting https://oss.sonatype.org to " +
-              "stage and release artifact!\n" +
-              "*project:* ${projectName}\n" +
-              "*branch:* ${currentBranchName}\n"
-
-          notifyRocketChat(rocketChatChannel, ':jenkins_party:', successMsg)
         }
       }
 
@@ -209,12 +193,7 @@ node {
         ]) {
           sh "curl -s https://codecov.io/bash | bash -s - -t ${env.codeCovToken} -C ${commitHash}"
         }
-
-        // notify Rocket.Chat
-        String successMsg = buildSuccessMsg(currentBranchName, targetBranchName, projectName)
-        notifyRocketChat(rocketChatChannel, ':jenkins_party:', successMsg)
       }
-
     } catch (Exception e) {
       // set build result to failure
       currentBuild.result = 'FAILURE'
@@ -225,17 +204,7 @@ node {
       // print exception
       Date date = new Date()
       println("[ERROR] [${date.format("dd/MM/yyyy")} - ${date.format("HH:mm:ss")}] " + e)
-
-      // notify rocket chat
-      net.sf.json.JSONObject prJsonObj = getPRJsonObj(orgName, projectName, env.CHANGE_ID)
-      String branchName = prJsonObj == null ? env.BRANCH_NAME : prJsonObj.head.ref
-      String errorMsg = "CI failed.\n" +
-          "*project:* ${projectName}\n" +
-          "*branch:* ${branchName}\n" +
-          "*error:* ${e.getMessage()}\n"
-      notifyRocketChat(rocketChatChannel, ':jenkins_explode:', errorMsg)
     }
-
   }
 }
 
@@ -280,7 +249,6 @@ def handleDevPr(String sshCredentialsId, String orgName, String projectName, Str
     "git fetch && git checkout $currentBranchName && git pull\"", returnStdout: false)
 
     gitLogLatestMergeString = sh(script: "cd $projectName && set +x && git log --merges -n 1", returnStdout: true)
-
   }
 
   // only create pr if the last merge has been a hotfix or a release branch merge
@@ -313,7 +281,6 @@ def handleDevPr(String sshCredentialsId, String orgName, String projectName, Str
         "git fetch && git checkout $currentBranchName && git pull && " +
         "git checkout -b $latestMergeBranchName $latestMergeCommitSHA && " +
         "git push --set-upstream origin $latestMergeBranchName\"")
-
       }
     } catch (Exception e) {
       println "No need to create a new branch. Can reuse old one."
@@ -389,7 +356,7 @@ def deployJavaDocs(String projectName, String sshCredentialsId, String gitChecko
       "git config user.name 'Johannes Hiry' && " +
       "git fetch --depth=1 origin api-docs && " +
       "git checkout api-docs && " +
-      "cd .. && ./gradlew clean javadoc -Dorg.gradle.java.home=/opt/java/openjdk && " +
+      "cd .. && ./gradlew clean javadoc && " +
       "cp -R build/docs/javadoc/* tmp-api-docs && " +
       "cd tmp-api-docs &&" +
       "git add --all && git commit -m 'updated api-docs' && git push origin api-docs:api-docs" +
@@ -399,7 +366,6 @@ def deployJavaDocs(String projectName, String sshCredentialsId, String gitChecko
   } catch (Exception e) {
     println "Error when deploying javadocs! Exception: $e"
   }
-
 }
 
 /* gradle */
@@ -456,43 +422,13 @@ def determineDisplayName(String currentBranchName, String commitHash, String org
 
 def publishReports(String relativeProjectDir) {
   // publish test reports
-  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/tests/allTests', reportFiles: 'index.html', reportName: "${relativeProjectDir}_java_tests_report", reportTitles: ''])
+  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/tests/test', reportFiles: 'index.html', reportName: "${relativeProjectDir}_java_tests_report", reportTitles: ''])
 
   // publish jacoco report for main project only
   publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/jacoco', reportFiles: 'index.html', reportName: "${relativeProjectDir}_jacoco_report", reportTitles: ''])
 
   // publish pmd report for main project only
   publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, escapeUnderscores: false, keepAll: true, reportDir: relativeProjectDir + '/build/reports/pmd', reportFiles: 'main.html', reportName: "${relativeProjectDir}_pmd_report", reportTitles: ''])
-
-}
-
-/* Rocket.Chat */
-
-def notifyRocketChat(String rocketChatChannel, String emoji, String message) {
-  rocketSend channel: rocketChatChannel, emoji: emoji,
-  message: message
-  rawMessage: true
-}
-
-def buildSuccessMsg(String currentBranchName, String targetBranchName, String projectName) {
-
-  String msg = "Build successful!\n" +
-      "*project:* ${projectName}\n" +
-      "*branch:* ${currentBranchName}\n"
-  String targetBranch = targetBranchName != null ? "*target:* ${targetBranchName} \n" : ""
-
-
-  return msg + targetBranch
-}
-
-def buildStartMsg(String currentBranchName, String targetBranchName, String projectName) {
-
-  String msg = "Build triggered.\n" +
-      "*project:* ${projectName}\n" +
-      "*branch:* ${currentBranchName}\n"
-  String targetBranch = targetBranchName != null ? "*target:* ${targetBranchName} \n" : ""
-
-  return msg + targetBranch
 }
 
 def prFromFork() {
@@ -610,7 +546,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "mainVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else if (targetBranchType == "dev") {
 
         boolean major = sourceBranchVersion[0].toInteger() == targetBranchVersion[0].toInteger()
@@ -626,7 +561,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "devVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else {
         // invalid branch type for hotfix merge
         return -1
@@ -647,7 +581,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
               "devVersion: ${targetBranchVersion[0]}.${targetBranchVersion[1]}.${targetBranchVersion[2]}"
           return -1
         }
-
       } else {
         // invalid branch type for feature merge
         println "Invalid target branch type '$targetBranchType' for feature branch. Feature branches can only" +
@@ -721,8 +654,6 @@ def compareVersionParts(String sourceBranchType, String[] sourceBranchVersion, S
       return -1
       break
   }
-
-
 }
 
 def getBranchType(String branchName) {
