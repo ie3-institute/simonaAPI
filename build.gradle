@@ -17,6 +17,8 @@ ext {
 
   // required for akka
   scalaVersion = "2.13"
+
+  scalaBinaryVersion = "2.13.11"
 }
 
 group = 'com.github.ie3-institute'
@@ -42,6 +44,9 @@ repositories {
 dependencies{
 
   implementation 'tech.units:indriya:2.2' // quantities
+
+  // scala (needed for akka)
+  implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
   // akka
   implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.21")
