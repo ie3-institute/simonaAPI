@@ -1,10 +1,10 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '6.0.0'//code format
+  id 'com.diffplug.spotless' version '6.20.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '4.7.1' // code check, working on byte code
-  id "org.sonarqube" version "3.2.0" // sonarqube
+  id 'com.github.spotbugs' version '5.1.0' // code check, working on byte code
+  id "org.sonarqube" version "4.3.0.3225" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -12,12 +12,13 @@ plugins {
 }
 
 ext {
-  javaVersion = JavaVersion.VERSION_1_8
+  javaVersion = JavaVersion.VERSION_17
   scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
   // required for akka
   scalaVersion = "2.13"
-  akkaVersion = '2.6.17'
+
+  scalaBinaryVersion = "2.13.11"
 }
 
 group = 'com.github.ie3-institute'
@@ -34,6 +35,7 @@ apply from: scriptsLocation + 'semVer.gradle'
 apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
+apply from: scriptsLocation + 'test.gradle'
 
 repositories {
   mavenCentral()
@@ -41,10 +43,18 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.1.2' // quantities
-  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.14")
-  implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
+  implementation 'tech.units:indriya:2.2' // quantities
 
+  // scala (needed for akka)
+  implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
+
+  // akka
+  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.21")
+  implementation "com.typesafe.akka:akka-actor_${scalaVersion}"
+  testImplementation "com.typesafe.akka:akka-testkit_${scalaVersion}"
+
+  // TESTING
+  testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 }
 
 task printVersion {

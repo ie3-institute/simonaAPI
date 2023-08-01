@@ -7,6 +7,8 @@ sonarqube {
     property 'sonar.sourceEncoding', 'UTF-8' // encoding
     property 'sonar.sources', [
       'src/main/java'] // src dirs
+    property "sonar.tests", [
+      'src/test/groovy'] // test src dirs
     // spotbugs report dir
     property "sonar.java.spotbugs.reportPaths", [
       "build/reports/spotbugs/main.xml",
@@ -18,6 +20,10 @@ sonarqube {
     property "sonar.coverage.jacoco.xmlReportsPath", [
       "build/reports/jacoco/test/jacocoTestReport.xml"] // Comma-separated list of paths to JaCoCo (jacoco.xml) report files.
     property 'sonar.groovy.jacoco.reportPath', 'build/jacoco/test.exec' // unit tests reports dir
+    property 'sonar.groovy.binaries', 'build/classes/groovy' // groovy binaries
+    // reports stuff (for all languages)
+    property 'sonar.junit.reportPaths', [
+      'build/test-results/test'] // Comma-delimited list of paths to Surefire XML-format reports.
   }
 }
 
