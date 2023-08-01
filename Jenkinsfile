@@ -77,7 +77,8 @@ node {
           // if manually triggered for deploy, no PR should be created
           if (params.deploy != "true") {
             // Disabled for now
-            // handleDevPr(sshCredentialsId, orgName, projectName, currentBranchName)          }
+            // handleDevPr(sshCredentialsId, orgName, projectName, currentBranchName)
+          }
         }
       }
 
