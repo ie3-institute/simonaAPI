@@ -18,7 +18,7 @@ ext {
   // required for akka
   scalaVersion = "2.13"
 
-  scalaBinaryVersion = "2.13.11"
+  scalaBinaryVersion = "2.13.12"
 }
 
 group = 'com.github.ie3-institute'
