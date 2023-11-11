@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-import java.util.Collection;
+import java.util.Optional;
 
-public record CompletionMessage(Collection<Long> newTriggers)
+public record CompletionMessage(Optional<Long> newTrigger)
     implements ControlResponseMessageFromExt {}

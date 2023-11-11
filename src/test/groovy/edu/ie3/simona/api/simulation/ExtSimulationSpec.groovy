@@ -28,21 +28,21 @@ class ExtSimulationSpec extends Specification {
      */
     private class TestSimulation extends ExtSimulation {
 
-        private List<Long> initReturnTicks
-        private List<Long> activityReturnTicks
+        private Optional<Long> initReturnTicks
+        private Optional<Long> activityReturnTicks
 
-        TestSimulation(List<Long> initReturnTicks, List<Long> activityReturnTicks) {
-            this.initReturnTicks = initReturnTicks
-            this.activityReturnTicks = activityReturnTicks
+        TestSimulation(Optional<Long> initReturnTick, Optional<Long> activityReturnTick) {
+            this.initReturnTicks = initReturnTick
+            this.activityReturnTicks = activityReturnTick
         }
 
         @Override
-        protected List<Long> initialize() {
+        protected Optional<Long> initialize() {
             return this.initReturnTicks
         }
 
         @Override
-        protected List<Long> doActivity(long tick) {
+        protected Optional<Long> doActivity(long tick) {
             return this.activityReturnTicks
         }
     }
@@ -63,10 +63,10 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle initialization"() {
         given:
             def tick = -1L
-            def newTicks = [0L]
+            def newTick = Optional.of(0L)
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation(newTicks, [-2L])
+            def extSim = new TestSimulation(newTick, Optional.of(-2L))
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -75,14 +75,16 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == false
-            testProbe.expectMsg(new CompletionMessage(newTicks))
+            testProbe.expectMsg(new CompletionMessage(newTick))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation([-2L], newTicks)
+            def newTickOpt = newTick.isEmpty() ?
+                    Optional.<Long>empty() : Optional.of(newTick.first())
+            def extSim = new TestSimulation(Optional.of(-2L), newTickOpt)
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -91,11 +93,11 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == finished
-            testProbe.expectMsg(new CompletionMessage(newTicks))
+            testProbe.expectMsg(new CompletionMessage(newTickOpt))
 
         where:
-            tick   | newTicks      || finished
-            0L     | [900L, 1800L] || false
+            tick   | newTick       || finished
+            0L     | [900L]        || false
             3600L  | [7200L]       || false
             7200L  | []            || true
             10800L | []            || true
@@ -105,7 +107,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation([], [])
+            def extSim = new TestSimulation(Optional.empty(), Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -128,7 +130,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation([], [])
+            def extSim = new TestSimulation(Optional.empty(), Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
