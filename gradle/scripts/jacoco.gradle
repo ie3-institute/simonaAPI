@@ -12,7 +12,7 @@ jacocoTestReport {
     xml.required = true
     csv.required = false
     html.required = true
-    html.destination file("${buildDir}/reports/jacoco")
+    html.outputLocation = file("${layout.buildDirectory}/reports/jacoco")
   }
 
   // what to exclude from coverage report (files that should not be analyzed!)
@@ -28,7 +28,7 @@ jacocoTestReport {
   ]
 
   getClassDirectories().setFrom(fileTree(
-      dir: "$buildDir/classes/",
+      dir: "${layout.buildDirectory}/classes/",
       excludes: excludes
       ))
 
