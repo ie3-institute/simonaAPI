@@ -12,7 +12,7 @@ jacocoTestReport {
     xml.required = true
     csv.required = false
     html.required = true
-    html.outputLocation = file("${layout.buildDirectory}/reports/jacoco")
+    html.outputLocation = layout.buildDirectory.dir("reports/jacoco")
   }
 
   // what to exclude from coverage report (files that should not be analyzed!)
