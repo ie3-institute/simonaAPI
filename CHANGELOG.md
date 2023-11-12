@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased/Snapshot]
 
 ### Changed
+- Updating to gradle 8.4 [#133](https://github.com/ie3-institute/simonaAPI/issues/133)
 - Adapted to changed SIMONA scheduler protocol [#131](https://github.com/ie3-institute/simonaAPI/issues/131)
 
 ## [0.2.0] - 2023-08-01
