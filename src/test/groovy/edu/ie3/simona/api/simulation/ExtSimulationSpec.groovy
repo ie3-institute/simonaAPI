@@ -4,10 +4,10 @@ import akka.actor.ActorSystem
 import akka.testkit.TestProbe
 import akka.testkit.javadsl.TestKit
 import edu.ie3.simona.api.data.ExtData
-import edu.ie3.simona.api.simulation.ontology.ActivityStartTrigger
+import edu.ie3.simona.api.simulation.ontology.ActivationMessage
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt
-import edu.ie3.simona.api.simulation.ontology.Terminate
+import edu.ie3.simona.api.simulation.ontology.TerminationMessage
 import edu.ie3.simona.api.simulation.ontology.TerminationCompleted
 import spock.lang.Shared
 import spock.lang.Specification
@@ -29,11 +29,11 @@ class ExtSimulationSpec extends Specification {
     private class TestSimulation extends ExtSimulation {
 
         private Optional<Long> initReturnTicks
-        private Optional<Long> activityReturnTicks
+        private Optional<Long> activationReturnTick
 
-        TestSimulation(Optional<Long> initReturnTick, Optional<Long> activityReturnTick) {
+        TestSimulation(Optional<Long> initReturnTick, Optional<Long> activationReturnTick) {
             this.initReturnTicks = initReturnTick
-            this.activityReturnTicks = activityReturnTick
+            this.activationReturnTick = activationReturnTick
         }
 
         @Override
@@ -43,7 +43,7 @@ class ExtSimulationSpec extends Specification {
 
         @Override
         protected Optional<Long> doActivity(long tick) {
-            return this.activityReturnTicks
+            return this.activationReturnTick
         }
     }
 
@@ -70,7 +70,7 @@ class ExtSimulationSpec extends Specification {
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivityStartTrigger(tick))
+            extSimData.queueExtMsg(new ActivationMessage(tick))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
@@ -88,7 +88,7 @@ class ExtSimulationSpec extends Specification {
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivityStartTrigger(tick))
+            extSimData.queueExtMsg(new ActivationMessage(tick))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
@@ -111,7 +111,7 @@ class ExtSimulationSpec extends Specification {
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new Terminate(simlulationSuccessful))
+            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:

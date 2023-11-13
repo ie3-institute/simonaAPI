@@ -49,24 +49,24 @@ public abstract class ExtSimulation implements Runnable {
     // take() will block until an object is ready for us
     final ControlMessageToExt msg = data.receiveMessageQueue.take();
 
-    if (msg.getClass().equals(ActivityStartTrigger.class)) {
-      final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
+    if (msg.getClass().equals(ActivationMessage.class)) {
+      final ActivationMessage activationMessage = (ActivationMessage) msg;
       Optional<Long> newTrigger;
 
-      if (activityStartTrigger.tick() == -1L) {
+      if (activationMessage.tick() == -1L) {
         newTrigger = initialize(); // this is blocking until initialization has finished
       } else {
         newTrigger =
             doActivity(
-                activityStartTrigger
+                activationMessage
                     .tick()); // this is blocking until processing of this tick has finished
       }
       data.send(new CompletionMessage(newTrigger));
 
       return newTrigger.isEmpty();
-    } else if (msg.getClass().equals(Terminate.class)) {
-      final Terminate terminateMsg = (Terminate) msg;
-      terminate(terminateMsg.simulationSuccessful());
+    } else if (msg.getClass().equals(TerminationMessage.class)) {
+      final TerminationMessage terminationMsg = (TerminationMessage) msg;
+      terminate(terminationMsg.simulationSuccessful());
       data.send(new TerminationCompleted());
 
       return true;

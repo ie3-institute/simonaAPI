@@ -8,5 +8,10 @@ package edu.ie3.simona.api.simulation.ontology;
 
 import java.util.Optional;
 
-public record CompletionMessage(Optional<Long> newTrigger)
+/**
+ * Message that is returned to SIMONA
+ *
+ * @param nextActivation The tick that the external simulation would like to be activated at again
+ */
+public record CompletionMessage(Optional<Long> nextActivation)
     implements ControlResponseMessageFromExt {}
