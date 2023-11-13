@@ -65,8 +65,7 @@ public abstract class ExtSimulation implements Runnable {
 
       return newTrigger.isEmpty();
     } else if (msg.getClass().equals(TerminationMessage.class)) {
-      final TerminationMessage terminationMsg = (TerminationMessage) msg;
-      terminate(terminationMsg.simulationSuccessful());
+      terminate();
       data.send(new TerminationCompleted());
 
       return true;
@@ -90,13 +89,8 @@ public abstract class ExtSimulation implements Runnable {
    */
   protected abstract Optional<Long> doActivity(long tick);
 
-  /**
-   * This method is called when the main simulation wants to terminate.
-   *
-   * @param simulationSuccessful whether the simulation was run successfully or has ended with an
-   *     error
-   */
-  protected void terminate(Boolean simulationSuccessful) {
+  /** This method is called when the main simulation wants to terminate. */
+  protected void terminate() {
     // to be overwritten in subclass
   }
 

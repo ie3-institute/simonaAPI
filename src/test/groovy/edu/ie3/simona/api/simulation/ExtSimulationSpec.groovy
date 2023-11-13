@@ -111,17 +111,13 @@ class ExtSimulationSpec extends Specification {
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
+            extSimData.queueExtMsg(new TerminationMessage())
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
-            finishedActual == finished
+            finishedActual
             testProbe.expectMsg(new TerminationCompleted())
 
-        where:
-            simlulationSuccessful || finished
-            false                 || true
-            true                  || true
     }
 
     class UnknownMessage implements ControlMessageToExt {}
