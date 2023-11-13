@@ -9,5 +9,7 @@ package edu.ie3.simona.api.simulation.ontology;
 /**
  * Message that is sent once SIMONA is terminating, indicating that the external simulation should
  * shut down as well
+ *
+ * @param simulationSuccessful Whether SIMONA terminated successfully
  */
-public record TerminationMessage() implements ControlMessageToExt {}
+public record TerminationMessage(Boolean simulationSuccessful) implements ControlMessageToExt {}
