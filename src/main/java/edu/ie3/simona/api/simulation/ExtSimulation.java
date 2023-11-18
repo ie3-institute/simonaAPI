@@ -78,7 +78,8 @@ public abstract class ExtSimulation implements Runnable {
   /**
    * This method is called when the external simulation needs to be initialized
    *
-   * @return a list of future ticks at which this external simulation wants to be triggered.
+   * @return The first regular tick at which this external simulation wants to be triggered, if
+   *     applicable.
    */
   protected abstract Optional<Long> initialize();
 
@@ -86,14 +87,14 @@ public abstract class ExtSimulation implements Runnable {
    * This method is called for every tick of the external simulation that is triggered.
    *
    * @param tick The current tick
-   * @return a list of future ticks at which this external simulation wants to be triggered.
+   * @return The next tick at which this external simulation wants to be triggered, if applicable.
    */
   protected abstract Optional<Long> doActivity(long tick);
 
   /**
    * This method is called when the main simulation wants to terminate.
    *
-   * @param simulationSuccessful whether the simulation was run successfully or has ended with an
+   * @param simulationSuccessful Whether the simulation was run successfully or has ended with an
    *     error
    */
   protected void terminate(Boolean simulationSuccessful) {
