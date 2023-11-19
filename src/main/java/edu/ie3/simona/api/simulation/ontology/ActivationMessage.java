@@ -6,4 +6,9 @@
 
 package edu.ie3.simona.api.simulation.ontology;
 
-public record ActivityStartTrigger(long tick) implements ControlMessageToExt {}
+/**
+ * Message that the external simulation is activated with by SIMONA
+ *
+ * @param tick The current tick
+ */
+public record ActivationMessage(long tick) implements ControlMessageToExt {}
