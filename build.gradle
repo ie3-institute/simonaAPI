@@ -1,10 +1,10 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '6.20.0'//code format
+  id 'com.diffplug.spotless' version '6.22.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '5.1.0' // code check, working on byte code
-  id "org.sonarqube" version "4.3.0.3225" // sonarqube
+  id 'com.github.spotbugs' version '5.2.3' // code check, working on byte code
+  id "org.sonarqube" version "4.4.1.3373" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -18,13 +18,16 @@ ext {
   // required for akka
   scalaVersion = "2.13"
 
-  scalaBinaryVersion = "2.13.11"
+  scalaBinaryVersion = "2.13.12"
 }
 
 group = 'com.github.ie3-institute'
 description = 'simonaAPI'
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+
+java {
+  sourceCompatibility = javaVersion
+  targetCompatibility = javaVersion
+}
 
 apply from: scriptsLocation + 'spotless.gradle'
 apply from: scriptsLocation + 'pmd.gradle'

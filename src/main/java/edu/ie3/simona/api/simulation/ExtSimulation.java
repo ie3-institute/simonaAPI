@@ -12,6 +12,7 @@ import edu.ie3.simona.api.data.ev.ExtEvSimulation;
 import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Every external simulation must extend this class in order to get triggered by the main
@@ -48,24 +49,24 @@ public abstract class ExtSimulation implements Runnable {
     // take() will block until an object is ready for us
     final ControlMessageToExt msg = data.receiveMessageQueue.take();
 
-    if (msg.getClass().equals(ActivityStartTrigger.class)) {
-      final ActivityStartTrigger activityStartTrigger = (ActivityStartTrigger) msg;
-      List<Long> newTriggers;
+    if (msg.getClass().equals(ActivationMessage.class)) {
+      final ActivationMessage activationMessage = (ActivationMessage) msg;
+      Optional<Long> newTrigger;
 
-      if (activityStartTrigger.tick() == -1L) {
-        newTriggers = initialize(); // this is blocking until initialization has finished
+      if (activationMessage.tick() == -1L) {
+        newTrigger = initialize(); // this is blocking until initialization has finished
       } else {
-        newTriggers =
+        newTrigger =
             doActivity(
-                activityStartTrigger
+                activationMessage
                     .tick()); // this is blocking until processing of this tick has finished
       }
-      data.send(new CompletionMessage(newTriggers));
+      data.send(new CompletionMessage(newTrigger));
 
-      return newTriggers.isEmpty();
-    } else if (msg.getClass().equals(Terminate.class)) {
-      final Terminate terminateMsg = (Terminate) msg;
-      terminate(terminateMsg.simulationSuccessful());
+      return newTrigger.isEmpty();
+    } else if (msg.getClass().equals(TerminationMessage.class)) {
+      final TerminationMessage terminationMsg = (TerminationMessage) msg;
+      terminate(terminationMsg.simulationSuccessful());
       data.send(new TerminationCompleted());
 
       return true;
@@ -77,22 +78,23 @@ public abstract class ExtSimulation implements Runnable {
   /**
    * This method is called when the external simulation needs to be initialized
    *
-   * @return a list of future ticks at which this external simulation wants to be triggered.
+   * @return The first regular tick at which this external simulation wants to be triggered, if
+   *     applicable.
    */
-  protected abstract List<Long> initialize();
+  protected abstract Optional<Long> initialize();
 
   /**
    * This method is called for every tick of the external simulation that is triggered.
    *
    * @param tick The current tick
-   * @return a list of future ticks at which this external simulation wants to be triggered.
+   * @return The next tick at which this external simulation wants to be triggered, if applicable.
    */
-  protected abstract List<Long> doActivity(long tick);
+  protected abstract Optional<Long> doActivity(long tick);
 
   /**
    * This method is called when the main simulation wants to terminate.
    *
-   * @param simulationSuccessful whether the simulation was run successfully or has ended with an
+   * @param simulationSuccessful Whether the simulation was run successfully or has ended with an
    *     error
    */
   protected void terminate(Boolean simulationSuccessful) {
