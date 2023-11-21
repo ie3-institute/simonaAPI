@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Changed
+- Replacing akka with pekko [#138](https://github.com/ie3-institute/simonaAPI/issues/138)
+
 ## [0.3.0] - 2023-11-19
 
 ### Changed

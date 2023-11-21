@@ -6,13 +6,13 @@
 
 package edu.ie3.simona.api.data.ev;
 
-import akka.actor.ActorRef;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.pekko.actor.ActorRef;
 
 public class ExtEvData implements ExtData {
   /** Data message queue containing messages from SIMONA */

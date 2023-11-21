@@ -1,8 +1,8 @@
 package edu.ie3.simona.api.data.ev
 
-import akka.actor.ActorSystem
-import akka.testkit.TestProbe
-import akka.testkit.javadsl.TestKit
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.testkit.TestProbe
+import org.apache.pekko.testkit.javadsl.TestKit
 import edu.ie3.simona.api.data.ev.model.EvModel
 import edu.ie3.simona.api.data.ev.ontology.ProvideArrivingEvs
 import edu.ie3.simona.api.data.ev.ontology.ProvideCurrentPrices
