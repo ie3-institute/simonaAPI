@@ -17,8 +17,8 @@ ext {
 
   // required for akka
   scalaVersion = "2.13"
-
   scalaBinaryVersion = "2.13.12"
+  pekkoVersion = "1.0.1"
 }
 
 group = 'com.github.ie3-institute'
@@ -52,9 +52,9 @@ dependencies{
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
   // akka
-  implementation platform("com.typesafe.akka:akka-bom_${scalaVersion}:2.6.21")
-  implementation "com.typesafe.akka:akka-actor_${scalaVersion}"
-  testImplementation "com.typesafe.akka:akka-testkit_${scalaVersion}"
+  implementation platform("org.apache.pekko:pekko-bom_${scalaVersion}:1.0.1")
+  implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
+  testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'

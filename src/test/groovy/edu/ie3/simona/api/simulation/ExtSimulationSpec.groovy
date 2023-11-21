@@ -1,8 +1,8 @@
 package edu.ie3.simona.api.simulation
 
-import akka.actor.ActorSystem
-import akka.testkit.TestProbe
-import akka.testkit.javadsl.TestKit
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.testkit.TestProbe
+import org.apache.pekko.testkit.javadsl.TestKit
 import edu.ie3.simona.api.data.ExtData
 import edu.ie3.simona.api.simulation.ontology.ActivationMessage
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
