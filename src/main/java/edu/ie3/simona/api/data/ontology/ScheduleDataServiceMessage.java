@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.data.ontology;
 
-import akka.actor.ActorRef;
 import java.util.Objects;
+import org.apache.pekko.actor.ActorRef;
 
 public class ScheduleDataServiceMessage {
   private final ActorRef dataService;

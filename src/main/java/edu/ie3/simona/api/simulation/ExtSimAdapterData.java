@@ -6,10 +6,10 @@
 
 package edu.ie3.simona.api.simulation;
 
-import akka.actor.ActorRef;
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.pekko.actor.ActorRef;
 
 public class ExtSimAdapterData {
 
