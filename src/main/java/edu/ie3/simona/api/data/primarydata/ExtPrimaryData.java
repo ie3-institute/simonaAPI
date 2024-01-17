@@ -39,6 +39,12 @@ public class ExtPrimaryData implements ExtData {
         sendExtMsg(new ProvidePrimaryData(tick, primaryData));
     }
 
+    public void requestSimulatedAssets(
+
+    ) {
+
+    }
+
     public void sendExtMsg(PrimaryDataMessageFromExt msg) {
         dataService.tell(msg, ActorRef.noSender());
         // we need to schedule data receiver activation with scheduler
