@@ -1,10 +1,14 @@
+/*
+ * © 2024. TU Dortmund University,
+ * Institute of Energy Systems, Energy Efficiency and Energy Economics,
+ * Research group Distribution grid planning and operation
+ */
+
 package edu.ie3.simona.api.data.results.ontology;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
-
 import java.util.List;
 
-public record ProvideResultEntities(
-        List<ResultEntity> resultEntityMap
-) implements ResultDataMessageToExt {
-}
+/** Provides a list of results from SIMONA to an external simulation. */
+public record ProvideResultEntities(List<ResultEntity> results)
+    implements ResultDataResponseMessageToExt {}
