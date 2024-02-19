@@ -37,11 +37,14 @@ public class ExtResultsData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
+  public ResultDataFactory factory;
+
   // important trigger queue must be the same as hold in actor
   // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
-  public ExtResultsData(ActorRef dataService, ActorRef extSimAdapter) {
+  public ExtResultsData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
+    this.factory = factory;
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
@@ -53,60 +56,17 @@ public class ExtResultsData implements ExtData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, Object> requestResultObjects() throws RuntimeException, InterruptedException {
+  public Map<String, Object> requestResultObjects() throws Exception {
     return convertResultsList(requestResults());
   }
 
   protected Map<String, Object> convertResultsList(List<ResultEntity> results)
-      throws RuntimeException {
+          throws Exception {
     Map<String, Object> resultsMap = new HashMap<>();
-    String oneResult;
+    Object convertedResult;
     for (ResultEntity res : results) {
-      if (res instanceof SystemParticipantWithHeatResult systemParticipantWithHeatResult) {
-        oneResult =
-            "{\"p\":\""
-                + systemParticipantWithHeatResult.getP()
-                + ",\"q\":\""
-                + systemParticipantWithHeatResult.getQ()
-                + ",\"qDot\":\""
-                + systemParticipantWithHeatResult.getqDot()
-                + "\"}";
-      } else if (res instanceof ElectricalEnergyStorageResult electricalEnergyStorageResult) {
-        oneResult =
-            "{\"p\":\""
-                + electricalEnergyStorageResult.getP()
-                + ",\"q\":\""
-                + electricalEnergyStorageResult.getQ()
-                + ",\"soc\":\""
-                + electricalEnergyStorageResult.getSoc()
-                + "\"}";
-      } else if (res instanceof ConnectorResult connectorResult) {
-        oneResult =
-            "{\"iAMag\":\""
-                + connectorResult.getiAMag()
-                + ",\"iAAng\":\""
-                + connectorResult.getiAAng()
-                + ",\"iBMag\":\""
-                + connectorResult.getiBMag()
-                + ",\"iBAng\":\""
-                + connectorResult.getiBAng()
-                + "\"}";
-      } else if (res instanceof NodeResult nodeResult) {
-        oneResult =
-            "{\"vMag\":\"" + nodeResult.getvMag() + ",\"vAng\":\"" + nodeResult.getvAng() + "\"}";
-      } else if (res instanceof ThermalUnitResult thermalUnitResult) {
-        oneResult = "{\"qDot\":\"" + thermalUnitResult.getqDot() + "\"}";
-      } else if (res instanceof SystemParticipantResult systemParticipantResult) {
-        oneResult =
-            "{\"p\":\""
-                + systemParticipantResult.getP()
-                + ",\"q\":\""
-                + systemParticipantResult.getQ()
-                + "\"}";
-      } else {
-        oneResult = "{}";
-      }
-      resultsMap.put(res.getUuid().toString(), oneResult);
+      convertedResult = factory.convertResultToString(res);
+      resultsMap.put(res.getUuid().toString(), convertedResult);
     }
     return resultsMap;
   }
