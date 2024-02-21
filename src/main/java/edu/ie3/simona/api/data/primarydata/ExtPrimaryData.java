@@ -6,15 +6,11 @@
 
 package edu.ie3.simona.api.data.primarydata;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.pekko.actor.ActorRef;
@@ -27,7 +23,7 @@ public class ExtPrimaryData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
-  public PrimaryDataFactory factory;    // wird in SIMONA über Config gebildet und dann an ExtPrimaryData übergeben
+  public PrimaryDataFactory factory;
 
   // important trigger queue must be the same as hold in actor
   // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
@@ -42,20 +38,6 @@ public class ExtPrimaryData implements ExtData {
     sendExtMsg(new ProvidePrimaryData(tick, primaryData));
   }
 
-  public void convertAndProvidePrimaryData(Long tick, Map<String, Object> inputData) throws Exception {
-    Map<UUID, Value> primaryData = new HashMap<>();
-    // check supported column scheme
-      // if it isn't primary data, then don't put it in
-    // String -> UUID, Object -> Value
-    for (Map.Entry<String, Object> entry : inputData.entrySet()) {
-      primaryData.put(
-              UUID.fromString(entry.getKey()),
-              factory.convertObjectToValue(entry.getValue())
-      );
-    }
-    providePrimaryData(tick, primaryData);
-  }
-
   /**
    * Send information from the external simulation to SIMONA's external primary data service.
    * Furthermore, ExtSimAdapter within SIMONA is instructed to activate the ev data service with the
@@ -68,13 +50,4 @@ public class ExtPrimaryData implements ExtData {
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
-
-
-  /*
-  private<V extends Value> V createEntity(Object agentInputValue, Class<V> valueClass) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
-    return mapper.readValue(agentInputValue.toString(), valueClass);
-  }
-
-   */
 }

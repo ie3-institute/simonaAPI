@@ -6,7 +6,6 @@
 
 package edu.ie3.simona.api.data.primarydata;
 
-import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataSimulation;
 
 /**
@@ -15,6 +14,5 @@ import edu.ie3.simona.api.data.ExtDataSimulation;
  */
 public interface ExtPrimaryDataSimulation extends ExtDataSimulation {
 
-    PrimaryDataFactory getFactory();
-
+  PrimaryDataFactory getFactory();
 }

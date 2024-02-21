@@ -6,13 +6,7 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.datamodel.models.result.connector.ConnectorResult;
-import edu.ie3.datamodel.models.result.system.ElectricalEnergyStorageResult;
-import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
-import edu.ie3.datamodel.models.result.system.SystemParticipantWithHeatResult;
-import edu.ie3.datamodel.models.result.thermal.ThermalUnitResult;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -60,8 +54,7 @@ public class ExtResultsData implements ExtData {
     return convertResultsList(requestResults());
   }
 
-  protected Map<String, Object> convertResultsList(List<ResultEntity> results)
-          throws Exception {
+  protected Map<String, Object> convertResultsList(List<ResultEntity> results) throws Exception {
     Map<String, Object> resultsMap = new HashMap<>();
     Object convertedResult;
     for (ResultEntity res : results) {

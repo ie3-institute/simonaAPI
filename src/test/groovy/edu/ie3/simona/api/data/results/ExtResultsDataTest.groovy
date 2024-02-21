@@ -2,11 +2,7 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.ResultEntity
-import edu.ie3.datamodel.models.result.system.EvResult
-import edu.ie3.datamodel.models.result.system.HpResult
 import edu.ie3.datamodel.models.result.system.LoadResult
-import edu.ie3.simona.api.data.ev.ExtEvData
-import edu.ie3.simona.api.data.ev.model.EvModel
 import edu.ie3.simona.api.data.ev.ontology.*
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
@@ -45,6 +41,20 @@ class ExtResultsDataTest extends Specification {
     @Shared
     Quantity<Power> qDot = Quantities.getQuantity(1, StandardUnits.Q_DOT_RESULT)
 
+    class DefaultResultFactory implements ResultDataFactory {
+
+        @Override
+        Object convertResultToString(ResultEntity entity) throws Exception {
+            String resultObject
+            if (entity instanceof LoadResult) {
+                resultObject = "{\"p\":\"" + entity.getP().toString() + ",\"q\":\"" + entity.getQ().toString() + "\"}"
+            } else {
+                resultObject = "{}"
+            }
+            return resultObject
+        }
+    }
+
     def setupSpec() {
         actorSystem = ActorSystem.create()
     }
@@ -58,7 +68,7 @@ class ExtResultsDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref())
+        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
         def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
 
@@ -82,7 +92,7 @@ class ExtResultsDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref())
+        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
         def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
 
@@ -106,7 +116,7 @@ class ExtResultsDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref())
+        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
         def unexpectedMsg = new ProvideCurrentPrices()
 
@@ -125,24 +135,18 @@ class ExtResultsDataTest extends Specification {
         given:
             def dataService = new TestProbe(actorSystem)
             def extSimAdapter = new TestProbe(actorSystem)
-            def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref())
+            def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
             def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
-            def evResult = new EvResult(uuid2, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q, soc)
-            def hpResult = new HpResult(uuid3, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q, qDot)
 
             def listOfResults = new ArrayList()
             listOfResults.add(loadResult)
-            listOfResults.add(evResult)
-            listOfResults.add(hpResult)
 
         when:
             def mapOfResults = extResultsData.convertResultsList(listOfResults)
 
         then:
-            mapOfResults.size() == 3
+            mapOfResults.size() == 1
             mapOfResults.get(uuid.toString()) == "{\"p\":\"10 kW,\"q\":\"10 kvar\"}"
-            mapOfResults.get(uuid2.toString()) == "{\"p\":\"10 kW,\"q\":\"10 kvar,\"soc\":\"50 %\"}"
-            mapOfResults.get(uuid3.toString()) == "{\"p\":\"10 kW,\"q\":\"10 kvar,\"qDot\":\"1 MW\"}"
     }
 }
