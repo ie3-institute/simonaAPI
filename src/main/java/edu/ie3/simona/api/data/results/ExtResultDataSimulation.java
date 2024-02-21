@@ -12,4 +12,6 @@ import edu.ie3.simona.api.data.ExtDataSimulation;
  * An external simulation that needs results from SIMONA should implement this interface and handle
  * the ExtResultsData that is handed over.
  */
-public interface ExtResultDataSimulation extends ExtDataSimulation {}
+public interface ExtResultDataSimulation extends ExtDataSimulation {
+    ResultDataFactory getFactory();
+}
