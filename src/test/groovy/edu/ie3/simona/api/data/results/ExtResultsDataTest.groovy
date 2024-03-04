@@ -38,7 +38,7 @@ class ExtResultsDataTest extends Specification {
         Object convert(ResultEntity entity) throws ConvertionException {
             String resultObject
             if (entity instanceof LoadResult) {
-                resultObject = "{\"p\":\"" + entity.getP().toString() + ",\"q\":\"" + entity.getQ().toString() + "\"}"
+                resultObject = "{\"p\":\"" + entity.p.toString() + ",\"q\":\"" + entity.q.toString() + "\"}"
             } else {
                 resultObject = "{}"
             }
@@ -63,8 +63,7 @@ class ExtResultsDataTest extends Specification {
 
         def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
 
-        def listOfResults = new ArrayList()
-        listOfResults.add(loadResult)
+        def listOfResults = [loadResult]
 
         def sentMsg = new ProvideResultEntities(listOfResults)
 
@@ -87,8 +86,7 @@ class ExtResultsDataTest extends Specification {
 
         def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
 
-        def listOfResults = new ArrayList()
-        listOfResults.add(loadResult)
+        def listOfResults = [loadResult]
 
         def sentMsg = new ProvideResultEntities(listOfResults)
 
@@ -130,8 +128,7 @@ class ExtResultsDataTest extends Specification {
 
             def loadResult = new LoadResult(uuid, ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"), inputModel, p, q)
 
-            def listOfResults = new ArrayList()
-            listOfResults.add(loadResult)
+            def listOfResults = [loadResult]
 
         when:
             def mapOfResults = extResultsData.convertResultsList(listOfResults)
