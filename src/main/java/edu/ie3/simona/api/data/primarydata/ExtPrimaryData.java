@@ -11,6 +11,8 @@ import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
+import edu.ie3.simona.api.exceptions.ConvertionException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.pekko.actor.ActorRef;
@@ -23,7 +25,8 @@ public class ExtPrimaryData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
-  public PrimaryDataFactory factory;
+  /** Factory to convert an external object to PSDM primary data */
+  private final PrimaryDataFactory factory;
 
   // important trigger queue must be the same as hold in actor
   // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
@@ -33,9 +36,22 @@ public class ExtPrimaryData implements ExtData {
     this.factory = factory;
   }
 
+  public PrimaryDataFactory getFactory() {
+    return factory;
+  }
+
   /** Provide primary data from an external simulation in one tick. */
-  public void providePrimaryData(Long tick, Map<UUID, Value> primaryData) {
-    sendExtMsg(new ProvidePrimaryData(tick, primaryData));
+  public void providePrimaryData(Long tick, Map<String, Object> primaryData) {
+    Map<UUID, Value> convertedMap = new HashMap<>();
+    primaryData.forEach(
+        (k, v) -> {
+          try {
+            convertedMap.put(UUID.fromString(k), factory.convert(v));
+          } catch (ConvertionException e) {
+            e.printStackTrace();
+          }
+        });
+    sendExtMsg(new ProvidePrimaryData(tick, convertedMap));
   }
 
   /**

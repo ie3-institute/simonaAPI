@@ -24,8 +24,12 @@ class ExtPrimaryDataTest extends Specification {
     class DefaultPrimaryDataFactory implements PrimaryDataFactory {
 
         @Override
-        Value convertObjectToValue(Object entity) throws Exception {
-            return null
+        Value convert(Object entity) throws Exception {
+            if (entity.getClass() == Value.class) {
+                return (Value) entity
+            } else {
+                return null
+            }
         }
     }
 
@@ -44,14 +48,18 @@ class ExtPrimaryDataTest extends Specification {
         def extSimAdapter = new TestProbe(actorSystem)
         def extPrimaryData = new ExtPrimaryData(dataService.ref(), extSimAdapter.ref(), new DefaultPrimaryDataFactory())
 
-        def primaryData = new HashMap<UUID, Value>()
-        primaryData.put(UUID.randomUUID(), new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
+        def primaryData = new HashMap<String, Object>()
+        def uuid = UUID.randomUUID()
+        primaryData.put(uuid.toString(), new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
+
+        def convertedPrimaryData = new HashMap<UUID, Value>()
+        convertedPrimaryData.put(uuid, new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
 
         when:
         extPrimaryData.providePrimaryData(0, primaryData)
 
         then:
-        dataService.expectMsg(new ProvidePrimaryData(0, primaryData))
+        dataService.expectMsg(new ProvidePrimaryData(0, convertedPrimaryData))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 }

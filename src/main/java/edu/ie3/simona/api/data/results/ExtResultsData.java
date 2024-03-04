@@ -31,7 +31,7 @@ public class ExtResultsData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
-  public ResultDataFactory factory;
+  private final ResultDataFactory factory;
 
   // important trigger queue must be the same as hold in actor
   // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
@@ -39,6 +39,10 @@ public class ExtResultsData implements ExtData {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;
+  }
+
+  public ResultDataFactory getFactory() {
+    return factory;
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
@@ -58,7 +62,7 @@ public class ExtResultsData implements ExtData {
     Map<String, Object> resultsMap = new HashMap<>();
     Object convertedResult;
     for (ResultEntity res : results) {
-      convertedResult = factory.convertResultToString(res);
+      convertedResult = factory.convert(res);
       resultsMap.put(res.getUuid().toString(), convertedResult);
     }
     return resultsMap;

@@ -7,12 +7,11 @@
 package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.simona.api.exceptions.ConvertionException;
 
 /** Interface that should be implemented by an external simulation. */
 public interface PrimaryDataFactory {
 
-  /**
-   * Should convert an object to an primary data value with a check if the object is primary data
-   */
-  Value convertObjectToValue(Object entity) throws Exception;
+  /** Should convert an object to a primary data value with a check if the object is primary data */
+  Value convert(Object entity) throws ConvertionException;
 }

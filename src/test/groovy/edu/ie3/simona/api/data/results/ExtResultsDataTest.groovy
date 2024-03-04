@@ -7,16 +7,15 @@ import edu.ie3.simona.api.data.ev.ontology.*
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
+import edu.ie3.simona.api.exceptions.ConvertionException
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
-import tech.units.indriya.unit.Units
 
 import javax.measure.Quantity
-import javax.measure.quantity.Dimensionless
 import javax.measure.quantity.Power
 import java.time.ZonedDateTime
 
@@ -27,24 +26,16 @@ class ExtResultsDataTest extends Specification {
     @Shared
     UUID uuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
     @Shared
-    UUID uuid2 = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f53")
-    @Shared
-    UUID uuid3 = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f54")
-    @Shared
     UUID inputModel = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
     @Shared
     Quantity<Power> p = Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN)
     @Shared
     Quantity<Power> q = Quantities.getQuantity(10, StandardUnits.REACTIVE_POWER_IN)
-    @Shared
-    Quantity<Dimensionless> soc = Quantities.getQuantity(50, Units.PERCENT)
-    @Shared
-    Quantity<Power> qDot = Quantities.getQuantity(1, StandardUnits.Q_DOT_RESULT)
 
     class DefaultResultFactory implements ResultDataFactory {
 
         @Override
-        Object convertResultToString(ResultEntity entity) throws Exception {
+        Object convert(ResultEntity entity) throws ConvertionException {
             String resultObject
             if (entity instanceof LoadResult) {
                 resultObject = "{\"p\":\"" + entity.getP().toString() + ",\"q\":\"" + entity.getQ().toString() + "\"}"
