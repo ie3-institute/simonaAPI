@@ -21,12 +21,12 @@ class ExtPrimaryDataTest extends Specification {
     ActorSystem actorSystem
 
 
-    class DefaultPrimaryDataFactory implements PrimaryDataFactory {
+    class PValuePrimaryDataFactory implements PrimaryDataFactory {
 
         @Override
         Value convert(Object entity) throws Exception {
-            if (entity.getClass() == Value.class) {
-                return (Value) entity
+            if (entity.getClass() == PValue.class) {
+                return (PValue) entity
             } else {
                 return null
             }
@@ -46,7 +46,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extPrimaryData = new ExtPrimaryData(dataService.ref(), extSimAdapter.ref(), new DefaultPrimaryDataFactory())
+        def extPrimaryData = new ExtPrimaryData(dataService.ref(), extSimAdapter.ref(), new PValuePrimaryDataFactory())
 
         def primaryData = new HashMap<String, Object>()
         def uuid = UUID.randomUUID()
