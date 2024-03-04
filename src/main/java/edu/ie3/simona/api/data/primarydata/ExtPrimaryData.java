@@ -48,7 +48,7 @@ public class ExtPrimaryData implements ExtData {
           try {
             convertedMap.put(UUID.fromString(k), factory.convert(v));
           } catch (ConvertionException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
           }
         });
     sendExtMsg(new ProvidePrimaryData(tick, convertedMap));
