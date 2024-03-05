@@ -5,6 +5,7 @@ import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
+import edu.ie3.simona.api.exceptions.ConvertionException
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -21,11 +22,11 @@ class ExtPrimaryDataTest extends Specification {
     class PValuePrimaryDataFactory implements PrimaryDataFactory {
 
         @Override
-        Value convert(Object entity) throws Exception {
+        Value convert(Object entity) throws ConvertionException {
             if (entity.getClass() == PValue) {
                 return (PValue) entity
             } else {
-                return null
+                throw new ConvertionException("This factory can convert PValue entities only!")
             }
         }
     }
@@ -49,8 +50,7 @@ class ExtPrimaryDataTest extends Specification {
         def uuid = UUID.randomUUID()
         primaryData.put(uuid.toString(), new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
 
-        def convertedPrimaryData = new HashMap<UUID, Value>()
-        convertedPrimaryData.put(uuid, new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
+        def convertedPrimaryData = Map.of(uuid, new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
 
         when:
         extPrimaryData.providePrimaryData(0, primaryData)

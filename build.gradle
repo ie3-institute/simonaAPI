@@ -52,7 +52,7 @@ dependencies{
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
   //PSDM
-  implementation('com.github.ie3-institute:PowerSystemUtils:2.2') {
+  implementation('com.github.ie3-institute:PowerSystemUtils:2.2.1') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
     /* Exclude our own nested dependencies */
@@ -72,8 +72,7 @@ dependencies{
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
-  implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.1'
 }
 
 task printVersion {

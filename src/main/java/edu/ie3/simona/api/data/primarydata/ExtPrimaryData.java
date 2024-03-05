@@ -28,8 +28,6 @@ public class ExtPrimaryData implements ExtData {
   /** Factory to convert an external object to PSDM primary data */
   private final PrimaryDataFactory factory;
 
-  // important trigger queue must be the same as hold in actor
-  // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
   public ExtPrimaryData(ActorRef dataService, ActorRef extSimAdapter, PrimaryDataFactory factory) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;

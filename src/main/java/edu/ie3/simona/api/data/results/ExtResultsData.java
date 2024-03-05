@@ -13,6 +13,8 @@ import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
+import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
+import edu.ie3.simona.api.exceptions.ConvertionException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +35,6 @@ public class ExtResultsData implements ExtData {
 
   private final ResultDataFactory factory;
 
-  // important trigger queue must be the same as hold in actor
-  // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
   public ExtResultsData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
@@ -54,11 +54,13 @@ public class ExtResultsData implements ExtData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, Object> requestResultObjects() throws Exception {
+  public Map<String, Object> requestResultObjects()
+      throws ConvertionException, InterruptedException {
     return convertResultsList(requestResults());
   }
 
-  protected Map<String, Object> convertResultsList(List<ResultEntity> results) throws Exception {
+  protected Map<String, Object> convertResultsList(List<ResultEntity> results)
+      throws ConvertionException {
     Map<String, Object> resultsMap = new HashMap<>();
     Object convertedResult;
     for (ResultEntity res : results) {
@@ -82,7 +84,7 @@ public class ExtResultsData implements ExtData {
   }
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
-  public void queueExtResponseMsg(DataResponseMessageToExt msg) throws InterruptedException {
+  public void queueExtResponseMsg(ResultDataResponseMessageToExt msg) throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
 
@@ -97,8 +99,8 @@ public class ExtResultsData implements ExtData {
    *     blocking operation
    */
   @SuppressWarnings("unchecked")
-  private <T extends DataResponseMessageToExt> T receiveWithType(Class<T> expectedMessageClass)
-      throws InterruptedException {
+  private <T extends ResultDataResponseMessageToExt> T receiveWithType(
+      Class<T> expectedMessageClass) throws InterruptedException {
 
     // blocks until actor puts something here
     DataResponseMessageToExt msg = receiveTriggerQueue.take();

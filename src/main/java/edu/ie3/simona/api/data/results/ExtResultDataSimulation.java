@@ -13,5 +13,5 @@ import edu.ie3.simona.api.data.ExtDataSimulation;
  * the ExtResultsData that is handed over.
  */
 public interface ExtResultDataSimulation extends ExtDataSimulation {
-  ResultDataFactory getFactory();
+  ResultDataFactory getResultDataFactory();
 }
