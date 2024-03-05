@@ -41,10 +41,6 @@ public class ExtResultsData implements ExtData {
     this.factory = factory;
   }
 
-  public ResultDataFactory getFactory() {
-    return factory;
-  }
-
   /** Method that an external simulation can request results from SIMONA as a list. */
   public List<ResultEntity> requestResults() throws InterruptedException {
     sendExtMsg(new RequestResultEntities());

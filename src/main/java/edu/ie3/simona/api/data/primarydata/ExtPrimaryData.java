@@ -34,10 +34,6 @@ public class ExtPrimaryData implements ExtData {
     this.factory = factory;
   }
 
-  public PrimaryDataFactory getFactory() {
-    return factory;
-  }
-
   /** Provide primary data from an external simulation in one tick. */
   public void providePrimaryData(Long tick, Map<String, Object> primaryData) {
     Map<UUID, Value> convertedMap = new HashMap<>();

@@ -46,9 +46,7 @@ class ExtResultsDataTest extends Specification {
         }
     }
 
-    class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {
-        WrongResultDataResponseMessageToExt() {}
-    }
+    class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
     def setupSpec() {
         actorSystem = ActorSystem.create()
