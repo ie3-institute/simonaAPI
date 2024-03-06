@@ -51,12 +51,28 @@ dependencies{
   // scala (needed for pekko)
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
+  //PSDM
+  implementation('com.github.ie3-institute:PowerSystemUtils:2.0') {
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'org.slf4j'
+    /* Exclude our own nested dependencies */
+    exclude group: 'com.github.ie3-institute'
+  }
+  implementation('com.github.ie3-institute:PowerSystemDataModel:4.1.0') {
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'org.slf4j'
+    /* Exclude our own nested dependencies */
+    exclude group: 'com.github.ie3-institute'
+  }
+
   // pekko
   implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
   testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.1'
 }
 
 task printVersion {
