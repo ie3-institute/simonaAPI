@@ -120,10 +120,9 @@ class ExtResultDataTest extends Specification {
             def dataService = new TestProbe(actorSystem)
             def extSimAdapter = new TestProbe(actorSystem)
             def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
-            def listOfResults = [loadResult]
 
         when:
-            def mapOfResults = extResultData.convertResultsList(listOfResults)
+            def mapOfResults = extResultData.convertResultsList([loadResult])
 
         then:
             mapOfResults.size() == 1
