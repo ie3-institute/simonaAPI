@@ -64,9 +64,7 @@ class ExtResultDataTest extends Specification {
         def resultDataFactory = new DefaultResultFactory()
         def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), resultDataFactory)
 
-        def listOfResults = [loadResult]
-
-        def sentMsg = new ProvideResultEntities(listOfResults)
+        def sentMsg = new ProvideResultEntities([loadResult])
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
@@ -85,9 +83,7 @@ class ExtResultDataTest extends Specification {
         def extSimAdapter = new TestProbe(actorSystem)
         def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
-        def listOfResults = [loadResult]
-
-        def sentMsg = new ProvideResultEntities(listOfResults)
+        def sentMsg = new ProvideResultEntities([loadResult])
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking

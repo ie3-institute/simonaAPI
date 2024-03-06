@@ -8,7 +8,6 @@ package edu.ie3.simona.api.data.results;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
@@ -24,7 +23,7 @@ import org.apache.pekko.actor.ActorRef;
 public class ExtResultData implements ExtData {
 
   /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<DataResponseMessageToExt> receiveTriggerQueue =
+  public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles ev data within SIMONA */
@@ -99,7 +98,7 @@ public class ExtResultData implements ExtData {
       Class<T> expectedMessageClass) throws InterruptedException {
 
     // blocks until actor puts something here
-    DataResponseMessageToExt msg = receiveTriggerQueue.take();
+    ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
 
     if (msg.getClass().equals(expectedMessageClass)) {
       return (T) msg;
