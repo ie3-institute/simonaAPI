@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtResultsData implements ExtData {
+public class ExtResultData implements ExtData {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<DataResponseMessageToExt> receiveTriggerQueue =
@@ -35,7 +35,7 @@ public class ExtResultsData implements ExtData {
 
   private final ResultDataFactory factory;
 
-  public ExtResultsData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
+  public ExtResultData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;

@@ -14,5 +14,13 @@ import edu.ie3.simona.api.data.ExtDataSimulation;
  */
 public interface ExtPrimaryDataSimulation extends ExtDataSimulation {
 
+  /**
+   * Hand over an ExtPrimaryData which enables communication regarding primary data.
+   */
+  void setExtPrimaryData(ExtPrimaryData extPrimaryData);
+
+  /**
+   * Should implement the convertion of the external format to the PSDM format of primary data.
+   */
   PrimaryDataFactory getPrimaryDataFactory();
 }

@@ -17,7 +17,7 @@ import tech.units.indriya.quantity.Quantities
 
 import java.time.ZonedDateTime
 
-class ExtResultsDataTest extends Specification {
+class ExtResultDataTest extends Specification {
 
     @Shared
     ActorSystem actorSystem
@@ -62,7 +62,7 @@ class ExtResultsDataTest extends Specification {
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
         def resultDataFactory = new DefaultResultFactory()
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), resultDataFactory)
+        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), resultDataFactory)
 
         def listOfResults = [loadResult]
 
@@ -70,8 +70,8 @@ class ExtResultsDataTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultsData.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultsData.requestResultObjects()
+        extResultData.queueExtResponseMsg(sentMsg)
+        def receivedResults = extResultData.requestResultObjects()
 
         then:
         dataService.expectMsg(new RequestResultEntities())
@@ -83,7 +83,7 @@ class ExtResultsDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
+        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
         def listOfResults = [loadResult]
 
@@ -91,8 +91,8 @@ class ExtResultsDataTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultsData.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultsData.requestResults()
+        extResultData.queueExtResponseMsg(sentMsg)
+        def receivedResults = extResultData.requestResults()
 
         then:
         dataService.expectMsg(new RequestResultEntities())
@@ -104,14 +104,14 @@ class ExtResultsDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
+        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
 
         def unexpectedMsg = new WrongResultDataResponseMessageToExt()
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultsData.queueExtResponseMsg(unexpectedMsg)
-        extResultsData.requestResults()
+        extResultData.queueExtResponseMsg(unexpectedMsg)
+        extResultData.requestResults()
 
         then:
         dataService.expectMsg(new RequestResultEntities())
@@ -123,11 +123,11 @@ class ExtResultsDataTest extends Specification {
         given:
             def dataService = new TestProbe(actorSystem)
             def extSimAdapter = new TestProbe(actorSystem)
-            def extResultsData = new ExtResultsData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
+            def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
             def listOfResults = [loadResult]
 
         when:
-            def mapOfResults = extResultsData.convertResultsList(listOfResults)
+            def mapOfResults = extResultData.convertResultsList(listOfResults)
 
         then:
             mapOfResults.size() == 1
