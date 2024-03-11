@@ -72,7 +72,7 @@ dependencies{
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.1'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.2'
 }
 
 task printVersion {
