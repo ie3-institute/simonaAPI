@@ -8,6 +8,9 @@ package edu.ie3.simona.api.data.results;
 
 import edu.ie3.simona.api.data.ExtDataSimulation;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * An external simulation that needs results from SIMONA should implement this interface and handle
  * the ExtResultsData that is handed over.
@@ -19,4 +22,6 @@ public interface ExtResultDataSimulation extends ExtDataSimulation {
 
   /** Should implement the convertion of the PSDM format to the external format of result data. */
   ResultDataFactory getResultDataFactory();
+
+  List<UUID> getResultDataAssets();
 }

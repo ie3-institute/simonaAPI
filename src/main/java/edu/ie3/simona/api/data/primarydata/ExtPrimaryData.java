@@ -13,6 +13,7 @@ import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.pekko.actor.ActorRef;
@@ -28,11 +29,16 @@ public class ExtPrimaryData implements ExtData {
   /** Factory to convert an external object to PSDM primary data */
   private final PrimaryDataFactory factory;
 
-  public ExtPrimaryData(ActorRef dataService, ActorRef extSimAdapter, PrimaryDataFactory factory) {
+  private final List<UUID> primaryDataAssets;
+
+  public ExtPrimaryData(ActorRef dataService, ActorRef extSimAdapter, PrimaryDataFactory factory, List<UUID> primaryDataAssets) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;
+    this.primaryDataAssets = primaryDataAssets;
   }
+
+  public List<UUID> getPrimaryDataAssets() { return primaryDataAssets; }
 
   /** Provide primary data from an external simulation in one tick. */
   public void providePrimaryData(Long tick, Map<String, Object> primaryData) {

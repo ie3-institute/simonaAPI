@@ -9,6 +9,10 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
+import edu.ie3.simona.api.data.primarydata.ExtPrimaryData;
+import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataSimulation;
+import edu.ie3.simona.api.data.results.ExtResultData;
+import edu.ie3.simona.api.data.results.ExtResultDataSimulation;
 import edu.ie3.simona.api.simulation.ontology.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +118,10 @@ public abstract class ExtSimulation implements Runnable {
 
     // todo sanity check if all required data is available
     for (ExtData adapter : adapters) {
+      if (adapter instanceof ExtPrimaryData && this instanceof ExtPrimaryDataSimulation)
+        ((ExtPrimaryDataSimulation) this).setExtPrimaryData((ExtPrimaryData) adapter);
+      if (adapter instanceof ExtResultData && this instanceof ExtResultDataSimulation)
+        ((ExtResultDataSimulation) this).setExtResultData((ExtResultData) adapter);
       if (adapter instanceof ExtEvData && this instanceof ExtEvSimulation)
         ((ExtEvSimulation) this).setExtEvData((ExtEvData) adapter);
     }
