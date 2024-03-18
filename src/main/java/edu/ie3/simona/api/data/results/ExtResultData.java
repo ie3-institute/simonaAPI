@@ -60,7 +60,7 @@ public class ExtResultData implements ExtData {
     Object convertedResult;
     for (ResultEntity res : results) {
       convertedResult = factory.convert(res);
-      resultsMap.put(res.getUuid().toString(), convertedResult);
+      resultsMap.put(res.getInputModel().toString(), convertedResult);
     }
     return resultsMap;
   }

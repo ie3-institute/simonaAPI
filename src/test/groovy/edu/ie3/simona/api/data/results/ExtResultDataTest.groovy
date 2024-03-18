@@ -27,9 +27,8 @@ class ExtResultDataTest extends Specification {
 
     @Shared
     LoadResult loadResult = new LoadResult(
-            loadUuid,
             ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"),
-            UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52"),
+            loadUuid,
             Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN),
             Quantities.getQuantity(10, StandardUnits.REACTIVE_POWER_IN)
     )
