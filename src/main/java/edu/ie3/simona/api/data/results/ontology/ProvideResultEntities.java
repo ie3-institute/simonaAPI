@@ -20,6 +20,4 @@ public record ProvideResultEntities(List<ResultEntity> results) implements Resul
     public ProvideResultEntities(List<ResultEntity> results) {
         this.results = results;
     }
-
-
 }

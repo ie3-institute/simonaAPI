@@ -29,6 +29,7 @@ public class ExtPrimaryData implements ExtData {
   /** Factory to convert an external object to PSDM primary data */
   private final PrimaryDataFactory factory;
 
+  /** Assets that provide primary data to SIMONA */
   private final List<UUID> primaryDataAssets;
 
   public ExtPrimaryData(ActorRef dataService, ActorRef extSimAdapter, PrimaryDataFactory factory, List<UUID> primaryDataAssets) {
