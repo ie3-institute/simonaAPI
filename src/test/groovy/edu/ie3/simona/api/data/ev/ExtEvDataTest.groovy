@@ -1,5 +1,6 @@
 package edu.ie3.simona.api.data.ev
 
+import edu.ie3.simona.api.data.ev.model.ArrivingEvsData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -94,14 +95,14 @@ class ExtEvDataTest extends Specification {
         def extSimAdapter = new TestProbe(actorSystem)
         def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
 
-        def arrivingEvs = new HashMap<UUID, List<EvModel>>()
-        arrivingEvs.put(UUID.randomUUID(), new ArrayList<EvModel>())
+        def arrivingEvsData = new HashMap<UUID, ArrivingEvsData>()
+        arrivingEvsData.put(UUID.randomUUID(), new ArrivingEvsData(new ArrayList<EvModel>(), Optional.of(60L)))
 
         when:
-        extEvData.provideArrivingEvs(arrivingEvs)
+        extEvData.provideArrivingEvs(arrivingEvsData)
 
         then:
-        dataService.expectMsg(new ProvideArrivingEvs(arrivingEvs))
+        dataService.expectMsg(new ProvideArrivingEvs(arrivingEvsData))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 

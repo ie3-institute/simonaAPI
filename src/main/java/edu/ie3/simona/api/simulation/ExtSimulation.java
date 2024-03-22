@@ -54,12 +54,11 @@ public abstract class ExtSimulation implements Runnable {
       Optional<Long> newTrigger;
 
       if (activationMessage.tick() == -1L) {
-        newTrigger = initialize(); // this is blocking until initialization has finished
+        // this is blocking until initialization has finished
+        newTrigger = Optional.of(initialize());
       } else {
-        newTrigger =
-            doActivity(
-                activationMessage
-                    .tick()); // this is blocking until processing of this tick has finished
+        // this is blocking until processing of this tick has finished
+        newTrigger = doActivity(activationMessage.tick());
       }
       data.send(new CompletionMessage(newTrigger));
 
@@ -81,7 +80,7 @@ public abstract class ExtSimulation implements Runnable {
    * @return The first regular tick at which this external simulation wants to be triggered, if
    *     applicable.
    */
-  protected abstract Optional<Long> initialize();
+  protected abstract Long initialize();
 
   /**
    * This method is called for every tick of the external simulation that is triggered.

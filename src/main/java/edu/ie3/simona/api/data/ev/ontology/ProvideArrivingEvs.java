@@ -6,15 +6,14 @@
 
 package edu.ie3.simona.api.data.ev.ontology;
 
-import edu.ie3.simona.api.data.ev.model.EvModel;
-import java.util.List;
+import edu.ie3.simona.api.data.ev.model.ArrivingEvsData;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * Provide arriving EVs to SIMONA and its charging stations
+ * Provide arriving EVs data to SIMONA and its charging stations
  *
- * @param arrivals the arriving EVs per charging station UUID
+ * @param arrivingEvsData the arriving EVs data per charging station UUID
  */
-public record ProvideArrivingEvs(Map<UUID, List<EvModel>> arrivals)
+public record ProvideArrivingEvs(Map<UUID, ArrivingEvsData> arrivingEvsData)
     implements EvDataMessageFromExt {}
