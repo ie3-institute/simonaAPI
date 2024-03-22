@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.ev.ontology;
 
 import edu.ie3.simona.api.data.ev.model.ArrivingEvsData;
-
 import java.util.Map;
 import java.util.UUID;
 
