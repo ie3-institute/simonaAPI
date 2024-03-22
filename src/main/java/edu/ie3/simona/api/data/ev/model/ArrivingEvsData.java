@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Data including arriving EVs and next arrival tick for a single charging station
+ * Data including arriving EVs and next arrival tick for a single charging station. Arriving EVs
+ * cannot be provided without being scheduled first.
  *
  * @param arrivals The arriving EVs for the current station
  * @param maybeNextTick The optional next tick at which some interaction between EV simulation and
