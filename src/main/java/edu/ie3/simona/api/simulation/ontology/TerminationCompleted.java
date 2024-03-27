@@ -7,4 +7,9 @@
 package edu.ie3.simona.api.simulation.ontology;
 
 /** Message returned to SIMONA indicating that the external simulation terminated */
-public record TerminationCompleted() implements ControlResponseMessageFromExt {}
+public record TerminationCompleted(int phase) implements ControlResponseMessageFromExt {
+    @Override
+    public int getPhase() {
+        return phase;
+    }
+}

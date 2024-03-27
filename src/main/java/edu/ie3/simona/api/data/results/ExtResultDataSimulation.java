@@ -7,8 +7,6 @@
 package edu.ie3.simona.api.data.results;
 
 import edu.ie3.simona.api.data.ExtDataSimulation;
-import edu.ie3.simona.api.data.primarydata.ExtPrimaryData;
-import edu.ie3.simona.api.data.primarydata.PrimaryDataFactory;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +16,7 @@ import java.util.UUID;
  * the ExtResultsData that is handed over.
  */
 public class ExtResultDataSimulation implements ExtDataSimulation {
+
   private final List<UUID> resultDataAssets;
 
   private final ResultDataFactory resultDataFactory;

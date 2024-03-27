@@ -8,17 +8,19 @@ package edu.ie3.simona.api.data.results;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ev.model.EvModel;
-import edu.ie3.simona.api.data.ev.ontology.ProvideArrivingEvs;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.data.results.ontology.*;
+import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
+import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
+import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
+import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
 import edu.ie3.simona.api.exceptions.ConvertionException;
+import org.apache.pekko.actor.ActorRef;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.pekko.actor.ActorRef;
 
 public class ExtResultData implements ExtData {
 
@@ -26,16 +28,19 @@ public class ExtResultData implements ExtData {
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
-  /** Actor reference to service that handles ev data within SIMONA */
+  /** Actor reference to service that handles result data within SIMONA */
   private final ActorRef dataService;
 
+  /** Actor reference to the dataServiceAdapter */
   private final ActorRef dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
+  /** Factory to convert a result entity to an object, that is readable from the external simulation */
   private final ResultDataFactory factory;
 
+  /** Assets in SIMONA that send result data */
   private final List<UUID> resultDataAssets;
 
   public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> resultDataAssets) {

@@ -36,12 +36,10 @@ public class ExtPrimaryDataSimulation implements ExtDataSimulation {
     this.extPrimaryData = extPrimaryData;
   }
 
-  /** Should implement the convertion of the external format to the PSDM format of primary data. */
   public PrimaryDataFactory getPrimaryDataFactory() {
     return primaryDataFactory;
   }
 
-  /** Should implement the list of assets that provide primary data to SIMOAN */
   public List<UUID> getPrimaryDataAssets() {
     return primaryDataAssets;
   }
