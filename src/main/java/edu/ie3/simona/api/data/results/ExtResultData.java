@@ -14,11 +14,13 @@ import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
 import edu.ie3.simona.api.exceptions.ConvertionException;
+import org.apache.pekko.actor.ActorRef;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.pekko.actor.ActorRef;
 
 public class ExtResultData implements ExtData {
 
@@ -26,32 +28,45 @@ public class ExtResultData implements ExtData {
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
-  /** Actor reference to service that handles ev data within SIMONA */
+  /** Actor reference to service that handles result data within SIMONA */
   private final ActorRef dataService;
+
+  /** Actor reference to the dataServiceAdapter */
+  private final ActorRef dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
+  /** Factory to convert a result entity to an object, that is readable from the external simulation */
   private final ResultDataFactory factory;
 
-  public ExtResultData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
+  /** Assets in SIMONA that send result data */
+  private final List<UUID> resultDataAssets;
+
+  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> resultDataAssets) {
     this.dataService = dataService;
+    this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;
+    this.resultDataAssets = resultDataAssets;
+  }
+
+  public List<UUID> getResultDataAssets() {
+    return resultDataAssets;
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  public List<ResultEntity> requestResults() throws InterruptedException {
-    sendExtMsg(new RequestResultEntities());
+  public List<ResultEntity> requestResults(long tick) throws InterruptedException {
+    sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, Object> requestResultObjects()
+  public Map<String, Object> requestResultObjects(long tick)
       throws ConvertionException, InterruptedException {
-    return convertResultsList(requestResults());
+    return convertResultsList(requestResults(tick));
   }
 
   protected Map<String, Object> convertResultsList(List<ResultEntity> results)
@@ -75,7 +90,7 @@ public class ExtResultData implements ExtData {
   public void sendExtMsg(ResultDataMessageFromExt msg) {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation), ActorRef.noSender());
   }
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
