@@ -13,7 +13,8 @@ import java.util.Optional;
  * Data including arriving EVs and next arrival tick for a single charging station. Arriving EVs
  * cannot be provided without being scheduled first.
  *
- * @param arrivals The arriving EVs for the current station
+ * @param arrivals The arriving EVs for the current station. Can be empty if only the next tick
+ *     needs to be communicated.
  * @param maybeNextTick The optional next tick at which some interaction between EV simulation and
  *     charging station is expected. Empty if no next event is known at this moment.
  */
