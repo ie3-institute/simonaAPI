@@ -15,7 +15,7 @@ import java.util.Optional;
  *
  * @param arrivals The arriving EVs for the current station. Can be empty if only the next tick
  *     needs to be communicated.
- * @param maybeNextTick The optional next tick at which some interaction between EV simulation and
- *     charging station is expected. Empty if no next event is known at this moment.
+ * @param maybeNextTick The optional next tick at which the next arrivals are expected. Empty if no
+ *     next arrivals for the EVCS are known at this moment.
  */
 public record ArrivingEvsData(List<EvModel> arrivals, Optional<Long> maybeNextTick) {}
