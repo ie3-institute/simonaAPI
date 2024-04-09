@@ -16,6 +16,7 @@ import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 import org.apache.pekko.actor.ActorRef;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +44,23 @@ public class ExtResultData implements ExtData {
   /** Assets in SIMONA that send result data */
   private final List<UUID> resultDataAssets;
 
-  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> resultDataAssets) {
+  private final ZonedDateTime simulationStartTime;
+
+  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> resultDataAssets, ZonedDateTime simulationStartTime) {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;
     this.resultDataAssets = resultDataAssets;
+    this.simulationStartTime = simulationStartTime;
+  }
+
+  public ZonedDateTime getSimulationStartTime() {
+    return simulationStartTime;
+  }
+
+  public ZonedDateTime getSimulationTime(Long tick) {
+    return simulationStartTime.plusSeconds(tick);
   }
 
   public List<UUID> getResultDataAssets() {
