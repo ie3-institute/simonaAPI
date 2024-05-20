@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.data.em;
 
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 
@@ -13,5 +14,5 @@ import edu.ie3.simona.api.exceptions.ConvertionException;
 public interface EmDataFactory {
 
   /** Should convert an object to a primary data value with a check if the object is primary data */
-  Value convert(Object entity) throws ConvertionException;
+  PValue convert(Object entity) throws ConvertionException;
 }

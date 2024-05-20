@@ -6,8 +6,11 @@
 
 package edu.ie3.simona.api.data.em;
 
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
+import edu.ie3.simona.api.data.em.ontology.ProvideEmData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.PrimaryDataFactory;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
@@ -41,11 +44,11 @@ public class ExtEmData implements ExtData {
     this.controlledEms = controlledEms;
   }
 
-  public List<UUID> getPrimaryDataAssets() { return controlledEms; }
+  public List<UUID> getControlledEms() { return controlledEms; }
 
   /** Provide primary data from an external simulation in one tick. */
   public void provideEmData(Long tick, Map<String, Object> emData) {
-    Map<UUID, Value> convertedMap = new HashMap<>();
+    Map<UUID, PValue> convertedMap = new HashMap<>();
     emData.forEach(
         (k, v) -> {
           try {
@@ -54,7 +57,7 @@ public class ExtEmData implements ExtData {
             throw new RuntimeException(e);
           }
         });
-    sendExtMsg(new ProvidePrimaryData(tick, convertedMap));
+    sendExtMsg(new ProvideEmData(tick, convertedMap));
   }
 
   /**
@@ -64,7 +67,8 @@ public class ExtEmData implements ExtData {
    *
    * @param msg the data/information that is sent to SIMONA's external primary data service
    */
-  public void sendExtMsg(PrimaryDataMessageFromExt msg) {
+  public void sendExtMsg(EmDataMessageFromExt msg) {
+    System.out.println("ExtEmData : " +dataService);
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
