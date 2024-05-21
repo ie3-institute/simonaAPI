@@ -68,7 +68,6 @@ public class ExtEmData implements ExtData {
    * @param msg the data/information that is sent to SIMONA's external primary data service
    */
   public void sendExtMsg(EmDataMessageFromExt msg) {
-    System.out.println("ExtEmData : " +dataService);
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
