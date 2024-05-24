@@ -42,29 +42,42 @@ public class ExtResultData implements ExtData {
   private final ResultDataFactory factory;
 
   /** Assets in SIMONA that send result data */
-  private final List<UUID> resultDataAssets;
+  private final List<UUID> gridResultDataAssets;
+
+  private final List<UUID> particpantResultDataAssets;
 
   private final ZonedDateTime simulationStartTime;
 
-  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> resultDataAssets, ZonedDateTime simulationStartTime) {
+  private final Long powerFlowResolution;
+
+  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> gridResultDataAssets, List<UUID> particpantResultDataAssets, ZonedDateTime simulationStartTime, Long powerFlowResolution) {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
     this.factory = factory;
-    this.resultDataAssets = resultDataAssets;
+    this.gridResultDataAssets = gridResultDataAssets;
+    this.particpantResultDataAssets = particpantResultDataAssets;
     this.simulationStartTime = simulationStartTime;
+    this.powerFlowResolution = powerFlowResolution;
   }
 
   public ZonedDateTime getSimulationStartTime() {
     return simulationStartTime;
+  }
+  public Long getPowerFlowResolution() {
+    return powerFlowResolution;
   }
 
   public ZonedDateTime getSimulationTime(Long tick) {
     return simulationStartTime.plusSeconds(tick);
   }
 
-  public List<UUID> getResultDataAssets() {
-    return resultDataAssets;
+  public List<UUID> getGridResultDataAssets() {
+    return gridResultDataAssets;
+  }
+
+  public List<UUID> getParticpantResultDataAssets() {
+    return particpantResultDataAssets;
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */

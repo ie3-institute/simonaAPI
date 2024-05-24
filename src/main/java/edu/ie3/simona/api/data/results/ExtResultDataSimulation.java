@@ -17,7 +17,8 @@ import java.util.UUID;
  */
 public class ExtResultDataSimulation implements ExtDataSimulation {
 
-  private final List<UUID> resultDataAssets;
+  private final List<UUID> particpantResultDataAssets;
+  private final List<UUID> gridResultDataAssets;
 
   private final ResultDataFactory resultDataFactory;
 
@@ -25,10 +26,12 @@ public class ExtResultDataSimulation implements ExtDataSimulation {
 
   public ExtResultDataSimulation(
           ResultDataFactory resultDataFactory,
-          List<UUID> resultDataAssets
+          List<UUID> particpantResultDataAssets,
+          List<UUID> gridResultDataAssets
   ) {
     this.resultDataFactory = resultDataFactory;
-    this.resultDataAssets = resultDataAssets;
+    this.particpantResultDataAssets = particpantResultDataAssets;
+    this.gridResultDataAssets = gridResultDataAssets;
   }
 
   /** Hand over an ExtPrimaryData which enables communication regarding primary data. */
@@ -40,8 +43,11 @@ public class ExtResultDataSimulation implements ExtDataSimulation {
     return resultDataFactory;
   }
 
-  public List<UUID> getResultDataAssets() {
-    return resultDataAssets;
+  public List<UUID> getParticipantResultDataAssets() {
+    return particpantResultDataAssets;
+  }
+  public List<UUID> getGridResultDataAssets() {
+    return gridResultDataAssets;
   }
 
   public ExtResultData getExtResultData() {
