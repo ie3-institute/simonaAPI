@@ -38,9 +38,6 @@ public class ExtResultData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
-  /** Factory to convert a result entity to an object, that is readable from the external simulation */
-  private final ResultDataFactory factory;
-
   /** Assets in SIMONA that send result data */
   private final List<UUID> gridResultDataAssets;
 
@@ -50,11 +47,10 @@ public class ExtResultData implements ExtData {
 
   private final Long powerFlowResolution;
 
-  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, ResultDataFactory factory, List<UUID> gridResultDataAssets, List<UUID> particpantResultDataAssets, ZonedDateTime simulationStartTime, Long powerFlowResolution) {
+  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, List<UUID> gridResultDataAssets, List<UUID> particpantResultDataAssets, ZonedDateTime simulationStartTime, Long powerFlowResolution) {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
-    this.factory = factory;
     this.gridResultDataAssets = gridResultDataAssets;
     this.particpantResultDataAssets = particpantResultDataAssets;
     this.simulationStartTime = simulationStartTime;
@@ -81,7 +77,7 @@ public class ExtResultData implements ExtData {
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  public List<ResultEntity> requestResults(long tick) throws InterruptedException {
+  public List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -89,19 +85,16 @@ public class ExtResultData implements ExtData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, Object> requestResultObjects(long tick)
-      throws ConvertionException, InterruptedException {
-    return convertResultsList(requestResults(tick));
+  public Map<UUID, ResultEntity> requestResults(long tick)
+      throws InterruptedException {
+    return convertResultsList(requestResultList(tick));
   }
 
-  protected Map<String, Object> convertResultsList(List<ResultEntity> results)
-      throws ConvertionException {
-    Map<String, Object> resultsMap = new HashMap<>();
-    Object convertedResult;
-    for (ResultEntity res : results) {
-      convertedResult = factory.convert(res);
-      resultsMap.put(res.getInputModel().toString(), convertedResult);
-    }
+  protected Map<UUID, ResultEntity> convertResultsList(List<ResultEntity> results) {
+    Map<UUID, ResultEntity> resultsMap = new HashMap<>();
+    results.forEach(
+            res -> resultsMap.put(res.getInputModel(), res)
+    );
     return resultsMap;
   }
 

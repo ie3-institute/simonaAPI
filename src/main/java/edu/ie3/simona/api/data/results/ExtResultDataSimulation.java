@@ -6,9 +6,14 @@
 
 package edu.ie3.simona.api.data.results;
 
+import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataSimulation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -17,21 +22,21 @@ import java.util.UUID;
  */
 public class ExtResultDataSimulation implements ExtDataSimulation {
 
+  private final Map<UUID, String> gridResultAssetMapping;
+  private final Map<UUID, String> participantResultAssetMapping;
   private final List<UUID> particpantResultDataAssets;
   private final List<UUID> gridResultDataAssets;
-
-  private final ResultDataFactory resultDataFactory;
 
   private ExtResultData extResultData;
 
   public ExtResultDataSimulation(
-          ResultDataFactory resultDataFactory,
-          List<UUID> particpantResultDataAssets,
-          List<UUID> gridResultDataAssets
+          Map<UUID, String> participantResultAssetMapping,
+          Map<UUID, String> gridResultAssetMapping
   ) {
-    this.resultDataFactory = resultDataFactory;
-    this.particpantResultDataAssets = particpantResultDataAssets;
-    this.gridResultDataAssets = gridResultDataAssets;
+    this.participantResultAssetMapping = participantResultAssetMapping;
+    this.gridResultAssetMapping = gridResultAssetMapping;
+    this.particpantResultDataAssets = participantResultAssetMapping.keySet().stream().toList();
+    this.gridResultDataAssets = gridResultAssetMapping.keySet().stream().toList();
   }
 
   /** Hand over an ExtPrimaryData which enables communication regarding primary data. */
@@ -39,15 +44,31 @@ public class ExtResultDataSimulation implements ExtDataSimulation {
     this.extResultData = extResultData;
   }
 
-  public ResultDataFactory getResultDataFactory() {
-    return resultDataFactory;
-  }
-
   public List<UUID> getParticipantResultDataAssets() {
     return particpantResultDataAssets;
   }
   public List<UUID> getGridResultDataAssets() {
     return gridResultDataAssets;
+  }
+
+  public Map<String, ResultEntity> requestResults(Long tick) throws InterruptedException {
+    return createResultMap(extResultData.requestResults(tick));
+  }
+
+  private Map<String, ResultEntity> createResultMap(Map<UUID, ResultEntity> results) {
+    Map<String, ResultEntity> resultMap = new HashMap<>();
+    results.forEach(
+            (uuid, res) -> {
+              if (res instanceof NodeResult) {
+                resultMap.put(gridResultAssetMapping.get(res.getInputModel()), res);
+              } else if (res instanceof SystemParticipantResult) {
+                resultMap.put(participantResultAssetMapping.get(res.getInputModel()), res);
+              } else {
+                throw new RuntimeException();
+              }
+            }
+    );
+    return resultMap;
   }
 
   public ExtResultData getExtResultData() {

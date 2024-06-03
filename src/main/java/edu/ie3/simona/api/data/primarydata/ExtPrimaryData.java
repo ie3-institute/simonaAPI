@@ -42,17 +42,8 @@ public class ExtPrimaryData implements ExtData {
   public List<UUID> getPrimaryDataAssets() { return primaryDataAssets; }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void providePrimaryData(Long tick, Map<String, Object> primaryData) {
-    Map<UUID, Value> convertedMap = new HashMap<>();
-    primaryData.forEach(
-        (k, v) -> {
-          try {
-            convertedMap.put(UUID.fromString(k), factory.convert(v));
-          } catch (ConvertionException e) {
-            throw new RuntimeException(e);
-          }
-        });
-    sendExtMsg(new ProvidePrimaryData(tick, convertedMap));
+  public void providePrimaryData(Long tick, Map<UUID, Value> primaryData) {
+    sendExtMsg(new ProvidePrimaryData(tick, primaryData));
   }
 
   /**

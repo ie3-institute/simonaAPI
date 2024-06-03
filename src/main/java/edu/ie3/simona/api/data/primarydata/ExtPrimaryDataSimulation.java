@@ -6,9 +6,15 @@
 
 package edu.ie3.simona.api.data.primarydata;
 
+import edu.ie3.datamodel.models.value.PValue;
+import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataSimulation;
+import edu.ie3.simona.api.data.ExtInputDataPackage;
+import edu.ie3.simona.api.exceptions.ConvertionException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,16 +25,19 @@ public class ExtPrimaryDataSimulation implements ExtDataSimulation {
 
   private final List<UUID> primaryDataAssets;
 
+  private final Map<String, UUID> extPrimaryDataMapping;
+
   private final PrimaryDataFactory primaryDataFactory;
 
   private ExtPrimaryData extPrimaryData;
 
   public ExtPrimaryDataSimulation(
           PrimaryDataFactory primaryDataFactory,
-          List<UUID> primaryDataAssets
+          Map<String, UUID> extPrimaryDataMapping
   ) {
     this.primaryDataFactory = primaryDataFactory;
-    this.primaryDataAssets = primaryDataAssets;
+    this.extPrimaryDataMapping = extPrimaryDataMapping;
+    this.primaryDataAssets = this.extPrimaryDataMapping.values().stream().toList();
   }
 
   /** Hand over an ExtPrimaryData which enables communication regarding primary data. */
@@ -46,5 +55,27 @@ public class ExtPrimaryDataSimulation implements ExtDataSimulation {
 
   public ExtPrimaryData getExtPrimaryData() {
     return extPrimaryData;
+  }
+
+
+  public Map<UUID, Value> createExtPrimaryDataMap(
+          ExtInputDataPackage extInputDataPackage
+  ) {
+    Map<UUID, Value> primaryDataForSimona = new HashMap<>();
+    extInputDataPackage.getSimonaInputMap().forEach(
+            (id, extInput) -> {
+              if (extPrimaryDataMapping.containsKey(id)) {
+                try {
+                  primaryDataForSimona.put(
+                          extPrimaryDataMapping.get(id),
+                          primaryDataFactory.convert(extInput)
+                  );
+                } catch (ConvertionException e) {
+                  throw new RuntimeException(e);
+                }
+              }
+            }
+    );
+    return primaryDataForSimona;
   }
 }

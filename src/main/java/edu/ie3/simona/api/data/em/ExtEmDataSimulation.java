@@ -6,11 +6,16 @@
 
 package edu.ie3.simona.api.data.em;
 
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtDataSimulation;
+import edu.ie3.simona.api.data.ExtInputDataPackage;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryData;
 import edu.ie3.simona.api.data.primarydata.PrimaryDataFactory;
+import edu.ie3.simona.api.exceptions.ConvertionException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -21,16 +26,19 @@ public class ExtEmDataSimulation implements ExtDataSimulation {
 
   private final List<UUID> controlledEms;
 
+  private final Map<String, UUID> extEmMapping;
+
   private final EmDataFactory emDataFactory;
 
   private ExtEmData extEmData;
 
   public ExtEmDataSimulation(
           EmDataFactory emDataFactory,
-          List<UUID> controlledEms
+          Map<String, UUID> extEmMapping
   ) {
     this.emDataFactory = emDataFactory;
-    this.controlledEms = controlledEms;
+    this.extEmMapping = extEmMapping;
+    this.controlledEms = extEmMapping.values().stream().toList();
   }
 
   /** Hand over an ExtPrimaryData which enables communication regarding primary data. */
@@ -49,4 +57,27 @@ public class ExtEmDataSimulation implements ExtDataSimulation {
   public ExtEmData getExtEmData() {
     return extEmData;
   }
+
+  public Map<UUID, PValue> createExtEmDataMap(
+          ExtInputDataPackage extEmData
+  ) {
+    Map<UUID, PValue> emDataForSimona = new HashMap<>();
+    extEmData.getSimonaInputMap().forEach(
+            (id, extInput) -> {
+              if (extEmMapping.containsKey(id)) {
+                  try {
+                      emDataForSimona.put(
+                              extEmMapping.get(id),
+                              emDataFactory.convert(extInput)
+                      );
+                  } catch (ConvertionException e) {
+                      throw new RuntimeException(e);
+                  }
+              }
+            }
+    );
+    return emDataForSimona;
+  }
+
+
 }

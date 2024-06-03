@@ -31,33 +31,20 @@ public class ExtEmData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
-  /** Factory to convert an external object to PSDM primary data */
-  private final EmDataFactory factory;
-
   /** Assets that provide primary data to SIMONA */
   private final List<UUID> controlledEms;
 
   public ExtEmData(ActorRef dataService, ActorRef extSimAdapter, EmDataFactory factory, List<UUID> controlledEms) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
-    this.factory = factory;
     this.controlledEms = controlledEms;
   }
 
   public List<UUID> getControlledEms() { return controlledEms; }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void provideEmData(Long tick, Map<String, Object> emData) {
-    Map<UUID, PValue> convertedMap = new HashMap<>();
-    emData.forEach(
-        (k, v) -> {
-          try {
-            convertedMap.put(UUID.fromString(k), factory.convert(v));
-          } catch (ConvertionException e) {
-            throw new RuntimeException(e);
-          }
-        });
-    sendExtMsg(new ProvideEmData(tick, convertedMap));
+  public void provideEmData(Long tick, Map<UUID, PValue> emData) {
+    sendExtMsg(new ProvideEmData(tick, emData));
   }
 
   /**
