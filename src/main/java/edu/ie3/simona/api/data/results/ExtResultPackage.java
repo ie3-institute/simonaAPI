@@ -3,6 +3,7 @@ package edu.ie3.simona.api.data.results;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
+import edu.ie3.simona.api.data.ExtDataPackage;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
-public class ExtResultPackage {
+public class ExtResultPackage implements ExtDataPackage {
 
     private final Long tick;
     private final Map<String, ResultEntity> simonaResultsMap;
