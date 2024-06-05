@@ -6,7 +6,9 @@
 
 package edu.ie3.simona.api.data.results;
 
+import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
@@ -30,29 +32,43 @@ public class ExtResultData implements ExtData {
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles result data within SIMONA */
-  private final ActorRef dataService;
+  private ActorRef dataService;
 
   /** Actor reference to the dataServiceAdapter */
-  private final ActorRef dataServiceActivation;
+  private ActorRef dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private final ActorRef extSimAdapter;
+  private ActorRef extSimAdapter;
 
-  /** Assets in SIMONA that send result data */
-  private final List<UUID> gridResultDataAssets;
+  private final Map<UUID, String> gridResultAssetMapping;
+  private final Map<UUID, String> participantResultAssetMapping;
 
-  private final List<UUID> particpantResultDataAssets;
+  private ZonedDateTime simulationStartTime;
 
-  private final ZonedDateTime simulationStartTime;
+  private Long powerFlowResolution;
 
-  private final Long powerFlowResolution;
+  public ExtResultData(
+          Map<UUID, String> participantResultAssetMapping,
+          Map<UUID, String> gridResultAssetMapping
+  ) {
+    this.participantResultAssetMapping = participantResultAssetMapping;
+    this.gridResultAssetMapping = gridResultAssetMapping;
+  }
 
-  public ExtResultData(ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter, List<UUID> gridResultDataAssets, List<UUID> particpantResultDataAssets, ZonedDateTime simulationStartTime, Long powerFlowResolution) {
+  public void setActorRefs(
+          ActorRef dataService,
+          ActorRef dataServiceActivation,
+          ActorRef extSimAdapter
+  ) {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
-    this.gridResultDataAssets = gridResultDataAssets;
-    this.particpantResultDataAssets = particpantResultDataAssets;
+  }
+
+  public void setSimulationData(
+          ZonedDateTime simulationStartTime,
+          Long powerFlowResolution
+  ) {
     this.simulationStartTime = simulationStartTime;
     this.powerFlowResolution = powerFlowResolution;
   }
@@ -69,15 +85,15 @@ public class ExtResultData implements ExtData {
   }
 
   public List<UUID> getGridResultDataAssets() {
-    return gridResultDataAssets;
+    return gridResultAssetMapping.keySet().stream().toList();
   }
 
-  public List<UUID> getParticpantResultDataAssets() {
-    return particpantResultDataAssets;
+  public List<UUID> getParticipantResultDataAssets() {
+    return participantResultAssetMapping.keySet().stream().toList();
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  public List<ResultEntity> requestResultList(long tick) throws InterruptedException {
+  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -85,17 +101,25 @@ public class ExtResultData implements ExtData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<UUID, ResultEntity> requestResults(long tick)
+  public Map<String, ResultEntity> requestResults(long tick)
       throws InterruptedException {
-    return convertResultsList(requestResultList(tick));
+    return createResultMap(requestResultList(tick));
   }
 
-  protected Map<UUID, ResultEntity> convertResultsList(List<ResultEntity> results) {
-    Map<UUID, ResultEntity> resultsMap = new HashMap<>();
+  private Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
+    Map<String, ResultEntity> resultMap = new HashMap<>();
     results.forEach(
-            res -> resultsMap.put(res.getInputModel(), res)
+            res -> {
+              if (res instanceof NodeResult) {
+                resultMap.put(gridResultAssetMapping.get(res.getInputModel()), res);
+              } else if (res instanceof SystemParticipantResult) {
+                resultMap.put(participantResultAssetMapping.get(res.getInputModel()), res);
+              } else {
+                throw new RuntimeException();
+              }
+            }
     );
-    return resultsMap;
+    return resultMap;
   }
 
   /**

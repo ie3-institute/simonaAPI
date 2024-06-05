@@ -140,4 +140,6 @@ public abstract class ExtSimulation implements Runnable {
   protected String[] getMainArgs() {
     return data.getMainArgs();
   }
+
+  public abstract List<ExtData> getDataConnections();
 }
