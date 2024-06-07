@@ -79,10 +79,10 @@ public class ExtEmData implements ExtData {
 
 
   public Map<UUID, PValue> createExtEmDataMap(
-          ExtInputDataPackage extEmData
+          ExtInputDataPackage extInputDataPackage
   ) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
-    extEmData.getSimonaInputMap().forEach(
+    extInputDataPackage.getSimonaInputMap().forEach(
             (id, extInput) -> {
               if (extEmMapping.containsKey(id)) {
                 try {

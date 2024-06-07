@@ -33,6 +33,14 @@ public class ExtSimAdapterData {
     this.mainArgs = mainArgs;
   }
 
+  public ActorRef getPhase1Adapter() {
+    return extSimAdapters.get(1);
+  }
+
+  public ActorRef getPhase2Adapter() {
+    return extSimAdapters.get(2);
+  }
+
   /**
    * Called within SIMONA to queue messages for the external simulation
    *

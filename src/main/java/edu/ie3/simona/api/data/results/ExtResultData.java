@@ -10,6 +10,7 @@ import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.ExtOutputData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ExtResultData implements ExtData {
+public class ExtResultData implements ExtOutputData {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
