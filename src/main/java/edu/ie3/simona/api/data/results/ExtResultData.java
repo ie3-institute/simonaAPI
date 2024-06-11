@@ -41,7 +41,11 @@ public class ExtResultData implements ExtOutputData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
 
+  /** Map uuid to external id of grid related entities*/
   private final Map<UUID, String> gridResultAssetMapping;
+
+
+  /** Map uuid to external id of system participants*/
   private final Map<UUID, String> participantResultAssetMapping;
 
   private ZonedDateTime simulationStartTime;
@@ -56,6 +60,7 @@ public class ExtResultData implements ExtOutputData {
     this.gridResultAssetMapping = gridResultAssetMapping;
   }
 
+  /** Sets the actor refs for data and control flow */
   public void setActorRefs(
           ActorRef dataService,
           ActorRef dataServiceActivation,
@@ -66,6 +71,7 @@ public class ExtResultData implements ExtOutputData {
     this.extSimAdapter = extSimAdapter;
   }
 
+  /** Sets simulation data from config */
   public void setSimulationData(
           ZonedDateTime simulationStartTime,
           Long powerFlowResolution

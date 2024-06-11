@@ -12,14 +12,23 @@ import java.util.Map;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
+/**
+ * Contains all results from SIMONA for a certain tick
+ */
 public class ExtResultPackage implements ExtDataPackage {
 
+    /** Tick the package is meant for */
     private final Long tick;
+
+    /** Map external id to result from SIMONA
+     * ATTENTION: The time stamp of the result entities is not necessarily corresponding to the tick
+     */
     private final Map<String, ResultEntity> simonaResultsMap;
 
     public ExtResultPackage(
             Long tick,
-            Map<String, ResultEntity> simonaResultsMap) {
+            Map<String, ResultEntity> simonaResultsMap
+    ) {
         this.tick = tick;
         this.simonaResultsMap = simonaResultsMap;
     }
@@ -28,6 +37,7 @@ public class ExtResultPackage implements ExtDataPackage {
         return tick;
     }
 
+    /** Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult} */
     public double getVoltageDeviation(String assetId) {
         if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
             ComparableQuantity<Dimensionless> vMagDev = Quantities.getQuantity(0, PU);
@@ -40,6 +50,7 @@ public class ExtResultPackage implements ExtDataPackage {
         }
     }
 
+    /** Returns the active power for certain asset, if this asset provided a {@link SystemParticipantResult} */
     public double getActivePower(String assetId) {
         if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
             return systemParticipantResult.getP().getValue().doubleValue();
@@ -48,6 +59,7 @@ public class ExtResultPackage implements ExtDataPackage {
         }
     }
 
+    /** Returns the reactive power for certain asset, if this asset provided a {@link SystemParticipantResult} */
     public double getReactivePower(String assetId) {
         if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
             return systemParticipantResult.getQ().getValue().doubleValue();
@@ -56,6 +68,7 @@ public class ExtResultPackage implements ExtDataPackage {
         }
     }
 
+    /** Returns the line loading for certain asset, if this asset provided a {@link NodeResult} */
     public double getLineLoading(String assetId) {
         throw new RuntimeException("LINE LOADING is not implemented yet!");
     }

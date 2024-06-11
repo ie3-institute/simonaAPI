@@ -38,8 +38,10 @@ public class ExtPrimaryData implements ExtData {
     this.extPrimaryDataMapping = extPrimaryDataMapping;
   }
 
+  /** Sets the actor refs for data and control flow */
   public void setActorRefs(
-          ActorRef dataService, ActorRef extSimAdapter
+          ActorRef dataService,
+          ActorRef extSimAdapter
   ) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
@@ -49,6 +51,7 @@ public class ExtPrimaryData implements ExtData {
     return primaryDataFactory;
   }
 
+  /** Returns a list of the uuids of the system participants that expect external primary data */
   public List<UUID> getPrimaryDataAssets() {
     return extPrimaryDataMapping.values().stream().toList();
   }
@@ -71,6 +74,9 @@ public class ExtPrimaryData implements ExtData {
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
+  /**
+   * Converts an input data package from an external simulation to a map of primary data
+   */
   public Map<UUID, Value> createExtPrimaryDataMap(
           ExtInputDataPackage extInputDataPackage
   ) {

@@ -7,15 +7,11 @@
 package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
-import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtInputDataPackage;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.data.primarydata.PrimaryDataFactory;
-import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 import org.apache.pekko.actor.ActorRef;
 
@@ -35,6 +31,7 @@ public class ExtEmData implements ExtData {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extEmMapping;
 
+  /** Factory, that converts external input data to set points for EM agents */
   private final EmDataFactory emDataFactory;
 
   public ExtEmData(
@@ -45,6 +42,7 @@ public class ExtEmData implements ExtData {
     this.extEmMapping = extEmMapping;
   }
 
+  /** Sets the actor refs for data and control flow */
   public void setActorRefs(
           ActorRef dataService,
           ActorRef extSimAdapter
@@ -53,6 +51,7 @@ public class ExtEmData implements ExtData {
     this.extSimAdapter = extSimAdapter;
   }
 
+  /** Returns a list of the uuids of the em agents that expect external set points */
   public List<UUID> getControlledEms() { return extEmMapping.values().stream().toList(); }
 
   public EmDataFactory getEmDataFactory() {
@@ -77,7 +76,9 @@ public class ExtEmData implements ExtData {
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
-
+  /**
+   * Converts an input data package from an external simulation to a map of set points
+   */
   public Map<UUID, PValue> createExtEmDataMap(
           ExtInputDataPackage extInputDataPackage
   ) {
