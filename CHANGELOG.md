@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Implemented `ExtPrimaryData` and `ExtResultsData` [#145](https://github.com/ie3-institute/simonaAPI/issues/145)
 - Have EV simulation communicate the next tick [#170](https://github.com/ie3-institute/simonaAPI/issues/170)
+- Only communicate the next tick of activation of EV simulation as a whole [#176](https://github.com/ie3-institute/simonaAPI/issues/176)
 
 ## [0.4.0] - 2023-11-22
 
