@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.ev;
 
 import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ev.model.ArrivingEvsData;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -82,10 +81,12 @@ public class ExtEvData implements ExtData {
    * Provide all EVs that are arriving at some charging station to SIMONA. Method returns right away
    * without expecting an answer from SIMONA.
    *
-   * @param arrivals the arriving EVs data per charging station UUID
+   * @param arrivals the arriving EV models per charging station UUID
+   * @param maybeNextTick the next tick at which new arrivals are expected, or empty if simulation
+   *     is about to end
    */
-  public void provideArrivingEvs(Map<UUID, ArrivingEvsData> arrivals) {
-    sendExtMsg(new ProvideArrivingEvs(arrivals));
+  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvideArrivingEvs(arrivals, maybeNextTick));
   }
 
   /**
