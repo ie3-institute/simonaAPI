@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
@@ -41,7 +41,7 @@ public class ExtResultData implements ExtData {
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  public List<ResultEntity> requestResults() throws InterruptedException {
+  public List<ModelResultEntity> requestResults() throws InterruptedException {
     sendExtMsg(new RequestResultEntities());
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -54,11 +54,11 @@ public class ExtResultData implements ExtData {
     return convertResultsList(requestResults());
   }
 
-  protected Map<String, Object> convertResultsList(List<ResultEntity> results)
+  protected Map<String, Object> convertResultsList(List<ModelResultEntity> results)
       throws ConvertionException {
     Map<String, Object> resultsMap = new HashMap<>();
     Object convertedResult;
-    for (ResultEntity res : results) {
+    for (ModelResultEntity res : results) {
       convertedResult = factory.convert(res);
       resultsMap.put(res.getInputModel().toString(), convertedResult);
     }
