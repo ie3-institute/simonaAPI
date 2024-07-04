@@ -9,6 +9,7 @@ package edu.ie3.simona.api.data.results;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
+import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtOutputData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;

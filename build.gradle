@@ -3,7 +3,7 @@ plugins {
   id 'java' // java support
   id 'com.diffplug.spotless' version '6.25.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '6.0.10' // code check, working on byte code
+  id 'com.github.spotbugs' version '6.0.18' // code check, working on byte code
   id "org.sonarqube" version "5.0.0.4638" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
@@ -17,8 +17,8 @@ ext {
 
   // required for pekko
   scalaVersion = "2.13"
-  scalaBinaryVersion = "2.13.13"
-  pekkoVersion = "1.0.2"
+  scalaBinaryVersion = "2.13.14"
+  pekkoVersion = "1.0.3"
 }
 
 group = 'com.github.ie3-institute'
@@ -59,7 +59,7 @@ dependencies{
     /* Exclude our own nested dependencies */
     exclude group: 'com.github.ie3-institute'
   }
-  implementation('com.github.ie3-institute:PowerSystemDataModel:5.0.1') {
+  implementation('com.github.ie3-institute:PowerSystemDataModel:5.1.0') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
     /* Exclude our own nested dependencies */
@@ -73,7 +73,7 @@ dependencies{
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.1'
 }
 
 task printVersion {
