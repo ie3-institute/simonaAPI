@@ -18,7 +18,7 @@ ext {
   // required for pekko
   scalaVersion = "2.13"
   scalaBinaryVersion = "2.13.14"
-  pekkoVersion = "1.0.3"
+  pekkoVersion = "1.0.2"
 }
 
 group = 'com.github.ie3-institute'

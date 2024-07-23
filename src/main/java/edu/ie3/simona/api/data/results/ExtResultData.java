@@ -6,18 +6,15 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.NodeResult;
-import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.datamodel.models.result.ModelResultEntity;
-import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import edu.ie3.simona.api.exceptions.ConvertionException;
 import org.apache.pekko.actor.ActorRef;
 
 import java.time.ZonedDateTime;
@@ -84,6 +81,7 @@ public class ExtResultData implements ExtOutputData {
   public ZonedDateTime getSimulationStartTime() {
     return simulationStartTime;
   }
+
   public Long getPowerFlowResolution() {
     return powerFlowResolution;
   }
@@ -101,7 +99,7 @@ public class ExtResultData implements ExtOutputData {
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
+  private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -109,19 +107,19 @@ public class ExtResultData implements ExtOutputData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, ResultEntity> requestResults(long tick)
+  public Map<String, ModelResultEntity> requestResults(long tick)
       throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
 
-  private Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
-    Map<String, ResultEntity> resultMap = new HashMap<>();
+  private Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
+    Map<String, ModelResultEntity> resultMap = new HashMap<>();
     results.forEach(
-            res -> {
-              if (res instanceof NodeResult) {
-                resultMap.put(gridResultAssetMapping.get(res.getInputModel()), res);
-              } else if (res instanceof SystemParticipantResult) {
-                resultMap.put(participantResultAssetMapping.get(res.getInputModel()), res);
+            result -> {
+              if (result instanceof NodeResult nodeResult) {
+                resultMap.put(gridResultAssetMapping.get(nodeResult.getInputModel()), nodeResult);
+              } else if (result instanceof SystemParticipantResult systemParticipantResult) {
+                resultMap.put(participantResultAssetMapping.get(systemParticipantResult.getInputModel()), systemParticipantResult);
               } else {
                 throw new RuntimeException();
               }

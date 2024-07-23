@@ -1,5 +1,6 @@
 package edu.ie3.simona.api.data.results;
 
+import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
@@ -23,11 +24,11 @@ public class ExtResultPackage implements ExtDataPackage {
     /** Map external id to result from SIMONA
      * ATTENTION: The time stamp of the result entities is not necessarily corresponding to the tick
      */
-    private final Map<String, ResultEntity> simonaResultsMap;
+    private final Map<String, ModelResultEntity> simonaResultsMap;
 
     public ExtResultPackage(
             Long tick,
-            Map<String, ResultEntity> simonaResultsMap
+            Map<String, ModelResultEntity> simonaResultsMap
     ) {
         this.tick = tick;
         this.simonaResultsMap = simonaResultsMap;

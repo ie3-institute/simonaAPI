@@ -3,6 +3,7 @@ package edu.ie3.simona.api.data.primarydata
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.exceptions.ConvertionException
@@ -13,20 +14,42 @@ import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
+import java.sql.ShardingKey
+
 class ExtPrimaryDataTest extends Specification {
 
     @Shared
     ActorSystem actorSystem
 
+    @Shared
+    UUID inputUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
 
-    class PValuePrimaryDataFactory implements PrimaryDataFactory {
 
+    @Shared
+    HashMap<String, UUID> extPrimaryDataMapping = Map.of(
+            "Pv",
+            inputUuid
+    )
+
+    class TestInputDataValue implements ExtInputDataValue {
+        private Value value
+
+        TestInputDataValue(Value value) {
+            this.value = value
+        }
+
+        Value getValue() {
+            return value
+        }
+    }
+
+    class TestPrimaryDataFactory implements PrimaryDataFactory {
         @Override
-        Value convert(Object entity) throws ConvertionException {
-            if (entity.getClass() == PValue) {
-                return (PValue) entity
+        Value convert(ExtInputDataValue entity) throws ConvertionException {
+            if (entity instanceof TestInputDataValue) {
+                return entity.getValue();
             } else {
-                throw new ConvertionException("This factory can convert PValue entities only!")
+                throw new ConvertionException("This factory can only convert PValue entities.");
             }
         }
     }
@@ -44,7 +67,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extPrimaryData = new ExtPrimaryData(dataService.ref(), extSimAdapter.ref(), new PValuePrimaryDataFactory())
+        def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
 
         def primaryData = new HashMap<String, Object>()
         def uuid = UUID.randomUUID()

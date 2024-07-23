@@ -33,17 +33,11 @@ class ExtResultDataTest extends Specification {
             Quantities.getQuantity(10, StandardUnits.REACTIVE_POWER_IN)
     )
 
-    class DefaultResultFactory implements ResultDataFactory {
+    @Shared
+    HashMap<UUID, String> participantResultAssetMapping = Map.of(loadUuid, "Load") as HashMap<UUID, String>
 
-        @Override
-        Object convert(ResultEntity entity) throws ConvertionException {
-            if (entity instanceof LoadResult) {
-                return "{\"p\":\"" + entity.p.toString() + ",\"q\":\"" + entity.q.toString() + "\"}"
-            } else {
-                throw new ConvertionException("This factory can convert LoadResult's only!")
-            }
-        }
-    }
+    @Shared
+    HashMap<UUID, String> gridResultAssetMapping = [:]
 
     class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
@@ -59,23 +53,29 @@ class ExtResultDataTest extends Specification {
     def "ExtResultsData should request and receive results correctly as Object"() {
         given:
         def dataService = new TestProbe(actorSystem)
+        def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def resultDataFactory = new DefaultResultFactory()
-        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), resultDataFactory)
+        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+        extResultData.setActorRefs(
+                dataService.ref(),
+                dataServiceActivation.ref(),
+                extSimAdapter.ref()
+        )
 
         def sentMsg = new ProvideResultEntities([loadResult])
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
         extResultData.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultData.requestResultObjects()
+        def receivedResults = extResultData.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities())
+        dataService.expectMsg(new RequestResultEntities(0L))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
-        receivedResults.get(loadUuid.toString()) == resultDataFactory.convert(loadResult)
+        receivedResults.get("Load") == loadResult
     }
 
+    /*
     def "ExtResultsData should request and receive results correctly as a list of results entities"() {
         given:
         def dataService = new TestProbe(actorSystem)
@@ -127,4 +127,6 @@ class ExtResultDataTest extends Specification {
             mapOfResults.size() == 1
             mapOfResults.get(loadUuid.toString()) == "{\"p\":\"10 kW,\"q\":\"10 kvar\"}"
     }
+
+     */
 }

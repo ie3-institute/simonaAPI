@@ -7,6 +7,8 @@
 package edu.ie3.simona.api.data.results.ontology;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,11 +19,11 @@ public record ProvideResultEntities(List<ModelResultEntity> results) implements 
         this(new ArrayList<>());
     }
 
-    public ProvideResultEntities(Map<UUID, ResultEntity> resultMap) {
+    public ProvideResultEntities(Map<UUID, ModelResultEntity> resultMap) {
         this(resultMap.values().stream().toList());
     }
 
-    public ProvideResultEntities(List<ResultEntity> results) {
+    public ProvideResultEntities(List<ModelResultEntity> results) {
         this.results = results;
     }
 }
