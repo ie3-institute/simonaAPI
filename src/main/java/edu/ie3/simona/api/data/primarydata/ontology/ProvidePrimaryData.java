@@ -11,6 +11,5 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Message that provides primary data from an external primary data simulation */
-public record ProvidePrimaryData(
-        long tick,
-        Map<UUID, Value> primaryData) implements PrimaryDataMessageFromExt {}
+public record ProvidePrimaryData(long tick, Map<UUID, Value> primaryData)
+    implements PrimaryDataMessageFromExt {}

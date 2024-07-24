@@ -33,16 +33,14 @@ public class ExtPrimaryData implements ExtData {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
-  public ExtPrimaryData(PrimaryDataFactory primaryDataFactory, Map<String, UUID> extPrimaryDataMapping) {
+  public ExtPrimaryData(
+      PrimaryDataFactory primaryDataFactory, Map<String, UUID> extPrimaryDataMapping) {
     this.primaryDataFactory = primaryDataFactory;
     this.extPrimaryDataMapping = extPrimaryDataMapping;
   }
 
   /** Sets the actor refs for data and control flow */
-  public void setActorRefs(
-          ActorRef dataService,
-          ActorRef extSimAdapter
-  ) {
+  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
@@ -74,27 +72,22 @@ public class ExtPrimaryData implements ExtData {
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
-  /**
-   * Converts an input data package from an external simulation to a map of primary data
-   */
-  public Map<UUID, Value> createExtPrimaryDataMap(
-          ExtInputDataPackage extInputDataPackage
-  ) {
+  /** Converts an input data package from an external simulation to a map of primary data */
+  public Map<UUID, Value> createExtPrimaryDataMap(ExtInputDataPackage extInputDataPackage) {
     Map<UUID, Value> primaryDataForSimona = new HashMap<>();
-    extInputDataPackage.getSimonaInputMap().forEach(
+    extInputDataPackage
+        .getSimonaInputMap()
+        .forEach(
             (id, extInput) -> {
               if (extPrimaryDataMapping.containsKey(id)) {
                 try {
                   primaryDataForSimona.put(
-                          extPrimaryDataMapping.get(id),
-                          primaryDataFactory.convert(extInput)
-                  );
+                      extPrimaryDataMapping.get(id), primaryDataFactory.convert(extInput));
                 } catch (ConvertionException e) {
                   throw new RuntimeException(e);
                 }
               }
-            }
-    );
+            });
     return primaryDataForSimona;
   }
 }

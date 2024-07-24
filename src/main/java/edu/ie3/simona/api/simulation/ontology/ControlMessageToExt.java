@@ -8,5 +8,5 @@ package edu.ie3.simona.api.simulation.ontology;
 
 /** Interface for control messages from the SIMONA to the external simulation */
 public interface ControlMessageToExt {
-    int getPhase();
+  int getPhase();
 }

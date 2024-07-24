@@ -12,12 +12,9 @@ package edu.ie3.simona.api.simulation.ontology;
  * @param tick The current tick
  * @param phase Phase of the simulation
  */
-public record ActivationMessage(
-        long tick,
-        int phase
-) implements ControlMessageToExt {
-    @Override
-    public int getPhase() {
-        return phase;
-    }
+public record ActivationMessage(long tick, int phase) implements ControlMessageToExt {
+  @Override
+  public int getPhase() {
+    return phase;
+  }
 }

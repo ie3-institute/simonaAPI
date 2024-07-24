@@ -12,9 +12,10 @@ package edu.ie3.simona.api.simulation.ontology;
  *
  * @param simulationSuccessful Whether SIMONA terminated successfully
  */
-public record TerminationMessage(Boolean simulationSuccessful, int phase) implements ControlMessageToExt {
-    @Override
-    public int getPhase() {
-        return phase;
-    }
+public record TerminationMessage(Boolean simulationSuccessful, int phase)
+    implements ControlMessageToExt {
+  @Override
+  public int getPhase() {
+    return phase;
+  }
 }

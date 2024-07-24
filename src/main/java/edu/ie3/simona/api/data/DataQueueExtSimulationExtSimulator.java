@@ -1,20 +1,24 @@
+/*
+ * © 2024. TU Dortmund University,
+ * Institute of Energy Systems, Energy Efficiency and Energy Economics,
+ * Research group Distribution grid planning and operation
+ */
+
 package edu.ie3.simona.api.data;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Data queue to allow data flow between SIMONA and a co-simulator
- */
+/** Data queue to allow data flow between SIMONA and a co-simulator */
 public class DataQueueExtSimulationExtSimulator<V extends ExtDataPackage> {
-    public final LinkedBlockingQueue<V> receiverTriggerQueue = new LinkedBlockingQueue<>();
+  private final LinkedBlockingQueue<V> receiverTriggerQueue = new LinkedBlockingQueue<>();
 
-    public DataQueueExtSimulationExtSimulator() {}
+  public DataQueueExtSimulationExtSimulator() {}
 
-    public void queueData(V data) throws InterruptedException {
-        this.receiverTriggerQueue.put(data);
-    }
+  public void queueData(V data) throws InterruptedException {
+    this.receiverTriggerQueue.put(data);
+  }
 
-    public V takeData() throws InterruptedException {
-        return this.receiverTriggerQueue.take();
-    }
+  public V takeData() throws InterruptedException {
+    return this.receiverTriggerQueue.take();
+  }
 }

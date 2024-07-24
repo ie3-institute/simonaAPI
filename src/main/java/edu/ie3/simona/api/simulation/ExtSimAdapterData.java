@@ -8,10 +8,8 @@ package edu.ie3.simona.api.simulation;
 
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import org.apache.pekko.actor.ActorRef;
 
 public class ExtSimAdapterData {
@@ -20,7 +18,9 @@ public class ExtSimAdapterData {
   public final LinkedBlockingQueue<ControlMessageToExt> receiveMessageQueue =
       new LinkedBlockingQueue<>();
 
-  /** Actor references to the adapters for the phases that handles scheduler control flow in SIMONA */
+  /**
+   * Actor references to the adapters for the phases that handles scheduler control flow in SIMONA
+   */
   private final Map<Integer, ActorRef> extSimAdapters;
 
   /** CLI arguments with which SIMONA is initiated */

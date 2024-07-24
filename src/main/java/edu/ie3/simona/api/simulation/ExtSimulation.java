@@ -6,7 +6,6 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.data.ExtDataSimulation;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ev.ExtEvData;
 import edu.ie3.simona.api.data.ev.ExtEvSimulation;
@@ -60,7 +59,9 @@ public abstract class ExtSimulation implements Runnable {
         newTrigger = Optional.of(initialize());
       } else {
         newTrigger =
-            doActivity(activationMessage.tick(), currentPhase); // this is blocking until processing of this tick has finished
+            doActivity(
+                activationMessage.tick(),
+                currentPhase); // this is blocking until processing of this tick has finished
       }
       data.send(new CompletionMessage(newTrigger, currentPhase));
 

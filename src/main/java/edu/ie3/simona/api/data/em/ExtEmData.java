@@ -13,12 +13,11 @@ import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.exceptions.ConvertionException;
-import org.apache.pekko.actor.ActorRef;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.pekko.actor.ActorRef;
 
 public class ExtEmData implements ExtData {
 
@@ -34,25 +33,21 @@ public class ExtEmData implements ExtData {
   /** Factory, that converts external input data to set points for EM agents */
   private final EmDataFactory emDataFactory;
 
-  public ExtEmData(
-          EmDataFactory emDataFactory,
-          Map<String, UUID> extEmMapping
-  ) {
+  public ExtEmData(EmDataFactory emDataFactory, Map<String, UUID> extEmMapping) {
     this.emDataFactory = emDataFactory;
     this.extEmMapping = extEmMapping;
   }
 
   /** Sets the actor refs for data and control flow */
-  public void setActorRefs(
-          ActorRef dataService,
-          ActorRef extSimAdapter
-  ) {
+  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
-  public List<UUID> getControlledEms() { return extEmMapping.values().stream().toList(); }
+  public List<UUID> getControlledEms() {
+    return extEmMapping.values().stream().toList();
+  }
 
   public EmDataFactory getEmDataFactory() {
     return emDataFactory;
@@ -76,27 +71,21 @@ public class ExtEmData implements ExtData {
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
-  /**
-   * Converts an input data package from an external simulation to a map of set points
-   */
-  public Map<UUID, PValue> createExtEmDataMap(
-          ExtInputDataPackage extInputDataPackage
-  ) {
+  /** Converts an input data package from an external simulation to a map of set points */
+  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataPackage extInputDataPackage) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
-    extInputDataPackage.getSimonaInputMap().forEach(
+    extInputDataPackage
+        .getSimonaInputMap()
+        .forEach(
             (id, extInput) -> {
               if (extEmMapping.containsKey(id)) {
                 try {
-                  emDataForSimona.put(
-                          extEmMapping.get(id),
-                          emDataFactory.convert(extInput)
-                  );
+                  emDataForSimona.put(extEmMapping.get(id), emDataFactory.convert(extInput));
                 } catch (ConvertionException e) {
                   throw new RuntimeException(e);
                 }
               }
-            }
-    );
+            });
     return emDataForSimona;
   }
 }

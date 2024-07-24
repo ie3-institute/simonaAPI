@@ -50,7 +50,7 @@ class ExtResultDataTest extends Specification {
         actorSystem = null
     }
 
-    def "ExtResultsData should request and receive results correctly as Object"() {
+    def "ExtResultsData should request and receive results correctly as ModelResultEntity"() {
         given:
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
@@ -71,12 +71,11 @@ class ExtResultDataTest extends Specification {
 
         then:
         dataService.expectMsg(new RequestResultEntities(0L))
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
+        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         receivedResults.get("Load") == loadResult
     }
 
-    /*
-    def "ExtResultsData should request and receive results correctly as a list of results entities"() {
+    def "ExtResultsData should fail if wrong response is sent"() {
         given:
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
@@ -88,51 +87,28 @@ class ExtResultDataTest extends Specification {
                 extSimAdapter.ref()
         )
 
-        def sentMsg = new ProvideResultEntities([loadResult])
-
-        when:
-        // we need to queue the msg beforehand because the receive method is blocking
-        extResultData.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultData.requestResults()
-
-        then:
-        dataService.expectMsg(new RequestResultEntities())
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
-        receivedResults == sentMsg.results()
-    }
-
-    def "ExtResultsData should fail if wrong response is sent"() {
-        given:
-        def dataService = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
-
         def unexpectedMsg = new WrongResultDataResponseMessageToExt()
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
         extResultData.queueExtResponseMsg(unexpectedMsg)
-        extResultData.requestResults()
+        extResultData.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities())
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
+        dataService.expectMsg(new RequestResultEntities(0L))
+        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         thrown RuntimeException
     }
 
-    def "ExtResultData should convert a list of result entities correctly to a map of objects"() {
+    def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
         given:
-            def dataService = new TestProbe(actorSystem)
-            def extSimAdapter = new TestProbe(actorSystem)
-            def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
+            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
 
         when:
-            def mapOfResults = extResultData.convertResultsList([loadResult])
+            def mapOfResults = extResultData.createResultMap([loadResult])
 
         then:
             mapOfResults.size() == 1
-            mapOfResults.get(loadUuid.toString()) == "{\"p\":\"10 kW,\"q\":\"10 kvar\"}"
+            mapOfResults.get("Load") == loadResult
     }
-
-     */
 }

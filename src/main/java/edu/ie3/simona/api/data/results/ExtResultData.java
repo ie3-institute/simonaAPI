@@ -15,14 +15,13 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import org.apache.pekko.actor.ActorRef;
-
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.pekko.actor.ActorRef;
 
 public class ExtResultData implements ExtOutputData {
 
@@ -39,11 +38,10 @@ public class ExtResultData implements ExtOutputData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
 
-  /** Map uuid to external id of grid related entities*/
+  /** Map uuid to external id of grid related entities */
   private final Map<UUID, String> gridResultAssetMapping;
 
-
-  /** Map uuid to external id of system participants*/
+  /** Map uuid to external id of system participants */
   private final Map<UUID, String> participantResultAssetMapping;
 
   private ZonedDateTime simulationStartTime;
@@ -51,29 +49,21 @@ public class ExtResultData implements ExtOutputData {
   private Long powerFlowResolution;
 
   public ExtResultData(
-          Map<UUID, String> participantResultAssetMapping,
-          Map<UUID, String> gridResultAssetMapping
-  ) {
+      Map<UUID, String> participantResultAssetMapping, Map<UUID, String> gridResultAssetMapping) {
     this.participantResultAssetMapping = participantResultAssetMapping;
     this.gridResultAssetMapping = gridResultAssetMapping;
   }
 
   /** Sets the actor refs for data and control flow */
   public void setActorRefs(
-          ActorRef dataService,
-          ActorRef dataServiceActivation,
-          ActorRef extSimAdapter
-  ) {
+      ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
   }
 
   /** Sets simulation data from config */
-  public void setSimulationData(
-          ZonedDateTime simulationStartTime,
-          Long powerFlowResolution
-  ) {
+  public void setSimulationData(ZonedDateTime simulationStartTime, Long powerFlowResolution) {
     this.simulationStartTime = simulationStartTime;
     this.powerFlowResolution = powerFlowResolution;
   }
@@ -107,24 +97,25 @@ public class ExtResultData implements ExtOutputData {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, ModelResultEntity> requestResults(long tick)
-      throws InterruptedException {
+  public Map<String, ModelResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
 
-  private Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
+  protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
     Map<String, ModelResultEntity> resultMap = new HashMap<>();
     results.forEach(
-            result -> {
-              if (result instanceof NodeResult nodeResult) {
-                resultMap.put(gridResultAssetMapping.get(nodeResult.getInputModel()), nodeResult);
-              } else if (result instanceof SystemParticipantResult systemParticipantResult) {
-                resultMap.put(participantResultAssetMapping.get(systemParticipantResult.getInputModel()), systemParticipantResult);
-              } else {
-                throw new RuntimeException();
-              }
-            }
-    );
+        result -> {
+          if (result instanceof NodeResult nodeResult) {
+            resultMap.put(gridResultAssetMapping.get(nodeResult.getInputModel()), nodeResult);
+          } else if (result instanceof SystemParticipantResult systemParticipantResult) {
+            resultMap.put(
+                participantResultAssetMapping.get(systemParticipantResult.getInputModel()),
+                systemParticipantResult);
+          } else {
+            throw new IllegalArgumentException(
+                "ExtResultData can only handle NodeResult's and SystemParticipantResult's!");
+          }
+        });
     return resultMap;
   }
 
