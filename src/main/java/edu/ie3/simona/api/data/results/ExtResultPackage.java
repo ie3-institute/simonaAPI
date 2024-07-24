@@ -49,7 +49,7 @@ public class ExtResultPackage implements ExtDataPackage {
               .add(nodeResult.getvMag().subtract(Quantities.getQuantity(1.0, PU)));
       return vMagDev.getValue().doubleValue();
     } else {
-      throw new RuntimeException("VOLTAGE DEVIATION is only available for NodeResult's!");
+      throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");
     }
   }
 
@@ -61,7 +61,8 @@ public class ExtResultPackage implements ExtDataPackage {
     if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getP().getValue().doubleValue();
     } else {
-      throw new RuntimeException("ACTIVE POWER is only available for SystemParticipantResult's!");
+      throw new IllegalArgumentException(
+          "ACTIVE POWER is only available for SystemParticipantResult's!");
     }
   }
 
@@ -73,13 +74,14 @@ public class ExtResultPackage implements ExtDataPackage {
     if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getQ().getValue().doubleValue();
     } else {
-      throw new RuntimeException("REACTIVE POWER is only available for SystemParticipantResult's!");
+      throw new IllegalArgumentException(
+          "REACTIVE POWER is only available for SystemParticipantResult's!");
     }
   }
 
   /** Returns the line loading for certain asset, if this asset provided a {@link NodeResult} */
   public double getLineLoading(String assetId) {
-    throw new RuntimeException("LINE LOADING is not implemented yet!");
+    throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }
 
   public String toString() {

@@ -104,7 +104,7 @@ class ExtEmDataTest extends Specification {
             emDataMap.get(inputUuid) == pValue
     }
 
-    def "ExtPrimaryData should throw an exception, if input data for a not requested asset was provided"() {
+    def "ExtEmData should throw an exception, if input data for a not requested asset was provided"() {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
@@ -116,4 +116,5 @@ class ExtEmDataTest extends Specification {
         then:
             thrown IllegalArgumentException
     }
+
 }

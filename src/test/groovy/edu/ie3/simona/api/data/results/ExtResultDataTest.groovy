@@ -2,6 +2,7 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.ResultEntity
+import edu.ie3.datamodel.models.result.connector.LineResult
 import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
@@ -15,6 +16,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
+import javax.measure.Quantity
+import javax.measure.quantity.Angle
+import javax.measure.quantity.ElectricCurrent
 import java.time.ZonedDateTime
 
 class ExtResultDataTest extends Specification {
@@ -110,5 +114,23 @@ class ExtResultDataTest extends Specification {
         then:
             mapOfResults.size() == 1
             mapOfResults.get("Load") == loadResult
+    }
+
+    def "ExtResultData should throw an exception, if a result with a wrong data type was provided"() {
+        given:
+            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+            Quantity<ElectricCurrent> iAMag = Quantities.getQuantity(100, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
+            Quantity<Angle> iAAng = Quantities.getQuantity(45, StandardUnits.ELECTRIC_CURRENT_ANGLE)
+            Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
+            Quantity<Angle> iBAng = Quantities.getQuantity(30, StandardUnits.ELECTRIC_CURRENT_ANGLE)
+            def wrongResult = new LineResult(
+                    ZonedDateTime.parse("2020-01-30T17:26:44Z"), loadUuid, iAMag, iAAng, iBMag, iBAng
+            )
+
+        when:
+            extResultData.createResultMap([wrongResult])
+
+        then:
+            thrown IllegalArgumentException
     }
 }
