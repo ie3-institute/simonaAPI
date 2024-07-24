@@ -55,7 +55,7 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
    *
    * @return Mapping external id and SIMONA uuid
    */
-  protected ExtEntityMapping buildExtEntityMapping() {
+  protected final ExtEntityMapping buildExtEntityMapping() {
     return new ExtEntityMapping(buildStream().map(this::createExtEntityEntry).toList());
   }
 
