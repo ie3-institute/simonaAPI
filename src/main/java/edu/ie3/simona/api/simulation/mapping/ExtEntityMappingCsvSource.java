@@ -10,7 +10,6 @@ import edu.ie3.datamodel.exceptions.SourceException;
 import edu.ie3.datamodel.io.naming.FileNamingStrategy;
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,22 +62,25 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
 
     try (Stream<String> lines = Files.lines(pathToCsv)) {
       // Read the header line
-      List<String> headers = lines
+      List<String> headers =
+          lines
               .findFirst()
               .map(line -> Arrays.asList(line.split(",")))
               .orElseThrow(() -> new RuntimeException("No header line found"));
 
       // Stream the rest of the lines
-      Stream<Map<String, String>> mapStream = Files.lines(pathToCsv)
+      Stream<Map<String, String>> mapStream =
+          Files.lines(pathToCsv)
               .skip(1) // Skip the header line
-              .map(line -> {
-                String[] values = line.split(",");
-                Map<String, String> map = new HashMap<>();
-                for (int i = 0; i < headers.size(); i++) {
-                  map.put(headers.get(i), values[i]);
-                }
-                return map;
-              });
+              .map(
+                  line -> {
+                    String[] values = line.split(",");
+                    Map<String, String> map = new HashMap<>();
+                    for (int i = 0; i < headers.size(); i++) {
+                      map.put(headers.get(i), values[i]);
+                    }
+                    return map;
+                  });
 
       return mapStream;
     } catch (IOException e) {
