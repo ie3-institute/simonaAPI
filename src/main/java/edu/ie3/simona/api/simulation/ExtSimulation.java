@@ -96,7 +96,7 @@ public abstract class ExtSimulation implements Runnable {
     } else if (phase == 2) {
       return doPostActivity(tick);
     } else {
-      return Optional.empty();
+      throw new IllegalArgumentException("ExtSimulation can only handle phase 1 and 2!");
     }
   }
 

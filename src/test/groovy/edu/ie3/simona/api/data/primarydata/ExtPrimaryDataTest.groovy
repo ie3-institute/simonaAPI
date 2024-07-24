@@ -68,6 +68,10 @@ class ExtPrimaryDataTest extends Specification {
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
         def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
+        extPrimaryData.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
 
         def primaryData = new HashMap<String, Object>()
         def uuid = UUID.randomUUID()
@@ -76,7 +80,7 @@ class ExtPrimaryDataTest extends Specification {
         def convertedPrimaryData = Map.of(uuid, new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
 
         when:
-        extPrimaryData.providePrimaryData(0, primaryData)
+        extPrimaryData.providePrimaryData(0, convertedPrimaryData)
 
         then:
         dataService.expectMsg(new ProvidePrimaryData(0, convertedPrimaryData))

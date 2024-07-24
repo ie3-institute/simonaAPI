@@ -79,8 +79,14 @@ class ExtResultDataTest extends Specification {
     def "ExtResultsData should request and receive results correctly as a list of results entities"() {
         given:
         def dataService = new TestProbe(actorSystem)
+        def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(dataService.ref(), extSimAdapter.ref(), new DefaultResultFactory())
+        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+        extResultData.setActorRefs(
+                dataService.ref(),
+                dataServiceActivation.ref(),
+                extSimAdapter.ref()
+        )
 
         def sentMsg = new ProvideResultEntities([loadResult])
 

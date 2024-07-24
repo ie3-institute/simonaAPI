@@ -42,8 +42,18 @@ class ExtSimulationSpec extends Specification {
         }
 
         @Override
-        protected Optional<Long> doActivity(long tick) {
+        protected Optional<Long> doPreActivity(long tick) {
             return this.activationReturnTick
+        }
+
+        @Override
+        protected Optional<Long> doPostActivity(long tick) {
+            return this.activationReturnTick
+        }
+
+        @Override
+        List<ExtData> getDataConnections() {
+            return new ArrayList<ExtData>()
         }
     }
 
@@ -64,36 +74,36 @@ class ExtSimulationSpec extends Specification {
         given:
             def tick = -1L
             def newTick = 0L
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivationMessage(tick))
+            extSimData.queueExtMsg(new ActivationMessage(tick, 1))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == false
-            testProbe.expectMsg(new CompletionMessage(Optional.of(newTick)))
+            extSimAdapter.expectMsg(new CompletionMessage(Optional.of(newTick), 1))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
             def extSim = new TestSimulation(-2L, newTickOpt)
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivationMessage(tick))
+            extSimData.queueExtMsg(new ActivationMessage(tick, 1))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == finished
-            testProbe.expectMsg(new CompletionMessage(newTickOpt))
+            extSimAdapter.expectMsg(new CompletionMessage(newTickOpt, 1))
 
         where:
             tick   | newTick       || finished
@@ -103,20 +113,41 @@ class ExtSimulationSpec extends Specification {
             10800L | []            || true
     }
 
+    def "An ExtSimulation throw an exception if a wrong phase was triggered"() {
+        given:
+            def tick = 0L
+            def newTick = 900L
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
+            def extSim = new TestSimulation(tick, Optional.of(newTick))
+            extSim.setup(extSimData, new ArrayList<ExtData>())
+
+        when:
+            extSimData.queueExtMsg(new ActivationMessage(tick, 0))
+            handleMessage.invoke(extSim)
+
+        then:
+            Exception ex = thrown()
+            // since we call a private method through reflection,
+            // our expected exception is wrapped in an InvocationTargetException
+            ex.getCause().getClass() == IllegalArgumentException
+            extSimAdapter.expectNoMessage()
+    }
+
     def "An ExtSimulation should handle termination properly"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
+            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful, 1))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == finished
-            testProbe.expectMsg(new TerminationCompleted())
+            extSimAdapter.expectMsg(new TerminationCompleted(1))
 
         where:
             simlulationSuccessful || finished
@@ -124,12 +155,17 @@ class ExtSimulationSpec extends Specification {
             true                  || true
     }
 
-    class UnknownMessage implements ControlMessageToExt {}
+    class UnknownMessage implements ControlMessageToExt {
+        @Override
+        int getPhase() {
+            return 0
+        }
+    }
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
@@ -142,6 +178,6 @@ class ExtSimulationSpec extends Specification {
             // since we call a private method through reflection,
             // our expected exception is wrapped in an InvocationTargetException
             ex.getCause().getClass() == IllegalArgumentException
-            testProbe.expectNoMessage()
+            extSimAdapter.expectNoMessage()
     }
 }
