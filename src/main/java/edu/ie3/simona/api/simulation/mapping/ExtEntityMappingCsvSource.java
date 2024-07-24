@@ -6,19 +6,16 @@
 
 package edu.ie3.simona.api.simulation.mapping;
 
-import com.opencsv.CSVReaderHeaderAware;
-import com.opencsv.exceptions.CsvValidationException;
 import edu.ie3.datamodel.exceptions.SourceException;
 import edu.ie3.datamodel.io.naming.FileNamingStrategy;
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
-import java.io.FileReader;
+
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /** Source that is capable of providing information around external mapping from csv files. */
 public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
@@ -62,32 +59,28 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
   private Stream<Map<String, String>>
       buildStream() { // TODO: Interim version -> maybe it would be easier to use PSDM methods for
     // reading the CSV
-    try {
-      FileReader fileReader = new FileReader(String.valueOf(mappingPath));
-      CSVReaderHeaderAware csvReader = new CSVReaderHeaderAware(fileReader);
+    Path pathToCsv = mappingPath;
 
-      // Creating a Stream from CSVReader
-      Stream<Map<String, String>> csvStream =
-          StreamSupport.stream(
-              new Spliterators.AbstractSpliterator<Map<String, String>>(
-                  Long.MAX_VALUE, Spliterator.ORDERED) {
-                @Override
-                public boolean tryAdvance(Consumer<? super Map<String, String>> action) {
-                  try {
-                    Map<String, String> line = csvReader.readMap();
-                    if (line == null) {
-                      return false;
-                    }
-                    action.accept(line);
-                    return true;
-                  } catch (IOException | CsvValidationException e) {
-                    throw new RuntimeException(e);
-                  }
+    try (Stream<String> lines = Files.lines(pathToCsv)) {
+      // Read the header line
+      List<String> headers = lines
+              .findFirst()
+              .map(line -> Arrays.asList(line.split(",")))
+              .orElseThrow(() -> new RuntimeException("No header line found"));
+
+      // Stream the rest of the lines
+      Stream<Map<String, String>> mapStream = Files.lines(pathToCsv)
+              .skip(1) // Skip the header line
+              .map(line -> {
+                String[] values = line.split(",");
+                Map<String, String> map = new HashMap<>();
+                for (int i = 0; i < headers.size(); i++) {
+                  map.put(headers.get(i), values[i]);
                 }
-              },
-              false);
+                return map;
+              });
 
-      return csvStream;
+      return mapStream;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
