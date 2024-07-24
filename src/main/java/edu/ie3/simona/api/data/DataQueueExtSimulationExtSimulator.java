@@ -12,8 +12,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class DataQueueExtSimulationExtSimulator<V extends ExtDataPackage> {
   private final LinkedBlockingQueue<V> receiverTriggerQueue = new LinkedBlockingQueue<>();
 
-  public DataQueueExtSimulationExtSimulator() {}
-
   public void queueData(V data) throws InterruptedException {
     this.receiverTriggerQueue.put(data);
   }

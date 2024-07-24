@@ -84,6 +84,9 @@ public class ExtEmData implements ExtData {
                 } catch (ConvertionException e) {
                   throw new RuntimeException(e);
                 }
+              } else {
+                throw new IllegalArgumentException(
+                    "Input for asset with id " + id + " was provided, but it wasn't requested!");
               }
             });
     return emDataForSimona;
