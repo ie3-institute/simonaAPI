@@ -92,7 +92,7 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
     return new ExtEntityEntry(
         UUID.fromString(fieldToValues.get(ExtEntityFactory.SIMONA_UUID)),
         fieldToValues.get(ExtEntityFactory.EXT_ID),
-        ColumnScheme.parse(fieldToValues.get(ExtEntityFactory.COLUMN_SCHEME)).get(),
+        ColumnScheme.parse(fieldToValues.get(ExtEntityFactory.COLUMN_SCHEME)).orElseThrow(),
         fieldToValues.get(ExtEntityFactory.DATA_TYPE));
   }
 
