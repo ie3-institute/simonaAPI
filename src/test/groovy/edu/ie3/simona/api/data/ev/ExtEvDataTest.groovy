@@ -98,10 +98,10 @@ class ExtEvDataTest extends Specification {
         arrivingEvs.put(UUID.randomUUID(), new ArrayList<EvModel>())
 
         when:
-        extEvData.provideArrivingEvs(arrivingEvs)
+        extEvData.provideArrivingEvs(arrivingEvs, Optional.of(60L))
 
         then:
-        dataService.expectMsg(new ProvideArrivingEvs(arrivingEvs))
+        dataService.expectMsg(new ProvideArrivingEvs(arrivingEvs, Optional.of(60L)))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 

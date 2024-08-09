@@ -28,7 +28,7 @@ jacocoTestReport {
   ]
 
   getClassDirectories().setFrom(fileTree(
-      dir: "${layout.buildDirectory}/classes/",
+      dir: layout.buildDirectory.dir("classes"),
       excludes: excludes
       ))
 

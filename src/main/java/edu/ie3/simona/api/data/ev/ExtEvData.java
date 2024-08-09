@@ -82,9 +82,11 @@ public class ExtEvData implements ExtData {
    * without expecting an answer from SIMONA.
    *
    * @param arrivals the arriving EV models per charging station UUID
+   * @param maybeNextTick the next tick at which new arrivals are expected, or empty if simulation
+   *     is about to end
    */
-  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals) {
-    sendExtMsg(new ProvideArrivingEvs(arrivals));
+  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvideArrivingEvs(arrivals, maybeNextTick));
   }
 
   /**

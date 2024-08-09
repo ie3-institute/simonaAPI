@@ -1,10 +1,10 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '6.22.0'//code format
+  id 'com.diffplug.spotless' version '6.25.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '5.2.3' // code check, working on byte code
-  id "org.sonarqube" version "4.4.1.3373" // sonarqube
+  id 'com.github.spotbugs' version '6.0.20' // code check, working on byte code
+  id "org.sonarqube" version "5.1.0.4882" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -17,8 +17,8 @@ ext {
 
   // required for pekko
   scalaVersion = "2.13"
-  scalaBinaryVersion = "2.13.12"
-  pekkoVersion = "1.0.1"
+  scalaBinaryVersion = "2.13.14"
+  pekkoVersion = "1.0.3"
 }
 
 group = 'com.github.ie3-institute'
@@ -51,12 +51,28 @@ dependencies{
   // scala (needed for pekko)
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
+  //PSDM
+  implementation('com.github.ie3-institute:PowerSystemUtils:2.2.1') {
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'org.slf4j'
+    /* Exclude our own nested dependencies */
+    exclude group: 'com.github.ie3-institute'
+  }
+  implementation('com.github.ie3-institute:PowerSystemDataModel:5.1.0') {
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'org.slf4j'
+    /* Exclude our own nested dependencies */
+    exclude group: 'com.github.ie3-institute'
+  }
+
   // pekko
   implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
   testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
 }
 
 task printVersion {

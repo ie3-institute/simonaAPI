@@ -28,17 +28,17 @@ class ExtSimulationSpec extends Specification {
      */
     private class TestSimulation extends ExtSimulation {
 
-        private Optional<Long> initReturnTicks
+        private Long initReturnTick
         private Optional<Long> activationReturnTick
 
-        TestSimulation(Optional<Long> initReturnTick, Optional<Long> activationReturnTick) {
-            this.initReturnTicks = initReturnTick
+        TestSimulation(Long initReturnTick, Optional<Long> activationReturnTick) {
+            this.initReturnTick = initReturnTick
             this.activationReturnTick = activationReturnTick
         }
 
         @Override
-        protected Optional<Long> initialize() {
-            return this.initReturnTicks
+        protected Long initialize() {
+            return this.initReturnTick
         }
 
         @Override
@@ -63,7 +63,7 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle initialization"() {
         given:
             def tick = -1L
-            def newTick = Optional.of(0L)
+            def newTick = 0L
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
@@ -75,7 +75,7 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == false
-            testProbe.expectMsg(new CompletionMessage(newTick))
+            testProbe.expectMsg(new CompletionMessage(Optional.of(newTick)))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
@@ -84,7 +84,7 @@ class ExtSimulationSpec extends Specification {
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
-            def extSim = new TestSimulation(Optional.of(-2L), newTickOpt)
+            def extSim = new TestSimulation(-2L, newTickOpt)
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -107,7 +107,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation(Optional.empty(), Optional.empty())
+            def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
@@ -130,7 +130,7 @@ class ExtSimulationSpec extends Specification {
         given:
             def testProbe = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
-            def extSim = new TestSimulation(Optional.empty(), Optional.empty())
+            def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
