@@ -13,10 +13,9 @@ import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import edu.ie3.simona.api.exceptions.ConvertionException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
+
 import org.apache.pekko.actor.ActorRef;
 
 public class ExtPrimaryData implements ExtData {
@@ -55,8 +54,8 @@ public class ExtPrimaryData implements ExtData {
   }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void providePrimaryData(Long tick, Map<UUID, Value> primaryData) {
-    sendExtMsg(new ProvidePrimaryData(tick, primaryData));
+  public void providePrimaryData(Long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
   }
 
   /**

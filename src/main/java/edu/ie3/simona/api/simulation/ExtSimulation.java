@@ -48,7 +48,6 @@ public abstract class ExtSimulation implements Runnable {
   private boolean takeAndHandleMessage() throws InterruptedException {
     // take() will block until an object is ready for us
     final ControlMessageToExt msg = data.receiveMessageQueue.take();
-    int currentPhase = msg.getPhase();
 
     if (msg.getClass().equals(ActivationMessage.class)) {
       final ActivationMessage activationMessage = (ActivationMessage) msg;
@@ -59,17 +58,15 @@ public abstract class ExtSimulation implements Runnable {
         newTrigger = Optional.of(initialize());
       } else {
         newTrigger =
-            doActivity(
-                activationMessage.tick(),
-                currentPhase); // this is blocking until processing of this tick has finished
+            doActivity(activationMessage.tick()); // this is blocking until processing of this tick has finished
       }
-      data.send(new CompletionMessage(newTrigger, currentPhase));
+      data.send(new CompletionMessage(newTrigger));
 
       return newTrigger.isEmpty();
     } else if (msg.getClass().equals(TerminationMessage.class)) {
       final TerminationMessage terminationMsg = (TerminationMessage) msg;
       terminate(terminationMsg.simulationSuccessful());
-      data.send(new TerminationCompleted(currentPhase));
+      data.send(new TerminationCompleted());
 
       return true;
     } else {
@@ -91,19 +88,7 @@ public abstract class ExtSimulation implements Runnable {
    * @param tick The current tick
    * @return The next tick at which this external simulation wants to be triggered, if applicable.
    */
-  protected Optional<Long> doActivity(long tick, int phase) {
-    if (phase == 1) {
-      return doPreActivity(tick);
-    } else if (phase == 2) {
-      return doPostActivity(tick);
-    } else {
-      throw new IllegalArgumentException("ExtSimulation can only handle phase 1 and 2!");
-    }
-  }
-
-  protected abstract Optional<Long> doPreActivity(long tick);
-
-  protected abstract Optional<Long> doPostActivity(long tick);
+  protected abstract Optional<Long> doActivity(long tick);
 
   /**
    * This method is called when the main simulation wants to terminate.

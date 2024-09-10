@@ -155,12 +155,7 @@ class ExtSimulationSpec extends Specification {
             true                  || true
     }
 
-    class UnknownMessage implements ControlMessageToExt {
-        @Override
-        int getPhase() {
-            return 0
-        }
-    }
+    class UnknownMessage implements ControlMessageToExt {}
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:

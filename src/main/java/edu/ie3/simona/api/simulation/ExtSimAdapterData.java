@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.simulation;
 
+import edu.ie3.simona.api.simulation.ontology.ActivationMessage;
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.Map;
@@ -21,25 +22,22 @@ public class ExtSimAdapterData {
   /**
    * Actor references to the adapters for the phases that handles scheduler control flow in SIMONA
    */
-  private final Map<Integer, ActorRef> extSimAdapters;
+  private final ActorRef extSimAdapter;
 
   /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
   // important trigger queue must be the same as held in actor
   // to make it safer one might consider asking the actor for a reference on its trigger queue?!
-  public ExtSimAdapterData(Map<Integer, ActorRef> extSimAdapters, String[] mainArgs) {
-    this.extSimAdapters = extSimAdapters;
+  public ExtSimAdapterData(ActorRef extSimAdapter, String[] mainArgs) {
+    this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
   }
 
-  public ActorRef getPhase1Adapter() {
-    return extSimAdapters.get(1);
+  public ActorRef getAdapter() {
+    return extSimAdapter;
   }
 
-  public ActorRef getPhase2Adapter() {
-    return extSimAdapters.get(2);
-  }
 
   /**
    * Called within SIMONA to queue messages for the external simulation
@@ -59,7 +57,7 @@ public class ExtSimAdapterData {
    * @param msg the message to send
    */
   public void send(ControlResponseMessageFromExt msg) {
-    extSimAdapters.get(msg.getPhase()).tell(msg, ActorRef.noSender());
+    extSimAdapter.tell(msg, ActorRef.noSender());
   }
 
   public String[] getMainArgs() {
