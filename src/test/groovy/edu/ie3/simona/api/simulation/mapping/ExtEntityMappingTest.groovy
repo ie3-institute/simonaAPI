@@ -24,7 +24,7 @@ class ExtEntityMappingTest extends Specification {
             "input"
     )
 
-    def "ExtEntityMapping should return external id to SIMONA uuid mapping correctly"() {
+    def "ExtEntityMapping should return SIMONA uuid mapping correctly"() {
         given:
         def extAssetList = List.of(extResultEntry, extInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
@@ -38,7 +38,7 @@ class ExtEntityMappingTest extends Specification {
     }
 
 
-    def "ExtEntityMapping should return external id to SIMONA uuid mapping correctly"() {
+    def "ExtEntityMapping should return external id mapping correctly"() {
         given:
         def extAssetList = List.of(extResultEntry, extInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)

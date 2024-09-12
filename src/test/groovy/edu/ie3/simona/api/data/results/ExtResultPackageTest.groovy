@@ -2,24 +2,12 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
-import edu.ie3.datamodel.models.result.connector.LineResult
 import edu.ie3.datamodel.models.result.system.LoadResult
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
-import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
-import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
 import edu.ie3.util.quantities.PowerSystemUnits
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.testkit.TestProbe
-import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
-import javax.measure.Quantity
-import javax.measure.quantity.Angle
-import javax.measure.quantity.Dimensionless
-import javax.measure.quantity.ElectricCurrent
 import java.time.ZonedDateTime
 
 class ExtResultPackageTest extends Specification {

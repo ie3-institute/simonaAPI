@@ -48,7 +48,7 @@ class ExtSimulationSpec extends Specification {
 
         @Override
         List<ExtData> getDataConnections() {
-            return new ArrayList<ExtData>()
+            return []
         }
     }
 

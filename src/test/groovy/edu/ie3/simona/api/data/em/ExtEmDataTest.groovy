@@ -33,7 +33,7 @@ class ExtEmDataTest extends Specification {
     )
 
     class TestInputDataValue implements ExtInputDataValue {
-        private PValue value
+        private final PValue value
 
         TestInputDataValue(PValue value) {
             this.value = value
@@ -48,7 +48,7 @@ class ExtEmDataTest extends Specification {
         @Override
         PValue convert(ExtInputDataValue entity) throws ConvertionException {
             if (entity instanceof TestInputDataValue) {
-                return entity.getValue()
+                return entity.value
             } else {
                 throw new ConvertionException("This factory can only convert PValue entities.")
             }
@@ -74,7 +74,7 @@ class ExtEmDataTest extends Specification {
                 extSimAdapter.ref()
         )
 
-        def emData = new HashMap<String, Value>()
+        def emData = [:] as HashMap<String, Value>
         def uuid = UUID.randomUUID()
         emData.put(uuid.toString(), pValue)
 

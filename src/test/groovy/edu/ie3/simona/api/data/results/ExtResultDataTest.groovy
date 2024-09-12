@@ -1,14 +1,12 @@
 package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
-import edu.ie3.datamodel.models.result.ResultEntity
 import edu.ie3.datamodel.models.result.connector.LineResult
 import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
-import edu.ie3.simona.api.exceptions.ConvertionException
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -38,10 +36,10 @@ class ExtResultDataTest extends Specification {
     )
 
     @Shared
-    HashMap<UUID, String> participantResultAssetMapping = Map.of(loadUuid, "Load") as HashMap<UUID, String>
+    Map<UUID, String> participantResultAssetMapping = Map.of(loadUuid, "Load")
 
     @Shared
-    HashMap<UUID, String> gridResultAssetMapping = [:]
+    Map<UUID, String> gridResultAssetMapping = [:]
 
     class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
