@@ -6,10 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.simulation.ontology.ActivationMessage;
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
@@ -37,7 +35,6 @@ public class ExtSimAdapterData {
   public ActorRef getAdapter() {
     return extSimAdapter;
   }
-
 
   /**
    * Called within SIMONA to queue messages for the external simulation

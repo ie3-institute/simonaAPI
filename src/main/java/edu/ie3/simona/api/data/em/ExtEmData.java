@@ -13,9 +13,7 @@ import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.exceptions.ConvertionException;
-
 import java.util.*;
-
 import org.apache.pekko.actor.ActorRef;
 
 public class ExtEmData implements ExtData {

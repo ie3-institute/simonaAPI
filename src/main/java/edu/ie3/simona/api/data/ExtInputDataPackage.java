@@ -35,7 +35,9 @@ public class ExtInputDataPackage implements ExtDataPackage {
     return dataMap;
   }
 
-  public Optional<Long> getMaybeNextTick() { return maybeNextTick; }
+  public Optional<Long> getMaybeNextTick() {
+    return maybeNextTick;
+  }
 
   /** Adds a value to the input map */
   public void addValue(String id, ExtInputDataValue value) {
