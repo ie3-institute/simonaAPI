@@ -10,6 +10,5 @@ package edu.ie3.simona.api.simulation.ontology;
  * Message that the external simulation is activated with by SIMONA
  *
  * @param tick The current tick
- * @param phase Phase of the simulation
  */
 public record ActivationMessage(long tick) implements ControlMessageToExt {}
