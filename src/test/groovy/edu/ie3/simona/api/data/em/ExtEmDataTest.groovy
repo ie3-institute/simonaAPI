@@ -81,37 +81,37 @@ class ExtEmDataTest extends Specification {
         def convertedEmData = Map.of(uuid, pValue)
 
         when:
-        extEmData.provideEmData(0, convertedEmData)
+        extEmData.provideEmData(0L, convertedEmData, Optional.of(900L))
 
         then:
-        dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData))
+        dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData, Optional.of(900L)))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
     def "ExtEmData should convert ExtInputDataPackage to a map"() {
         given:
-            def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
-            def inputDataMap = Map.of("Em", new TestInputDataValue(pValue))
-            def inputDataPackage = new ExtInputDataPackage(inputDataMap)
+        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
+        def inputDataMap = Map.of("Em", new TestInputDataValue(pValue))
+        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
 
         when:
-            def emDataMap = extEmData.createExtEmDataMap(inputDataPackage)
+        def emDataMap = extEmData.createExtEmDataMap(inputDataPackage)
 
         then:
-            emDataMap.get(inputUuid) == pValue
+        emDataMap.get(inputUuid) == pValue
     }
 
     def "ExtEmData should throw an exception, if input data for a not requested asset was provided"() {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(inputDataMap)
+        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
 
         when:
-            extEmData.createExtEmDataMap(inputDataPackage)
+        extEmData.createExtEmDataMap(inputDataPackage)
 
         then:
-            thrown IllegalArgumentException
+        thrown IllegalArgumentException
     }
 
 }

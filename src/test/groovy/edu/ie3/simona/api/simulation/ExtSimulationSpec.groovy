@@ -42,12 +42,7 @@ class ExtSimulationSpec extends Specification {
         }
 
         @Override
-        protected Optional<Long> doPreActivity(long tick) {
-            return this.activationReturnTick
-        }
-
-        @Override
-        protected Optional<Long> doPostActivity(long tick) {
+        protected Optional<Long> doActivity(long tick) {
             return this.activationReturnTick
         }
 
@@ -75,35 +70,35 @@ class ExtSimulationSpec extends Specification {
             def tick = -1L
             def newTick = 0L
             def extSimAdapter = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivationMessage(tick, 1))
+            extSimData.queueExtMsg(new ActivationMessage(tick))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == false
-            extSimAdapter.expectMsg(new CompletionMessage(Optional.of(newTick), 1))
+            extSimAdapter.expectMsg(new CompletionMessage(Optional.of(newTick)))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
             def extSimAdapter = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
             def extSim = new TestSimulation(-2L, newTickOpt)
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new ActivationMessage(tick, 1))
+            extSimData.queueExtMsg(new ActivationMessage(tick))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == finished
-            extSimAdapter.expectMsg(new CompletionMessage(newTickOpt, 1))
+            extSimAdapter.expectMsg(new CompletionMessage(newTickOpt))
 
         where:
             tick   | newTick       || finished
@@ -113,41 +108,20 @@ class ExtSimulationSpec extends Specification {
             10800L | []            || true
     }
 
-    def "An ExtSimulation throw an exception if a wrong phase was triggered"() {
-        given:
-            def tick = 0L
-            def newTick = 900L
-            def extSimAdapter = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
-            def extSim = new TestSimulation(tick, Optional.of(newTick))
-            extSim.setup(extSimData, new ArrayList<ExtData>())
-
-        when:
-            extSimData.queueExtMsg(new ActivationMessage(tick, 0))
-            handleMessage.invoke(extSim)
-
-        then:
-            Exception ex = thrown()
-            // since we call a private method through reflection,
-            // our expected exception is wrapped in an InvocationTargetException
-            ex.getCause().getClass() == IllegalArgumentException
-            extSimAdapter.expectNoMessage()
-    }
-
     def "An ExtSimulation should handle termination properly"() {
         given:
             def extSimAdapter = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
+        def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
         when:
-            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful, 1))
+            extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
             def finishedActual = handleMessage.invoke(extSim)
 
         then:
             finishedActual == finished
-            extSimAdapter.expectMsg(new TerminationCompleted(1))
+            extSimAdapter.expectMsg(new TerminationCompleted())
 
         where:
             simlulationSuccessful || finished
@@ -160,7 +134,7 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
             def extSimAdapter = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(Map.of(1, extSimAdapter.ref()), new String[0])
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 

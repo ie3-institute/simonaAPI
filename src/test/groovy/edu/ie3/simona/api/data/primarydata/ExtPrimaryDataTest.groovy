@@ -81,10 +81,10 @@ class ExtPrimaryDataTest extends Specification {
         def convertedPrimaryData = Map.of(uuid, pValue)
 
         when:
-        extPrimaryData.providePrimaryData(0, convertedPrimaryData)
+        extPrimaryData.providePrimaryData(0L, convertedPrimaryData, Optional.of(900L))
 
         then:
-        dataService.expectMsg(new ProvidePrimaryData(0, convertedPrimaryData))
+        dataService.expectMsg(new ProvidePrimaryData(0L, convertedPrimaryData, Optional.of(900L)))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -92,7 +92,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
             def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
             def inputDataMap = Map.of("Pv", new TestInputDataValue(pValue))
-            def inputDataPackage = new ExtInputDataPackage(inputDataMap)
+            def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
 
         when:
             def primaryDataMap = extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
@@ -105,7 +105,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
         def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(inputDataMap)
+        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
 
         when:
             extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
