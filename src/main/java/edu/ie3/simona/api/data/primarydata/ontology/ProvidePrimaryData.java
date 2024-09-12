@@ -12,5 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /** Message that provides primary data from an external primary data simulation */
-public record ProvidePrimaryData(long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick)
-    implements PrimaryDataMessageFromExt {}
+public record ProvidePrimaryData(
+        long tick,
+        Map<UUID, Value> primaryData,
+        Optional<Long> maybeNextTick
+) implements PrimaryDataMessageFromExt {}

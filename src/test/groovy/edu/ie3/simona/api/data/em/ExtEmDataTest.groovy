@@ -5,11 +5,8 @@ import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.ExtInputDataPackage
 import edu.ie3.simona.api.data.ExtInputDataValue
-import edu.ie3.simona.api.data.em.ontology.ProvideEmData
+import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.primarydata.ExtPrimaryData
-import edu.ie3.simona.api.data.primarydata.PrimaryDataFactory
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.exceptions.ConvertionException
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
@@ -87,7 +84,7 @@ class ExtEmDataTest extends Specification {
         extEmData.provideEmData(0, convertedEmData)
 
         then:
-        dataService.expectMsg(new ProvideEmData(0, convertedEmData))
+        dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 

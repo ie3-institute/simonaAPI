@@ -6,4 +6,5 @@
 
 package edu.ie3.simona.api.data;
 
+/** Interface that represents a value of an external simulation */
 public interface ExtInputDataValue {}

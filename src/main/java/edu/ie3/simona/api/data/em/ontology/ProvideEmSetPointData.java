@@ -8,7 +8,12 @@ package edu.ie3.simona.api.data.em.ontology;
 
 import edu.ie3.datamodel.models.value.PValue;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-/** Message that provides primary data from an external primary data simulation */
-public record ProvideEmData(long tick, Map<UUID, PValue> emData) implements EmDataMessageFromExt {}
+/** Message that provides em data (set points) from an external simulation */
+public record ProvideEmSetPointData(
+        long tick,
+        Map<UUID, PValue> emData,
+        Optional<Long> maybeNextTick
+) implements EmDataMessageFromExt {}

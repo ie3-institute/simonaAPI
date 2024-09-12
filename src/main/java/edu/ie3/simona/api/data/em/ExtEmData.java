@@ -10,13 +10,12 @@ import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtInputDataPackage;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
-import edu.ie3.simona.api.data.em.ontology.ProvideEmData;
+import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.exceptions.ConvertionException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
+
 import org.apache.pekko.actor.ActorRef;
 
 public class ExtEmData implements ExtData {
@@ -54,8 +53,8 @@ public class ExtEmData implements ExtData {
   }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void provideEmData(Long tick, Map<UUID, PValue> emData) {
-    sendExtMsg(new ProvideEmData(tick, emData));
+  public void provideEmData(Long tick, Map<UUID, PValue> emData, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvideEmSetPointData(tick, emData, maybeNextTick));
   }
 
   /**
