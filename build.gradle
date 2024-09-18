@@ -3,7 +3,7 @@ plugins {
   id 'java' // java support
   id 'com.diffplug.spotless' version '6.25.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '6.0.21' // code check, working on byte code
+  id 'com.github.spotbugs' version '6.0.22' // code check, working on byte code
   id "org.sonarqube" version "5.1.0.4882" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
@@ -18,7 +18,7 @@ ext {
   // required for pekko
   scalaVersion = "2.13"
   scalaBinaryVersion = "2.13.14"
-  pekkoVersion = "1.0.2"
+  pekkoVersion = "1.1.1"
 }
 
 group = 'com.github.ie3-institute'
