@@ -13,6 +13,9 @@ import edu.ie3.simona.api.exceptions.ConvertionException;
 /** Interface that should be implemented by an external simulation. */
 public interface PrimaryDataFactory {
 
-  /** Should convert an object to a primary data value with a check if the object is primary data */
+  /**
+   * Should convert an external value to a primary data value with a check if the object is primary
+   * data
+   */
   Value convert(ExtInputDataValue entity) throws ConvertionException;
 }

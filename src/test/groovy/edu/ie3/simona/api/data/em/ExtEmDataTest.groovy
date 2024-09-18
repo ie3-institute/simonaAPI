@@ -92,7 +92,7 @@ class ExtEmDataTest extends Specification {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Em", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
+        def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:
         def emDataMap = extEmData.createExtEmDataMap(inputDataPackage)
@@ -105,7 +105,7 @@ class ExtEmDataTest extends Specification {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
+        def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:
         extEmData.createExtEmDataMap(inputDataPackage)

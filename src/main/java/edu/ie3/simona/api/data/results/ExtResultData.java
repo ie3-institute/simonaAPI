@@ -54,7 +54,14 @@ public class ExtResultData implements ExtOutputData {
     this.gridResultAssetMapping = gridResultAssetMapping;
   }
 
-  /** Sets the actor refs for data and control flow */
+  /**
+   * Sets the actor refs for data and control flow
+   *
+   * @param dataService actor ref to the adapter of the data service for data messages
+   * @param dataServiceActivation actor ref to the adapter of the data service for schedule
+   *     activation messages
+   * @param extSimAdapter actor ref to the extSimAdapter
+   */
   public void setActorRefs(
       ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
     this.dataService = dataService;

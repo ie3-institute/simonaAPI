@@ -92,7 +92,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
             def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
             def inputDataMap = Map.of("Pv", new TestInputDataValue(pValue))
-            def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
+            def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:
             def primaryDataMap = extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
@@ -105,7 +105,7 @@ class ExtPrimaryDataTest extends Specification {
         given:
         def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(inputDataMap, Optional.of(900L))
+        def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:
             extPrimaryData.createExtPrimaryDataMap(inputDataPackage)

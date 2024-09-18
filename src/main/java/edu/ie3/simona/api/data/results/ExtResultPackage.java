@@ -29,6 +29,12 @@ public class ExtResultPackage implements ExtDataPackage {
    */
   private final Map<String, ModelResultEntity> simonaResultsMap;
 
+  /**
+   * Container class for output data from SIMONA
+   *
+   * @param tick current tick
+   * @param simonaResultsMap results from SIMONA with external id as key
+   */
   public ExtResultPackage(Long tick, Map<String, ModelResultEntity> simonaResultsMap) {
     this.tick = tick;
     this.simonaResultsMap = simonaResultsMap;
@@ -82,9 +88,5 @@ public class ExtResultPackage implements ExtDataPackage {
   /** Returns the line loading for certain asset, if this asset provided a {@link NodeResult} */
   public double getLineLoading(String assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
-  }
-
-  public String toString() {
-    return simonaResultsMap.toString();
   }
 }

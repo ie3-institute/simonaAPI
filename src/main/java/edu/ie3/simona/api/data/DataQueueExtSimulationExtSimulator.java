@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-/** Data queue to allow data flow between SIMONA and a co-simulator */
+/** Data queue to allow data flow between SIMONA and an external simulation */
 public class DataQueueExtSimulationExtSimulator<V extends ExtDataPackage> {
   private final LinkedBlockingQueue<V> receiverTriggerQueue = new LinkedBlockingQueue<>();
 

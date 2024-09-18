@@ -13,6 +13,8 @@ import edu.ie3.simona.api.exceptions.ConvertionException;
 /** Interface that should be implemented by an external simulation. */
 public interface EmDataFactory {
 
-  /** Should convert an object to a primary data value with a check if the object is primary data */
+  /**
+   * Should convert an object to an em data value with a check if the object has a valid data type
+   */
   PValue convert(ExtInputDataValue entity) throws ConvertionException;
 }
