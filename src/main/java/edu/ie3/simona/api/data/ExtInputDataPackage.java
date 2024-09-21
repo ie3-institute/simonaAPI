@@ -46,6 +46,10 @@ public class ExtInputDataPackage implements ExtDataPackage {
     return dataMap;
   }
 
+  public Long getTick() {
+    return tick;
+  }
+
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }
