@@ -15,15 +15,7 @@ import java.util.UUID;
 /** Provides a list of results from SIMONA to an external simulation. */
 public record ProvideResultEntities(List<ModelResultEntity> results)
     implements ResultDataResponseMessageToExt {
-  public ProvideResultEntities() {
-    this(new ArrayList<>());
-  }
-
   public ProvideResultEntities(Map<UUID, ModelResultEntity> resultMap) {
     this(resultMap.values().stream().toList());
-  }
-
-  public ProvideResultEntities(List<ModelResultEntity> results) {
-    this.results = results;
   }
 }

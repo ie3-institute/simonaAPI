@@ -46,7 +46,6 @@ public class ExtResultData implements ExtOutputData {
 
   private ZonedDateTime simulationStartTime;
 
-  private Long powerFlowResolution;
 
   public ExtResultData(
       Map<UUID, String> participantResultAssetMapping, Map<UUID, String> gridResultAssetMapping) {
@@ -67,24 +66,6 @@ public class ExtResultData implements ExtOutputData {
     this.dataService = dataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
-  }
-
-  /** Sets simulation data from config */
-  public void setSimulationData(ZonedDateTime simulationStartTime, Long powerFlowResolution) {
-    this.simulationStartTime = simulationStartTime;
-    this.powerFlowResolution = powerFlowResolution;
-  }
-
-  public ZonedDateTime getSimulationStartTime() {
-    return simulationStartTime;
-  }
-
-  public Long getPowerFlowResolution() {
-    return powerFlowResolution;
-  }
-
-  public ZonedDateTime getSimulationTime(Long tick) {
-    return simulationStartTime.plusSeconds(tick);
   }
 
   public List<UUID> getGridResultDataAssets() {

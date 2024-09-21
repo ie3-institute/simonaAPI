@@ -49,8 +49,7 @@ public class ExtResultPackage implements ExtDataPackage {
    */
   public double getVoltageDeviation(String assetId) {
     if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
-      ComparableQuantity<Dimensionless> vMagDev = Quantities.getQuantity(0, PU);
-      vMagDev =
+      ComparableQuantity<Dimensionless> vMagDev =
           Quantities.getQuantity(0, PU)
               .add(nodeResult.getvMag().subtract(Quantities.getQuantity(1.0, PU)));
       return vMagDev.getValue().doubleValue();

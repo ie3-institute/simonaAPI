@@ -11,7 +11,7 @@ public abstract class ExtEntityMappingSource {
 
   protected final ExtEntityFactory factory;
 
-  public ExtEntityMappingSource() {
+  protected ExtEntityMappingSource() {
     this.factory = new ExtEntityFactory();
   }
 }
