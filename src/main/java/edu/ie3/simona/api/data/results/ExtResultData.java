@@ -15,7 +15,6 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +42,6 @@ public class ExtResultData implements ExtOutputData {
 
   /** Map uuid to external id of system participants */
   private final Map<UUID, String> participantResultAssetMapping;
-
-  private ZonedDateTime simulationStartTime;
-
 
   public ExtResultData(
       Map<UUID, String> participantResultAssetMapping, Map<UUID, String> gridResultAssetMapping) {

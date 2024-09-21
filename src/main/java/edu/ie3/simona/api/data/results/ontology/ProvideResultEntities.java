@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.results.ontology;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
