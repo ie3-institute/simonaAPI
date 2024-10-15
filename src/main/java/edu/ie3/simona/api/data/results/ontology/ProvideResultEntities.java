@@ -8,7 +8,13 @@ package edu.ie3.simona.api.data.results.ontology;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /** Provides a list of results from SIMONA to an external simulation. */
 public record ProvideResultEntities(List<ModelResultEntity> results)
-    implements ResultDataResponseMessageToExt {}
+    implements ResultDataResponseMessageToExt {
+  public ProvideResultEntities(Map<UUID, ModelResultEntity> resultMap) {
+    this(resultMap.values().stream().toList());
+  }
+}

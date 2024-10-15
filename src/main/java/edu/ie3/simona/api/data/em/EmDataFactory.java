@@ -4,18 +4,17 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.primarydata;
+package edu.ie3.simona.api.data.em;
 
-import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtInputDataValue;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 
 /** Interface that should be implemented by an external simulation. */
-public interface PrimaryDataFactory {
+public interface EmDataFactory {
 
   /**
-   * Should convert an external value to a primary data value with a check if the object is primary
-   * data
+   * Should convert an object to an em data value with a check if the object has a valid data type
    */
-  Value convert(ExtInputDataValue entity) throws ConvertionException;
+  PValue convert(ExtInputDataValue entity) throws ConvertionException;
 }

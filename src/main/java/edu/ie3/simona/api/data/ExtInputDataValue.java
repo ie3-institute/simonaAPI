@@ -4,8 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.results;
+package edu.ie3.simona.api.data;
 
-import edu.ie3.simona.api.data.ExtDataSimulation;
-
-public interface ExtResultDataSimulation extends ExtDataSimulation {}
+/** Interface that represents a value of an external simulation */
+public interface ExtInputDataValue {}

@@ -57,8 +57,10 @@ public abstract class ExtSimulation implements Runnable {
         // this is blocking until initialization has finished
         newTrigger = Optional.of(initialize());
       } else {
-        // this is blocking until processing of this tick has finished
-        newTrigger = doActivity(activationMessage.tick());
+        newTrigger =
+            doActivity(
+                activationMessage
+                    .tick()); // this is blocking until processing of this tick has finished
       }
       data.send(new CompletionMessage(newTrigger));
 
@@ -126,4 +128,6 @@ public abstract class ExtSimulation implements Runnable {
   protected String[] getMainArgs() {
     return data.getMainArgs();
   }
+
+  public abstract List<ExtData> getDataConnections();
 }

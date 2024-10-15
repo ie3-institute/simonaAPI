@@ -4,19 +4,19 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.primarydata;
+package edu.ie3.simona.api.data.em;
 
-import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtInputDataPackage;
+import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
+import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import edu.ie3.simona.api.exceptions.ConvertionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtPrimaryData implements ExtData {
+public class ExtEmData implements ExtData {
 
   /** Actor reference to service that handles ev data within SIMONA */
   private ActorRef dataService;
@@ -24,16 +24,15 @@ public class ExtPrimaryData implements ExtData {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
 
-  /** Factory to convert an external object to PSDM primary data */
-  private final PrimaryDataFactory primaryDataFactory;
-
   /** Assets that provide primary data to SIMONA */
-  private final Map<String, UUID> extPrimaryDataMapping;
+  private final Map<String, UUID> extEmMapping;
 
-  public ExtPrimaryData(
-      PrimaryDataFactory primaryDataFactory, Map<String, UUID> extPrimaryDataMapping) {
-    this.primaryDataFactory = primaryDataFactory;
-    this.extPrimaryDataMapping = extPrimaryDataMapping;
+  /** Factory, that converts external input data to set points for EM agents */
+  private final EmDataFactory emDataFactory;
+
+  public ExtEmData(EmDataFactory emDataFactory, Map<String, UUID> extEmMapping) {
+    this.emDataFactory = emDataFactory;
+    this.extEmMapping = extEmMapping;
   }
 
   /** Sets the actor refs for data and control flow */
@@ -42,19 +41,18 @@ public class ExtPrimaryData implements ExtData {
     this.extSimAdapter = extSimAdapter;
   }
 
-  public PrimaryDataFactory getPrimaryDataFactory() {
-    return primaryDataFactory;
+  /** Returns a list of the uuids of the em agents that expect external set points */
+  public List<UUID> getControlledEms() {
+    return extEmMapping.values().stream().toList();
   }
 
-  /** Returns a list of the uuids of the system participants that expect external primary data */
-  public List<UUID> getPrimaryDataAssets() {
-    return extPrimaryDataMapping.values().stream().toList();
+  public EmDataFactory getEmDataFactory() {
+    return emDataFactory;
   }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void providePrimaryData(
-      Long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
-    sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
+  public void provideEmData(Long tick, Map<UUID, PValue> emData, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvideEmSetPointData(tick, emData, maybeNextTick));
   }
 
   /**
@@ -64,23 +62,22 @@ public class ExtPrimaryData implements ExtData {
    *
    * @param msg the data/information that is sent to SIMONA's external primary data service
    */
-  public void sendExtMsg(PrimaryDataMessageFromExt msg) {
+  public void sendExtMsg(EmDataMessageFromExt msg) {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 
-  /** Converts an input data package from an external simulation to a map of primary data */
-  public Map<UUID, Value> createExtPrimaryDataMap(ExtInputDataPackage extInputDataPackage) {
-    Map<UUID, Value> primaryDataForSimona = new HashMap<>();
+  /** Converts an input data package from an external simulation to a map of set points */
+  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataPackage extInputDataPackage) {
+    Map<UUID, PValue> emDataForSimona = new HashMap<>();
     extInputDataPackage
         .getSimonaInputMap()
         .forEach(
             (id, extInput) -> {
-              if (extPrimaryDataMapping.containsKey(id)) {
+              if (extEmMapping.containsKey(id)) {
                 try {
-                  primaryDataForSimona.put(
-                      extPrimaryDataMapping.get(id), primaryDataFactory.convert(extInput));
+                  emDataForSimona.put(extEmMapping.get(id), emDataFactory.convert(extInput));
                 } catch (ConvertionException e) {
                   throw new RuntimeException(e);
                 }
@@ -89,6 +86,6 @@ public class ExtPrimaryData implements ExtData {
                     "Input for asset with id " + id + " was provided, but it wasn't requested!");
               }
             });
-    return primaryDataForSimona;
+    return emDataForSimona;
   }
 }
