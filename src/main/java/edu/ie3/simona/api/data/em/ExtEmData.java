@@ -19,7 +19,7 @@ import org.apache.pekko.actor.ActorRef;
 public class ExtEmData implements ExtData {
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private ActorRef dataService;
+  private ActorRef emDataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
@@ -36,8 +36,8 @@ public class ExtEmData implements ExtData {
   }
 
   /** Sets the actor refs for data and control flow */
-  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
-    this.dataService = dataService;
+  public void setActorRefs(ActorRef emDataService, ActorRef extSimAdapter) {
+    this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
   }
 
@@ -46,11 +46,12 @@ public class ExtEmData implements ExtData {
     return extEmMapping.values().stream().toList();
   }
 
+  /** Return the factory, that converts external input data to set points for EM agents */
   public EmDataFactory getEmDataFactory() {
     return emDataFactory;
   }
 
-  /** Provide primary data from an external simulation in one tick. */
+  /** Provide primary data from an external simulation for one tick. */
   public void provideEmData(Long tick, Map<UUID, PValue> emData, Optional<Long> maybeNextTick) {
     sendExtMsg(new ProvideEmSetPointData(tick, emData, maybeNextTick));
   }
@@ -63,9 +64,9 @@ public class ExtEmData implements ExtData {
    * @param msg the data/information that is sent to SIMONA's external primary data service
    */
   public void sendExtMsg(EmDataMessageFromExt msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    emDataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(emDataService), ActorRef.noSender());
   }
 
   /** Converts an input data package from an external simulation to a map of set points */
