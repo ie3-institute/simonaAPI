@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Class to build a mapping entry external simulation to SIMONA */
+/** Class to build a mapping entry from the external simulation to SIMONA */
 public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> {
 
   public static final String SIMONA_UUID = "uuid";

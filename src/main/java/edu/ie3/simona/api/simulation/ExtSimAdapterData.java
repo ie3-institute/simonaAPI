@@ -17,9 +17,7 @@ public class ExtSimAdapterData {
   public final LinkedBlockingQueue<ControlMessageToExt> receiveMessageQueue =
       new LinkedBlockingQueue<>();
 
-  /**
-   * Actor references to the adapters for the phases that handles scheduler control flow in SIMONA
-   */
+  /** Actor reference to the adapter for the phases that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
   /** CLI arguments with which SIMONA is initiated */

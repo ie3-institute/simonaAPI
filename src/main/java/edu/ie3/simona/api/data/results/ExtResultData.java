@@ -29,7 +29,7 @@ public class ExtResultData implements ExtOutputData {
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles result data within SIMONA */
-  private ActorRef dataService;
+  private ActorRef extResultDataService;
 
   /** Actor reference to the dataServiceAdapter */
   private ActorRef dataServiceActivation;
@@ -52,14 +52,14 @@ public class ExtResultData implements ExtOutputData {
   /**
    * Sets the actor refs for data and control flow
    *
-   * @param dataService actor ref to the adapter of the data service for data messages
+   * @param extResultDataService actor ref to the adapter of the data service for data messages
    * @param dataServiceActivation actor ref to the adapter of the data service for schedule
    *     activation messages
    * @param extSimAdapter actor ref to the extSimAdapter
    */
   public void setActorRefs(
-      ActorRef dataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
-    this.dataService = dataService;
+      ActorRef extResultDataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
+    this.extResultDataService = extResultDataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
   }
@@ -111,7 +111,7 @@ public class ExtResultData implements ExtOutputData {
    * @param msg the data/information that is sent to SIMONA's result data service
    */
   public void sendExtMsg(ResultDataMessageFromExt msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    extResultDataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation), ActorRef.noSender());
   }

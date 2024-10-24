@@ -8,7 +8,7 @@ package edu.ie3.simona.api.simulation.mapping;
 
 import java.util.*;
 
-/** Contains the mapping between SIMONA uuid and external id and the data type the assets hold */
+/** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
 
   private final List<ExtEntityEntry> extEntities;
@@ -23,15 +23,15 @@ public class ExtEntityMapping {
    * @param dataType data type the external asset expects
    * @return Mapping external id to SIMONA uuid
    */
-  public Map<String, UUID> getExtIdUuidMapping(String dataType) {
-    Map<String, UUID> extIdUuidMapping = new HashMap<>();
+  public Map<String, UUID> getExtId2UuidMapping(String dataType) {
+    Map<String, UUID> extId2UuidMapping = new HashMap<>();
     extEntities.forEach(
         ent -> {
           if (Objects.equals(ent.resultType(), dataType)) {
-            extIdUuidMapping.put(ent.id(), ent.uuid());
+            extId2UuidMapping.put(ent.id(), ent.uuid());
           }
         });
-    return extIdUuidMapping;
+    return extId2UuidMapping;
   }
 
   /**
@@ -40,14 +40,14 @@ public class ExtEntityMapping {
    * @param dataType data type the external asset expects
    * @return Mapping SIMONA uuid to external id
    */
-  public Map<UUID, String> getExtUuidIdMapping(String dataType) {
-    Map<UUID, String> extUuidIdMapping = new HashMap<>();
+  public Map<UUID, String> getExtUuid2IdMapping(String dataType) {
+    Map<UUID, String> extUuid2IdMapping = new HashMap<>();
     extEntities.forEach(
         ent -> {
           if (Objects.equals(ent.resultType(), dataType)) {
-            extUuidIdMapping.put(ent.uuid(), ent.id());
+            extUuid2IdMapping.put(ent.uuid(), ent.id());
           }
         });
-    return extUuidIdMapping;
+    return extUuid2IdMapping;
   }
 }

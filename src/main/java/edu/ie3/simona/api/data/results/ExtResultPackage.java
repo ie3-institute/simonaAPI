@@ -10,6 +10,7 @@ import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataPackage;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class ExtResultPackage implements ExtDataPackage {
   }
 
   /**
-   * Returns the active power for certain asset, if this asset provided a {@link
+   * Returns the active power in kW for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
   public double getActivePower(String assetId) {
@@ -72,7 +73,7 @@ public class ExtResultPackage implements ExtDataPackage {
   }
 
   /**
-   * Returns the reactive power for certain asset, if this asset provided a {@link
+   * Returns the reactive power in kVAr for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
   public double getReactivePower(String assetId) {
@@ -84,7 +85,7 @@ public class ExtResultPackage implements ExtDataPackage {
     }
   }
 
-  /** Returns the line loading for certain asset, if this asset provided a {@link NodeResult} */
+  /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
   public double getLineLoading(String assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }
