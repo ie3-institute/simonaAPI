@@ -17,7 +17,7 @@ public class ExtSimAdapterData {
   public final LinkedBlockingQueue<ControlMessageToExt> receiveMessageQueue =
       new LinkedBlockingQueue<>();
 
-  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
+  /** Actor reference to the adapter for the phases that handles scheduler control flow in SIMONA */
   private final ActorRef extSimAdapter;
 
   /** CLI arguments with which SIMONA is initiated */
@@ -28,6 +28,10 @@ public class ExtSimAdapterData {
   public ExtSimAdapterData(ActorRef extSimAdapter, String[] mainArgs) {
     this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
+  }
+
+  public ActorRef getAdapter() {
+    return extSimAdapter;
   }
 
   /**
