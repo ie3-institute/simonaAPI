@@ -8,6 +8,7 @@ import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.exceptions.ConvertionException
+import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -15,16 +16,10 @@ import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
-class ExtEmDataTest extends Specification {
+class ExtEmDataTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
-
-    @Shared
-    UUID inputUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
-
-    @Shared
-    PValue pValue = new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN))
 
     @Shared
     Map<String, UUID> extEmDataMapping = Map.of(
@@ -32,23 +27,23 @@ class ExtEmDataTest extends Specification {
             inputUuid
     )
 
-    class TestInputDataValue implements ExtInputDataValue {
-        private final PValue value
+    class TestInputDataPValue implements ExtInputDataValue {
+        private final PValue pValue
 
-        TestInputDataValue(PValue value) {
-            this.value = value
+        TestInputDataPValue(PValue pValue) {
+            this.pValue = pValue
         }
 
-        PValue getValue() {
-            return value
+        PValue getPValue() {
+            return pValue
         }
     }
 
     class TestEmDataFactory implements EmDataFactory {
         @Override
         PValue convert(ExtInputDataValue entity) throws ConvertionException {
-            if (entity instanceof TestInputDataValue) {
-                return entity.value
+            if (entity instanceof TestInputDataPValue) {
+                return entity.pValue
             } else {
                 throw new ConvertionException("This factory can only convert PValue entities.")
             }
@@ -78,7 +73,7 @@ class ExtEmDataTest extends Specification {
         def uuid = UUID.randomUUID()
         emData.put(uuid.toString(), pValue)
 
-        def convertedEmData = Map.of(uuid, pValue)
+        def convertedEmData = Map.of(uuid, pValue as PValue)
 
         when:
         extEmData.provideEmData(0L, convertedEmData, Optional.of(900L))
@@ -91,7 +86,7 @@ class ExtEmDataTest extends Specification {
     def "ExtEmData should convert ExtInputDataPackage to a map"() {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
-        def inputDataMap = Map.of("Em", new TestInputDataValue(pValue))
+        def inputDataMap = Map.of("Em", new TestInputDataPValue(pValue))
         def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:
@@ -104,7 +99,7 @@ class ExtEmDataTest extends Specification {
     def "ExtEmData should throw an exception, if input data for a not requested asset was provided"() {
         given:
         def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
-        def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
+        def inputDataMap = Map.of("Load", new TestInputDataPValue(pValue))
         def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
 
         when:

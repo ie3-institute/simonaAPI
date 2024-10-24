@@ -8,6 +8,7 @@ import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.exceptions.ConvertionException
+import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -15,16 +16,10 @@ import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
-class ExtPrimaryDataTest extends Specification {
+class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
-
-    @Shared
-    UUID inputUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
-
-    @Shared
-    PValue pValue = new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN))
 
     @Shared
     Map<String, UUID> extPrimaryDataMapping = Map.of(
@@ -78,7 +73,7 @@ class ExtPrimaryDataTest extends Specification {
         def uuid = UUID.randomUUID()
         primaryData.put(uuid.toString(), pValue)
 
-        def convertedPrimaryData = Map.of(uuid, pValue)
+        def convertedPrimaryData = Map.of(uuid, pValue as Value)
 
         when:
         extPrimaryData.providePrimaryData(0L, convertedPrimaryData, Optional.of(900L))

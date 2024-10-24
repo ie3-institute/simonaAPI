@@ -7,6 +7,7 @@ import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
+import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
@@ -19,24 +20,13 @@ import javax.measure.quantity.Angle
 import javax.measure.quantity.ElectricCurrent
 import java.time.ZonedDateTime
 
-class ExtResultDataTest extends Specification {
+class ExtResultDataTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
 
     @Shared
-    UUID loadUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
-
-    @Shared
-    LoadResult loadResult = new LoadResult(
-            ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"),
-            loadUuid,
-            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN),
-            Quantities.getQuantity(10, StandardUnits.REACTIVE_POWER_IN)
-    )
-
-    @Shared
-    Map<UUID, String> participantResultAssetMapping = Map.of(loadUuid, "Load")
+    Map<UUID, String> participantResultAssetMapping = Map.of(inputUuid, "Load")
 
     @Shared
     Map<UUID, String> gridResultAssetMapping = [:]
@@ -122,7 +112,7 @@ class ExtResultDataTest extends Specification {
             Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
             Quantity<Angle> iBAng = Quantities.getQuantity(30, StandardUnits.ELECTRIC_CURRENT_ANGLE)
             def wrongResult = new LineResult(
-                    ZonedDateTime.parse("2020-01-30T17:26:44Z"), loadUuid, iAMag, iAAng, iBMag, iBAng
+                    ZonedDateTime.parse("2020-01-30T17:26:44Z"), inputUuid, iAMag, iAAng, iBMag, iBAng
             )
 
         when:
