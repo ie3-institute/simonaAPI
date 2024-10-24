@@ -30,7 +30,7 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtIdUuidMapping("input")
+        def inputMap = extEntryMapping.getExtId2UuidMapping("input")
 
         then:
         inputMap.size() == 1
@@ -44,7 +44,7 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtUuidIdMapping("input")
+        def inputMap = extEntryMapping.getExtUuid2IdMapping("input")
 
         then:
         inputMap.size() == 1
