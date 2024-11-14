@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Changed
+- Renaming power fields in `EvModel` [#208](https://github.com/ie3-institute/simonaAPI/issues/208)
+
+
 ## [0.5.0] - 2024-08-09
 
 ### Added
