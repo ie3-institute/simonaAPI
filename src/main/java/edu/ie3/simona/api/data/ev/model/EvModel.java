@@ -23,14 +23,14 @@ public interface EvModel {
   String getId();
 
   /**
-   * @return the maximum AC charging power of this ev
+   * @return the maximum AC charging power of this ev (as active power)
    */
-  ComparableQuantity<Power> getSRatedAC();
+  ComparableQuantity<Power> getPRatedAC();
 
   /**
-   * @return the maximum DC charging power of this ev
+   * @return the maximum DC charging power of this ev (as active power)
    */
-  ComparableQuantity<Power> getSRatedDC();
+  ComparableQuantity<Power> getPRatedDC();
 
   /**
    * @return the storage capacity of this ev's battery
