@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ExtInputDataPackage;
+import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -70,7 +70,7 @@ public class ExtEmData implements ExtData {
   }
 
   /** Converts an input data package from an external simulation to a map of set points */
-  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataPackage extInputDataPackage) {
+  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataContainer extInputDataPackage) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
     extInputDataPackage
         .getSimonaInputMap()

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /** Contains all inputs for SIMONA for a certain tick */
-public class ExtInputDataPackage implements ExtDataPackage {
+public class ExtInputDataContainer implements ExtDataContainer {
 
   private final long tick;
 
@@ -27,18 +27,18 @@ public class ExtInputDataPackage implements ExtDataPackage {
    * @param dataMap data to be provided to SIMONA
    * @param maybeNextTick tick, when the next data will be provided
    */
-  public ExtInputDataPackage(
+  public ExtInputDataContainer(
       long tick, Map<String, ExtInputDataValue> dataMap, Optional<Long> maybeNextTick) {
     this.tick = tick;
     this.dataMap = dataMap;
     this.maybeNextTick = maybeNextTick;
   }
 
-  public ExtInputDataPackage(long tick, long nextTick) {
+  public ExtInputDataContainer(long tick, long nextTick) {
     this(tick, new HashMap<>(), Optional.of(nextTick));
   }
 
-  public ExtInputDataPackage(long tick) {
+  public ExtInputDataContainer(long tick) {
     this(tick, new HashMap<>(), Optional.empty());
   }
 

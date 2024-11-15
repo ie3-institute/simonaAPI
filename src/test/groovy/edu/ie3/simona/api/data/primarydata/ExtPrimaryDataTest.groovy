@@ -2,7 +2,7 @@ package edu.ie3.simona.api.data.primarydata
 
 
 import edu.ie3.datamodel.models.value.Value
-import edu.ie3.simona.api.data.ExtInputDataPackage
+import edu.ie3.simona.api.data.ExtInputDataContainer
 import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
@@ -85,7 +85,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         given:
             def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
             def inputDataMap = Map.of("Pv", new TestInputDataValue(pValue))
-            def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
+            def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 
         when:
             def primaryDataMap = extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
@@ -98,7 +98,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         given:
         def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataPackage(0L, inputDataMap, Optional.of(900L))
+        def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 
         when:
             extPrimaryData.createExtPrimaryDataMap(inputDataPackage)

@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ExtInputDataPackage;
+import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
@@ -71,7 +71,7 @@ public class ExtPrimaryData implements ExtData {
   }
 
   /** Converts an input data package from an external simulation to a map of primary data */
-  public Map<UUID, Value> createExtPrimaryDataMap(ExtInputDataPackage extInputDataPackage) {
+  public Map<UUID, Value> createExtPrimaryDataMap(ExtInputDataContainer extInputDataPackage) {
     Map<UUID, Value> primaryDataForSimona = new HashMap<>();
     extInputDataPackage
         .getSimonaInputMap()

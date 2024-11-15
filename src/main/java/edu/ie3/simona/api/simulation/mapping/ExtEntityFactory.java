@@ -21,6 +21,10 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
   public static final String COLUMN_SCHEME = "columnScheme";
   public static final String DATA_TYPE = "dataType";
 
+  public ExtEntityFactory() {
+    super(new Class[] {ExtEntityEntry.class});
+  }
+
   @Override
   protected List<Set<String>> getFields(Class<?> entityClass) {
     return Collections.singletonList(
@@ -31,7 +35,7 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
   protected ExtEntityEntry buildModel(EntityData data) {
     UUID simonaUuid = data.getUUID(SIMONA_UUID);
     String extId = data.getField(EXT_ID);
-    Optional<ColumnScheme> columnScheme = ColumnScheme.parse(COLUMN_SCHEME);
+    Optional<ColumnScheme> columnScheme = ColumnScheme.parse(data.getField(COLUMN_SCHEME));
     String inputType = data.getField(DATA_TYPE);
 
     return new ExtEntityEntry(

@@ -12,14 +12,14 @@ import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
-import edu.ie3.simona.api.data.ExtDataPackage;
+import edu.ie3.simona.api.data.ExtDataContainer;
 import java.util.Map;
 import javax.measure.quantity.Dimensionless;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
 
 /** Contains all results from SIMONA for a certain tick */
-public class ExtResultPackage implements ExtDataPackage {
+public class ExtResultContainer implements ExtDataContainer {
 
   /** Tick the package is meant for */
   private final Long tick;
@@ -36,7 +36,7 @@ public class ExtResultPackage implements ExtDataPackage {
    * @param tick current tick
    * @param simonaResultsMap results from SIMONA with external id as key
    */
-  public ExtResultPackage(Long tick, Map<String, ModelResultEntity> simonaResultsMap) {
+  public ExtResultContainer(Long tick, Map<String, ModelResultEntity> simonaResultsMap) {
     this.tick = tick;
     this.simonaResultsMap = simonaResultsMap;
   }
@@ -50,7 +50,8 @@ public class ExtResultPackage implements ExtDataPackage {
    */
   public double getVoltageDeviation(String assetId) {
     if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
-      ComparableQuantity<Dimensionless> vMagDev = Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
+      ComparableQuantity<Dimensionless> vMagDev =
+          Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
       return vMagDev.getValue().doubleValue();
     } else {
       throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");

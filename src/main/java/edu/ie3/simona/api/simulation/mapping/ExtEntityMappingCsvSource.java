@@ -9,7 +9,6 @@ package edu.ie3.simona.api.simulation.mapping;
 import edu.ie3.datamodel.exceptions.SourceException;
 import edu.ie3.datamodel.io.factory.EntityData;
 import edu.ie3.datamodel.io.naming.FileNamingStrategy;
-import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,12 +89,7 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
   }
 
   private ExtEntityEntry createExtEntityEntry(Map<String, String> fieldToValues) {
-    return factory.get(
-            new EntityData(
-                    fieldToValues,
-                    ExtEntityEntry.class
-            )
-    ).getOrThrow();
+    return factory.get(new EntityData(fieldToValues, ExtEntityEntry.class)).getOrThrow();
   }
 
   public static ExtEntityMapping createExtEntityMapping(Path mappingPath) {

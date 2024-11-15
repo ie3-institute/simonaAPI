@@ -2,7 +2,6 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
-import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -29,7 +28,7 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
         def resultMap = Map.of(
                 "Node", nodeResult
         )
-        def extResultPackage = new ExtResultPackage(0L, resultMap)
+        def extResultPackage = new ExtResultContainer(0L, resultMap)
 
         when:
         def calculatedVoltageDeviation = extResultPackage.getVoltageDeviation("Node")
@@ -43,7 +42,7 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultPackage(0L, resultMap)
+        def extResultPackage = new ExtResultContainer(0L, resultMap)
 
         when:
         extResultPackage.getVoltageDeviation("Load")
@@ -57,7 +56,7 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultPackage(0L, resultMap)
+        def extResultPackage = new ExtResultContainer(0L, resultMap)
 
         when:
         def returnedActivePower = extResultPackage.getActivePower("Load")
@@ -71,7 +70,7 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultPackage(0L, resultMap)
+        def extResultPackage = new ExtResultContainer(0L, resultMap)
 
         when:
         def returnedReactivePower = extResultPackage.getReactivePower("Load")
@@ -85,7 +84,7 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
         def resultMap = Map.of(
                 "Node", nodeResult
         )
-        def extResultPackage = new ExtResultPackage(0L, resultMap)
+        def extResultPackage = new ExtResultContainer(0L, resultMap)
 
         when:
         extResultPackage.getActivePower("Node")
