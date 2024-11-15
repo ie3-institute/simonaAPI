@@ -12,6 +12,7 @@ import edu.ie3.simona.api.data.ExtDataSimulation;
  * An external simulation that provides an ev mobility simulation should implement this interface
  * and handle the ExtEvData that is handed over.
  */
+@Deprecated
 public interface ExtEvSimulation extends ExtDataSimulation {
 
   /**
@@ -19,5 +20,5 @@ public interface ExtEvSimulation extends ExtDataSimulation {
    *
    * @param evData the ev data
    */
-  void setExtEvData(ExtEvData evData);
+  void setExtEvData(ExtEvDataConnection evData);
 }

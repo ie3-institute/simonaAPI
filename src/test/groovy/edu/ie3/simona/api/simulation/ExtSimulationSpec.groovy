@@ -3,7 +3,7 @@ package edu.ie3.simona.api.simulation
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
-import edu.ie3.simona.api.data.ExtData
+import edu.ie3.simona.api.data.ExtDataConnection
 import edu.ie3.simona.api.simulation.ontology.ActivationMessage
 import edu.ie3.simona.api.simulation.ontology.CompletionMessage
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt
@@ -47,7 +47,7 @@ class ExtSimulationSpec extends Specification {
         }
 
         @Override
-        List<ExtData> getDataConnections() {
+        List<ExtDataConnection> getDataConnections() {
             return []
         }
     }
@@ -72,7 +72,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData)
 
         when:
             extSimData.queueExtMsg(new ActivationMessage(tick))
@@ -90,7 +90,7 @@ class ExtSimulationSpec extends Specification {
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
             def extSim = new TestSimulation(-2L, newTickOpt)
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData)
 
         when:
             extSimData.queueExtMsg(new ActivationMessage(tick))
@@ -113,7 +113,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData)
 
         when:
             extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
@@ -136,7 +136,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
-            extSim.setup(extSimData, new ArrayList<ExtData>())
+            extSim.setup(extSimData)
 
         when:
             extSimData.queueExtMsg(new UnknownMessage())

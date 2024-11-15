@@ -61,7 +61,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
+        def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
         extPrimaryData.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
@@ -83,7 +83,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     def "ExtPrimaryData should convert ExtInputDataPackage to a map"() {
         given:
-            def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
+            def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
             def inputDataMap = Map.of("Pv", new TestInputDataValue(pValue))
             def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 
@@ -96,7 +96,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     def "ExtPrimaryData should throw an exception, if input data for a not requested asset was provided"() {
         given:
-        def extPrimaryData = new ExtPrimaryData(new TestPrimaryDataFactory(), extPrimaryDataMapping)
+        def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
         def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
         def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 

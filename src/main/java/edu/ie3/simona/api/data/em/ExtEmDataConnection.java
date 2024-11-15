@@ -6,8 +6,10 @@
 
 package edu.ie3.simona.api.data.em;
 
+import edu.ie3.datamodel.models.input.AssetInput;
+import edu.ie3.datamodel.models.input.EmInput;
 import edu.ie3.datamodel.models.value.PValue;
-import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
@@ -16,7 +18,7 @@ import edu.ie3.simona.api.exceptions.ConversionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtEmData implements ExtData {
+public class ExtEmDataConnection implements ExtInputDataConnection {
 
   /** Actor reference to service that handles ev data within SIMONA */
   private ActorRef emDataService;
@@ -30,15 +32,20 @@ public class ExtEmData implements ExtData {
   /** Factory, that converts external input data to set points for EM agents */
   private final EmDataFactory emDataFactory;
 
-  public ExtEmData(EmDataFactory emDataFactory, Map<String, UUID> extEmMapping) {
+  public ExtEmDataConnection(EmDataFactory emDataFactory, Map<String, UUID> extEmMapping) {
     this.emDataFactory = emDataFactory;
     this.extEmMapping = extEmMapping;
   }
 
-  /** Sets the actor refs for data and control flow */
+  @Override
   public void setActorRefs(ActorRef emDataService, ActorRef extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
+  }
+
+  @Override
+  public List<Class<? extends AssetInput>> getTargetClasses() {
+    return List.of(EmInput.class);
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */

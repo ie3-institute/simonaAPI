@@ -2,7 +2,6 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.connector.LineResult
-import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
@@ -47,7 +46,7 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultData = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultData.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -72,7 +71,7 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultData = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultData.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -94,7 +93,7 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
 
     def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
         given:
-            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+            def extResultData = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
 
         when:
             def mapOfResults = extResultData.createResultMap([loadResult])
@@ -106,7 +105,7 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
 
     def "ExtResultData should throw an exception, if a result with a wrong data type was provided"() {
         given:
-            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+            def extResultData = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
             Quantity<ElectricCurrent> iAMag = Quantities.getQuantity(100, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
             Quantity<Angle> iAAng = Quantities.getQuantity(45, StandardUnits.ELECTRIC_CURRENT_ANGLE)
             Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)

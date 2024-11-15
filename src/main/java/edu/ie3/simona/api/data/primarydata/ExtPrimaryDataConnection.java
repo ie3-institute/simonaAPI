@@ -6,8 +6,9 @@
 
 package edu.ie3.simona.api.data.primarydata;
 
+import edu.ie3.datamodel.models.input.AssetInput;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
@@ -16,9 +17,9 @@ import edu.ie3.simona.api.exceptions.ConversionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtPrimaryData implements ExtData {
+public class ExtPrimaryDataConnection implements ExtInputDataConnection {
 
-  /** Actor reference to service that handles ev data within SIMONA */
+  /** Actor reference to service that handles primary data within SIMONA */
   private ActorRef dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
@@ -30,13 +31,19 @@ public class ExtPrimaryData implements ExtData {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
-  public ExtPrimaryData(
-      PrimaryDataFactory primaryDataFactory, Map<String, UUID> extPrimaryDataMapping) {
+  /** List of all assets that this data connector returns data for. */
+  private final List<Class<? extends AssetInput>> targetClasses;
+
+  public ExtPrimaryDataConnection(
+      PrimaryDataFactory primaryDataFactory,
+      Map<String, UUID> extPrimaryDataMapping,
+      List<Class<? extends AssetInput>> targetClasses) {
     this.primaryDataFactory = primaryDataFactory;
     this.extPrimaryDataMapping = extPrimaryDataMapping;
+    this.targetClasses = targetClasses;
   }
 
-  /** Sets the actor refs for data and control flow */
+  @Override
   public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
@@ -90,5 +97,10 @@ public class ExtPrimaryData implements ExtData {
               }
             });
     return primaryDataForSimona;
+  }
+
+  @Override
+  public List<Class<? extends AssetInput>> getTargetClasses() {
+    return targetClasses;
   }
 }

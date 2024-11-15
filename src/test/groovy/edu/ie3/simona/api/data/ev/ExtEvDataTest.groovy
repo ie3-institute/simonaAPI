@@ -33,7 +33,8 @@ class ExtEvDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
+        def extEvData = new ExtEvDataConnection()
+        extEvData.setActorRefs(dataService.ref(), extSimAdapter.ref())
 
         def sentMsg = new ProvideEvcsFreeLots()
 
@@ -52,7 +53,8 @@ class ExtEvDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
+        def extEvData = new ExtEvDataConnection()
+        extEvData.setActorRefs(dataService.ref(), extSimAdapter.ref())
 
         def sentMsg = new ProvideCurrentPrices()
 
@@ -71,7 +73,8 @@ class ExtEvDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
+        def extEvData = new ExtEvDataConnection()
+        extEvData.setActorRefs(dataService.ref(), extSimAdapter.ref())
 
         def requestedDepartingEvs = new HashMap<UUID, List<UUID>>()
         requestedDepartingEvs.put(UUID.randomUUID(), new ArrayList<UUID>())
@@ -92,7 +95,8 @@ class ExtEvDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
+        def extEvData = new ExtEvDataConnection()
+        extEvData.setActorRefs(dataService.ref(), extSimAdapter.ref())
 
         def arrivingEvs = new HashMap<UUID, List<EvModel>>()
         arrivingEvs.put(UUID.randomUUID(), new ArrayList<EvModel>())
@@ -109,7 +113,8 @@ class ExtEvDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEvData = new ExtEvData(dataService.ref(), extSimAdapter.ref())
+        def extEvData = new ExtEvDataConnection()
+        extEvData.setActorRefs(dataService.ref(), extSimAdapter.ref())
 
         def unexpectedMsg = new ProvideCurrentPrices()
 

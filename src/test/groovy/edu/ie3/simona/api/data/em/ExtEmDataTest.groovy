@@ -62,7 +62,7 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
+        def extEmData = new ExtEmDataConnection(new TestEmDataFactory(), extEmDataMapping)
         extEmData.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
@@ -84,7 +84,7 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
 
     def "ExtEmData should convert ExtInputDataPackage to a map"() {
         given:
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
+        def extEmData = new ExtEmDataConnection(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Em", new TestInputDataPValue(pValue))
         def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 
@@ -97,7 +97,7 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
 
     def "ExtEmData should throw an exception, if input data for a not requested asset was provided"() {
         given:
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
+        def extEmData = new ExtEmDataConnection(new TestEmDataFactory(), extEmDataMapping)
         def inputDataMap = Map.of("Load", new TestInputDataPValue(pValue))
         def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
 
