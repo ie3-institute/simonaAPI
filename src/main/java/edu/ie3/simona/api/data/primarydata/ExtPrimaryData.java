@@ -12,7 +12,7 @@ import edu.ie3.simona.api.data.ExtInputDataPackage;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import edu.ie3.simona.api.exceptions.ConvertionException;
+import edu.ie3.simona.api.exceptions.ConversionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
@@ -81,7 +81,7 @@ public class ExtPrimaryData implements ExtData {
                 try {
                   primaryDataForSimona.put(
                       extPrimaryDataMapping.get(id), primaryDataFactory.convert(extInput));
-                } catch (ConvertionException e) {
+                } catch (ConversionException e) {
                   throw new RuntimeException(e);
                 }
               } else {

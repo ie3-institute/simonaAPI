@@ -12,7 +12,7 @@ import edu.ie3.simona.api.data.ExtInputDataPackage;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.exceptions.ConvertionException;
+import edu.ie3.simona.api.exceptions.ConversionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
@@ -79,7 +79,7 @@ public class ExtEmData implements ExtData {
               if (extEmMapping.containsKey(id)) {
                 try {
                   emDataForSimona.put(extEmMapping.get(id), emDataFactory.convert(extInput));
-                } catch (ConvertionException e) {
+                } catch (ConversionException e) {
                   throw new RuntimeException(e);
                 }
               } else {

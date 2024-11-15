@@ -6,9 +6,9 @@
 
 package edu.ie3.simona.api.exceptions;
 
-public class ConvertionException extends Exception {
+public class ConversionException extends Exception {
 
-  public ConvertionException(final String message) {
+  public ConversionException(final String message) {
     super(message);
   }
 }

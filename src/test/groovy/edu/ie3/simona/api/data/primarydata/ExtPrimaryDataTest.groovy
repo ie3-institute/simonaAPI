@@ -1,20 +1,18 @@
 package edu.ie3.simona.api.data.primarydata
 
-import edu.ie3.datamodel.models.StandardUnits
-import edu.ie3.datamodel.models.value.PValue
+
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.ExtInputDataPackage
 import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
-import edu.ie3.simona.api.exceptions.ConvertionException
+import edu.ie3.simona.api.exceptions.ConversionException
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
 import spock.lang.Specification
-import tech.units.indriya.quantity.Quantities
 
 class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
@@ -41,11 +39,11 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     class TestPrimaryDataFactory implements PrimaryDataFactory {
         @Override
-        Value convert(ExtInputDataValue entity) throws ConvertionException {
+        Value convert(ExtInputDataValue entity) throws ConversionException {
             if (entity instanceof TestInputDataValue) {
                 return entity.value
             } else {
-                throw new ConvertionException("This factory can only convert PValue entities.")
+                throw new ConversionException("This factory can only convert PValue entities.")
             }
         }
     }

@@ -3,6 +3,7 @@ package edu.ie3.simona.api.data.results
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
 import edu.ie3.datamodel.models.result.system.LoadResult
+import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
 import spock.lang.Specification
@@ -10,9 +11,7 @@ import tech.units.indriya.quantity.Quantities
 
 import java.time.ZonedDateTime
 
-class ExtResultPackageTest extends Specification {
-    @Shared
-    UUID loadUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
+class ExtResultPackageTest extends Specification implements DataServiceTestData {
 
     @Shared
     UUID nodeUuid = UUID.fromString("55b97041-64be-4e6b-983a-72dbde6eddf4")
@@ -23,14 +22,6 @@ class ExtResultPackageTest extends Specification {
             nodeUuid,
             Quantities.getQuantity(0.95, PowerSystemUnits.PU),
             Quantities.getQuantity(45, StandardUnits.VOLTAGE_ANGLE)
-    )
-
-    @Shared
-    LoadResult loadResult = new LoadResult(
-            ZonedDateTime.parse("2020-01-30T17:26:44Z"),
-            loadUuid,
-            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN),
-            Quantities.getQuantity(10, StandardUnits.REACTIVE_POWER_IN)
     )
 
     def "ExtResultPackage should return voltage deviation correctly"() {
@@ -73,6 +64,20 @@ class ExtResultPackageTest extends Specification {
 
         then:
         returnedActivePower == 10d
+    }
+
+    def "ExtResultPackage should return reactive power correctly"() {
+        given:
+        def resultMap = Map.of(
+                "Load", loadResult
+        )
+        def extResultPackage = new ExtResultPackage(0L, resultMap)
+
+        when:
+        def returnedReactivePower = extResultPackage.getReactivePower("Load")
+
+        then:
+        returnedReactivePower == 5d
     }
 
     def "ExtResultPackage should throw an exception, if active power was requested for a not SystemParticipantResult"() {

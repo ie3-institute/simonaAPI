@@ -50,9 +50,7 @@ public class ExtResultPackage implements ExtDataPackage {
    */
   public double getVoltageDeviation(String assetId) {
     if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
-      ComparableQuantity<Dimensionless> vMagDev =
-          Quantities.getQuantity(0, PU)
-              .add(nodeResult.getvMag().subtract(Quantities.getQuantity(1.0, PU)));
+      ComparableQuantity<Dimensionless> vMagDev = Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
       return vMagDev.getValue().doubleValue();
     } else {
       throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");

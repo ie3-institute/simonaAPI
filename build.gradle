@@ -45,6 +45,7 @@ repositories {
 }
 
 dependencies{
+
   implementation 'tech.units:indriya:2.2' // quantities
 
   // scala (needed for pekko)
