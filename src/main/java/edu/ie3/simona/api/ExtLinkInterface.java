@@ -6,9 +6,7 @@
 
 package edu.ie3.simona.api;
 
-import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.simulation.ExtSimulation;
-import java.util.List;
 
 /**
  * Every external simulation has to provide a class {@code edu.ie3.simona.api.ExtLink} which
@@ -18,8 +16,9 @@ public interface ExtLinkInterface {
   /** Returns the external simulation. */
   ExtSimulation getExtSimulation();
 
-  /** Returns the data connection between this external simulation and SIMONA. */
-  default List<ExtDataConnection> getExtDataConnections() {
-    return getExtSimulation().getDataConnections();
-  }
+  /**
+   * Method to set up an external simulation that needs cli arguments.
+   * @param mainArgs the arguments the simulation is started with
+   */
+  void setup(String[] mainArgs);
 }
