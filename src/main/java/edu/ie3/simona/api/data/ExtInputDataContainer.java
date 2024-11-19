@@ -6,17 +6,20 @@
 
 package edu.ie3.simona.api.data;
 
+import edu.ie3.datamodel.models.value.Value;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /** Contains all inputs for SIMONA for a certain tick */
 public class ExtInputDataContainer implements ExtDataContainer {
 
   private final long tick;
 
-  /** Map external id to input for SIMONA */
-  private final Map<String, ExtInputDataValue> dataMap;
+  /** Map external id to an input value for SIMONA */
+  private final Map<String, Value> dataMap;
 
   private final Optional<Long> maybeNextTick;
 
@@ -25,24 +28,29 @@ public class ExtInputDataContainer implements ExtDataContainer {
    *
    * @param tick current tick
    * @param dataMap data to be provided to SIMONA
-   * @param maybeNextTick tick, when the next data will be provided
+   * @param nextTick tick, when the next data will be provided
    */
-  public ExtInputDataContainer(
-      long tick, Map<String, ExtInputDataValue> dataMap, Optional<Long> maybeNextTick) {
+  public ExtInputDataContainer(long tick, Map<String, Value> dataMap, long nextTick) {
     this.tick = tick;
     this.dataMap = dataMap;
-    this.maybeNextTick = maybeNextTick;
+    this.maybeNextTick = Optional.of(nextTick);
   }
 
-  public ExtInputDataContainer(long tick, long nextTick) {
-    this(tick, new HashMap<>(), Optional.of(nextTick));
+  public ExtInputDataContainer(long tick, Map<String, Value> dataMap) {
+    this.tick = tick;
+    this.dataMap = dataMap;
+    this.maybeNextTick = Optional.empty();
   }
 
   public ExtInputDataContainer(long tick) {
-    this(tick, new HashMap<>(), Optional.empty());
+    this(tick, new HashMap<>());
   }
 
-  public Map<String, ExtInputDataValue> getSimonaInputMap() {
+  public ExtInputDataContainer(long tick, long nextTick) {
+    this(tick, new HashMap<>(), nextTick);
+  }
+
+  public Map<String, Value> getSimonaInputMap() {
     return dataMap;
   }
 
@@ -55,7 +63,7 @@ public class ExtInputDataContainer implements ExtDataContainer {
   }
 
   /** Adds a value to the input map */
-  public void addValue(String id, ExtInputDataValue value) {
-    dataMap.put(id, value);
+  public void addValue(String id, Value value) {
+      dataMap.put(id, value);
   }
 }

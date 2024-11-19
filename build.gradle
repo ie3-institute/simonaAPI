@@ -65,6 +65,10 @@ dependencies{
     exclude group: 'com.github.ie3-institute'
   }
 
+  // logging
+  implementation "com.typesafe.scala-logging:scala-logging_${scalaVersion}:3.9.5" // pekko scala logging
+  implementation "ch.qos.logback:logback-classic:1.4.14"
+
   // pekko
   implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
   testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit

@@ -20,9 +20,13 @@ import java.util.Optional;
  */
 public abstract class ExtSimulation implements Runnable {
 
+  protected String simulationName;
+
   private ExtSimAdapterData data;
 
-  protected ExtSimulation() {}
+  protected ExtSimulation(String simulationName) {
+    this.simulationName = simulationName;
+  }
 
   public void run() {
     try {
