@@ -97,6 +97,10 @@ public abstract class ExtSimulation implements Runnable {
     // to be overwritten in subclass
   }
 
+  /**
+   * Method to set the external simulation adapter data. This method should be called during {@link edu.ie3.simona.api.ExtLinkInterface#setup(ExtSimAdapterData)}.
+   * @param data to set up
+   */
   public final void setAdapterData(ExtSimAdapterData data) {
     this.data = data;
   }
@@ -110,5 +114,9 @@ public abstract class ExtSimulation implements Runnable {
     return data.getMainArgs();
   }
 
+  /**
+   *
+   * Returns all {@link ExtDataConnection} of this simulation.
+   */
   public abstract List<ExtDataConnection> getDataConnections();
 }
