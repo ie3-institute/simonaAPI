@@ -72,7 +72,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
-            extSim.setup(extSimData)
+            extSim.setAdapterData(extSimData)
 
         when:
             extSimData.queueExtMsg(new ActivationMessage(tick))
@@ -90,7 +90,7 @@ class ExtSimulationSpec extends Specification {
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
             def extSim = new TestSimulation(-2L, newTickOpt)
-            extSim.setup(extSimData)
+            extSim.setAdapterData(extSimData)
 
         when:
             extSimData.queueExtMsg(new ActivationMessage(tick))
@@ -113,7 +113,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
-            extSim.setup(extSimData)
+            extSim.setAdapterData(extSimData)
 
         when:
             extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
@@ -136,7 +136,7 @@ class ExtSimulationSpec extends Specification {
             def extSimAdapter = new TestProbe(actorSystem)
             def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
-            extSim.setup(extSimData)
+            extSim.setAdapterData(extSimData)
 
         when:
             extSimData.queueExtMsg(new UnknownMessage())

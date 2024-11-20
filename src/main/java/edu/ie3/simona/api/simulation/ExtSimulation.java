@@ -97,7 +97,7 @@ public abstract class ExtSimulation implements Runnable {
     // to be overwritten in subclass
   }
 
-  public final void setup(ExtSimAdapterData data) {
+  public final void setAdapterData(ExtSimAdapterData data) {
     this.data = data;
   }
 

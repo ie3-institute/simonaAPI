@@ -22,7 +22,7 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
   public static final String DATA_TYPE = "dataType";
 
   public ExtEntityFactory() {
-    super(new Class[] {ExtEntityEntry.class});
+    super(ExtEntityEntry.class);
   }
 
   @Override

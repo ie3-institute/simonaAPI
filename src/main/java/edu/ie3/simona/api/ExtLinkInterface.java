@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api;
 
+import edu.ie3.simona.api.simulation.ExtSimAdapterData;
 import edu.ie3.simona.api.simulation.ExtSimulation;
 
 /**
@@ -17,8 +18,8 @@ public interface ExtLinkInterface {
   ExtSimulation getExtSimulation();
 
   /**
-   * Method to set up an external simulation that needs cli arguments.
-   * @param mainArgs the arguments the simulation is started with
+   * Method to set up an external simulation.
+   * @param data used for setting up the external simulation
    */
-  void setup(String[] mainArgs);
+  void setup(ExtSimAdapterData data);
 }
