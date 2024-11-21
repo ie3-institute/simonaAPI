@@ -46,7 +46,7 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.2' // quantities
+  implementation 'tech.units:indriya:2.2.1' // quantities
 
   // scala (needed for pekko)
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
