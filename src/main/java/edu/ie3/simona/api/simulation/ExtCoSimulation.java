@@ -46,50 +46,41 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /** Function to send primary data to SIMONA using ExtPrimaryData */
-  protected void sendPrimaryDataToSimona(ExtPrimaryData extPrimaryData, long tick, Logger log) {
-    try {
-      log.debug("Wait for Primary Data from " + extSimulatorName);
-      ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-      log.debug("Received Primary Data from " + extSimulatorName);
-      extPrimaryData.providePrimaryData(
-          tick,
-          extPrimaryData.convertExternalInputToPrimaryData(inputData),
-          inputData.getMaybeNextTick());
-      log.debug("Provided Primary Data to SIMONA!");
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+  protected void sendPrimaryDataToSimona(ExtPrimaryData extPrimaryData, long tick, Logger log)
+      throws InterruptedException {
+    log.debug("Wait for Primary Data from " + extSimulatorName);
+    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+    log.debug("Received Primary Data from " + extSimulatorName);
+    extPrimaryData.providePrimaryData(
+        tick,
+        extPrimaryData.convertExternalInputToPrimaryData(inputData),
+        inputData.getMaybeNextTick());
+    log.debug("Provided Primary Data to SIMONA!");
   }
 
   /**
    * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
    * agents have an own scheduler that should know, when the next set point arrives.
    */
-  protected void sendEmDataToSimona(ExtEmData extEmData, long tick, long nextTick, Logger log) {
-    try {
-      log.debug("Wait for EmData from " + extSimulatorName);
-      ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-      log.debug("Received EmData from " + extSimulatorName);
-      extEmData.provideEmData(
-          tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
-      log.debug("Provided EmData to SIMONA!");
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+  protected void sendEmDataToSimona(ExtEmData extEmData, long tick, long nextTick, Logger log)
+      throws InterruptedException {
+    log.debug("Wait for EmData from " + extSimulatorName);
+    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+    log.debug("Received EmData from " + extSimulatorName);
+    extEmData.provideEmData(
+        tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
+    log.debug("Provided EmData to SIMONA!");
   }
 
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendResultsToExtCoSimulator(
-      ExtResultData extResultData, long tick, Optional<Long> nextTick, Logger log) {
-    try {
-      log.debug("Request results from SIMONA!");
-      Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestResults(tick);
-      log.debug("Received results from SIMONA!");
-      dataQueueSimonaApiToExtCoSimulator.queueData(
-          new ExtResultContainer(tick, resultsToBeSend, nextTick));
-      log.debug("Sent results to " + extSimulatorName);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+      ExtResultData extResultData, long tick, Optional<Long> nextTick, Logger log)
+      throws InterruptedException {
+    log.debug("Request results from SIMONA!");
+    Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestResults(tick);
+    log.debug("Received results from SIMONA!");
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+        new ExtResultContainer(tick, resultsToBeSend, nextTick));
+    log.debug("Sent results to " + extSimulatorName);
   }
 }
