@@ -54,10 +54,6 @@ public class ExtInputDataContainer implements ExtDataContainer {
     return dataMap;
   }
 
-  public Long getTick() {
-    return tick;
-  }
-
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }
