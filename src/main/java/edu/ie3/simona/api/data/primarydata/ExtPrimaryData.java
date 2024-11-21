@@ -15,6 +15,7 @@ import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
+/** Enables data connection of primary data between SIMONA and SimonaAPI */
 public class ExtPrimaryData implements ExtData {
 
   /** Actor reference to service that handles ev data within SIMONA */

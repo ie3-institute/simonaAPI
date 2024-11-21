@@ -15,6 +15,7 @@ import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
+/** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmData implements ExtData {
 
   /** Actor reference to service that handles ev data within SIMONA */
