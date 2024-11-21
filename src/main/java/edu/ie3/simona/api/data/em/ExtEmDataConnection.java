@@ -29,11 +29,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extEmMapping;
 
-  /** Factory, that converts external input data to set points for EM agents */
-  private final EmDataFactory emDataFactory;
-
-  public ExtEmDataConnection(EmDataFactory emDataFactory, Map<String, UUID> extEmMapping) {
-    this.emDataFactory = emDataFactory;
+  public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
     this.extEmMapping = extEmMapping;
   }
 
@@ -51,11 +47,6 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   /** Returns a list of the uuids of the em agents that expect external set points */
   public List<UUID> getControlledEms() {
     return extEmMapping.values().stream().toList();
-  }
-
-  /** Return the factory, that converts external input data to set points for EM agents */
-  public EmDataFactory getEmDataFactory() {
-    return emDataFactory;
   }
 
   /** Provide primary data from an external simulation for one tick. */
@@ -77,17 +68,19 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   }
 
   /** Converts an input data package from an external simulation to a map of set points */
-  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataContainer extInputDataPackage) {
+  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataContainer extInputDataContainer) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
-    extInputDataPackage
+    extInputDataContainer
         .getSimonaInputMap()
         .forEach(
-            (id, extInput) -> {
+            (id, value) -> {
               if (extEmMapping.containsKey(id)) {
-                try {
-                  emDataForSimona.put(extEmMapping.get(id), emDataFactory.convert(extInput));
-                } catch (ConversionException e) {
-                  throw new RuntimeException(e);
+                if (value instanceof PValue pValue) {
+                  emDataForSimona.put(extEmMapping.get(id), pValue);
+                } else {
+                  throw new IllegalArgumentException(
+                          "EmData can only handle PValue's!"
+                  );
                 }
               } else {
                 throw new IllegalArgumentException(

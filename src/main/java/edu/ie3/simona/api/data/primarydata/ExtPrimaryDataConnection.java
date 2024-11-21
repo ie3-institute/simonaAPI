@@ -25,9 +25,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
 
-  /** Factory to convert an external object to PSDM primary data */
-  private final PrimaryDataFactory primaryDataFactory;
-
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
@@ -35,10 +32,8 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   private final List<Class<? extends AssetInput>> targetClasses;
 
   public ExtPrimaryDataConnection(
-      PrimaryDataFactory primaryDataFactory,
       Map<String, UUID> extPrimaryDataMapping,
       List<Class<? extends AssetInput>> targetClasses) {
-    this.primaryDataFactory = primaryDataFactory;
     this.extPrimaryDataMapping = extPrimaryDataMapping;
     this.targetClasses = targetClasses;
   }
@@ -47,10 +42,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
-  }
-
-  public PrimaryDataFactory getPrimaryDataFactory() {
-    return primaryDataFactory;
   }
 
   /** Returns a list of the uuids of the system participants that expect external primary data */
@@ -78,19 +69,14 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   }
 
   /** Converts an input data package from an external simulation to a map of primary data */
-  public Map<UUID, Value> createExtPrimaryDataMap(ExtInputDataContainer extInputDataPackage) {
+  public Map<UUID, Value> convertExternalInputToPrimaryData(ExtInputDataContainer extInputDataContainer) {
     Map<UUID, Value> primaryDataForSimona = new HashMap<>();
-    extInputDataPackage
+    extInputDataContainer
         .getSimonaInputMap()
         .forEach(
-            (id, extInput) -> {
+            (id, value) -> {
               if (extPrimaryDataMapping.containsKey(id)) {
-                try {
-                  primaryDataForSimona.put(
-                      extPrimaryDataMapping.get(id), primaryDataFactory.convert(extInput));
-                } catch (ConversionException e) {
-                  throw new RuntimeException(e);
-                }
+                primaryDataForSimona.put(extPrimaryDataMapping.get(id), value);
               } else {
                 throw new IllegalArgumentException(
                     "Input for asset with id " + id + " was provided, but it wasn't requested!");
