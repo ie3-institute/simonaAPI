@@ -6,17 +6,15 @@
 
 package edu.ie3.simona.api.data.em;
 
-import edu.ie3.datamodel.models.input.AssetInput;
-import edu.ie3.datamodel.models.input.EmInput;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.exceptions.ConversionException;
-import java.util.*;
 import org.apache.pekko.actor.ActorRef;
+
+import java.util.*;
 
 public class ExtEmDataConnection implements ExtInputDataConnection {
 
@@ -37,11 +35,6 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   public void setActorRefs(ActorRef emDataService, ActorRef extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
-  }
-
-  @Override
-  public List<Class<? extends AssetInput>> getTargetClasses() {
-    return List.of(EmInput.class);
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */

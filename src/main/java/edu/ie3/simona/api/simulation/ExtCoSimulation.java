@@ -1,15 +1,13 @@
 package edu.ie3.simona.api.simulation;
 
-import ch.qos.logback.classic.Logger;
 import edu.ie3.datamodel.models.result.ModelResultEntity;
-import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
-import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
-import edu.ie3.simona.api.data.em.ExtEmData;
-import edu.ie3.simona.api.data.primarydata.ExtPrimaryData;
+import edu.ie3.simona.api.data.em.ExtEmDataConnection;
+import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultContainer;
-import edu.ie3.simona.api.data.results.ExtResultData;
+import edu.ie3.simona.api.data.results.ExtResultDataConnection;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
@@ -21,12 +19,12 @@ import java.util.Optional;
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
 
-    protected final ch.qos.logback.classic.Logger log = (Logger) LoggerFactory.getLogger(simulationName);
+    protected final Logger log = LoggerFactory.getLogger(simulationName);
 
     protected final DataQueueExtSimulationExtSimulator<ExtInputDataContainer> dataQueueExtCoSimulatorToSimonaApi;
     protected final DataQueueExtSimulationExtSimulator<ExtResultContainer> dataQueueSimonaApiToExtCoSimulator;
 
-    private final long deltaT = 900L;
+    protected final long deltaT = 900L;
 
     protected ExtCoSimulation(String simulationName) {
         super(simulationName);
@@ -35,12 +33,12 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
 
     protected void sendPrimaryDataToSimona(
-            ExtPrimaryData extPrimaryData,
+            ExtPrimaryDataConnection extPrimaryData,
             long tick
     ) {
         try {
             ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-            log.debug("Received Primary Data from " + simulationName + " = " + inputData);
+            log.debug("Received Primary Data from {} = {}", simulationName, inputData);
 
             extPrimaryData.providePrimaryData(
                     tick,
@@ -54,12 +52,12 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
 
     protected void sendEmDataToSimona(
-            ExtEmData extEmData,
+            ExtEmDataConnection extEmData,
             long tick,
             long nextTick
     ) {
         try {
-            log.info("+++++ External simulation triggered for tick " + tick + " +++++");
+            log.info("+++++ External simulation triggered for tick {} +++++", tick);
             log.info("Wait for new EmData from OpSim...");
             ExtInputDataContainer rawEmData = dataQueueExtCoSimulatorToSimonaApi.takeData();
             extEmData.provideEmData(
@@ -74,7 +72,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
 
     protected void sendResultsToExtCoSimulator(
-            ExtResultData extResultData,
+            ExtResultDataConnection extResultData,
             long tick,
             long nextTick
     ) {
@@ -84,7 +82,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
             log.info("Received results from SIMONA! Now convert them and send them to Mosaik!");
 
             dataQueueSimonaApiToExtCoSimulator.queueData(new ExtResultContainer(tick, resultsToBeSend));
-            log.info("***** External simulation for tick " + tick + " completed. Next simulation tick = " + nextTick + " *****");
+            log.info("***** External simulation for tick {} completed. Next simulation tick = {} *****", tick, nextTick);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

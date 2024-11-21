@@ -120,6 +120,14 @@ public abstract class ExtSimulation implements Runnable {
 
   /**
    *
+   * Returns the name of this external simulation.
+   */
+  public final String getSimulationName() {
+    return simulationName;
+  }
+
+  /**
+   *
    * Returns all {@link ExtDataConnection} of this simulation.
    */
   public abstract List<ExtDataConnection> getDataConnections();

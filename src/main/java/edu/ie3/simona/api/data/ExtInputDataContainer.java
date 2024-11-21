@@ -8,10 +8,7 @@ package edu.ie3.simona.api.data;
 
 import edu.ie3.datamodel.models.value.Value;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
 public class ExtInputDataContainer implements ExtDataContainer {

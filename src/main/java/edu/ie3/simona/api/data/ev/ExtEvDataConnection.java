@@ -6,15 +6,17 @@
 
 package edu.ie3.simona.api.data.ev;
 
-import edu.ie3.datamodel.models.input.AssetInput;
-import edu.ie3.datamodel.models.input.system.EvcsInput;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ExtEvDataConnection implements ExtInputDataConnection {
   /** Data message queue containing messages from SIMONA */
@@ -35,11 +37,6 @@ public class ExtEvDataConnection implements ExtInputDataConnection {
   public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
-  }
-
-  @Override
-  public List<Class<? extends AssetInput>> getTargetClasses() {
-    return List.of(EvcsInput.class);
   }
 
   /**

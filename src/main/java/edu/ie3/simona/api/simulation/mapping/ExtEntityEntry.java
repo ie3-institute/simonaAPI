@@ -24,7 +24,8 @@ public record ExtEntityEntry(
     ColumnScheme columnScheme, // FIXME: placeholder -> ColumnScheme should handle more data types
     String resultType)
     implements InputEntity {
-  public static final String EXT_INPUT = "input";
+  public static final String EXT_PRIMARY_INPUT = "primary_input";
+  public static final String EXT_EM_INPUT = "em_input";
   public static final String EXT_RESULT_PARTICIPANT = "result_participant";
   public static final String EXT_RESULT_GRID = "result_grid";
 

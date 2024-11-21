@@ -6,16 +6,15 @@
 
 package edu.ie3.simona.api.data.primarydata;
 
-import edu.ie3.datamodel.models.input.AssetInput;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import edu.ie3.simona.api.exceptions.ConversionException;
-import java.util.*;
 import org.apache.pekko.actor.ActorRef;
+
+import java.util.*;
 
 public class ExtPrimaryDataConnection implements ExtInputDataConnection {
 
@@ -28,14 +27,9 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
-  /** List of all assets that this data connector returns data for. */
-  private final List<Class<? extends AssetInput>> targetClasses;
 
-  public ExtPrimaryDataConnection(
-      Map<String, UUID> extPrimaryDataMapping,
-      List<Class<? extends AssetInput>> targetClasses) {
+  public ExtPrimaryDataConnection(Map<String, UUID> extPrimaryDataMapping) {
     this.extPrimaryDataMapping = extPrimaryDataMapping;
-    this.targetClasses = targetClasses;
   }
 
   @Override
@@ -83,10 +77,5 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
               }
             });
     return primaryDataForSimona;
-  }
-
-  @Override
-  public List<Class<? extends AssetInput>> getTargetClasses() {
-    return targetClasses;
   }
 }

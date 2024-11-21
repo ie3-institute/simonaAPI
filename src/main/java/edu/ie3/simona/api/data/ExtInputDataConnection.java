@@ -6,8 +6,6 @@
 
 package edu.ie3.simona.api.data;
 
-import edu.ie3.datamodel.models.input.AssetInput;
-import java.util.List;
 import org.apache.pekko.actor.ActorRef;
 
 public interface ExtInputDataConnection extends ExtDataConnection {
@@ -20,7 +18,4 @@ public interface ExtInputDataConnection extends ExtDataConnection {
    * @param extSimAdapter actor ref to the extSimAdapter
    */
   void setActorRefs(ActorRef dataService, ActorRef extSimAdapter);
-
-  /** Returns a list of all classes this connection provides data for. */
-  List<Class<? extends AssetInput>> getTargetClasses();
 }
