@@ -24,7 +24,7 @@ public class ExtInputDataContainer implements ExtDataContainer {
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Container class for input data for SIMONA
+   * Container class for input data for SIMONA which can be read by SimonaAPI
    *
    * @param tick The tick, the input data is meant for
    * @param dataMap data to be provided to SIMONA
@@ -48,6 +48,10 @@ public class ExtInputDataContainer implements ExtDataContainer {
 
   public ExtInputDataContainer(long tick, long nextTick) {
     this(tick, new HashMap<>(), nextTick);
+  }
+
+  public long getTick() {
+    return tick;
   }
 
   public Map<String, Value> getSimonaInputMap() {

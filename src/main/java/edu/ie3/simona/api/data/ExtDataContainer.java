@@ -6,5 +6,5 @@
 
 package edu.ie3.simona.api.data;
 
-/** Interface for data format to exchange data with an external simulation */
+/** Interface for data that are exchanged between an external simulation and SimonaAPI */
 public interface ExtDataContainer {}
