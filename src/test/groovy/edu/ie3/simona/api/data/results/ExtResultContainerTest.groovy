@@ -10,7 +10,7 @@ import tech.units.indriya.quantity.Quantities
 
 import java.time.ZonedDateTime
 
-class ExtResultPackageTest extends Specification implements DataServiceTestData {
+class ExtResultContainerTest extends Specification implements DataServiceTestData {
 
     @Shared
     UUID nodeUuid = UUID.fromString("55b97041-64be-4e6b-983a-72dbde6eddf4")
@@ -23,71 +23,71 @@ class ExtResultPackageTest extends Specification implements DataServiceTestData 
             Quantities.getQuantity(45, StandardUnits.VOLTAGE_ANGLE)
     )
 
-    def "ExtResultPackage should return voltage deviation correctly"() {
+    def "ExtResultContainer should return voltage deviation correctly"() {
         given:
         def resultMap = Map.of(
                 "Node", nodeResult
         )
-        def extResultPackage = new ExtResultContainer(0L, resultMap)
+        def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def calculatedVoltageDeviation = extResultPackage.getVoltageDeviation("Node")
+        def calculatedVoltageDeviation = extResultContainer.getVoltageDeviation("Node")
 
         then:
         calculatedVoltageDeviation == -0.05d
     }
 
-    def "ExtResultPackage should throw an exception, if voltage deviation was requested for a not NodeResult"() {
+    def "ExtResultContainer should throw an exception, if voltage deviation was requested for a not NodeResult"() {
         given:
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultContainer(0L, resultMap)
+        def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        extResultPackage.getVoltageDeviation("Load")
+        extResultContainer.getVoltageDeviation("Load")
 
         then:
         thrown IllegalArgumentException
     }
 
-    def "ExtResultPackage should return active power correctly"() {
+    def "ExtResultContainer should return active power correctly"() {
         given:
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultContainer(0L, resultMap)
+        def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def returnedActivePower = extResultPackage.getActivePower("Load")
+        def returnedActivePower = extResultContainer.getActivePower("Load")
 
         then:
         returnedActivePower == 10d
     }
 
-    def "ExtResultPackage should return reactive power correctly"() {
+    def "ExtResultContainer should return reactive power correctly"() {
         given:
         def resultMap = Map.of(
                 "Load", loadResult
         )
-        def extResultPackage = new ExtResultContainer(0L, resultMap)
+        def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def returnedReactivePower = extResultPackage.getReactivePower("Load")
+        def returnedReactivePower = extResultContainer.getReactivePower("Load")
 
         then:
         returnedReactivePower == 5d
     }
 
-    def "ExtResultPackage should throw an exception, if active power was requested for a not SystemParticipantResult"() {
+    def "ExtResultContainer should throw an exception, if active power was requested for a not SystemParticipantResult"() {
         given:
         def resultMap = Map.of(
                 "Node", nodeResult
         )
-        def extResultPackage = new ExtResultContainer(0L, resultMap)
+        def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        extResultPackage.getActivePower("Node")
+        extResultContainer.getActivePower("Node")
 
         then:
         thrown IllegalArgumentException

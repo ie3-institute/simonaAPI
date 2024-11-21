@@ -7,13 +7,11 @@
 package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
-import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.exceptions.ConversionException;
 import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
@@ -62,7 +60,8 @@ public class ExtEmData implements ExtData {
   }
 
   /** Converts an input data package from an external simulation to a map of set points */
-  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataContainer extInputDataContainer) {
+  public Map<UUID, PValue> convertExternalInputToEmSetPoints(
+      ExtInputDataContainer extInputDataContainer) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
     extInputDataContainer
         .getSimonaInputMap()
@@ -72,9 +71,7 @@ public class ExtEmData implements ExtData {
                 if (value instanceof PValue pValue) {
                   emDataForSimona.put(extEmMapping.get(id), pValue);
                 } else {
-                  throw new IllegalArgumentException(
-                          "EmData can only handle PValue's!"
-                  );
+                  throw new IllegalArgumentException("EmData can only handle PValue's!");
                 }
               } else {
                 throw new IllegalArgumentException(

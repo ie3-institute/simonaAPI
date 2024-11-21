@@ -4,10 +4,8 @@ package edu.ie3.simona.api.data.em
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.ExtInputDataContainer
-import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.exceptions.ConversionException
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
@@ -26,29 +24,6 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
             inputUuid
     )
 
-    class TestInputDataPValue implements ExtInputDataValue {
-        private final PValue pValue
-
-        TestInputDataPValue(PValue pValue) {
-            this.pValue = pValue
-        }
-
-        PValue getPValue() {
-            return pValue
-        }
-    }
-
-    class TestEmDataFactory implements EmDataFactory {
-        @Override
-        PValue convert(ExtInputDataValue entity) throws ConversionException {
-            if (entity instanceof TestInputDataPValue) {
-                return entity.pValue
-            } else {
-                throw new ConversionException("This factory can only convert PValue entities.")
-            }
-        }
-    }
-
     def setupSpec() {
         actorSystem = ActorSystem.create()
     }
@@ -62,7 +37,7 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
+        def extEmData = new ExtEmData(extEmDataMapping)
         extEmData.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
@@ -84,12 +59,12 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
 
     def "ExtEmData should convert ExtInputDataPackage to a map"() {
         given:
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
-        def inputDataMap = Map.of("Em", new TestInputDataPValue(pValue))
-        def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
+        def extEmData = new ExtEmData(extEmDataMapping)
+        def inputDataMap = Map.of("Em", pValue)
+        def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
 
         when:
-        def emDataMap = extEmData.createExtEmDataMap(inputDataPackage)
+        def emDataMap = extEmData.convertExternalInputToEmSetPoints(inputDataContainer)
 
         then:
         emDataMap.get(inputUuid) == pValue
@@ -97,12 +72,12 @@ class ExtEmDataTest extends Specification implements DataServiceTestData {
 
     def "ExtEmData should throw an exception, if input data for a not requested asset was provided"() {
         given:
-        def extEmData = new ExtEmData(new TestEmDataFactory(), extEmDataMapping)
-        def inputDataMap = Map.of("Load", new TestInputDataPValue(pValue))
-        def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
+        def extEmData = new ExtEmData(extEmDataMapping)
+        def inputDataMap = Map.of("Load", pValue)
+        def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
 
         when:
-        extEmData.createExtEmDataMap(inputDataPackage)
+        extEmData.convertExternalInputToEmSetPoints(inputDataContainer)
 
         then:
         thrown IllegalArgumentException

@@ -14,6 +14,7 @@ import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataContainer;
 import java.util.Map;
+import java.util.Optional;
 import javax.measure.quantity.Dimensionless;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
@@ -21,8 +22,11 @@ import tech.units.indriya.quantity.Quantities;
 /** Contains all results from SIMONA for a certain tick */
 public class ExtResultContainer implements ExtDataContainer {
 
-  /** Tick the package is meant for */
-  private final Long tick;
+  /** Tick the results are meant for */
+  private final long tick;
+
+  /** Tick the external simulation can expect the next results */
+  private final Optional<Long> maybeNextTick;
 
   /**
    * Map external id to result from SIMONA ATTENTION: The time stamp of the result entities is not
@@ -31,14 +35,21 @@ public class ExtResultContainer implements ExtDataContainer {
   private final Map<String, ModelResultEntity> simonaResultsMap;
 
   /**
-   * Container class for output data from SIMONA
+   * Container class for result data from SIMONA
    *
    * @param tick current tick
    * @param simonaResultsMap results from SIMONA with external id as key
+   * @param nextTick tick the external simulation can expect the next results
    */
-  public ExtResultContainer(Long tick, Map<String, ModelResultEntity> simonaResultsMap) {
+  public ExtResultContainer(
+      long tick, Map<String, ModelResultEntity> simonaResultsMap, Optional<Long> nextTick) {
     this.tick = tick;
     this.simonaResultsMap = simonaResultsMap;
+    this.maybeNextTick = nextTick;
+  }
+
+  public ExtResultContainer(long tick, Map<String, ModelResultEntity> simonaResultsMap) {
+    this(tick, simonaResultsMap, Optional.empty());
   }
 
   public Long getTick() {
