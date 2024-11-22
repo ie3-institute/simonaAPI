@@ -72,7 +72,16 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
   }
 
+  /**
+   *
+   * Returns a set of all the {@link ExtInputDataConnection}s.
+   */
   protected abstract Set<ExtInputDataConnection> getInputDataConnections();
+
+  /**
+   *
+   * Returns an option for an {@link ExtResultDataConnection}.
+   */
   protected abstract  Optional<ExtResultDataConnection> getResultDataConnection();
 
   /**
