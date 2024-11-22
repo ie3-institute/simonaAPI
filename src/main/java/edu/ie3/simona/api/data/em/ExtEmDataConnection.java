@@ -7,15 +7,16 @@
 package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
+import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
+import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
-import java.util.*;
-
+/** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection implements ExtInputDataConnection {
 
   /** Actor reference to service that handles ev data within SIMONA */
@@ -61,7 +62,8 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   }
 
   /** Converts an input data package from an external simulation to a map of set points */
-  public Map<UUID, PValue> createExtEmDataMap(ExtInputDataContainer extInputDataContainer) {
+  public Map<UUID, PValue> convertExternalInputToEmSetPoints(
+      ExtInputDataContainer extInputDataContainer) {
     Map<UUID, PValue> emDataForSimona = new HashMap<>();
     extInputDataContainer
         .getSimonaInputMap()
@@ -71,9 +73,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
                 if (value instanceof PValue pValue) {
                   emDataForSimona.put(extEmMapping.get(id), pValue);
                 } else {
-                  throw new IllegalArgumentException(
-                          "EmData can only handle PValue's!"
-                  );
+                  throw new IllegalArgumentException("EmData can only handle PValue's!");
                 }
               } else {
                 throw new IllegalArgumentException(

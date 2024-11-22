@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
+/** Enables data connection of results between SIMONA and SimonaAPI */
 public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   /** Data message queue containing messages from SIMONA */

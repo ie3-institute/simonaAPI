@@ -12,10 +12,10 @@ import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
+import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
-import java.util.*;
-
+/** Enables data connection of primary data between SIMONA and SimonaAPI */
 public class ExtPrimaryDataConnection implements ExtInputDataConnection {
 
   /** Actor reference to service that handles primary data within SIMONA */
@@ -63,7 +63,8 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   }
 
   /** Converts an input data package from an external simulation to a map of primary data */
-  public Map<UUID, Value> convertExternalInputToPrimaryData(ExtInputDataContainer extInputDataContainer) {
+  public Map<UUID, Value> convertExternalInputToPrimaryData(
+      ExtInputDataContainer extInputDataContainer) {
     Map<UUID, Value> primaryDataForSimona = new HashMap<>();
     extInputDataContainer
         .getSimonaInputMap()

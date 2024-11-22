@@ -1,12 +1,9 @@
 package edu.ie3.simona.api.data.primarydata
 
-
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.ExtInputDataContainer
-import edu.ie3.simona.api.data.ExtInputDataValue
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
-import edu.ie3.simona.api.exceptions.ConversionException
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
@@ -25,29 +22,6 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
             inputUuid
     )
 
-    class TestInputDataValue implements ExtInputDataValue {
-        private final Value value
-
-        TestInputDataValue(Value value) {
-            this.value = value
-        }
-
-        Value getValue() {
-            return value
-        }
-    }
-
-    class TestPrimaryDataFactory implements PrimaryDataFactory {
-        @Override
-        Value convert(ExtInputDataValue entity) throws ConversionException {
-            if (entity instanceof TestInputDataValue) {
-                return entity.value
-            } else {
-                throw new ConversionException("This factory can only convert PValue entities.")
-            }
-        }
-    }
-
     def setupSpec() {
         actorSystem = ActorSystem.create()
     }
@@ -61,8 +35,8 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
-        extPrimaryData.setActorRefs(
+        def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
+        extPrimaryDataConnection.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
         )
@@ -83,12 +57,12 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     def "ExtPrimaryData should convert ExtInputDataPackage to a map"() {
         given:
-            def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
-            def inputDataMap = Map.of("Pv", new TestInputDataValue(pValue))
-            def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
+            def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
+            def inputDataMap = Map.of("Pv", pValue)
+            def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
 
         when:
-            def primaryDataMap = extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
+            def primaryDataMap = extPrimaryDataConnection.convertExternalInputToPrimaryData(inputDataContainer)
 
         then:
             primaryDataMap.get(inputUuid) == pValue
@@ -96,12 +70,12 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     def "ExtPrimaryData should throw an exception, if input data for a not requested asset was provided"() {
         given:
-        def extPrimaryData = new ExtPrimaryDataConnection(new TestPrimaryDataFactory(), extPrimaryDataMapping, List.of())
-        def inputDataMap = Map.of("Load", new TestInputDataValue(pValue))
-        def inputDataPackage = new ExtInputDataContainer(0L, inputDataMap, Optional.of(900L))
+        def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
+        def inputDataMap = Map.of("Load", pValue)
+        def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
 
         when:
-            extPrimaryData.createExtPrimaryDataMap(inputDataPackage)
+            extPrimaryDataConnection.convertExternalInputToPrimaryData(inputDataContainer)
 
         then:
             thrown IllegalArgumentException

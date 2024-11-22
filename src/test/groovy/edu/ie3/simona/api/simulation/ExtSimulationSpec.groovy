@@ -32,6 +32,7 @@ class ExtSimulationSpec extends Specification {
         private Optional<Long> activationReturnTick
 
         TestSimulation(Long initReturnTick, Optional<Long> activationReturnTick) {
+            super("TestSimulation")
             this.initReturnTick = initReturnTick
             this.activationReturnTick = activationReturnTick
         }

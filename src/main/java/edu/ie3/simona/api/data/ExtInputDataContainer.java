@@ -7,23 +7,26 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.datamodel.models.value.Value;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /** Contains all inputs for SIMONA for a certain tick */
 public class ExtInputDataContainer implements ExtDataContainer {
 
+  /** The tick, the input data is meant for */
   private final long tick;
 
   /** Map external id to an input value for SIMONA */
   private final Map<String, Value> dataMap;
 
+  /** The next tick, when data will be provided, if available */
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Container class for input data for SIMONA
+   * Container class for input data for SIMONA which can be read by SimonaAPI
    *
-   * @param tick current tick
+   * @param tick The tick, the input data is meant for
    * @param dataMap data to be provided to SIMONA
    * @param nextTick tick, when the next data will be provided
    */
@@ -47,12 +50,12 @@ public class ExtInputDataContainer implements ExtDataContainer {
     this(tick, new HashMap<>(), nextTick);
   }
 
-  public Map<String, Value> getSimonaInputMap() {
-    return dataMap;
+  public long getTick() {
+    return tick;
   }
 
-  public Long getTick() {
-    return tick;
+  public Map<String, Value> getSimonaInputMap() {
+    return dataMap;
   }
 
   public Optional<Long> getMaybeNextTick() {
@@ -61,6 +64,6 @@ public class ExtInputDataContainer implements ExtDataContainer {
 
   /** Adds a value to the input map */
   public void addValue(String id, Value value) {
-      dataMap.put(id, value);
+    dataMap.put(id, value);
   }
 }

@@ -11,7 +11,7 @@ import edu.ie3.datamodel.models.input.InputEntity;
 import java.util.UUID;
 
 /**
- * Package of an external asset with all information for the mapping
+ * Container for an external asset with all information for the mapping
  *
  * @param uuid SIMONA uuid
  * @param id external id
