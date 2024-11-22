@@ -48,7 +48,7 @@ class ExtSimulationSpec extends Specification {
         }
 
         @Override
-        List<ExtDataConnection> getDataConnections() {
+        Set<ExtDataConnection> getDataConnections() {
             return []
         }
     }

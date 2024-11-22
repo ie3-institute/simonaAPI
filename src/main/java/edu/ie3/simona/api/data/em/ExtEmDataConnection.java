@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
-import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;

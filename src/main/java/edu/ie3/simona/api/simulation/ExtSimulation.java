@@ -8,8 +8,8 @@ package edu.ie3.simona.api.simulation;
 
 import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.simulation.ontology.*;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Every external simulation must extend this class in order to get triggered by the main
@@ -102,7 +102,9 @@ public abstract class ExtSimulation implements Runnable {
   }
 
   /**
-   * Method to set the external simulation adapter data. This method should be called during {@link edu.ie3.simona.api.ExtLinkInterface#setup(ExtSimAdapterData)}.
+   * Method to set the external simulation adapter data. This method should be called during {@link
+   * edu.ie3.simona.api.ExtLinkInterface#setup(ExtSimAdapterData)}.
+   *
    * @param data to set up
    */
   public final void setAdapterData(ExtSimAdapterData data) {
@@ -118,17 +120,11 @@ public abstract class ExtSimulation implements Runnable {
     return data.getMainArgs();
   }
 
-  /**
-   *
-   * Returns the name of this external simulation.
-   */
+  /** Returns the name of this external simulation. */
   public final String getSimulationName() {
     return simulationName;
   }
 
-  /**
-   *
-   * Returns all {@link ExtDataConnection} of this simulation.
-   */
-  public abstract List<ExtDataConnection> getDataConnections();
+  /** Returns all {@link ExtDataConnection} of this simulation. */
+  public abstract Set<ExtDataConnection> getDataConnections();
 }

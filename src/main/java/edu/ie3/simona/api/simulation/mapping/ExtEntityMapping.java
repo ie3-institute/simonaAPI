@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.simulation.mapping;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {

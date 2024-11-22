@@ -10,13 +10,12 @@ import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import org.apache.pekko.actor.ActorRef;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.pekko.actor.ActorRef;
 
 public class ExtEvDataConnection implements ExtInputDataConnection {
   /** Data message queue containing messages from SIMONA */

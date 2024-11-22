@@ -48,7 +48,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         def convertedPrimaryData = Map.of(uuid, pValue as Value)
 
         when:
-        extPrimaryData.providePrimaryData(0L, convertedPrimaryData, Optional.of(900L))
+        extPrimaryDataConnection.providePrimaryData(0L, convertedPrimaryData, Optional.of(900L))
 
         then:
         dataService.expectMsg(new ProvidePrimaryData(0L, convertedPrimaryData, Optional.of(900L)))

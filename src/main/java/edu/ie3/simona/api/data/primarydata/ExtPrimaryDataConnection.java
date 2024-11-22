@@ -27,7 +27,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
-
   public ExtPrimaryDataConnection(Map<String, UUID> extPrimaryDataMapping) {
     this.extPrimaryDataMapping = extPrimaryDataMapping;
   }

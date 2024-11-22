@@ -18,8 +18,9 @@ public interface ExtLinkInterface {
   ExtSimulation getExtSimulation();
 
   /**
-   * Method to set up an external simulation. Everything that needs to be set up before the
-   * external simulation can be retrieved should be done here.
+   * Method to set up an external simulation. Everything that needs to be set up before the external
+   * simulation can be retrieved should be done here.
+   *
    * @param data used for setting up the external simulation
    */
   void setup(ExtSimAdapterData data);

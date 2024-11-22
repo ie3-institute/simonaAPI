@@ -13,10 +13,9 @@ import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -24,8 +23,6 @@ import java.util.Optional;
  * data to SIMONA and results to the external co-simulation.
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
-
-    protected final Logger log = LoggerFactory.getLogger(simulationName);
 
   /** Queue for the data connection from the external co-simulation to SimonaAPI */
   protected final DataQueueExtSimulationExtSimulator<ExtInputDataContainer>
@@ -49,11 +46,12 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /** Function to send primary data to SIMONA using ExtPrimaryData */
-  protected void sendPrimaryDataToSimona(ExtPrimaryDataConnection extPrimaryDataConnection, long tick, Logger log)
+  protected void sendPrimaryDataToSimona(
+      ExtPrimaryDataConnection extPrimaryDataConnection, long tick, Logger log)
       throws InterruptedException {
-    log.debug("Wait for Primary Data from " + extSimulatorName);
+    log.debug("Wait for Primary Data from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received Primary Data from " + extSimulatorName);
+    log.debug("Received Primary Data from {}", extSimulatorName);
     extPrimaryDataConnection.providePrimaryData(
         tick,
         extPrimaryDataConnection.convertExternalInputToPrimaryData(inputData),
@@ -65,25 +63,31 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
    * agents have an own scheduler that should know, when the next set point arrives.
    */
-  protected void sendEmDataToSimona(ExtEmDataConnection extEmDataConnection, long tick, long nextTick, Logger log)
+  protected void sendEmDataToSimona(
+      ExtEmDataConnection extEmDataConnection, long tick, long nextTick, Logger log)
       throws InterruptedException {
-    log.debug("Wait for EmData from " + extSimulatorName);
+    log.debug("Wait for EmData from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received EmData from " + extSimulatorName);
+    log.debug("Received EmData from {}", extSimulatorName);
     extEmDataConnection.provideEmData(
-        tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
+        tick,
+        extEmDataConnection.convertExternalInputToEmSetPoints(inputData),
+        Optional.of(nextTick));
     log.debug("Provided EmData to SIMONA!");
   }
 
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendResultsToExtCoSimulator(
-      ExtResultDataConnection extResultDataConnection, long tick, Optional<Long> nextTick, Logger log)
+      ExtResultDataConnection extResultDataConnection,
+      long tick,
+      Optional<Long> nextTick,
+      Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
     Map<String, ModelResultEntity> resultsToBeSend = extResultDataConnection.requestResults(tick);
     log.debug("Received results from SIMONA!");
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.debug("Sent results to " + extSimulatorName);
+    log.debug("Sent results to {}", extSimulatorName);
   }
 }
