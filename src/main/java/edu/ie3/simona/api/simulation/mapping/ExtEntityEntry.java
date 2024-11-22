@@ -16,13 +16,13 @@ import java.util.UUID;
  * @param uuid SIMONA uuid
  * @param id external id
  * @param columnScheme data types the external asset expects
- * @param resultType data types the external asset expects
+ * @param dataType data types the external asset expects
  */
 public record ExtEntityEntry(
     UUID uuid,
     String id,
     ColumnScheme columnScheme, // FIXME: placeholder -> ColumnScheme should handle more data types
-    String resultType)
+    String dataType)
     implements InputEntity {
   public static final String EXT_PRIMARY_INPUT = "primary_input";
   public static final String EXT_EM_INPUT = "em_input";
@@ -32,16 +32,16 @@ public record ExtEntityEntry(
   public String toString() {
     return "ExtEntityEntry={"
         + "UUID="
-        + uuid()
+        + uuid
         + ", "
-        + "ExtId="
-        + id()
+        + "extId="
+        + id
         + ", "
-        + "ColumnScheme="
-        + columnScheme()
+        + "columnScheme="
+        + columnScheme
         + ", "
-        + "ResultType="
-        + resultType()
+        + "dataType="
+        + dataType
         + "}";
   }
 }

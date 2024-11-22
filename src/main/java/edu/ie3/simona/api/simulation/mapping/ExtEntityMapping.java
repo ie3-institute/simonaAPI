@@ -27,7 +27,7 @@ public class ExtEntityMapping {
     Map<String, UUID> extId2UuidMapping = new HashMap<>();
     extEntities.forEach(
         ent -> {
-          if (Objects.equals(ent.resultType(), dataType)) {
+          if (ent.dataType().equals(dataType)) {
             extId2UuidMapping.put(ent.id(), ent.uuid());
           }
         });
@@ -44,7 +44,7 @@ public class ExtEntityMapping {
     Map<UUID, String> extUuid2IdMapping = new HashMap<>();
     extEntities.forEach(
         ent -> {
-          if (Objects.equals(ent.resultType(), dataType)) {
+          if (ent.dataType().equals(dataType)) {
             extUuid2IdMapping.put(ent.uuid(), ent.id());
           }
         });

@@ -7,13 +7,17 @@
 package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.value.PValue;
+import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.pekko.actor.ActorRef;
+import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection implements ExtInputDataConnection {
@@ -35,6 +39,21 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   public void setActorRefs(ActorRef emDataService, ActorRef extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
+  }
+
+  public void convertAndSend(long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+    // filtering and converting the data
+    Map<UUID, PValue> convertedMap = data.entrySet().stream()
+            .filter(e -> extEmMapping.containsKey(e.getKey()))
+            .collect(Collectors.toMap(e -> extEmMapping.get(e.getKey()), e -> (PValue) e.getValue()));
+
+    if (convertedMap.isEmpty()) {
+      log.warn("No em data found! Sending no em data to SIMONA for tick {}.", tick);
+    } else {
+      log.debug("Provided SIMONA with em data.");
+    }
+
+    provideEmData(tick, convertedMap, maybeNextTick);
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
