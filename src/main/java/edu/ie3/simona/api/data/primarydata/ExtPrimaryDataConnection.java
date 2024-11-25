@@ -13,7 +13,6 @@ import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.apache.pekko.actor.ActorRef;
 import org.slf4j.Logger;
 
@@ -43,11 +42,14 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
     this.extSimAdapter = extSimAdapter;
   }
 
-  public void convertAndSend(long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+  public void convertAndSend(
+      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering and converting the data
-    Map<UUID, Value> convertedMap = data.entrySet().stream()
+    Map<UUID, Value> convertedMap =
+        data.entrySet().stream()
             .filter(e -> extPrimaryDataMapping.containsKey(e.getKey()))
-            .collect(Collectors.toMap(e -> extPrimaryDataMapping.get(e.getKey()), Map.Entry::getValue));
+            .collect(
+                Collectors.toMap(e -> extPrimaryDataMapping.get(e.getKey()), Map.Entry::getValue));
 
     if (convertedMap.isEmpty()) {
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);

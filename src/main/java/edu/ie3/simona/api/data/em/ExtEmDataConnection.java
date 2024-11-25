@@ -15,7 +15,6 @@ import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.apache.pekko.actor.ActorRef;
 import org.slf4j.Logger;
 
@@ -41,11 +40,14 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
     this.extSimAdapter = extSimAdapter;
   }
 
-  public void convertAndSend(long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+  public void convertAndSend(
+      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering and converting the data
-    Map<UUID, PValue> convertedMap = data.entrySet().stream()
+    Map<UUID, PValue> convertedMap =
+        data.entrySet().stream()
             .filter(e -> extEmMapping.containsKey(e.getKey()))
-            .collect(Collectors.toMap(e -> extEmMapping.get(e.getKey()), e -> (PValue) e.getValue()));
+            .collect(
+                Collectors.toMap(e -> extEmMapping.get(e.getKey()), e -> (PValue) e.getValue()));
 
     if (convertedMap.isEmpty()) {
       log.warn("No em data found! Sending no em data to SIMONA for tick {}.", tick);

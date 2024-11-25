@@ -10,11 +10,8 @@ import edu.ie3.datamodel.exceptions.SourceException;
 import edu.ie3.datamodel.io.factory.EntityData;
 import edu.ie3.datamodel.io.naming.FileNamingStrategy;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Map;
 
 /** Source that is capable of providing information around external mapping from csv files. */
 public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
@@ -23,13 +20,12 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
 
   private final CsvDataSource dataSource;
 
-  private final Path mappingPath;
-
   public ExtEntityMappingCsvSource(
-      String csvSep, Path folderPath, FileNamingStrategy fileNamingStrategy) {
+      String csvSep, Path folderPath, FileNamingStrategy fileNamingStrategy)
+      throws SourceException {
     super();
     this.dataSource = new CsvDataSource(csvSep, folderPath, fileNamingStrategy);
-    this.mappingPath = folderPath;
+
     this.extEntities = buildExtEntityMapping();
   }
 
@@ -38,63 +34,23 @@ public class ExtEntityMappingCsvSource extends ExtEntityMappingSource {
   }
 
   /**
-   * Method to retrieve the fields found in the source.
-   *
-   * @return an option for the found fields
-   */
-  public Optional<Set<String>> getSourceFields() throws SourceException {
-    return dataSource.getSourceFields(ExtEntityEntry.class);
-  }
-
-  /**
    * Builds the mapping from CSV
    *
    * @return Mapping external id and SIMONA uuid
    */
-  protected final ExtEntityMapping buildExtEntityMapping() {
-    return new ExtEntityMapping(buildStream().map(this::createExtEntityEntry).toList());
-  }
-
-  private Stream<Map<String, String>>
-      buildStream() { // TODO: Interim version -> maybe it would be easier to use PSDM methods for
-    // reading the CSV
-    Path pathToCsv = mappingPath;
-
-    try (Stream<String> lines = Files.lines(pathToCsv)) {
-      // Read the header line
-      List<String> headers =
-          lines
-              .findFirst()
-              .map(line -> Arrays.asList(line.split(",")))
-              .orElseThrow(() -> new RuntimeException("No header line found"));
-
-      // Stream the rest of the lines
-      Stream<Map<String, String>> mapStream =
-          Files.lines(pathToCsv)
-              .skip(1) // Skip the header line
-              .map(
-                  line -> {
-                    String[] values = line.split(",");
-                    Map<String, String> map = new HashMap<>();
-                    for (int i = 0; i < headers.size(); i++) {
-                      map.put(headers.get(i), values[i]);
-                    }
-                    return map;
-                  });
-
-      return mapStream;
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  protected final ExtEntityMapping buildExtEntityMapping() throws SourceException {
+    return new ExtEntityMapping(
+        dataSource.getSourceData(ExtEntityEntry.class).map(this::createExtEntityEntry).toList());
   }
 
   private ExtEntityEntry createExtEntityEntry(Map<String, String> fieldToValues) {
     return factory.get(new EntityData(fieldToValues, ExtEntityEntry.class)).getOrThrow();
   }
 
-  public static ExtEntityMapping createExtEntityMapping(Path mappingPath) {
+  public static ExtEntityMapping createExtEntityMapping(Path mappingPath) throws SourceException {
+    Path directory = mappingPath.getParent();
     ExtEntityMappingCsvSource mappingSource =
-        new ExtEntityMappingCsvSource(",", mappingPath, new FileNamingStrategy());
+        new ExtEntityMappingCsvSource(",", directory, new FileNamingStrategy(namingStrategy));
     return mappingSource.getMapping();
   }
 }

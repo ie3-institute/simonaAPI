@@ -9,18 +9,15 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
-import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -54,76 +51,42 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     this.dataQueueSimonaApiToExtCoSimulator = new DataQueueExtSimulationExtSimulator<>();
   }
 
-  @Override
-  protected Optional<Long> doActivity(long tick) {
-    log.info(
-            "+++++++++++++++++++++++++++ Activities in External simulation: Tick {} has been triggered. +++++++++++++++++++++++++++",
-            tick);
-    try {
-      Thread.sleep(500);
-
-      Optional<Long> nextTick = Optional.of(tick + deltaT);
-      sendDataToSimona(tick, nextTick);
-      sendDataToExt(tick, nextTick);
-
-      return nextTick;
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+  /** Function to send primary data to SIMONA using ExtPrimaryData */
+  protected void sendPrimaryDataToSimona(
+      ExtPrimaryDataConnection extPrimaryDataConnection,
+      long tick,
+      Map<String, Value> dataMap,
+      Optional<Long> maybeNextTick) {
+    log.debug("Wait for Primary Data from {}", extSimulatorName);
+    log.debug("Received Primary Data from {}", extSimulatorName);
+    extPrimaryDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
+    log.debug("Provided Primary Data to SIMONA!");
   }
 
   /**
-   *
-   * Returns a set of all the {@link ExtInputDataConnection}s.
+   * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
+   * agents have an own scheduler that should know, when the next set point arrives.
    */
-  protected abstract Set<ExtInputDataConnection> getInputDataConnections();
-
-  /**
-   *
-   * Returns an option for an {@link ExtResultDataConnection}.
-   */
-  protected abstract  Optional<ExtResultDataConnection> getResultDataConnection();
-
-  /**
-   * Function to send external data to SIMONA using the available {@link ExtInputDataConnection}s.
-   */
-  protected void sendDataToSimona(long tick, Optional<Long> maybeNextTick) throws InterruptedException {
-    log.debug("Wait for external data from {}", extSimulatorName);
-    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received external data from {}", extSimulatorName);
-
-    Map<String, Value> data = inputData.getSimonaInputMap();
-    Set<ExtInputDataConnection> extInputDataConnections = getInputDataConnections();
-
-    if (!extInputDataConnections.isEmpty()) {
-      extInputDataConnections.forEach(inputDataConnection -> {
-        if (inputDataConnection instanceof ExtPrimaryDataConnection primary) {
-          primary.convertAndSend(tick, data, maybeNextTick, log);
-        } else if (inputDataConnection instanceof ExtEmDataConnection em) {
-          em.convertAndSend(tick, data, maybeNextTick, log);
-        }
-      });
-      log.debug("Provided SIMONA with external data!");
-    } else {
-      log.info("No connections found. Sending no external data to SIMONA!");
-    }
+  protected void sendEmDataToSimona(
+      ExtEmDataConnection extEmDataConnection,
+      long tick,
+      Map<String, Value> dataMap,
+      Optional<Long> maybeNextTick) {
+    log.debug("Wait for EmData from {}", extSimulatorName);
+    log.debug("Received EmData from {}", extSimulatorName);
+    extEmDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
+    log.debug("Provided EmData to SIMONA!");
   }
 
   /** Function to get result data from SIMONA using the available {@link ExtResultDataConnection} */
-  protected void sendDataToExt(long tick, Optional<Long> nextTick) throws InterruptedException {
+  protected void sendDataToExt(
+      ExtResultDataConnection connection, long tick, Optional<Long> nextTick)
+      throws InterruptedException {
     log.debug("Request results from SIMONA!");
-
-    Optional<ExtResultDataConnection> resultDataConnection = getResultDataConnection();
-
-    if (resultDataConnection.isPresent()) {
-      ExtResultDataConnection connection = resultDataConnection.get();
-
-      Map<String, ModelResultEntity> resultsToBeSend = connection.requestResults(tick);
-      log.debug("Received results from SIMONA!");
-      dataQueueSimonaApiToExtCoSimulator.queueData(new ExtResultContainer(tick, resultsToBeSend, nextTick));
-      log.debug("Sent results to {}", extSimulatorName);
-    } else {
-      log.info("No connection found. Sending no results to {}!", extSimulatorName);
-    }
+    Map<String, ModelResultEntity> resultsToBeSend = connection.requestResults(tick);
+    log.debug("Received results from SIMONA!");
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+        new ExtResultContainer(tick, resultsToBeSend, nextTick));
+    log.debug("Sent results to {}", extSimulatorName);
   }
 }
