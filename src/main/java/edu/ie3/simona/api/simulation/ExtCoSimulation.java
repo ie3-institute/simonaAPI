@@ -97,8 +97,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @return an ext result data connection
    */
   protected ExtResultDataConnection buildResultConnection(ExtEntityMapping mapping) {
-    Map<UUID, String> resultParticipantMapping = mapping.getExtUuid2IdMapping(DataType.EXT_RESULT_PARTICIPANT);
-    Map<UUID, String> resultGridMapping = mapping.getExtUuid2IdMapping(DataType.EXT_RESULT_GRID);
+    Map<UUID, String> resultParticipantMapping = mapping.getExtUuid2IdMapping(DataType.EXT_PARTICIPANT_RESULT);
+    Map<UUID, String> resultGridMapping = mapping.getExtUuid2IdMapping(DataType.EXT_GRID_RESULT);
     ExtResultDataConnection extResultDataConnection = new ExtResultDataConnection(resultParticipantMapping, resultGridMapping);
 
     if (resultParticipantMapping.isEmpty() && resultGridMapping.isEmpty()) {

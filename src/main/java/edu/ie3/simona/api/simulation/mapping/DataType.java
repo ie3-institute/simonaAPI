@@ -11,8 +11,8 @@ import edu.ie3.datamodel.exceptions.ParsingException;
 public enum DataType {
   EXT_PRIMARY_INPUT("primary_input"),
   EXT_EM_INPUT("em_input"),
-  EXT_RESULT_GRID("result_grid"),
-  EXT_RESULT_PARTICIPANT("result_participant");
+  EXT_GRID_RESULT("grid_result"),
+  EXT_PARTICIPANT_RESULT("participant_result");
 
   public final String type;
 
@@ -24,8 +24,8 @@ public enum DataType {
     return switch (type) {
       case "primary_input" -> EXT_PRIMARY_INPUT;
       case "em_input" -> EXT_EM_INPUT;
-      case "result_grid" -> EXT_RESULT_GRID;
-      case "result_participant" -> EXT_RESULT_PARTICIPANT;
+      case "result_grid" -> EXT_GRID_RESULT;
+      case "result_participant" -> EXT_PARTICIPANT_RESULT;
       default -> throw new ParsingException("Data type " + type + " is not supported!");
     };
   }
