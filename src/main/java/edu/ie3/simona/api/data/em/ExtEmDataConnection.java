@@ -9,7 +9,6 @@ package edu.ie3.simona.api.data.em;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
-import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -78,27 +77,5 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
     emDataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(emDataService), ActorRef.noSender());
-  }
-
-  /** Converts an input data package from an external simulation to a map of set points */
-  public Map<UUID, PValue> convertExternalInputToEmSetPoints(
-      ExtInputDataContainer extInputDataContainer) {
-    Map<UUID, PValue> emDataForSimona = new HashMap<>();
-    extInputDataContainer
-        .getSimonaInputMap()
-        .forEach(
-            (id, value) -> {
-              if (extEmMapping.containsKey(id)) {
-                if (value instanceof PValue pValue) {
-                  emDataForSimona.put(extEmMapping.get(id), pValue);
-                } else {
-                  throw new IllegalArgumentException("EmData can only handle PValue's!");
-                }
-              } else {
-                throw new IllegalArgumentException(
-                    "Input for asset with id " + id + " was provided, but it wasn't requested!");
-              }
-            });
-    return emDataForSimona;
   }
 }

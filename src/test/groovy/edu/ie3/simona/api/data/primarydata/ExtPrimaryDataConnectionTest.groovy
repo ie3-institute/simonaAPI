@@ -1,7 +1,6 @@
 package edu.ie3.simona.api.data.primarydata
 
 import edu.ie3.datamodel.models.value.Value
-import edu.ie3.simona.api.data.ExtInputDataContainer
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.test.common.DataServiceTestData
@@ -11,7 +10,7 @@ import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
 import spock.lang.Specification
 
-class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
+class ExtPrimaryDataConnectionTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
@@ -31,7 +30,7 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         actorSystem = null
     }
 
-    def "ExtPrimaryData should provide primary data correctly"() {
+    def "ExtPrimaryDataConnection should provide primary data correctly"() {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
@@ -55,29 +54,40 @@ class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
-    def "ExtPrimaryData should convert ExtInputDataPackage to a map"() {
+    def "ExtPrimaryDataConnection should convert input data correctly"() {
         given:
-            def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
-            def inputDataMap = Map.of("Pv", pValue)
-            def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
+        def dataService = new TestProbe(actorSystem)
+        def extSimAdapter = new TestProbe(actorSystem)
+        def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
+        extPrimaryDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+        def inputDataMap = Map.of("Pv", pValue)
 
         when:
-            def primaryDataMap = extPrimaryDataConnection.convertExternalInputToPrimaryData(inputDataContainer)
+        extPrimaryDataConnection.convertAndSend(0L, inputDataMap, Optional.of(900L), log)
 
         then:
-            primaryDataMap.get(inputUuid) == pValue
+        dataService.expectMsg(new ProvidePrimaryData(0L, Map.of(inputUuid, pValue), Optional.of(900L)))
+        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
-    def "ExtPrimaryData should throw an exception, if input data for a not requested asset was provided"() {
+    def "ExtPrimaryDataConnection should send no message, if input data for a not requested asset was provided"() {
         given:
+        def dataService = new TestProbe(actorSystem)
+        def extSimAdapter = new TestProbe(actorSystem)
         def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
+        extPrimaryDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
         def inputDataMap = Map.of("Load", pValue)
-        def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
 
         when:
-            extPrimaryDataConnection.convertExternalInputToPrimaryData(inputDataContainer)
+        extPrimaryDataConnection.convertAndSend(0L, inputDataMap, Optional.empty(), log)
 
         then:
-            thrown IllegalArgumentException
+        dataService.expectNoMessage()
     }
 }

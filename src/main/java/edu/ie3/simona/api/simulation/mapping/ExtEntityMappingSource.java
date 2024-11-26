@@ -13,7 +13,6 @@ import edu.ie3.datamodel.io.naming.FileNamingStrategy;
 import edu.ie3.datamodel.io.source.DataSource;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
 import edu.ie3.datamodel.models.Entity;
-
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +30,7 @@ public class ExtEntityMappingSource {
 
   /**
    * Creates an {@link ExtEntityMapping} from a given file.
+   *
    * @param filepath path to the file including its name
    * @return a new mapping
    * @throws SourceException if an error occurred
@@ -51,16 +51,15 @@ public class ExtEntityMappingSource {
     return new ExtEntityMappingSource(source).getMapping();
   }
 
-  /**
-   *
-   * Return the mapping from a given {@link DataSource}.
-   */
+  /** Return the mapping from a given {@link DataSource}. */
   public ExtEntityMapping getMapping() throws SourceException {
-    return new ExtEntityMapping(dataSource.getSourceData(ExtEntityEntry.class).map(this::createExtEntityEntry).toList());
+    return new ExtEntityMapping(
+        dataSource.getSourceData(ExtEntityEntry.class).map(this::createExtEntityEntry).toList());
   }
 
   /**
    * Creates an ext entity entry from a given map.
+   *
    * @param fieldToValues map: field name to value
    * @return a new {@link ExtEntityEntry}
    */
@@ -68,9 +67,7 @@ public class ExtEntityMappingSource {
     return factory.get(new EntityData(fieldToValues, ExtEntityEntry.class)).getOrThrow();
   }
 
-  /**
-   * Csv naming for ext entity mapping.
-   */
+  /** Csv naming for ext entity mapping. */
   private static class ExtEntityNaming extends EntityPersistenceNamingStrategy {
 
     private final String filename;
