@@ -55,9 +55,8 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with primary data.");
+      providePrimaryData(tick, convertedMap, maybeNextTick);
     }
-
-    providePrimaryData(tick, convertedMap, maybeNextTick);
   }
 
   /** Returns a list of the uuids of the system participants that expect external primary data */

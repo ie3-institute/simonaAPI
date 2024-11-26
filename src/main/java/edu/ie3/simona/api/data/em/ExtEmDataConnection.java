@@ -53,9 +53,8 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
       log.warn("No em data found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em data.");
+      provideEmData(tick, convertedMap, maybeNextTick);
     }
-
-    provideEmData(tick, convertedMap, maybeNextTick);
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
