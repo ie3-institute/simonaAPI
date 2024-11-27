@@ -24,8 +24,8 @@ public enum DataType {
     return switch (type) {
       case "primary_input" -> EXT_PRIMARY_INPUT;
       case "em_input" -> EXT_EM_INPUT;
-      case "result_grid" -> EXT_GRID_RESULT;
-      case "result_participant" -> EXT_PARTICIPANT_RESULT;
+      case "grid_result" -> EXT_GRID_RESULT;
+      case "participant_result" -> EXT_PARTICIPANT_RESULT;
       default -> throw new ParsingException("Data type " + type + " is not supported!");
     };
   }

@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api;
 
+import edu.ie3.simona.api.exceptions.NoExtSimulationException;
 import edu.ie3.simona.api.simulation.ExtSimAdapterData;
 import edu.ie3.simona.api.simulation.ExtSimulation;
 
@@ -15,7 +16,9 @@ import edu.ie3.simona.api.simulation.ExtSimulation;
  */
 public interface ExtLinkInterface {
   /** Returns the external simulation. */
-  ExtSimulation getExtSimulation();
+  default ExtSimulation getExtSimulation() {
+    throw new NoExtSimulationException(this.getClass());
+  }
 
   /**
    * Method to set up an external simulation. Everything that needs to be set up before the external
