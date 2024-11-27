@@ -51,13 +51,15 @@ dependencies{
   // scala (needed for pekko)
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
-  //PSDM
+  //PSU
   implementation('com.github.ie3-institute:PowerSystemUtils:2.2.1') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
     /* Exclude our own nested dependencies */
     exclude group: 'com.github.ie3-institute'
   }
+
+  //PSDM
   implementation('com.github.ie3-institute:PowerSystemDataModel:5.1.0') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
@@ -66,7 +68,6 @@ dependencies{
   }
 
   // logging
-  //implementation "ch.qos.logback:logback-classic:1.4.14"
   implementation platform('org.apache.logging.log4j:log4j-bom:2.24.1')
   implementation 'org.apache.logging.log4j:log4j-api' // log4j
   implementation 'org.apache.logging.log4j:log4j-core' // log4j

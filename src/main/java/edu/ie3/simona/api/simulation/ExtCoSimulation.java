@@ -6,7 +6,6 @@
 
 package edu.ie3.simona.api.simulation;
 
-import org.slf4j.Logger;
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
@@ -16,6 +15,7 @@ import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultData;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
