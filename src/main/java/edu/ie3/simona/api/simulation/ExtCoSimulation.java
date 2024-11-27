@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.simulation;
 
-import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
