@@ -1,35 +1,26 @@
 package edu.ie3.simona.api.data.primarydata
 
-import edu.ie3.datamodel.models.StandardUnits
-import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.ExtInputDataContainer
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
-import edu.ie3.simona.api.exceptions.ConvertionException
+import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
 import spock.lang.Specification
-import tech.units.indriya.quantity.Quantities
 
-class ExtPrimaryDataTest extends Specification {
+class ExtPrimaryDataTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
 
-
-    class PValuePrimaryDataFactory implements PrimaryDataFactory {
-
-        @Override
-        Value convert(Object entity) throws ConvertionException {
-            if (entity.getClass() == PValue) {
-                return (PValue) entity
-            } else {
-                throw new ConvertionException("This factory can convert PValue entities only!")
-            }
-        }
-    }
+    @Shared
+    Map<String, UUID> extPrimaryDataMapping = Map.of(
+            "Pv",
+            inputUuid
+    )
 
     def setupSpec() {
         actorSystem = ActorSystem.create()
@@ -44,19 +35,49 @@ class ExtPrimaryDataTest extends Specification {
         given:
         def dataService = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extPrimaryData = new ExtPrimaryData(dataService.ref(), extSimAdapter.ref(), new PValuePrimaryDataFactory())
+        def extPrimaryData = new ExtPrimaryData(extPrimaryDataMapping)
+        extPrimaryData.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
 
-        def primaryData = new HashMap<String, Object>()
+        def primaryData = [:] as HashMap<String, Value>
         def uuid = UUID.randomUUID()
-        primaryData.put(uuid.toString(), new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
+        primaryData.put(uuid.toString(), pValue)
 
-        def convertedPrimaryData = Map.of(uuid, new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)))
+        def convertedPrimaryData = Map.of(uuid, pValue as Value)
 
         when:
-        extPrimaryData.providePrimaryData(0, primaryData)
+        extPrimaryData.providePrimaryData(0L, convertedPrimaryData, Optional.of(900L))
 
         then:
-        dataService.expectMsg(new ProvidePrimaryData(0, convertedPrimaryData))
+        dataService.expectMsg(new ProvidePrimaryData(0L, convertedPrimaryData, Optional.of(900L)))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
+    }
+
+    def "ExtPrimaryData should convert ExtInputDataPackage to a map"() {
+        given:
+            def extPrimaryData = new ExtPrimaryData(extPrimaryDataMapping)
+            def inputDataMap = Map.of("Pv", pValue)
+            def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
+
+        when:
+            def primaryDataMap = extPrimaryData.convertExternalInputToPrimaryData(inputDataContainer)
+
+        then:
+            primaryDataMap.get(inputUuid) == pValue
+    }
+
+    def "ExtPrimaryData should throw an exception, if input data for a not requested asset was provided"() {
+        given:
+        def extPrimaryData = new ExtPrimaryData(extPrimaryDataMapping)
+        def inputDataMap = Map.of("Load", pValue)
+        def inputDataContainer = new ExtInputDataContainer(0L, inputDataMap, 900L)
+
+        when:
+            extPrimaryData.convertExternalInputToPrimaryData(inputDataContainer)
+
+        then:
+            thrown IllegalArgumentException
     }
 }

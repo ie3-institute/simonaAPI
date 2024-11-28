@@ -7,62 +7,101 @@
 package edu.ie3.simona.api.data.results;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
-import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
+import edu.ie3.simona.api.data.ExtOutputData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import edu.ie3.simona.api.exceptions.ConvertionException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtResultData implements ExtData {
+/** Enables data connection of results between SIMONA and SimonaAPI */
+public class ExtResultData implements ExtOutputData {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
-  /** Actor reference to service that handles ev data within SIMONA */
-  private final ActorRef dataService;
+  /** Actor reference to service that handles result data within SIMONA */
+  private ActorRef extResultDataService;
+
+  /** Actor reference to the dataServiceAdapter */
+  private ActorRef dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private final ActorRef extSimAdapter;
+  private ActorRef extSimAdapter;
 
-  private final ResultDataFactory factory;
+  /** Map uuid to external id of grid related entities */
+  private final Map<UUID, String> gridResultAssetMapping;
 
-  public ExtResultData(ActorRef dataService, ActorRef extSimAdapter, ResultDataFactory factory) {
-    this.dataService = dataService;
+  /** Map uuid to external id of system participants */
+  private final Map<UUID, String> participantResultAssetMapping;
+
+  public ExtResultData(
+      Map<UUID, String> participantResultAssetMapping, Map<UUID, String> gridResultAssetMapping) {
+    this.participantResultAssetMapping = participantResultAssetMapping;
+    this.gridResultAssetMapping = gridResultAssetMapping;
+  }
+
+  /**
+   * Sets the actor refs for data and control flow
+   *
+   * @param extResultDataService actor ref to the adapter of the data service for data messages
+   * @param dataServiceActivation actor ref to the adapter of the data service for schedule
+   *     activation messages
+   * @param extSimAdapter actor ref to the extSimAdapter
+   */
+  public void setActorRefs(
+      ActorRef extResultDataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
+    this.extResultDataService = extResultDataService;
+    this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
-    this.factory = factory;
+  }
+
+  public List<UUID> getGridResultDataAssets() {
+    return gridResultAssetMapping.keySet().stream().toList();
+  }
+
+  public List<UUID> getParticipantResultDataAssets() {
+    return participantResultAssetMapping.keySet().stream().toList();
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  public List<ModelResultEntity> requestResults() throws InterruptedException {
-    sendExtMsg(new RequestResultEntities());
+  private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
+    sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, Object> requestResultObjects()
-      throws ConvertionException, InterruptedException {
-    return convertResultsList(requestResults());
+  public Map<String, ModelResultEntity> requestResults(long tick) throws InterruptedException {
+    return createResultMap(requestResultList(tick));
   }
 
-  protected Map<String, Object> convertResultsList(List<ModelResultEntity> results)
-      throws ConvertionException {
-    Map<String, Object> resultsMap = new HashMap<>();
-    Object convertedResult;
-    for (ModelResultEntity res : results) {
-      convertedResult = factory.convert(res);
-      resultsMap.put(res.getInputModel().toString(), convertedResult);
-    }
-    return resultsMap;
+  protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
+    Map<String, ModelResultEntity> resultMap = new HashMap<>();
+    results.forEach(
+        result -> {
+          if (result instanceof NodeResult nodeResult) {
+            resultMap.put(gridResultAssetMapping.get(nodeResult.getInputModel()), nodeResult);
+          } else if (result instanceof SystemParticipantResult systemParticipantResult) {
+            resultMap.put(
+                participantResultAssetMapping.get(systemParticipantResult.getInputModel()),
+                systemParticipantResult);
+          } else {
+            throw new IllegalArgumentException(
+                "ExtResultData can only handle NodeResult's and SystemParticipantResult's!");
+          }
+        });
+    return resultMap;
   }
 
   /**
@@ -73,9 +112,9 @@ public class ExtResultData implements ExtData {
    * @param msg the data/information that is sent to SIMONA's result data service
    */
   public void sendExtMsg(ResultDataMessageFromExt msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    extResultDataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation), ActorRef.noSender());
   }
 
   /** Queues message from SIMONA that should be handled by the external simulation. */

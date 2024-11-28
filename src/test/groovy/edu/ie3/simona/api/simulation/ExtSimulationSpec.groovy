@@ -32,6 +32,7 @@ class ExtSimulationSpec extends Specification {
         private Optional<Long> activationReturnTick
 
         TestSimulation(Long initReturnTick, Optional<Long> activationReturnTick) {
+            super("TestSimulation")
             this.initReturnTick = initReturnTick
             this.activationReturnTick = activationReturnTick
         }
@@ -44,6 +45,11 @@ class ExtSimulationSpec extends Specification {
         @Override
         protected Optional<Long> doActivity(long tick) {
             return this.activationReturnTick
+        }
+
+        @Override
+        List<ExtData> getDataConnections() {
+            return []
         }
     }
 
@@ -64,8 +70,8 @@ class ExtSimulationSpec extends Specification {
         given:
             def tick = -1L
             def newTick = 0L
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(newTick, Optional.of(-2L))
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
@@ -75,13 +81,13 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == false
-            testProbe.expectMsg(new CompletionMessage(Optional.of(newTick)))
+            extSimAdapter.expectMsg(new CompletionMessage(Optional.of(newTick)))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
             def extSim = new TestSimulation(-2L, newTickOpt)
@@ -93,7 +99,7 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == finished
-            testProbe.expectMsg(new CompletionMessage(newTickOpt))
+            extSimAdapter.expectMsg(new CompletionMessage(newTickOpt))
 
         where:
             tick   | newTick       || finished
@@ -105,8 +111,8 @@ class ExtSimulationSpec extends Specification {
 
     def "An ExtSimulation should handle termination properly"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+        def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
@@ -116,7 +122,7 @@ class ExtSimulationSpec extends Specification {
 
         then:
             finishedActual == finished
-            testProbe.expectMsg(new TerminationCompleted())
+            extSimAdapter.expectMsg(new TerminationCompleted())
 
         where:
             simlulationSuccessful || finished
@@ -128,8 +134,8 @@ class ExtSimulationSpec extends Specification {
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
-            def testProbe = new TestProbe(actorSystem)
-            def extSimData = new ExtSimAdapterData(testProbe.ref(), new String[0])
+            def extSimAdapter = new TestProbe(actorSystem)
+            def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
             def extSim = new TestSimulation(-1L, Optional.empty())
             extSim.setup(extSimData, new ArrayList<ExtData>())
 
@@ -142,6 +148,6 @@ class ExtSimulationSpec extends Specification {
             // since we call a private method through reflection,
             // our expected exception is wrapped in an InvocationTargetException
             ex.getCause().getClass() == IllegalArgumentException
-            testProbe.expectNoMessage()
+            extSimAdapter.expectNoMessage()
     }
 }

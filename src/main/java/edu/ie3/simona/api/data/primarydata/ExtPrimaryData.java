@@ -8,44 +8,44 @@ package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import edu.ie3.simona.api.exceptions.ConvertionException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.apache.pekko.actor.ActorRef;
 
+/** Enables data connection of primary data between SIMONA and SimonaAPI */
 public class ExtPrimaryData implements ExtData {
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private final ActorRef dataService;
+  private ActorRef dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private final ActorRef extSimAdapter;
+  private ActorRef extSimAdapter;
 
-  /** Factory to convert an external object to PSDM primary data */
-  private final PrimaryDataFactory factory;
+  /** Assets that provide primary data to SIMONA */
+  private final Map<String, UUID> extPrimaryDataMapping;
 
-  public ExtPrimaryData(ActorRef dataService, ActorRef extSimAdapter, PrimaryDataFactory factory) {
+  public ExtPrimaryData(Map<String, UUID> extPrimaryDataMapping) {
+    this.extPrimaryDataMapping = extPrimaryDataMapping;
+  }
+
+  /** Sets the actor refs for data and control flow */
+  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
-    this.factory = factory;
+  }
+
+  /** Returns a list of the uuids of the system participants that expect external primary data */
+  public List<UUID> getPrimaryDataAssets() {
+    return extPrimaryDataMapping.values().stream().toList();
   }
 
   /** Provide primary data from an external simulation in one tick. */
-  public void providePrimaryData(Long tick, Map<String, Object> primaryData) {
-    Map<UUID, Value> convertedMap = new HashMap<>();
-    primaryData.forEach(
-        (k, v) -> {
-          try {
-            convertedMap.put(UUID.fromString(k), factory.convert(v));
-          } catch (ConvertionException e) {
-            throw new RuntimeException(e);
-          }
-        });
-    sendExtMsg(new ProvidePrimaryData(tick, convertedMap));
+  public void providePrimaryData(
+      Long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
+    sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
   }
 
   /**
@@ -59,5 +59,23 @@ public class ExtPrimaryData implements ExtData {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+  }
+
+  /** Converts an input data package from an external simulation to a map of primary data */
+  public Map<UUID, Value> convertExternalInputToPrimaryData(
+      ExtInputDataContainer extInputDataContainer) {
+    Map<UUID, Value> primaryDataForSimona = new HashMap<>();
+    extInputDataContainer
+        .getSimonaInputMap()
+        .forEach(
+            (id, value) -> {
+              if (extPrimaryDataMapping.containsKey(id)) {
+                primaryDataForSimona.put(extPrimaryDataMapping.get(id), value);
+              } else {
+                throw new IllegalArgumentException(
+                    "Input for asset with id " + id + " was provided, but it wasn't requested!");
+              }
+            });
+    return primaryDataForSimona;
   }
 }
