@@ -32,9 +32,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected final DataQueueExtSimulationExtSimulator<ExtResultContainer>
       dataQueueSimonaApiToExtCoSimulator;
 
-  /** Time resolution for the data exchange */
-  private final long deltaT = 900L;
-
   /** Name of the external co-simulation */
   protected final String extSimulatorName;
 
