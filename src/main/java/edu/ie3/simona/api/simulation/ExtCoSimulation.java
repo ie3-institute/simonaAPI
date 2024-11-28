@@ -64,9 +64,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    */
   protected void sendEmDataToSimona(ExtEmData extEmData, long tick, long nextTick, Logger log)
       throws InterruptedException {
-    log.debug("Wait for EmData from " + extSimulatorName);
+    log.debug("Wait for EmData from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received EmData from " + extSimulatorName);
+    log.debug("Received EmData from {}", extSimulatorName);
     extEmData.provideEmData(
         tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
     log.debug("Provided EmData to SIMONA!");
@@ -81,6 +81,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Received results from SIMONA!");
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.debug("Sent results to " + extSimulatorName);
+    log.debug("Sent results to {}", extSimulatorName);
   }
 }
