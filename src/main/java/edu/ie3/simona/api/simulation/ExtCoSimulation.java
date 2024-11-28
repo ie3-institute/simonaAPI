@@ -45,9 +45,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   /** Function to send primary data to SIMONA using ExtPrimaryData */
   protected void sendPrimaryDataToSimona(ExtPrimaryData extPrimaryData, long tick, Logger log)
       throws InterruptedException {
-    log.debug("Wait for Primary Data from " + extSimulatorName);
+    log.debug("Wait for Primary Data from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received Primary Data from " + extSimulatorName);
+    log.debug("Received Primary Data from {}", extSimulatorName);
     extPrimaryData.providePrimaryData(
         tick,
         extPrimaryData.convertExternalInputToPrimaryData(inputData),
