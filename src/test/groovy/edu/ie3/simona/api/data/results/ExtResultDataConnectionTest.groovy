@@ -2,7 +2,6 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.connector.LineResult
-import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
@@ -20,7 +19,7 @@ import javax.measure.quantity.Angle
 import javax.measure.quantity.ElectricCurrent
 import java.time.ZonedDateTime
 
-class ExtResultDataTest extends Specification implements DataServiceTestData {
+class ExtResultDataConnectionTest extends Specification implements DataServiceTestData {
 
     @Shared
     ActorSystem actorSystem
@@ -47,8 +46,8 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
-        extResultData.setActorRefs(
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
                 extSimAdapter.ref()
@@ -58,8 +57,8 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultData.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultData.requestResults(0L)
+        extResultDataConnection.queueExtResponseMsg(sentMsg)
+        def receivedResults = extResultDataConnection.requestResults(0L)
 
         then:
         dataService.expectMsg(new RequestResultEntities(0L))
@@ -72,8 +71,8 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
-        extResultData.setActorRefs(
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
                 extSimAdapter.ref()
@@ -83,8 +82,8 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultData.queueExtResponseMsg(unexpectedMsg)
-        extResultData.requestResults(0L)
+        extResultDataConnection.queueExtResponseMsg(unexpectedMsg)
+        extResultDataConnection.requestResults(0L)
 
         then:
         dataService.expectMsg(new RequestResultEntities(0L))
@@ -94,31 +93,31 @@ class ExtResultDataTest extends Specification implements DataServiceTestData {
 
     def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
         given:
-            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
 
         when:
-            def mapOfResults = extResultData.createResultMap([loadResult])
+        def mapOfResults = extResultDataConnection.createResultMap([loadResult])
 
         then:
-            mapOfResults.size() == 1
-            mapOfResults.get("Load") == loadResult
+        mapOfResults.size() == 1
+        mapOfResults.get("Load") == loadResult
     }
 
     def "ExtResultData should throw an exception, if a result with a wrong data type was provided"() {
         given:
-            def extResultData = new ExtResultData(participantResultAssetMapping, gridResultAssetMapping)
-            Quantity<ElectricCurrent> iAMag = Quantities.getQuantity(100, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
-            Quantity<Angle> iAAng = Quantities.getQuantity(45, StandardUnits.ELECTRIC_CURRENT_ANGLE)
-            Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
-            Quantity<Angle> iBAng = Quantities.getQuantity(30, StandardUnits.ELECTRIC_CURRENT_ANGLE)
-            def wrongResult = new LineResult(
-                    ZonedDateTime.parse("2020-01-30T17:26:44Z"), inputUuid, iAMag, iAAng, iBMag, iBAng
-            )
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        Quantity<ElectricCurrent> iAMag = Quantities.getQuantity(100, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
+        Quantity<Angle> iAAng = Quantities.getQuantity(45, StandardUnits.ELECTRIC_CURRENT_ANGLE)
+        Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
+        Quantity<Angle> iBAng = Quantities.getQuantity(30, StandardUnits.ELECTRIC_CURRENT_ANGLE)
+        def wrongResult = new LineResult(
+                ZonedDateTime.parse("2020-01-30T17:26:44Z"), inputUuid, iAMag, iAAng, iBMag, iBAng
+        )
 
         when:
-            extResultData.createResultMap([wrongResult])
+        extResultDataConnection.createResultMap([wrongResult])
 
         then:
-            thrown IllegalArgumentException
+        thrown IllegalArgumentException
     }
 }

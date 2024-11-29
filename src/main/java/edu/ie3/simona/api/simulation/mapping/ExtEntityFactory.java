@@ -6,6 +6,8 @@
 
 package edu.ie3.simona.api.simulation.mapping;
 
+import edu.ie3.datamodel.exceptions.FactoryException;
+import edu.ie3.datamodel.exceptions.ParsingException;
 import edu.ie3.datamodel.io.factory.EntityData;
 import edu.ie3.datamodel.io.factory.EntityFactory;
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
@@ -22,7 +24,7 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
   public static final String DATA_TYPE = "dataType";
 
   public ExtEntityFactory() {
-    super(new Class[] {ExtEntityEntry.class});
+    super(ExtEntityEntry.class);
   }
 
   @Override
@@ -36,7 +38,13 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
     UUID simonaUuid = data.getUUID(SIMONA_UUID);
     String extId = data.getField(EXT_ID);
     Optional<ColumnScheme> columnScheme = ColumnScheme.parse(data.getField(COLUMN_SCHEME));
-    String inputType = data.getField(DATA_TYPE);
+
+    DataType inputType;
+    try {
+      inputType = DataType.parse(data.getField(DATA_TYPE));
+    } catch (ParsingException e) {
+      throw new FactoryException(e);
+    }
 
     return new ExtEntityEntry(
         simonaUuid,

@@ -13,7 +13,7 @@ class ExtEntityMappingTest extends Specification {
             loadUuid,
             "Load",
             ColumnScheme.parse("p").get(),
-            "result_participant"
+            DataType.EXT_PARTICIPANT_RESULT
     )
 
     @Shared
@@ -21,7 +21,7 @@ class ExtEntityMappingTest extends Specification {
             loadUuid,
             "Load",
             ColumnScheme.parse("p").get(),
-            "input"
+            DataType.EXT_PRIMARY_INPUT
     )
 
     def "ExtEntityMapping should return SIMONA uuid mapping correctly"() {
@@ -30,13 +30,12 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping("input")
+        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT)
 
         then:
         inputMap.size() == 1
         inputMap.get("Load") == loadUuid
     }
-
 
     def "ExtEntityMapping should return external id mapping correctly"() {
         given:
@@ -44,7 +43,7 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping("input")
+        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.EXT_PRIMARY_INPUT)
 
         then:
         inputMap.size() == 1
