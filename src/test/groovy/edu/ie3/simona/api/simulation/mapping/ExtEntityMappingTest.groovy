@@ -37,7 +37,6 @@ class ExtEntityMappingTest extends Specification {
         inputMap.get("Load") == loadUuid
     }
 
-
     def "ExtEntityMapping should return external id mapping correctly"() {
         given:
         def extAssetList = List.of(extResultEntry, extInputEntry)
