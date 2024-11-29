@@ -6,20 +6,25 @@
 
 package edu.ie3.simona.api;
 
-import edu.ie3.simona.api.data.ExtDataSimulation;
+import edu.ie3.simona.api.exceptions.NoExtSimulationException;
+import edu.ie3.simona.api.simulation.ExtSimAdapterData;
 import edu.ie3.simona.api.simulation.ExtSimulation;
-import java.util.List;
 
 /**
  * Every external simulation has to provide a class {@code edu.ie3.simona.api.ExtLink} which
  * implements this interface.
- *
- * <p>{@link #getExtSimulation()} and {@link #getExtDataSimulations()} can return references to the
- * same object, if that object implements both {@link ExtSimulation} and one or more variants of
- * {@link ExtDataSimulation}.
  */
 public interface ExtLinkInterface {
-  ExtSimulation getExtSimulation();
+  /** Returns the external simulation. */
+  default ExtSimulation getExtSimulation() {
+    throw new NoExtSimulationException(this.getClass());
+  }
 
-  List<ExtDataSimulation> getExtDataSimulations();
+  /**
+   * Method to set up an external simulation. Everything that needs to be set up before the external
+   * simulation can be retrieved should be done here.
+   *
+   * @param data used for setting up the external simulation
+   */
+  void setup(ExtSimAdapterData data);
 }

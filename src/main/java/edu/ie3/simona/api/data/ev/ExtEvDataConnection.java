@@ -6,28 +6,30 @@
 
 package edu.ie3.simona.api.data.ev;
 
-import edu.ie3.simona.api.data.ExtData;
+import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtEvData implements ExtData {
+public class ExtEvDataConnection implements ExtInputDataConnection {
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<EvDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private final ActorRef dataService;
+  private ActorRef dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private final ActorRef extSimAdapter;
+  private ActorRef extSimAdapter;
 
-  // important trigger queue must be the same as hold in actor
-  // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
-  public ExtEvData(ActorRef dataService, ActorRef extSimAdapter) {
+  @Override
+  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
