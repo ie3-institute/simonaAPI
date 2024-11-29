@@ -56,6 +56,10 @@ public class ExtResultContainer implements ExtDataContainer {
     return tick;
   }
 
+  public Optional<Long> getNextTick() {
+    return maybeNextTick;
+  }
+
   /**
    * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
    */

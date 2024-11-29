@@ -151,7 +151,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       long tick,
       Map<String, Value> dataMap,
       Optional<Long> maybeNextTick) {
-    log.debug("Wait for EmData from {}", extSimulatorName);
     log.debug("Received EmData from {}", extSimulatorName);
     extEmDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
     log.debug("Provided EmData to SIMONA!");
