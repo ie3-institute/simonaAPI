@@ -28,10 +28,6 @@ public class ExtEvDataConnection implements ExtInputDataConnection {
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef extSimAdapter;
 
-  // important trigger queue must be the same as hold in actor
-  // to make it safer one might consider asking the actor for ara reference on its trigger queue?!
-  public ExtEvDataConnection() {}
-
   @Override
   public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
     this.dataService = dataService;

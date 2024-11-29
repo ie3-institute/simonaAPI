@@ -41,7 +41,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
 
   public void convertAndSend(
       long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
-    // filtering and converting the data
+    // filtering the data and converting the keys
     Map<UUID, PValue> convertedMap =
         data.entrySet().stream()
             .filter(e -> extEmMapping.containsKey(e.getKey()))

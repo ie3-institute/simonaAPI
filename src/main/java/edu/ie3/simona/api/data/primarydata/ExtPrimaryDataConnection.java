@@ -28,10 +28,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
 
-  public ExtPrimaryDataConnection() {
-    this(Map.of());
-  }
-
   public ExtPrimaryDataConnection(Map<String, UUID> extPrimaryDataMapping) {
     this.extPrimaryDataMapping = extPrimaryDataMapping;
   }
@@ -44,7 +40,7 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection {
 
   public void convertAndSend(
       long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
-    // filtering and converting the data
+    // filtering the data and converting the keys
     Map<UUID, Value> convertedMap =
         data.entrySet().stream()
             .filter(e -> extPrimaryDataMapping.containsKey(e.getKey()))
