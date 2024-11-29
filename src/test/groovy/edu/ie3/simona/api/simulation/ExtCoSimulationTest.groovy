@@ -1,37 +1,18 @@
 package edu.ie3.simona.api.simulation
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
-import edu.ie3.simona.api.data.ExtDataConnection
 import edu.ie3.simona.api.simulation.mapping.DataType
 import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 
 class ExtCoSimulationTest extends Specification {
 
     @Shared
-    ExtCoSimulation coSimulation
-
-
-    def setupSpec() {
-        coSimulation = new ExtCoSimulation("ExtCoSimulation", "") {
-            @Override
-            protected Long initialize() {
-                return null
-            }
-
-            @Override
-            protected Optional<Long> doActivity(long tick) {
-                return null
-            }
-
-            @Override
-            Set<ExtDataConnection> getDataConnections() {
-                return null
-            }
-        }
-    }
+    private static final Logger log = LoggerFactory.getLogger(ExtCoSimulationTest)
 
     def "An ExtCoSimulation can build a primary data connection correctly"() {
         given:
@@ -46,7 +27,7 @@ class ExtCoSimulationTest extends Specification {
         ])
 
         when:
-        def actual = coSimulation.buildPrimaryConnection(mapping)
+        def actual = ExtCoSimulation.buildPrimaryConnection(mapping, log)
 
         then:
         actual.getPrimaryDataAssets() == [uuid3, uuid1]
@@ -65,7 +46,7 @@ class ExtCoSimulationTest extends Specification {
         ])
 
         when:
-        def actual = coSimulation.buildEmConnection(mapping)
+        def actual = ExtCoSimulation.buildEmConnection(mapping, log)
 
         then:
         actual.getControlledEms() == [uuid1, uuid2]
@@ -84,7 +65,7 @@ class ExtCoSimulationTest extends Specification {
         ])
 
         when:
-        def actual = coSimulation.buildResultConnection(mapping)
+        def actual = ExtCoSimulation.buildResultConnection(mapping, log)
 
         then:
         actual.getGridResultDataAssets() == [uuid1]
