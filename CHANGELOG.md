@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Added
+- Enable initialization of external data simulation [#167](https://github.com/ie3-institute/simonaAPI/issues/167)
+- `ExtResultContainer` returns result map [#217](https://github.com/ie3-institute/simonaAPI/issues/217)
+
 ### Changed
 - Renaming power fields in `EvModel` [#208](https://github.com/ie3-institute/simonaAPI/issues/208)
-
 
 ## [0.5.0] - 2024-08-09
 
@@ -16,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented `ExtPrimaryData` and `ExtResultsData` [#145](https://github.com/ie3-institute/simonaAPI/issues/145)
 - Have EV simulation communicate the next tick [#170](https://github.com/ie3-institute/simonaAPI/issues/170)
 - Only communicate the next tick of activation of EV simulation as a whole [#176](https://github.com/ie3-institute/simonaAPI/issues/176)
-- Enable initialization of external data simulation [#167](https://github.com/ie3-institute/simonaAPI/issues/167)
 
 ## [0.4.0] - 2023-11-22
 
