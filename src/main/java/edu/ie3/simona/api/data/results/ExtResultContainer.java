@@ -52,6 +52,10 @@ public class ExtResultContainer implements ExtDataContainer {
     this(tick, simonaResultsMap, Optional.empty());
   }
 
+  public Map<String, ModelResultEntity> getResults() {
+    return simonaResultsMap;
+  }
+
   public Long getTick() {
     return tick;
   }
