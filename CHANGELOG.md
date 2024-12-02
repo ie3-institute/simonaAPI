@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+## [0.6.0] - 2024-12-02
+
 ### Added
 - Enable initialization of external data simulation [#167](https://github.com/ie3-institute/simonaAPI/issues/167)
 - `ExtResultContainer` returns result map [#217](https://github.com/ie3-institute/simonaAPI/issues/217)
@@ -45,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.5.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.2.0...0.3.0
