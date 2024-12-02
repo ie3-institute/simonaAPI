@@ -3,8 +3,8 @@ plugins {
   id 'java' // java support
   id 'com.diffplug.spotless' version '6.25.0'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '6.0.20' // code check, working on byte code
-  id "org.sonarqube" version "5.1.0.4882" // sonarqube
+  id 'com.github.spotbugs' version '6.0.26' // code check, working on byte code
+  id "org.sonarqube" version "6.0.1.5171" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -17,8 +17,8 @@ ext {
 
   // required for pekko
   scalaVersion = "2.13"
-  scalaBinaryVersion = "2.13.14"
-  pekkoVersion = "1.0.3"
+  scalaBinaryVersion = "2.13.15"
+  pekkoVersion = "1.1.2"
 }
 
 group = 'com.github.ie3-institute'
@@ -46,18 +46,20 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.2' // quantities
+  implementation 'tech.units:indriya:2.2.1' // quantities
 
   // scala (needed for pekko)
   implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
 
-  //PSDM
+  //PSU
   implementation('com.github.ie3-institute:PowerSystemUtils:2.2.1') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
     /* Exclude our own nested dependencies */
     exclude group: 'com.github.ie3-institute'
   }
+
+  //PSDM
   implementation('com.github.ie3-institute:PowerSystemDataModel:5.1.0') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
@@ -65,14 +67,18 @@ dependencies{
     exclude group: 'com.github.ie3-institute'
   }
 
+  // logging
+  implementation platform('org.apache.logging.log4j:log4j-bom:2.24.2')
+  implementation 'org.apache.logging.log4j:log4j-api' // log4j
+  implementation 'org.apache.logging.log4j:log4j-core' // log4j
+  implementation 'org.apache.logging.log4j:log4j-slf4j-impl' // log4j -> slf4j
+
   // pekko
   implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
   testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
 }
 
 task printVersion {

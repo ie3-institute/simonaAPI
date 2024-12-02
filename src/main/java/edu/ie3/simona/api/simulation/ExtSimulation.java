@@ -6,13 +6,10 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.data.ExtData;
-import edu.ie3.simona.api.data.ev.ExtEvData;
-import edu.ie3.simona.api.data.ev.ExtEvSimulation;
+import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.simulation.ontology.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Every external simulation must extend this class in order to get triggered by the main
@@ -20,9 +17,13 @@ import java.util.Optional;
  */
 public abstract class ExtSimulation implements Runnable {
 
+  protected String simulationName;
+
   private ExtSimAdapterData data;
 
-  protected ExtSimulation() {}
+  protected ExtSimulation(String simulationName) {
+    this.simulationName = simulationName;
+  }
 
   public void run() {
     try {
@@ -100,22 +101,14 @@ public abstract class ExtSimulation implements Runnable {
     // to be overwritten in subclass
   }
 
-  public final List<Class<? extends ExtData>> getRequiredAdapters() {
-    ArrayList<Class<? extends ExtData>> classes = new ArrayList<>();
-
-    if (this instanceof ExtEvSimulation) classes.add(ExtEvData.class);
-
-    return classes;
-  }
-
-  public final void setup(ExtSimAdapterData data, List<ExtData> adapters) {
+  /**
+   * Method to set the external simulation adapter data. This method should be called during {@link
+   * edu.ie3.simona.api.ExtLinkInterface#setup(ExtSimAdapterData)}.
+   *
+   * @param data to set up
+   */
+  public final void setAdapterData(ExtSimAdapterData data) {
     this.data = data;
-
-    // todo sanity check if all required data is available
-    for (ExtData adapter : adapters) {
-      if (adapter instanceof ExtEvData && this instanceof ExtEvSimulation)
-        ((ExtEvSimulation) this).setExtEvData((ExtEvData) adapter);
-    }
   }
 
   /**
@@ -126,4 +119,12 @@ public abstract class ExtSimulation implements Runnable {
   protected String[] getMainArgs() {
     return data.getMainArgs();
   }
+
+  /** Returns the name of this external simulation. */
+  public final String getSimulationName() {
+    return simulationName;
+  }
+
+  /** Returns all {@link ExtDataConnection} of this simulation. */
+  public abstract Set<ExtDataConnection> getDataConnections();
 }

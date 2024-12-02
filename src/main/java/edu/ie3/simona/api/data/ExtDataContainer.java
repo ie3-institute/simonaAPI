@@ -4,11 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.exceptions;
+package edu.ie3.simona.api.data;
 
-public class ConvertionException extends Exception {
-
-  public ConvertionException(final String message) {
-    super(message);
-  }
-}
+/** Interface for data that are exchanged between an external simulation and SimonaAPI */
+public interface ExtDataContainer {}

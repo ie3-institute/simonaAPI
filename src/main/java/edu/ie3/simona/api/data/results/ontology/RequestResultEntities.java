@@ -7,4 +7,4 @@
 package edu.ie3.simona.api.data.results.ontology;
 
 /** Request calculated results from SIMONA in the current tick */
-public record RequestResultEntities() implements ResultDataMessageFromExt {}
+public record RequestResultEntities(Long tick) implements ResultDataMessageFromExt {}
