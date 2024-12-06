@@ -8,6 +8,7 @@ package edu.ie3.simona.api.data.results;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -44,10 +45,16 @@ public class ExtResultData implements ExtOutputData {
   /** Map uuid to external id of system participants */
   private final Map<UUID, String> participantResultAssetMapping;
 
+  private final Map<UUID, String> flexOptionsMapping;
+
   public ExtResultData(
-      Map<UUID, String> participantResultAssetMapping, Map<UUID, String> gridResultAssetMapping) {
+      Map<UUID, String> participantResultAssetMapping,
+      Map<UUID, String> gridResultAssetMapping,
+      Map<UUID, String> flexOptionsMapping
+  ) {
     this.participantResultAssetMapping = participantResultAssetMapping;
     this.gridResultAssetMapping = gridResultAssetMapping;
+    this.flexOptionsMapping = flexOptionsMapping;
   }
 
   /**
@@ -73,6 +80,10 @@ public class ExtResultData implements ExtOutputData {
     return participantResultAssetMapping.keySet().stream().toList();
   }
 
+  public List<UUID> getFlexOptionAssets() {
+    return flexOptionsMapping.keySet().stream().toList();
+  }
+
   /** Method that an external simulation can request results from SIMONA as a list. */
   private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick));
@@ -96,9 +107,14 @@ public class ExtResultData implements ExtOutputData {
             resultMap.put(
                 participantResultAssetMapping.get(systemParticipantResult.getInputModel()),
                 systemParticipantResult);
+          } else if (result instanceof FlexOptionsResult flexOptionsResult) {
+            resultMap.put(
+                    flexOptionsMapping.get(flexOptionsResult.getInputModel()),
+                    flexOptionsResult
+            );
           } else {
             throw new IllegalArgumentException(
-                "ExtResultData can only handle NodeResult's and SystemParticipantResult's!");
+                "ExtResultData can only handle NodeResult's, FlexOptionResult's and SystemParticipantResult's!");
           }
         });
     return resultMap;

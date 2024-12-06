@@ -15,6 +15,8 @@ import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultData;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 
 /**
@@ -61,23 +63,23 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    */
   protected void sendEmDataToSimona(ExtEmData extEmData, long tick, long nextTick, Logger log)
       throws InterruptedException {
-    log.debug("Wait for EmData from {}", extSimulatorName);
+    log.info("Wait for EmData from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-    log.debug("Received EmData from {}", extSimulatorName);
+    log.info("Received EmData from {}", extSimulatorName);
     extEmData.provideEmData(
         tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
-    log.debug("Provided EmData to SIMONA!");
+    log.info("Provided EmData to SIMONA!");
   }
 
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendResultsToExtCoSimulator(
       ExtResultData extResultData, long tick, Optional<Long> nextTick, Logger log)
       throws InterruptedException {
-    log.debug("Request results from SIMONA!");
+    log.info("Request results from SIMONA!");
     Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestResults(tick);
-    log.debug("Received results from SIMONA!");
+    log.info("Received results from SIMONA!");
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.debug("Sent results to {}", extSimulatorName);
+    log.info("Sent results to {}", extSimulatorName);
   }
 }

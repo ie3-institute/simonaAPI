@@ -27,6 +27,7 @@ public record ExtEntityEntry(
   public static final String EXT_INPUT = "input";
   public static final String EXT_RESULT_PARTICIPANT = "result_participant";
   public static final String EXT_RESULT_GRID = "result_grid";
+  public static final String EXT_RESULT_FLEX_OPTIONS = "result_flexoptions";
 
   public String toString() {
     return "ExtEntityEntry={"
