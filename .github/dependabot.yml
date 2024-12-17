@@ -9,6 +9,7 @@ updates:
   target-branch: dev
   reviewers:
   - t-ober
-  - sensarmad
+  - jo-bao
   - danielfeismann
   - sebastian-peter
+  - staudtMarius
