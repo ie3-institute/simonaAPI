@@ -56,6 +56,8 @@ public class ExtResultContainer implements ExtDataContainer {
     return simonaResultsMap;
   }
 
+  public String getResultsAsString() { return resultMapToString(simonaResultsMap); }
+
   public Long getTick() {
     return tick;
   }
@@ -74,6 +76,17 @@ public class ExtResultContainer implements ExtDataContainer {
       return vMagDev.getValue().doubleValue();
     } else {
       throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");
+    }
+  }
+
+  /**
+   * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
+   */
+  public double getVoltage(String assetId) {
+    if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
+      return nodeResult.getvMag().getValue().doubleValue();
+    } else {
+      throw new IllegalArgumentException("VOLTAGE is only available for NodeResult's!");
     }
   }
 
@@ -106,5 +119,16 @@ public class ExtResultContainer implements ExtDataContainer {
   /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
   public double getLineLoading(String assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
+  }
+
+
+  private String resultMapToString(
+          Map<String, ModelResultEntity> results
+  ) {
+    String resultString = "";
+    for (String key : results.keySet()) {
+      resultString = resultString + "id = " + key + ", time = " + results.get(key).getTime() + ", result = " + results.get(key).getClass().getSimpleName() + "\n";
+    }
+    return resultString;
   }
 }

@@ -16,11 +16,12 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.pekko.actor.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
@@ -86,7 +87,18 @@ public class ExtResultData implements ExtOutputData {
 
   /** Method that an external simulation can request results from SIMONA as a list. */
   private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
-    sendExtMsg(new RequestResultEntities(tick));
+    List<UUID> allExtEntities = Stream.concat(Stream.concat(getFlexOptionAssets().stream(), getGridResultDataAssets().stream()), getParticipantResultDataAssets().stream()).toList();
+    sendExtMsg(new RequestResultEntities(tick, allExtEntities));
+    return receiveWithType(ProvideResultEntities.class).results();
+  }
+
+  private List<ModelResultEntity> requestFlexOptionResultsList(long tick) throws InterruptedException {
+    sendExtMsg(new RequestResultEntities(tick, getFlexOptionAssets()));
+    return receiveWithType(ProvideResultEntities.class).results();
+  }
+
+  private List<ModelResultEntity> requestGridResultsList(long tick) throws InterruptedException {
+    sendExtMsg(new RequestResultEntities(tick, getGridResultDataAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
@@ -95,6 +107,14 @@ public class ExtResultData implements ExtOutputData {
    */
   public Map<String, ModelResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
+  }
+
+  public Map<String, ModelResultEntity> requestFlexOptionResults(long tick) throws InterruptedException {
+    return createResultMap(requestFlexOptionResultsList(tick));
+  }
+
+  public Map<String, ModelResultEntity> requestGridResults(long tick) throws InterruptedException {
+    return createResultMap(requestGridResultsList(tick));
   }
 
   protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {

@@ -66,6 +66,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.info("Wait for EmData from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
     log.info("Received EmData from {}", extSimulatorName);
+    if (inputData.getTick() != tick) {
+      throw new RuntimeException("External input data is for another tick " + inputData.getTick() + " than SIMONA's tick " + tick + "!");
+    }
     extEmData.provideEmData(
         tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
     log.info("Provided EmData to SIMONA!");
@@ -73,13 +76,62 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendResultsToExtCoSimulator(
-      ExtResultData extResultData, long tick, Optional<Long> nextTick, Logger log)
+      ExtResultData extResultData,
+      long tick,
+      Optional<Long> nextTick,
+      Logger log
+  )
       throws InterruptedException {
-    log.info("Request results from SIMONA!");
+    log.info("Request results from SIMONA for tick {}!", tick);
     Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestResults(tick);
-    log.info("Received results from SIMONA!");
+    log.debug("[" + tick + "] Received results from SIMONA!\n" + resultMapToString(resultsToBeSend));
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.info("Sent results to {}", extSimulatorName);
+    log.info("Sent results for tick {} to {}", tick, extSimulatorName);
   }
+
+
+  /** Function to get result data from SIMONA using ExtResultData */
+  protected void sendGridResultsToExtCoSimulator(
+          ExtResultData extResultData,
+          long tick,
+          Optional<Long> nextTick,
+          Logger log
+  )
+          throws InterruptedException {
+    log.info("Request results from SIMONA for grid entities for tick {}!", tick);
+    Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestGridResults(tick);
+    log.debug("[" + tick + "] Received grid results from SIMONA!\n" + resultMapToString(resultsToBeSend));
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+            new ExtResultContainer(tick, resultsToBeSend, nextTick));
+    log.info("Sent grid results for tick {} to {}", tick, extSimulatorName);
+  }
+
+
+  /** Function to get result data from SIMONA using ExtResultData */
+  protected void sendFlexOptionResultsToExtCoSimulator(
+          ExtResultData extResultData,
+          long tick,
+          Optional<Long> nextTick,
+          Logger log
+  )
+          throws InterruptedException {
+    log.info("Request results from SIMONA for flex options for tick {}!", tick);
+    Map<String, ModelResultEntity> resultsToBeSend = extResultData.requestFlexOptionResults(tick);
+    log.debug("[" + tick + "] Received flex option results from SIMONA!\n" + resultMapToString(resultsToBeSend));
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+            new ExtResultContainer(tick, resultsToBeSend, nextTick));
+    log.info("Sent flex option results for tick {} to {}", tick, extSimulatorName);
+  }
+
+  private String resultMapToString(
+          Map<String, ModelResultEntity> results
+  ) {
+    String resultString = "";
+    for (String key : results.keySet()) {
+      resultString = resultString + "id = " + key + ", time = " + results.get(key).getTime() + ", result = " + results.get(key).getClass().getSimpleName() + "\n";
+    }
+    return resultString;
+  }
+
 }
