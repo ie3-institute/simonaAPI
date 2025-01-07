@@ -20,23 +20,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.typed.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultDataConnection implements ExtOutputDataConnection {
+public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDataMessageFromExt> {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles result data within SIMONA */
-  private ActorRef extResultDataService;
+  private ActorRef<ResultDataMessageFromExt> extResultDataService;
 
   /** Actor reference to the dataServiceAdapter */
-  private ActorRef dataServiceActivation;
+  private ActorRef<ResultDataMessageFromExt> dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef extSimAdapter;
+  private ActorRef<ScheduleDataServiceMessage<ResultDataMessageFromExt>> extSimAdapter;
 
   /** Map uuid to external id of grid related entities */
   private final Map<UUID, String> gridResultAssetMapping;
@@ -59,7 +59,9 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
    * @param extSimAdapter actor ref to the extSimAdapter
    */
   public void setActorRefs(
-      ActorRef extResultDataService, ActorRef dataServiceActivation, ActorRef extSimAdapter) {
+      ActorRef<ResultDataMessageFromExt> extResultDataService,
+      ActorRef<ResultDataMessageFromExt> dataServiceActivation,
+      ActorRef<ScheduleDataServiceMessage<ResultDataMessageFromExt>> extSimAdapter) {
     this.extResultDataService = extResultDataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;
@@ -112,9 +114,9 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
    * @param msg the data/information that is sent to SIMONA's result data service
    */
   public void sendExtMsg(ResultDataMessageFromExt msg) {
-    extResultDataService.tell(msg, ActorRef.noSender());
+    extResultDataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage<>(dataServiceActivation));
   }
 
   /** Queues message from SIMONA that should be handled by the external simulation. */

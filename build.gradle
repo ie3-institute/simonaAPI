@@ -74,8 +74,9 @@ dependencies{
   implementation 'org.apache.logging.log4j:log4j-slf4j-impl' // log4j -> slf4j
 
   // pekko
-  implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
-  testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
+  implementation "org.apache.pekko:pekko-actor-typed_${scalaVersion}:${pekkoVersion}"
+
+  testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'

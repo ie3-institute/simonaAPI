@@ -7,16 +7,16 @@
 package edu.ie3.simona.api.data.ontology;
 
 import java.util.Objects;
-import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.typed.ActorRef;
 
-public class ScheduleDataServiceMessage {
-  private final ActorRef dataService;
+public class ScheduleDataServiceMessage<T extends DataMessageFromExt> {
+  private final ActorRef<T> dataService;
 
-  public ScheduleDataServiceMessage(ActorRef dataService) {
+  public ScheduleDataServiceMessage(ActorRef<T> dataService) {
     this.dataService = dataService;
   }
 
-  public ActorRef getDataService() {
+  public ActorRef<T> getDataService() {
     return dataService;
   }
 
@@ -24,7 +24,7 @@ public class ScheduleDataServiceMessage {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    ScheduleDataServiceMessage that = (ScheduleDataServiceMessage) o;
+    ScheduleDataServiceMessage<?> that = (ScheduleDataServiceMessage<?>) o;
     return dataService.equals(that.dataService);
   }
 

@@ -12,19 +12,22 @@ import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.typed.ActorRef;
 import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
-public class ExtEmDataConnection implements ExtInputDataConnection {
+public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessageFromExt> {
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private ActorRef emDataService;
+  private ActorRef<EmDataMessageFromExt> emDataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef extSimAdapter;
+  private ActorRef<ScheduleDataServiceMessage<EmDataMessageFromExt>> extSimAdapter;
 
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extEmMapping;
@@ -34,7 +37,9 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
   }
 
   @Override
-  public void setActorRefs(ActorRef emDataService, ActorRef extSimAdapter) {
+  public void setActorRefs(
+      ActorRef<EmDataMessageFromExt> emDataService,
+      ActorRef<ScheduleDataServiceMessage<EmDataMessageFromExt>> extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
   }
@@ -74,8 +79,8 @@ public class ExtEmDataConnection implements ExtInputDataConnection {
    * @param msg the data/information that is sent to SIMONA's external primary data service
    */
   public void sendExtMsg(EmDataMessageFromExt msg) {
-    emDataService.tell(msg, ActorRef.noSender());
+    emDataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(emDataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage<>(emDataService));
   }
 }

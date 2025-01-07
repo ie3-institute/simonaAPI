@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added Bao and Staudt to the list of reviewers [#216](https://github.com/ie3-institute/simonaAPI/issues/216)
 
+### Changed
+- Converting pekko classic to typed [#232](https://github.com/ie3-institute/simonaAPI/issues/232)
+
 ## [0.6.0] - 2024-12-02
 
 ### Added
