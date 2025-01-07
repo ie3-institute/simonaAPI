@@ -14,7 +14,7 @@ createextsims
 extlinkinterface
 
 simulations/externalsimulation
-
+simulations/mapping
 simulations/extsimadapterdata
 
 connections/connections

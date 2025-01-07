@@ -68,6 +68,15 @@ html_show_sourcelink = False
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# Intersphinx for references to external ReadTheDocs
+intersphinx_mapping = {
+    'psdm': ('https://powersystemdatamodel.readthedocs.io/en/latest/', None),
+}
+
+hoverxref_intersphinx = [
+    "psdm",
+]
+
 
 def setup(app):
     app.add_css_file("css/theme_override.css")
