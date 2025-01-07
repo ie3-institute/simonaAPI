@@ -58,8 +58,8 @@ source_encoding = 'utf-8-sig'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
-html_short_title = "SIMONA"
-htmlhelp_basename = 'SIMONA-doc'
+html_short_title = "simonaAPI"
+htmlhelp_basename = 'simonaAPI-doc'
 html_use_index = True
 html_show_sourcelink = False
 
