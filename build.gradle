@@ -9,6 +9,7 @@ plugins {
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
   id 'net.thauvin.erik.gradle.semver' version '1.0.4' // semantic versioning
+  id 'kr.motd.sphinx' version '2.10.1' // documentation generation
 }
 
 ext {
