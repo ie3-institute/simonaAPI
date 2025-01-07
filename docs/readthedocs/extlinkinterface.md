@@ -3,11 +3,11 @@
 The external link interface, or short `ExtLinkInterface`, is used to provide SIMONA with all methods necessary to load
 the external simulation.
 
-There are currently these methods:
+Currently, these methods exist:
 1. [setup](#setting-up-the-external-simulation)
 2. [getExtSimulation](#getting-the-external-simulation)
 
-Both method will be called by SIMONA to set up and get the external simulation.
+Both method will be called by SIMONA to initialize and retrieve the external simulation.
 
 
 ## Setting up the external simulation
