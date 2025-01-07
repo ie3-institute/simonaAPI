@@ -48,5 +48,3 @@ and add the dependency:
 
 With the release of version `0.6.0` there were major changes in the way external simulations are
 set up. Therefore, older simulations no longer work with the version `0.6.0`.
-
-

@@ -25,4 +25,3 @@ forward the adapter data to the external simulation.
 ## Getting the external simulation
 
 This method should return the [external simulation](/simulations/externalsimulation).
-

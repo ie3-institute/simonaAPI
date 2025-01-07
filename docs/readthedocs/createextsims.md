@@ -19,9 +19,3 @@ and adding them to the service file. When doing this SIMONA will give you a warn
 receive external data from **one** external simulation. If two external simulations are set up to provide data to the
 same asset, SIMONA will exit with an exception. Therefore, it is encouraged to create an own project for each external
 simulation.
-
-
-
-
-
-
