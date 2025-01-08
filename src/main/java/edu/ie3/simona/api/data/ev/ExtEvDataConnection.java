@@ -10,6 +10,7 @@ import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,12 +27,12 @@ public class ExtEvDataConnection implements ExtInputDataConnection<EvDataMessage
   private ActorRef<EvDataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ScheduleDataServiceMessage<EvDataMessageFromExt>> extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   @Override
   public void setActorRefs(
       ActorRef<EvDataMessageFromExt> dataService,
-      ActorRef<ScheduleDataServiceMessage<EvDataMessageFromExt>> extSimAdapter) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }

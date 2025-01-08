@@ -15,6 +15,7 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDa
   private ActorRef<ResultDataMessageFromExt> dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ScheduleDataServiceMessage<ResultDataMessageFromExt>> extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   /** Map uuid to external id of grid related entities */
   private final Map<UUID, String> gridResultAssetMapping;
@@ -61,7 +62,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDa
   public void setActorRefs(
       ActorRef<ResultDataMessageFromExt> extResultDataService,
       ActorRef<ResultDataMessageFromExt> dataServiceActivation,
-      ActorRef<ScheduleDataServiceMessage<ResultDataMessageFromExt>> extSimAdapter) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.extResultDataService = extResultDataService;
     this.dataServiceActivation = dataServiceActivation;
     this.extSimAdapter = extSimAdapter;

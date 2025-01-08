@@ -11,6 +11,7 @@ import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.pekko.actor.typed.ActorRef;
@@ -23,7 +24,7 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   private ActorRef<PrimaryDataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ScheduleDataServiceMessage<PrimaryDataMessageFromExt>> extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extPrimaryDataMapping;
@@ -35,7 +36,7 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   @Override
   public void setActorRefs(
       ActorRef<PrimaryDataMessageFromExt> dataService,
-      ActorRef<ScheduleDataServiceMessage<PrimaryDataMessageFromExt>> extSimAdapter) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }

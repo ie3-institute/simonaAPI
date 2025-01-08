@@ -12,6 +12,7 @@ import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessage
   private ActorRef<EmDataMessageFromExt> emDataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ScheduleDataServiceMessage<EmDataMessageFromExt>> extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   /** Assets that provide primary data to SIMONA */
   private final Map<String, UUID> extEmMapping;
@@ -39,7 +40,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessage
   @Override
   public void setActorRefs(
       ActorRef<EmDataMessageFromExt> emDataService,
-      ActorRef<ScheduleDataServiceMessage<EmDataMessageFromExt>> extSimAdapter) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
   }

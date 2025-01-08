@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.data;
 
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import org.apache.pekko.actor.typed.ActorRef;
 
 /**
@@ -28,5 +28,5 @@ public interface ExtOutputDataConnection<T extends ResultDataMessageFromExt>
   void setActorRefs(
       ActorRef<T> extResultDataService,
       ActorRef<T> dataServiceActivation,
-      ActorRef<ScheduleDataServiceMessage<T>> extSimAdapter);
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter);
 }
