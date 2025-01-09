@@ -51,7 +51,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def convertedEmData = Map.of(uuid, pValue as PValue)
 
         when:
-        extEmDataConnection.provideEmData(0L, convertedEmData, Optional.of(900L))
+        extEmDataConnection.provideData(0L, convertedEmData, Optional.of(900L))
 
         then:
         dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData, Optional.of(900L)))

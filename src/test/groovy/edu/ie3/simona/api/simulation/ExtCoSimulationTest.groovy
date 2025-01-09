@@ -30,7 +30,7 @@ class ExtCoSimulationTest extends Specification {
         def actual = ExtCoSimulation.buildPrimaryConnection(mapping, log)
 
         then:
-        actual.getPrimaryDataAssets() == [uuid3, uuid1]
+        actual.get().primaryDataAssets == [uuid3, uuid1]
     }
 
     def "An ExtCoSimulation can build an em data connection correctly"() {
@@ -49,7 +49,7 @@ class ExtCoSimulationTest extends Specification {
         def actual = ExtCoSimulation.buildEmConnection(mapping, log)
 
         then:
-        actual.getControlledEms() == [uuid1, uuid2]
+        actual.get().controlledEms == [uuid1, uuid2]
     }
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
@@ -68,7 +68,9 @@ class ExtCoSimulationTest extends Specification {
         def actual = ExtCoSimulation.buildResultConnection(mapping, log)
 
         then:
-        actual.getGridResultDataAssets() == [uuid1]
-        actual.getParticipantResultDataAssets() == [uuid2]
+        actual.isPresent()
+
+        actual.get().gridResultDataAssets == [uuid1]
+        actual.get().participantResultDataAssets == [uuid2]
     }
 }
