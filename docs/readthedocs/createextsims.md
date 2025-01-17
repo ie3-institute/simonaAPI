@@ -15,7 +15,9 @@ of the `ExtLinkInterface`.
 
 ## Project with multiple external simulations
 Your project could contain multiple external simulations by creating multiple implementations of the `ExtLinkInterface`
-and adding them to the service file. When doing this SIMONA will give you a warning. Each asset in SIMONA can only
-receive external data from **one** external simulation. If two external simulations are set up to provide data to the
-same asset, SIMONA will exit with an exception. Therefore, it is encouraged to create an own project for each external
-simulation.
+and adding them to the service file. When doing this SIMONA will give you a warning. 
+
+
+**Also**, each asset in SIMONA can only receive external data from **one** external simulation. If two external simulations
+are set up to provide data to the same asset, SIMONA will exit with an exception. Therefore, it is encouraged to create
+an own project for each external simulation.

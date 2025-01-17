@@ -1,8 +1,7 @@
 # Documentation of the SIMONA API
 
 Welcome to the documentation of the SIMONA API.
-This API is used to create extensions for [SIMONA](https://github.com/ie3-institute/simona).
-One example are external simulations, that can be used in co-simulations with SIMONA.
+This API is used to create extensions for [SIMONA](https://github.com/ie3-institute/simona), that can be used in co-simulations with SIMONA.
 
 
 ```{toctree}
@@ -14,6 +13,7 @@ createextsims
 extlinkinterface
 
 simulations/externalsimulation
+simulations/extcosimulation
 simulations/mapping
 simulations/extsimadapterdata
 
