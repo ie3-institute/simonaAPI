@@ -6,5 +6,11 @@
 
 package edu.ie3.simona.api.data.results.ontology;
 
+import java.util.List;
+import java.util.UUID;
+
 /** Request calculated results from SIMONA in the current tick */
-public record RequestResultEntities(Long tick) implements ResultDataMessageFromExt {}
+public record RequestResultEntities(
+        Long tick,
+        List<UUID> requestedResults
+) implements ResultDataMessageFromExt {}

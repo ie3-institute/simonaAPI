@@ -49,8 +49,7 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
     return new ExtEntityEntry(
         simonaUuid,
         extId,
-        columnScheme
-            .orElseThrow(), // FIXME: Interim version -> ColumnScheme should handle more data types
+        columnScheme, // FIXME: Interim version -> ColumnScheme should handle more data types
         inputType);
   }
 }
