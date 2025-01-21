@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
-
 import org.apache.pekko.actor.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
@@ -53,8 +52,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
   public ExtResultDataConnection(
       Map<UUID, String> participantResultAssetMapping,
       Map<UUID, String> gridResultAssetMapping,
-      Map<UUID, String> flexOptionsMapping
-  ) {
+      Map<UUID, String> flexOptionsMapping) {
     this.participantResultAssetMapping = participantResultAssetMapping;
     this.gridResultAssetMapping = gridResultAssetMapping;
     this.flexOptionsMapping = flexOptionsMapping;
@@ -89,12 +87,17 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   /** Method that an external simulation can request results from SIMONA as a list. */
   private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
-    List<UUID> allExtEntities = Stream.concat(Stream.concat(getFlexOptionAssets().stream(), getGridResultDataAssets().stream()), getParticipantResultDataAssets().stream()).toList();
+    List<UUID> allExtEntities =
+        Stream.concat(
+                Stream.concat(getFlexOptionAssets().stream(), getGridResultDataAssets().stream()),
+                getParticipantResultDataAssets().stream())
+            .toList();
     sendExtMsg(new RequestResultEntities(tick, allExtEntities));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ModelResultEntity> requestFlexOptionResultsList(long tick) throws InterruptedException {
+  private List<ModelResultEntity> requestFlexOptionResultsList(long tick)
+      throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getFlexOptionAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -111,7 +114,8 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return createResultMap(requestResultList(tick));
   }
 
-  public Map<String, ModelResultEntity> requestFlexOptionResults(long tick) throws InterruptedException {
+  public Map<String, ModelResultEntity> requestFlexOptionResults(long tick)
+      throws InterruptedException {
     return createResultMap(requestFlexOptionResultsList(tick));
   }
 
@@ -131,9 +135,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
                 systemParticipantResult);
           } else if (result instanceof FlexOptionsResult flexOptionsResult) {
             resultMap.put(
-                    flexOptionsMapping.get(flexOptionsResult.getInputModel()),
-                    flexOptionsResult
-            );
+                flexOptionsMapping.get(flexOptionsResult.getInputModel()), flexOptionsResult);
           } else {
             throw new IllegalArgumentException(
                 "ExtResultData can only handle NodeResult's, FlexOptionResult's and SystemParticipantResult's!");

@@ -57,7 +57,9 @@ public class ExtResultContainer implements ExtDataContainer {
     return simonaResultsMap;
   }
 
-  public String getResultsAsString() { return resultMapToString(simonaResultsMap); }
+  public String getResultsAsString() {
+    return resultMapToString(simonaResultsMap);
+  }
 
   public Long getTick() {
     return tick;
@@ -67,15 +69,14 @@ public class ExtResultContainer implements ExtDataContainer {
     return maybeNextTick;
   }
 
-  /**
-   * Returns the result for a certain asset.
-   */
+  /** Returns the result for a certain asset. */
   public ResultEntity getResult(String assetId) {
     return simonaResultsMap.get(assetId);
   }
 
   /**
-   * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link NodeResult}
+   * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
+   * NodeResult}
    */
   public double getVoltageDeviation(String assetId) {
     if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
@@ -129,13 +130,17 @@ public class ExtResultContainer implements ExtDataContainer {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }
 
-
-  private String resultMapToString(
-          Map<String, ModelResultEntity> results
-  ) {
+  private String resultMapToString(Map<String, ModelResultEntity> results) {
     StringBuilder resultString = new StringBuilder();
     for (String key : results.keySet()) {
-      resultString.append("id = ").append(key).append(", time = ").append(results.get(key).getTime()).append(", result = ").append(results.get(key).getClass().getSimpleName()).append("\n");
+      resultString
+          .append("id = ")
+          .append(key)
+          .append(", time = ")
+          .append(results.get(key).getTime())
+          .append(", result = ")
+          .append(results.get(key).getClass().getSimpleName())
+          .append("\n");
     }
     return resultString.toString();
   }

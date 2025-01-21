@@ -50,7 +50,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   @SafeVarargs
-  protected static Set<ExtDataConnection> toSet(Optional<? extends ExtDataConnection>... optionals) {
+  protected static Set<ExtDataConnection> toSet(
+      Optional<? extends ExtDataConnection>... optionals) {
     return Arrays.stream(optionals)
         .filter(Optional::isPresent)
         .map(Optional::get)
@@ -109,7 +110,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     Map<UUID, String> resultParticipantMapping =
         mapping.getExtUuid2IdMapping(DataType.EXT_PARTICIPANT_RESULT);
     Map<UUID, String> resultGridMapping = mapping.getExtUuid2IdMapping(DataType.EXT_GRID_RESULT);
-    Map<UUID, String> resultFlexOptionsMapping = mapping.getExtUuid2IdMapping(DataType.EXT_FLEX_OPTIONS_RESULT);
+    Map<UUID, String> resultFlexOptionsMapping =
+        mapping.getExtUuid2IdMapping(DataType.EXT_FLEX_OPTIONS_RESULT);
 
     if (resultParticipantMapping.isEmpty() && resultGridMapping.isEmpty()) {
       log.warn("No result connection was created.");
@@ -120,12 +122,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
           resultParticipantMapping.size(),
           resultGridMapping.size());
       return Optional.of(
-              new ExtResultDataConnection(
-              resultParticipantMapping,
-              resultGridMapping,
-              resultFlexOptionsMapping
-              )
-      );
+          new ExtResultDataConnection(
+              resultParticipantMapping, resultGridMapping, resultFlexOptionsMapping));
     }
   }
 
@@ -172,16 +170,15 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /**
-   * Function to send all external data to SIMONA using {@link ExtInputDataConnectionWithMapping}s. This
-   * method will automatically take the next {@link ExtInputDataContainer} from the queue.
+   * Function to send all external data to SIMONA using {@link ExtInputDataConnectionWithMapping}s.
+   * This method will automatically take the next {@link ExtInputDataContainer} from the queue.
    *
    * @param dataConnections the connections to SIMONA
    * @param log logger
    * @return an option for the next tick simona expects data
    */
   protected Optional<Long> sendDataToSIMONA(
-          Set<Optional<? extends ExtInputDataConnectionWithMapping<?, ?>>> dataConnections,
-      Logger log)
+      Set<Optional<? extends ExtInputDataConnectionWithMapping<?, ?>>> dataConnections, Logger log)
       throws InterruptedException {
     log.debug("Received data from {}", extSimulatorName);
 
@@ -192,45 +189,40 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     Optional<Long> maybeNextTick = dataContainer.getMaybeNextTick();
 
     dataConnections.stream()
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .forEach(con -> con.convertAndSend(tick, data, maybeNextTick, log));
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .forEach(con -> con.convertAndSend(tick, data, maybeNextTick, log));
 
     log.debug("Provided all data from {} to SIMONA", extSimulatorName);
 
     return maybeNextTick;
   }
 
-
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendGridResultsToExt(
-          ExtResultDataConnection connection,
-          long tick,
-          Optional<Long> nextTick,
-          Logger log
-  )
-          throws InterruptedException {
+      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
+      throws InterruptedException {
     log.info("Request results from SIMONA for grid entities for tick {}!", tick);
     Map<String, ModelResultEntity> resultsToBeSend = connection.requestGridResults(tick);
-      log.debug("[{}] Received grid results from SIMONA!\n{}", tick, resultMapToString(resultsToBeSend));
+    log.debug(
+        "[{}] Received grid results from SIMONA!\n{}", tick, resultMapToString(resultsToBeSend));
     dataQueueSimonaApiToExtCoSimulator.queueData(
-            new ExtResultContainer(tick, resultsToBeSend, nextTick));
+        new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent grid results for tick {} to {}", tick, extSimulatorName);
   }
 
-
   /** Function to get result data from SIMONA using ExtResultData */
   protected void sendFlexOptionResultsToExt(
-          ExtResultDataConnection connection,
-          long tick,
-          Optional<Long> nextTick,
-          Logger log)
-          throws InterruptedException {
+      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
+      throws InterruptedException {
     log.info("Request results from SIMONA for flex options for tick {}!", tick);
     Map<String, ModelResultEntity> resultsToBeSend = connection.requestFlexOptionResults(tick);
-      log.debug("[{}] Received flex option results from SIMONA!\n{}", tick, resultMapToString(resultsToBeSend));
+    log.debug(
+        "[{}] Received flex option results from SIMONA!\n{}",
+        tick,
+        resultMapToString(resultsToBeSend));
     dataQueueSimonaApiToExtCoSimulator.queueData(
-            new ExtResultContainer(tick, resultsToBeSend, nextTick));
+        new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent flex option results for tick {} to {}", tick, extSimulatorName);
   }
 
@@ -243,10 +235,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    */
   protected void sendResultDataToExt(
-      ExtResultDataConnection connection,
-      long tick,
-      Optional<Long> maybeNextTick,
-      Logger log)
+      ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
     Map<String, ModelResultEntity> resultsToBeSend = connection.requestResults(tick);
@@ -256,12 +245,17 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Sent results to {}", extSimulatorName);
   }
 
-  private String resultMapToString(
-          Map<String, ModelResultEntity> results
-  ) {
+  private String resultMapToString(Map<String, ModelResultEntity> results) {
     StringBuilder resultString = new StringBuilder();
     for (String key : results.keySet()) {
-      resultString.append("id = ").append(key).append(", time = ").append(results.get(key).getTime()).append(", result = ").append(results.get(key).getClass().getSimpleName()).append("\n");
+      resultString
+          .append("id = ")
+          .append(key)
+          .append(", time = ")
+          .append(results.get(key).getTime())
+          .append(", result = ")
+          .append(results.get(key).getClass().getSimpleName())
+          .append("\n");
     }
     return resultString.toString();
   }
