@@ -19,6 +19,11 @@ public class ExtEntityMapping {
         extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
   }
 
+  /** Returns the data types of this mapping. */
+  public Set<DataType> getDataTypes() {
+    return extEntities.keySet();
+  }
+
   /**
    * Mapping external id to SIMONA uuid
    *

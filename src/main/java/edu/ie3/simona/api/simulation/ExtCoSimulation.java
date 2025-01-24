@@ -10,12 +10,12 @@ import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
 import edu.ie3.simona.api.data.ExtDataConnection;
-import edu.ie3.simona.api.data.ExtInputDataConnectionWithMapping;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
 import java.util.*;
@@ -63,18 +63,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    *
    * @param mapping between the external simulation and SIMONA.
    * @param log logger
-   * @return an option for an ext primary data connection
+   * @return an ext primary data connection
    */
-  public static Optional<ExtPrimaryDataConnection> buildPrimaryConnection(
+  public static ExtPrimaryDataConnection buildPrimaryConnection(
       ExtEntityMapping mapping, Logger log) {
     Map<String, UUID> primaryMapping = mapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT);
 
     if (primaryMapping.isEmpty()) {
       log.warn("No primary data connection was created.");
-      return Optional.empty();
+      throw new ExtDataConnectionException(ExtPrimaryDataConnection.class);
     } else {
       log.info("Primary data connection with {} entities created.", primaryMapping.size());
-      return Optional.of(new ExtPrimaryDataConnection(primaryMapping));
+      return new ExtPrimaryDataConnection(primaryMapping);
     }
   }
 
@@ -83,18 +83,17 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    *
    * @param mapping between the external simulation and SIMONA.
    * @param log logger
-   * @return an option for an ext em data connection
+   * @return an ext em data connection
    */
-  public static Optional<ExtEmDataConnection> buildEmConnection(
-      ExtEntityMapping mapping, Logger log) {
+  public static ExtEmDataConnection buildEmConnection(ExtEntityMapping mapping, Logger log) {
     Map<String, UUID> emMapping = mapping.getExtId2UuidMapping(DataType.EXT_EM_INPUT);
 
     if (emMapping.isEmpty()) {
       log.warn("No em data connection was created.");
-      return Optional.empty();
+      throw new ExtDataConnectionException(ExtEmDataConnection.class);
     } else {
       log.info("Em data connection with {} entities created.", emMapping.size());
-      return Optional.of(new ExtEmDataConnection(emMapping));
+      return new ExtEmDataConnection(emMapping);
     }
   }
 
@@ -103,9 +102,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    *
    * @param mapping between the external simulation and SIMONA.
    * @param log logger
-   * @return an option for an ext result data connection
+   * @return an ext result data connection
    */
-  public static Optional<ExtResultDataConnection> buildResultConnection(
+  public static ExtResultDataConnection buildResultConnection(
       ExtEntityMapping mapping, Logger log) {
     Map<UUID, String> resultParticipantMapping =
         mapping.getExtUuid2IdMapping(DataType.EXT_PARTICIPANT_RESULT);
@@ -113,22 +112,47 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     Map<UUID, String> resultFlexOptionsMapping =
         mapping.getExtUuid2IdMapping(DataType.EXT_FLEX_OPTIONS_RESULT);
 
-    if (resultParticipantMapping.isEmpty() && resultGridMapping.isEmpty()) {
+    if (resultParticipantMapping.isEmpty()
+        && resultGridMapping.isEmpty()
+        && resultFlexOptionsMapping.isEmpty()) {
       log.warn("No result connection was created.");
-      return Optional.empty();
+      throw new ExtDataConnectionException(ExtResultDataConnection.class);
     } else {
       log.info(
-          "Result connection with {} participants and {} grid assets created.",
+          "Result connection with {} participants, {} grid assets and {} flex option mappings created.",
           resultParticipantMapping.size(),
-          resultGridMapping.size());
-      return Optional.of(
-          new ExtResultDataConnection(
-              resultParticipantMapping, resultGridMapping, resultFlexOptionsMapping));
+          resultGridMapping.size(),
+          resultFlexOptionsMapping.size());
+      return new ExtResultDataConnection(
+          resultParticipantMapping, resultGridMapping, resultFlexOptionsMapping);
     }
   }
 
   /**
-   * Function to send primary data to SIMONA using ExtPrimaryData
+   * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}. This
+   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   *
+   * @param extPrimaryDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   */
+  protected void sendPrimaryDataToSimona(
+      ExtPrimaryDataConnection extPrimaryDataConnection,
+      long tick,
+      Optional<Long> maybeNextTick,
+      Logger log)
+      throws InterruptedException {
+    sendPrimaryDataToSimona(
+        extPrimaryDataConnection,
+        tick,
+        dataQueueExtCoSimulatorToSimonaApi.takeData().getSimonaInputMap(),
+        maybeNextTick,
+        log);
+  }
+
+  /**
+   * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}.
    *
    * @param extPrimaryDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -149,8 +173,33 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /**
-   * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
-   * agents have an own scheduler that should know, when the next set point arrives.
+   * Function to send em data to SIMONA using the given {@link ExtEmDataConnection}. This method
+   * will take a value from the * {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   *
+   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
+   * when the next set point arrives.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   */
+  protected void sendEmDataToSimona(
+      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
+    sendEmDataToSimona(
+        extEmDataConnection,
+        tick,
+        dataQueueExtCoSimulatorToSimonaApi.takeData().getSimonaInputMap(),
+        maybeNextTick,
+        log);
+  }
+
+  /**
+   * Function to send em data to SIMONA using the given {@link ExtEmDataConnection}.
+   *
+   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
+   * when the next set point arrives.
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -170,71 +219,65 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /**
-   * Function to send all external data to SIMONA using {@link ExtInputDataConnectionWithMapping}s.
-   * This method will automatically take the next {@link ExtInputDataContainer} from the queue.
-   *
-   * @param dataConnections the connections to SIMONA
-   * @param log logger
-   * @return an option for the next tick simona expects data
+   * Function to send only participant result data from SIMONA to the external simulation using the
+   * given {@link ExtResultDataConnection}
    */
-  protected Optional<Long> sendDataToSIMONA(
-      Set<Optional<? extends ExtInputDataConnectionWithMapping<?, ?>>> dataConnections, Logger log)
-      throws InterruptedException {
-    log.debug("Received data from {}", extSimulatorName);
-
-    ExtInputDataContainer dataContainer = dataQueueExtCoSimulatorToSimonaApi.takeData();
-
-    Map<String, Value> data = dataContainer.getSimonaInputMap();
-    long tick = dataContainer.getTick();
-    Optional<Long> maybeNextTick = dataContainer.getMaybeNextTick();
-
-    dataConnections.stream()
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .forEach(con -> con.convertAndSend(tick, data, maybeNextTick, log));
-
-    log.debug("Provided all data from {} to SIMONA", extSimulatorName);
-
-    return maybeNextTick;
-  }
-
-  /** Function to get result data from SIMONA using ExtResultData */
-  protected void sendGridResultsToExt(
+  protected void sendParticipantResultsToExt(
       ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
       throws InterruptedException {
-    log.info("Request results from SIMONA for grid entities for tick {}!", tick);
-    Map<String, ModelResultEntity> resultsToBeSend = connection.requestGridResults(tick);
-    log.debug(
-        "[{}] Received grid results from SIMONA!\n{}", tick, resultMapToString(resultsToBeSend));
-    dataQueueSimonaApiToExtCoSimulator.queueData(
-        new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.info("Sent grid results for tick {} to {}", tick, extSimulatorName);
-  }
-
-  /** Function to get result data from SIMONA using ExtResultData */
-  protected void sendFlexOptionResultsToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
-      throws InterruptedException {
-    log.info("Request results from SIMONA for flex options for tick {}!", tick);
-    Map<String, ModelResultEntity> resultsToBeSend = connection.requestFlexOptionResults(tick);
-    log.debug(
-        "[{}] Received flex option results from SIMONA!\n{}",
-        tick,
-        resultMapToString(resultsToBeSend));
-    dataQueueSimonaApiToExtCoSimulator.queueData(
-        new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.info("Sent flex option results for tick {} to {}", tick, extSimulatorName);
+    sendSingleResultType(
+        "participant", connection.requestParticipantResults(tick), tick, nextTick, log);
   }
 
   /**
-   * Function to get all result data from SIMONA using the available {@link ExtResultDataConnection}
+   * Function to send only grid result data from SIMONA to the external simulation using the given
+   * {@link ExtResultDataConnection}
+   */
+  protected void sendGridResultsToExt(
+      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
+      throws InterruptedException {
+    sendSingleResultType("grid", connection.requestGridResults(tick), tick, nextTick, log);
+  }
+
+  /**
+   * Function to send only flex option result data from SIMONA to the external simulation using the
+   * given {@link ExtResultDataConnection}
+   */
+  protected void sendFlexOptionResultsToExt(
+      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
+      throws InterruptedException {
+    sendSingleResultType(
+        "flex option", connection.requestFlexOptionResults(tick), tick, nextTick, log);
+  }
+
+  private void sendSingleResultType(
+      String type,
+      Map<String, ModelResultEntity> resultsToBeSend,
+      long tick,
+      Optional<Long> nextTick,
+      Logger log)
+      throws InterruptedException {
+    log.info("Request results from SIMONA for {} for tick {}!", type, tick);
+    log.debug(
+        "[{}] Received {} results from SIMONA!\n{}",
+        tick,
+        type,
+        resultMapToString(resultsToBeSend));
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+        new ExtResultContainer(tick, resultsToBeSend, nextTick));
+    log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
+  }
+
+  /**
+   * Function to send all result data from SIMONA to the external simulation using the given {@link
+   * ExtResultDataConnection}
    *
    * @param connection the connection to SIMONA
    * @param tick for which data is received
    * @param maybeNextTick option for the next tick data is received
    * @param log logger
    */
-  protected void sendResultDataToExt(
+  protected void sendResultToExt(
       ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
