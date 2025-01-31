@@ -10,7 +10,7 @@ import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
-import edu.ie3.simona.api.data.ExtOutputData;
+import edu.ie3.simona.api.data.ExtOutputDataConnection;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import org.apache.pekko.actor.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultData implements ExtOutputData {
+public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
@@ -48,7 +48,7 @@ public class ExtResultData implements ExtOutputData {
 
   private final Map<UUID, String> flexOptionsMapping;
 
-  public ExtResultData(
+  public ExtResultDataConnection(
       Map<UUID, String> participantResultAssetMapping,
       Map<UUID, String> gridResultAssetMapping,
       Map<UUID, String> flexOptionsMapping
