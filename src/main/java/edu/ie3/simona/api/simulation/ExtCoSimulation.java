@@ -66,9 +66,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.info("Wait for EmData from {}", extSimulatorName);
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
     log.info("Received EmData from {}", extSimulatorName);
-    if (inputData.getTick() != tick) {
-      throw new RuntimeException("External input data is for another tick " + inputData.getTick() + " than SIMONA's tick " + tick + "!");
-    }
+    // TODO: Check if external ticks fits to SIMONA ticks
     extEmData.provideEmData(
         tick, extEmData.convertExternalInputToEmSetPoints(inputData), Optional.of(nextTick));
     log.info("Provided EmData to SIMONA!");
