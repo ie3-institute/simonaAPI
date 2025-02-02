@@ -100,8 +100,13 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     Map<UUID, String> resultParticipantMapping =
         mapping.getExtUuid2IdMapping(DataType.EXT_PARTICIPANT_RESULT);
     Map<UUID, String> resultGridMapping = mapping.getExtUuid2IdMapping(DataType.EXT_GRID_RESULT);
+    Map<UUID, String> resultFlexOptionsMapping = mapping.getExtUuid2IdMapping(DataType.EXT_FLEX_OPTIONS_RESULT);
     ExtResultDataConnection extResultDataConnection =
-        new ExtResultDataConnection(resultParticipantMapping, resultGridMapping);
+        new ExtResultDataConnection(
+                resultParticipantMapping,
+                resultGridMapping,
+                resultFlexOptionsMapping
+        );
 
     if (resultParticipantMapping.isEmpty() && resultGridMapping.isEmpty()) {
       log.warn("Result connection with 0 participants and 0 grid assets created.");
