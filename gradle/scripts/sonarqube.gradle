@@ -33,4 +33,3 @@ project.tasks["sonarqube"].dependsOn "pmdTest"
 project.tasks["sonarqube"].dependsOn "spotbugsMain"
 project.tasks["sonarqube"].dependsOn "spotbugsTest"
 project.tasks["sonarqube"].dependsOn "test"
-
