@@ -274,11 +274,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       Logger log)
       throws InterruptedException {
     log.info("Request results from SIMONA for {} for tick {}!", type, tick);
-    log.debug(
-        "[{}] Received {} results from SIMONA!\n{}",
-        tick,
-        type,
-        resultMapToString(resultsToBeSend));
+
+    String resultString = resultMapToString(resultsToBeSend);
+    log.debug("[{}] Received {} results from SIMONA!\n{}", tick, type, resultString);
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
@@ -306,14 +304,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   private String resultMapToString(Map<String, ModelResultEntity> results) {
     StringBuilder resultString = new StringBuilder();
-    for (String key : results.keySet()) {
+
+    for (Map.Entry<String, ModelResultEntity> entry : results.entrySet()) {
+      String key = entry.getKey();
+      ModelResultEntity value = entry.getValue();
+
       resultString
           .append("id = ")
           .append(key)
           .append(", time = ")
-          .append(results.get(key).getTime())
+          .append(value.getTime())
           .append(", result = ")
-          .append(results.get(key).getClass().getSimpleName())
+          .append(value.getClass().getSimpleName())
           .append("\n");
     }
     return resultString.toString();

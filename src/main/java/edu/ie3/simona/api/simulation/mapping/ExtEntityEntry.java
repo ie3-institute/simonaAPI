@@ -20,11 +20,7 @@ import java.util.UUID;
  * @param dataType data types the external asset expects
  */
 public record ExtEntityEntry(
-    UUID uuid,
-    String id,
-    Optional<ColumnScheme>
-        columnScheme, // FIXME: placeholder -> ColumnScheme should handle more data types
-    DataType dataType)
+    UUID uuid, String id, Optional<ColumnScheme> columnScheme, DataType dataType)
     implements InputEntity {
 
   public String toString() {

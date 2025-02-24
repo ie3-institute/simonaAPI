@@ -131,7 +131,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   public Map<String, ModelResultEntity> requestParticipantResults(long tick)
       throws InterruptedException {
-    return createResultMap(requestGridResultsList(tick));
+    return createResultMap(requestParticiapntResultsList(tick));
   }
 
   protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
