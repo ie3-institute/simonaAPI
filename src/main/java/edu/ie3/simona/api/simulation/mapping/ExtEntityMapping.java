@@ -25,6 +25,16 @@ public class ExtEntityMapping {
   }
 
   /**
+   * Method for getting the external entity entries for a specific data type.
+   *
+   * @param dataType for which entries should be returned
+   * @return a list containing all entries or an empty list
+   */
+  public List<ExtEntityEntry> getExtEntityEntries(DataType dataType) {
+    return extEntities.getOrDefault(dataType, Collections.emptyList());
+  }
+
+  /**
    * Mapping external id to SIMONA uuid
    *
    * @param dataType data type the external asset expects

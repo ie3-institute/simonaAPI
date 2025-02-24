@@ -20,13 +20,27 @@ import org.slf4j.Logger;
 public class ExtPrimaryDataConnection
     extends ExtInputDataConnectionWithMapping<PrimaryDataMessageFromExt, Value> {
 
+  private Map<UUID, Class<Value>> valueClasses;
+
   public ExtPrimaryDataConnection(Map<String, UUID> extPrimaryDataMapping) {
     super(extPrimaryDataMapping);
+  }
+
+  public void setValueClasses(Map<UUID, Class<Value>> valueClasses) {
+    this.valueClasses = valueClasses;
   }
 
   /** Returns a list of the uuids of the system participants that expect external primary data */
   public List<UUID> getPrimaryDataAssets() {
     return getDataAssets();
+  }
+
+  /**
+   * @param uuid of the model
+   * @return an option for the value class associated with the model.
+   */
+  public Optional<Class<Value>> getValueClass(UUID uuid) {
+    return Optional.ofNullable(valueClasses.get(uuid));
   }
 
   @Override

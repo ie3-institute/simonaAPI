@@ -17,6 +17,7 @@ import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
+import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,16 +66,31 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    * @return an ext primary data connection
    */
+  @SuppressWarnings("unchecked")
   public static ExtPrimaryDataConnection buildPrimaryConnection(
       ExtEntityMapping mapping, Logger log) {
-    Map<String, UUID> primaryMapping = mapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT);
+    List<ExtEntityEntry> entries = mapping.getExtEntityEntries(DataType.EXT_PRIMARY_INPUT);
 
-    if (primaryMapping.isEmpty()) {
+    if (entries.isEmpty()) {
       log.warn("No primary data connection was created.");
       throw new ExtDataConnectionException(ExtPrimaryDataConnection.class);
     } else {
-      log.info("Primary data connection with {} entities created.", primaryMapping.size());
-      return new ExtPrimaryDataConnection(primaryMapping);
+      log.info("Primary data connection with {} entities created.", entries.size());
+
+      Map<String, UUID> primaryMapping =
+          entries.stream().collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+      Map<UUID, Class<Value>> valueClasses = new HashMap<>();
+      entries.stream()
+          .filter(e -> e.columnScheme().isPresent())
+          .forEach(
+              e ->
+                  valueClasses.put(
+                      e.uuid(), (Class<Value>) e.columnScheme().get().getValueClass()));
+
+      ExtPrimaryDataConnection primaryDataConnection = new ExtPrimaryDataConnection(primaryMapping);
+      primaryDataConnection.setValueClasses(valueClasses);
+
+      return primaryDataConnection;
     }
   }
 
