@@ -12,7 +12,7 @@ class ExtEntityMappingTest extends Specification {
     ExtEntityEntry extResultEntry = new ExtEntityEntry(
             loadUuid,
             "Load",
-            ColumnScheme.parse("p").get(),
+            ColumnScheme.parse("p"),
             DataType.EXT_PARTICIPANT_RESULT
     )
 
@@ -20,7 +20,7 @@ class ExtEntityMappingTest extends Specification {
     ExtEntityEntry extInputEntry = new ExtEntityEntry(
             loadUuid,
             "Load",
-            ColumnScheme.parse("p").get(),
+            ColumnScheme.parse("p"),
             DataType.EXT_PRIMARY_INPUT
     )
 

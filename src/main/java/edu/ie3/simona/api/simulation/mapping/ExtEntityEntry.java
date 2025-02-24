@@ -8,7 +8,6 @@ package edu.ie3.simona.api.simulation.mapping;
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.InputEntity;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,10 +20,11 @@ import java.util.UUID;
  * @param dataType data types the external asset expects
  */
 public record ExtEntityEntry(
-        UUID uuid,
-        String id,
-        Optional<ColumnScheme> columnScheme, // FIXME: placeholder -> ColumnScheme should handle more data types
-        DataType dataType)
+    UUID uuid,
+    String id,
+    Optional<ColumnScheme>
+        columnScheme, // FIXME: placeholder -> ColumnScheme should handle more data types
+    DataType dataType)
     implements InputEntity {
 
   public String toString() {

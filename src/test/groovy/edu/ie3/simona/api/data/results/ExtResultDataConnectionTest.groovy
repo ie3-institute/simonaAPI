@@ -30,6 +30,9 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
     @Shared
     Map<UUID, String> gridResultAssetMapping = [:]
 
+    @Shared
+    Map<UUID, String> flexResultAssetMapping = [:]
+
     class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
     def setupSpec() {
@@ -46,7 +49,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -61,7 +64,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         def receivedResults = extResultDataConnection.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities(0L))
+        dataService.expectMsg(new RequestResultEntities(0L, [inputUuid]))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         receivedResults.get("Load") == loadResult
     }
@@ -71,7 +74,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         def dataService = new TestProbe(actorSystem)
         def dataServiceActivation = new TestProbe(actorSystem)
         def extSimAdapter = new TestProbe(actorSystem)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -86,14 +89,14 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         extResultDataConnection.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities(0L))
+        dataService.expectMsg(new RequestResultEntities(0L, [inputUuid]))
         extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         thrown RuntimeException
     }
 
     def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
         given:
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
 
         when:
         def mapOfResults = extResultDataConnection.createResultMap([loadResult])
@@ -105,7 +108,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
 
     def "ExtResultData should throw an exception, if a result with a wrong data type was provided"() {
         given:
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
         Quantity<ElectricCurrent> iAMag = Quantities.getQuantity(100, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
         Quantity<Angle> iAAng = Quantities.getQuantity(45, StandardUnits.ELECTRIC_CURRENT_ANGLE)
         Quantity<ElectricCurrent> iBMag = Quantities.getQuantity(150, StandardUnits.ELECTRIC_CURRENT_MAGNITUDE)
