@@ -113,12 +113,6 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ModelResultEntity> requestParticiapntResultsList(long tick)
-      throws InterruptedException {
-    sendExtMsg(new RequestResultEntities(tick, getParticipantResultDataAssets()));
-    return receiveWithType(ProvideResultEntities.class).results();
-  }
-
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */

@@ -80,7 +80,7 @@ public class ExtResultContainer implements ExtDataContainer {
           Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
       return vMagDev.getValue().doubleValue();
     } else {
-      throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");
+      throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's! AssetId: "+ assetId);
     }
   }
 
