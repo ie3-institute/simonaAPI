@@ -57,10 +57,6 @@ public class ExtResultContainer implements ExtDataContainer {
     return simonaResultsMap;
   }
 
-  public String getResultsAsString() {
-    return resultMapToString(simonaResultsMap);
-  }
-
   public Long getTick() {
     return tick;
   }
@@ -128,20 +124,5 @@ public class ExtResultContainer implements ExtDataContainer {
   /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
   public double getLineLoading(String assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
-  }
-
-  private String resultMapToString(Map<String, ModelResultEntity> results) {
-    StringBuilder resultString = new StringBuilder();
-    for (String key : results.keySet()) {
-      resultString
-          .append("id = ")
-          .append(key)
-          .append(", time = ")
-          .append(results.get(key).getTime())
-          .append(", result = ")
-          .append(results.get(key).getClass().getSimpleName())
-          .append("\n");
-    }
-    return resultString.toString();
   }
 }
