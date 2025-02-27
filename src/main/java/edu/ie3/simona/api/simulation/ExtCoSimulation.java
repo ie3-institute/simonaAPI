@@ -50,15 +50,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     this.dataQueueSimonaApiToExtCoSimulator = new DataQueueExtSimulationExtSimulator<>();
   }
 
-  @SafeVarargs
-  protected static Set<ExtDataConnection> toSet(
-      Optional<? extends ExtDataConnection>... optionals) {
-    return Arrays.stream(optionals)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toSet());
-  }
-
   /**
    * Builds an {@link ExtPrimaryDataConnection}.
    *
@@ -159,10 +150,19 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       Optional<Long> maybeNextTick,
       Logger log)
       throws InterruptedException {
+    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+
+    if (inputData.getTick() != tick) {
+      throw new RuntimeException(
+              String.format(
+                      "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+                      inputData.getTick(), tick));
+    }
+
     sendPrimaryDataToSimona(
         extPrimaryDataConnection,
         tick,
-        dataQueueExtCoSimulatorToSimonaApi.takeData().getSimonaInputMap(),
+        inputData.getSimonaInputMap(),
         maybeNextTick,
         log);
   }
@@ -203,10 +203,19 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmDataToSimona(
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
+    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+
+    if (inputData.getTick() != tick) {
+      throw new RuntimeException(
+              String.format(
+                      "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+                      inputData.getTick(), tick));
+    }
+
     sendEmDataToSimona(
         extEmDataConnection,
         tick,
-        dataQueueExtCoSimulatorToSimonaApi.takeData().getSimonaInputMap(),
+        inputData.getSimonaInputMap(),
         maybeNextTick,
         log);
   }
@@ -301,6 +310,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
         new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
     log.debug("Sent results to {}", extSimulatorName);
   }
+
+  // helper methods
 
   private String resultMapToString(Map<String, ModelResultEntity> results) {
     StringBuilder resultString = new StringBuilder();
