@@ -4,13 +4,10 @@ import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -51,7 +48,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def convertedEmData = Map.of(uuid, pValue as PValue)
 
         when:
-        extEmDataConnection.provideEmData(0L, convertedEmData, Optional.of(900L))
+        extEmDataConnection.provideData(0L, convertedEmData, Optional.of(900L))
 
         then:
         dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData, Optional.of(900L)))

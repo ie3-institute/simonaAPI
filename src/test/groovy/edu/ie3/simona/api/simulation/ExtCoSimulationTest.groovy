@@ -20,17 +20,19 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid2 = UUID.randomUUID()
         UUID uuid3 = UUID.randomUUID()
 
+        Optional<ColumnScheme> columnScheme = Optional.of(ColumnScheme.ACTIVE_POWER)
+
         ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
-                new ExtEntityEntry(uuid2, "em1", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid3, "primary2", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
+                new ExtEntityEntry(uuid1, "primary1", columnScheme, DataType.EXT_PRIMARY_INPUT),
+                new ExtEntityEntry(uuid2, "em1", columnScheme, DataType.EXT_EM_INPUT),
+                new ExtEntityEntry(uuid3, "primary2", columnScheme, DataType.EXT_PRIMARY_INPUT),
         ])
 
         when:
         def actual = ExtCoSimulation.buildPrimaryConnection(mapping, log)
 
         then:
-        actual.getPrimaryDataAssets() == [uuid3, uuid1]
+        actual.primaryDataAssets == [uuid3, uuid1]
     }
 
     def "An ExtCoSimulation can build an em data connection correctly"() {
@@ -39,17 +41,19 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid2 = UUID.randomUUID()
         UUID uuid3 = UUID.randomUUID()
 
+        Optional<ColumnScheme> columnScheme = Optional.of(ColumnScheme.ACTIVE_POWER)
+
         ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "em1", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid2, "em2", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid3, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
+                new ExtEntityEntry(uuid1, "em1", columnScheme, DataType.EXT_EM_INPUT),
+                new ExtEntityEntry(uuid2, "em2", columnScheme, DataType.EXT_EM_INPUT),
+                new ExtEntityEntry(uuid3, "primary1", columnScheme, DataType.EXT_PRIMARY_INPUT),
         ])
 
         when:
         def actual = ExtCoSimulation.buildEmConnection(mapping, log)
 
         then:
-        actual.getControlledEms() == [uuid1, uuid2]
+        actual.controlledEms == [uuid1, uuid2]
     }
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
@@ -58,17 +62,20 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid2 = UUID.randomUUID()
         UUID uuid3 = UUID.randomUUID()
 
+        Optional<ColumnScheme> columnScheme = Optional.of(ColumnScheme.ACTIVE_POWER)
+
         ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "grid_result", ColumnScheme.ACTIVE_POWER, DataType.EXT_GRID_RESULT),
-                new ExtEntityEntry(uuid2, "participant_result", ColumnScheme.ACTIVE_POWER, DataType.EXT_PARTICIPANT_RESULT),
-                new ExtEntityEntry(uuid3, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
+                new ExtEntityEntry(uuid1, "grid_result", columnScheme, DataType.EXT_GRID_RESULT),
+                new ExtEntityEntry(uuid2, "participant_result", columnScheme, DataType.EXT_PARTICIPANT_RESULT),
+                new ExtEntityEntry(uuid3, "primary1", columnScheme, DataType.EXT_PRIMARY_INPUT),
         ])
 
         when:
         def actual = ExtCoSimulation.buildResultConnection(mapping, log)
 
         then:
-        actual.getGridResultDataAssets() == [uuid1]
-        actual.getParticipantResultDataAssets() == [uuid2]
+        actual.gridResultDataAssets == [uuid1]
+        actual.participantResultDataAssets == [uuid2]
+        actual.flexOptionAssets == []
     }
 }

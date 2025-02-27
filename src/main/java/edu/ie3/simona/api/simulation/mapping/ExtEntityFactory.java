@@ -46,11 +46,6 @@ public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> 
       throw new FactoryException(e);
     }
 
-    return new ExtEntityEntry(
-        simonaUuid,
-        extId,
-        columnScheme
-            .orElseThrow(), // FIXME: Interim version -> ColumnScheme should handle more data types
-        inputType);
+    return new ExtEntityEntry(simonaUuid, extId, columnScheme, inputType);
   }
 }

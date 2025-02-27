@@ -10,6 +10,7 @@ import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
 import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataContainer;
@@ -64,8 +65,14 @@ public class ExtResultContainer implements ExtDataContainer {
     return maybeNextTick;
   }
 
+  /** Returns the result for a certain asset. */
+  public ResultEntity getResult(String assetId) {
+    return simonaResultsMap.get(assetId);
+  }
+
   /**
-   * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
+   * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
+   * NodeResult}
    */
   public double getVoltageDeviation(String assetId) {
     if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
@@ -74,6 +81,17 @@ public class ExtResultContainer implements ExtDataContainer {
       return vMagDev.getValue().doubleValue();
     } else {
       throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's!");
+    }
+  }
+
+  /**
+   * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
+   */
+  public double getVoltage(String assetId) {
+    if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
+      return nodeResult.getvMag().getValue().doubleValue();
+    } else {
+      throw new IllegalArgumentException("VOLTAGE is only available for NodeResult's!");
     }
   }
 

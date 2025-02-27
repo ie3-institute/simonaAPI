@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Bao and Staudt to the list of reviewers [#216](https://github.com/ie3-institute/simonaAPI/issues/216)
 - Documentation for this API [#230](https://github.com/ie3-institute/simonaAPI/issues/230)
 
+
+### Changed
+- Refactoring `ExtCoSimulation` [#237](https://github.com/ie3-institute/simonaAPI/issues/237)
+
 ## [0.6.0] - 2024-12-02
 
 ### Added
