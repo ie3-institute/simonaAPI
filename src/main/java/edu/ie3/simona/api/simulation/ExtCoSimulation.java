@@ -6,10 +6,9 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.datamodel.models.result.ModelResultEntity;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
-import edu.ie3.simona.api.data.ExtDataConnection;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
@@ -19,9 +18,10 @@ import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
+import org.slf4j.Logger;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -277,7 +277,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   private void sendSingleResultType(
       String type,
-      Map<String, ModelResultEntity> resultsToBeSend,
+      Map<String, ResultEntity> resultsToBeSend,
       long tick,
       Optional<Long> nextTick,
       Logger log)
@@ -304,7 +304,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
-    Map<String, ModelResultEntity> resultsToBeSend = connection.requestResults(tick);
+    Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
@@ -313,12 +313,12 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   // helper methods
 
-  private String resultMapToString(Map<String, ModelResultEntity> results) {
+  private String resultMapToString(Map<String, ResultEntity> results) {
     StringBuilder resultString = new StringBuilder();
 
-    for (Map.Entry<String, ModelResultEntity> entry : results.entrySet()) {
+    for (Map.Entry<String, ResultEntity> entry : results.entrySet()) {
       String key = entry.getKey();
-      ModelResultEntity value = entry.getValue();
+      ResultEntity value = entry.getValue();
 
       resultString
           .append("id = ")

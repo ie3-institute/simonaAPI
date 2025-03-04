@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.ModelResultEntity;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
@@ -86,7 +86,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
+  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     List<UUID> allExtEntities =
         Stream.concat(
                 Stream.concat(getFlexOptionAssets().stream(), getGridResultDataAssets().stream()),
@@ -96,18 +96,18 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ModelResultEntity> requestFlexOptionResultsList(long tick)
+  private List<ResultEntity> requestFlexOptionResultsList(long tick)
       throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getFlexOptionAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ModelResultEntity> requestGridResultsList(long tick) throws InterruptedException {
+  private List<ResultEntity> requestGridResultsList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getGridResultDataAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ModelResultEntity> requestParticiapntResultsList(long tick)
+  private List<ResultEntity> requestParticiapntResultsList(long tick)
       throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getParticipantResultDataAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
@@ -116,26 +116,26 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, ModelResultEntity> requestResults(long tick) throws InterruptedException {
+  public Map<String, ResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
 
-  public Map<String, ModelResultEntity> requestFlexOptionResults(long tick)
+  public Map<String, ResultEntity> requestFlexOptionResults(long tick)
       throws InterruptedException {
     return createResultMap(requestFlexOptionResultsList(tick));
   }
 
-  public Map<String, ModelResultEntity> requestGridResults(long tick) throws InterruptedException {
+  public Map<String, ResultEntity> requestGridResults(long tick) throws InterruptedException {
     return createResultMap(requestGridResultsList(tick));
   }
 
-  public Map<String, ModelResultEntity> requestParticipantResults(long tick)
+  public Map<String, ResultEntity> requestParticipantResults(long tick)
       throws InterruptedException {
     return createResultMap(requestParticiapntResultsList(tick));
   }
 
-  protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
-    Map<String, ModelResultEntity> resultMap = new HashMap<>();
+  protected Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
+    Map<String, ResultEntity> resultMap = new HashMap<>();
     results.forEach(
         result -> {
           if (result instanceof NodeResult nodeResult) {

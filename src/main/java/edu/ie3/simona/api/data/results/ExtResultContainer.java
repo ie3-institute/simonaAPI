@@ -8,9 +8,8 @@ package edu.ie3.simona.api.data.results;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
-import edu.ie3.datamodel.models.result.ModelResultEntity;
-import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataContainer;
@@ -33,7 +32,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Map external id to result from SIMONA ATTENTION: The time stamp of the result entities is not
    * necessarily corresponding to the tick
    */
-  private final Map<String, ModelResultEntity> simonaResultsMap;
+  private final Map<String, ResultEntity> simonaResultsMap;
 
   /**
    * Container class for result data from SIMONA
@@ -43,17 +42,17 @@ public class ExtResultContainer implements ExtDataContainer {
    * @param nextTick tick the external simulation can expect the next results
    */
   public ExtResultContainer(
-      long tick, Map<String, ModelResultEntity> simonaResultsMap, Optional<Long> nextTick) {
+      long tick, Map<String, ResultEntity> simonaResultsMap, Optional<Long> nextTick) {
     this.tick = tick;
     this.simonaResultsMap = simonaResultsMap;
     this.maybeNextTick = nextTick;
   }
 
-  public ExtResultContainer(long tick, Map<String, ModelResultEntity> simonaResultsMap) {
+  public ExtResultContainer(long tick, Map<String, ResultEntity> simonaResultsMap) {
     this(tick, simonaResultsMap, Optional.empty());
   }
 
-  public Map<String, ModelResultEntity> getResults() {
+  public Map<String, ResultEntity> getResults() {
     return simonaResultsMap;
   }
 
