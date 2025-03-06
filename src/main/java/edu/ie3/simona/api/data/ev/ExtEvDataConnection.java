@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.ActorRef;
 
-public class ExtEvDataConnection implements ExtInputDataConnection {
+public class ExtEvDataConnection implements ExtInputDataConnection<EvDataMessageFromExt> {
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<EvDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();

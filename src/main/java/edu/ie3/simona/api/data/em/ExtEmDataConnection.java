@@ -6,50 +6,109 @@
 
 package edu.ie3.simona.api.data.em;
 
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.ExtInputDataConnectionWithMapping;
-import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
-import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
+import edu.ie3.simona.api.data.BiDirectional;
+import edu.ie3.simona.api.data.em.model.FlexOptionValue;
+import edu.ie3.simona.api.data.em.ontology.*;
+import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection
-    extends ExtInputDataConnectionWithMapping<EmDataMessageFromExt, PValue> {
+    extends BiDirectional<EmDataMessageFromExt, EmDataResponseMessageToExt> {
+
+  /** Assets that provide data to SIMONA */
+  private final Map<String, UUID> extEmMapping;
+
+  /** Assets that provide data to ext */
+  private final Map<UUID, String> mosaikMapping;
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
-    super(extEmMapping);
+    this.extEmMapping = extEmMapping;
+
+    this.mosaikMapping =
+        extEmMapping.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
   public List<UUID> getControlledEms() {
-    return getDataAssets();
+    return new ArrayList<>(extEmMapping.values());
   }
 
   /**
-   * Converts the data and sends them to SIMONA.
+   * Converts the em flex options and sends them to SIMONA.
    *
    * @param tick current tick
    * @param data to be converted and send
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
-  public void convertAndSend(
+  public void convertAndSendFlexOptions(
       long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
-    Map<UUID, PValue> convertedMap = convert(data);
+    Map<UUID, FlexOptionValue> emFlexOptions = ExtEntityMapping.mapToSimona(data, extEmMapping);
 
-    if (convertedMap.isEmpty()) {
-      log.warn("No em data found! Sending no em data to SIMONA for tick {}.", tick);
+    if (emFlexOptions.isEmpty()) {
+      log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
-      log.debug("Provided SIMONA with em data.");
-      provideData(tick, convertedMap, maybeNextTick);
+      log.debug("Provided SIMONA with em flex options.");
+      sendExtMsg(new ProvideFlexOptions(tick, emFlexOptions, maybeNextTick));
     }
   }
 
-  /** Provide primary data from an external simulation for one tick. */
-  public void provideData(long tick, Map<UUID, PValue> emData, Optional<Long> maybeNextTick) {
-    sendExtMsg(new ProvideEmSetPointData(tick, emData, maybeNextTick));
+  /**
+   * Converts the em set points and sends them to SIMONA.
+   *
+   * @param tick current tick
+   * @param data to be converted and send
+   * @param maybeNextTick option for the next tick in the simulation
+   * @param log logger
+   */
+  public void convertAndSendSetPoints(
+      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+    // filtering the data and converting the keys
+    Map<UUID, PValue> emSetPoints = ExtEntityMapping.mapToSimona(data, extEmMapping);
+
+    if (emSetPoints.isEmpty()) {
+      log.warn("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
+    } else {
+      log.debug("Provided SIMONA with em set points.");
+      sendExtMsg(new ProvideEmSetPointData(tick, emSetPoints, maybeNextTick));
+    }
+  }
+
+  /**
+   * Method to request em flexibility options from SIMONA.
+   *
+   * @param tick for which set points are requested
+   * @param emEntities for which set points are requested
+   * @return an {@link EmSetPointDataResponse} message
+   * @throws InterruptedException - on interruptions
+   */
+  public Map<String, ResultEntity> requestEmFlexResults(long tick, List<UUID> emEntities)
+      throws InterruptedException {
+    sendExtMsg(new RequestEmFlexResults(tick, emEntities));
+    return ExtEntityMapping.mapToExt(
+        receiveWithType(FlexOptionsResponse.class).flexOptions(), mosaikMapping);
+  }
+
+  /**
+   * Method to request em set points from SIMONA.
+   *
+   * @param tick for which set points are requested
+   * @param emEntities for which set points are requested
+   * @return an {@link EmSetPointDataResponse} message
+   * @throws InterruptedException - on interruptions
+   */
+  public Map<String, ResultEntity> requestEmSetPoints(long tick, List<UUID> emEntities)
+      throws InterruptedException {
+    sendExtMsg(new RequestEmSetPoints(tick, emEntities));
+    return ExtEntityMapping.mapToExt(
+        receiveWithType(EmSetPointDataResponse.class).emData(), mosaikMapping);
   }
 }

@@ -6,11 +6,12 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputDataConnection;
+import edu.ie3.simona.api.data.WithDataResponseToExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
@@ -20,16 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 import org.apache.pekko.actor.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultDataConnection implements ExtOutputDataConnection {
-
-  /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
-      new LinkedBlockingQueue<>();
+public class ExtResultDataConnection extends WithDataResponseToExt<ResultDataResponseMessageToExt>
+    implements ExtOutputDataConnection<ResultDataMessageFromExt> {
 
   /** Actor reference to service that handles result data within SIMONA */
   private ActorRef extResultDataService;
@@ -96,8 +93,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ResultEntity> requestFlexOptionResultsList(long tick)
-      throws InterruptedException {
+  private List<ResultEntity> requestFlexOptionResultsList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getFlexOptionAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -107,8 +103,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  private List<ResultEntity> requestParticiapntResultsList(long tick)
-      throws InterruptedException {
+  private List<ResultEntity> requestParticipantResultsList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, getParticipantResultDataAssets()));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -120,8 +115,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     return createResultMap(requestResultList(tick));
   }
 
-  public Map<String, ResultEntity> requestFlexOptionResults(long tick)
-      throws InterruptedException {
+  public Map<String, ResultEntity> requestFlexOptionResults(long tick) throws InterruptedException {
     return createResultMap(requestFlexOptionResultsList(tick));
   }
 
@@ -131,7 +125,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   public Map<String, ResultEntity> requestParticipantResults(long tick)
       throws InterruptedException {
-    return createResultMap(requestParticiapntResultsList(tick));
+    return createResultMap(requestParticipantResultsList(tick));
   }
 
   protected Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
@@ -166,38 +160,5 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
     extResultDataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler
     extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation), ActorRef.noSender());
-  }
-
-  /** Queues message from SIMONA that should be handled by the external simulation. */
-  public void queueExtResponseMsg(ResultDataResponseMessageToExt msg) throws InterruptedException {
-    receiveTriggerQueue.put(msg);
-  }
-
-  /**
-   * Waits until a message of given type is added to the queue. If the message has a different type,
-   * a RuntimeException is thrown. This method blocks until having received a response from SIMONA.
-   *
-   * @param expectedMessageClass the expected class of the message to be received
-   * @return a message of the expected type once it has been received
-   * @param <T> the type of the expected message
-   * @throws InterruptedException if the thread running this has been interrupted during the
-   *     blocking operation
-   */
-  @SuppressWarnings("unchecked")
-  private <T extends ResultDataResponseMessageToExt> T receiveWithType(
-      Class<T> expectedMessageClass) throws InterruptedException {
-
-    // blocks until actor puts something here
-    ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
-
-    if (msg.getClass().equals(expectedMessageClass)) {
-      return (T) msg;
-    } else
-      throw new RuntimeException(
-          "Received unexpected message '"
-              + msg
-              + "', expected type '"
-              + expectedMessageClass
-              + "'");
   }
 }

@@ -8,9 +8,13 @@ package edu.ie3.simona.api.simulation.mapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
+
+  private static final Logger log = LoggerFactory.getLogger(ExtEntityMapping.class);
 
   private final Map<DataType, List<ExtEntityEntry>> extEntities;
 
@@ -54,5 +58,56 @@ public class ExtEntityMapping {
   public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
         .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+  }
+
+  /**
+   * Maps a map: ids to value to a map: uuids to value.
+   *
+   * @param valueMap that should be remapped
+   * @param mapping that is used
+   * @return a map: uuids to value
+   * @param <T> type of output values
+   * @param <V> type of input values
+   */
+  @SuppressWarnings("unchecked")
+  public static <T, V> Map<UUID, T> mapToSimona(
+      Map<String, V> valueMap, Map<String, UUID> mapping) {
+    Map<UUID, T> convertedMap = new HashMap<>();
+
+    for (String key : valueMap.keySet()) {
+      V value = valueMap.get(key);
+
+      try {
+        convertedMap.put(mapping.get(key), (T) value);
+      } catch (ClassCastException e) {
+        log.warn("Could not convert value {} for key {}", value, key, e);
+      }
+    }
+    return convertedMap;
+  }
+
+  /**
+   * Maps a map: uuids to value to a map: ids to value.
+   *
+   * @param valueMap that should be remapped
+   * @param mapping that is used
+   * @return a map: id to value
+   * @param <T> type of output values
+   * @param <V> type of input values
+   */
+  @SuppressWarnings("unchecked")
+  public static <T, V> Map<String, T> mapToExt(Map<UUID, V> valueMap, Map<UUID, String> mapping) {
+    Map<String, T> convertedMap = new HashMap<>();
+
+    for (UUID key : valueMap.keySet()) {
+      V value = valueMap.get(key);
+
+      try {
+        convertedMap.put(mapping.get(key), (T) value);
+      } catch (ClassCastException e) {
+        log.warn("Could not convert value {} for key {}", value, key, e);
+      }
+    }
+    return convertedMap;
   }
 }

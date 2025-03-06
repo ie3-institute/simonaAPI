@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 
 public abstract class ExtInputDataConnectionWithMapping<
         M extends DataMessageFromExt, V extends Value>
-    implements ExtInputDataConnection {
+    implements ExtInputDataConnection<M> {
 
   /** Actor reference to service that handles data within SIMONA */
   private ActorRef dataService;
@@ -24,7 +24,7 @@ public abstract class ExtInputDataConnectionWithMapping<
   private ActorRef extSimAdapter;
 
   /** Assets that provide data to SIMONA */
-  private final Map<String, UUID> extDataMapping;
+  protected final Map<String, UUID> extDataMapping;
 
   protected ExtInputDataConnectionWithMapping(Map<String, UUID> extDataMapping) {
     this.extDataMapping = extDataMapping;
@@ -50,13 +50,6 @@ public abstract class ExtInputDataConnectionWithMapping<
   /** Provide data from an external simulation for one tick. */
   public abstract void provideData(long tick, Map<UUID, V> data, Optional<Long> maybeNextTick);
 
-  /**
-   * Send information from the external simulation to SIMONA's external primary data service.
-   * Furthermore, ExtSimAdapter within SIMONA is instructed to activate the ev data service with the
-   * current tick.
-   *
-   * @param msg the data/information that is sent to SIMONA's external primary data service
-   */
   public void sendExtMsg(M msg) {
     dataService.tell(msg, ActorRef.noSender());
     // we need to schedule data receiver activation with scheduler

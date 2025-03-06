@@ -18,10 +18,9 @@ import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
-import org.slf4j.Logger;
-
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -49,6 +48,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     this.dataQueueExtCoSimulatorToSimonaApi = new DataQueueExtSimulationExtSimulator<>();
     this.dataQueueSimonaApiToExtCoSimulator = new DataQueueExtSimulationExtSimulator<>();
   }
+
+  // connection helper methods
 
   /**
    * Builds an {@link ExtPrimaryDataConnection}.
@@ -135,6 +136,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
   }
 
+  // primary data methods
+
   /**
    * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}. This
    * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
@@ -154,17 +157,13 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
     if (inputData.getTick() != tick) {
       throw new RuntimeException(
-              String.format(
-                      "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-                      inputData.getTick(), tick));
+          String.format(
+              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+              inputData.getTick(), tick));
     }
 
     sendPrimaryDataToSimona(
-        extPrimaryDataConnection,
-        tick,
-        inputData.getSimonaInputMap(),
-        maybeNextTick,
-        log);
+        extPrimaryDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
   }
 
   /**
@@ -188,9 +187,55 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Provided Primary Data to SIMONA!");
   }
 
+  // energy management data methods
+
   /**
-   * Function to send em data to SIMONA using the given {@link ExtEmDataConnection}. This method
-   * will take a value from the * {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   * Function to send em flex options from SIMONA to the external simulation using the given {@link
+   * ExtEmDataConnection}. This method will provide values to the {@link
+   * #dataQueueSimonaApiToExtCoSimulator}.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
+   */
+  protected void sendEmFlexResultsToExt(
+      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
+    sendSingleResultType(
+        "em flexibility option",
+        extEmDataConnection.requestEmFlexResults(tick, extEmDataConnection.getControlledEms()),
+        tick,
+        maybeNextTick,
+        log);
+  }
+
+  /**
+   * Function to send em set points from SIMONA to the external simulation using the given {@link
+   * ExtEmDataConnection}. This method will provide values to the {@link
+   * #dataQueueSimonaApiToExtCoSimulator}.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
+   */
+  protected void sendEmSetPointsToExt(
+      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
+    sendSingleResultType(
+        "em set point",
+        extEmDataConnection.requestEmSetPoints(tick, extEmDataConnection.getControlledEms()),
+        tick,
+        maybeNextTick,
+        log);
+  }
+
+  /**
+   * Function to send em flex options to SIMONA using the given {@link ExtEmDataConnection}. This
+   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
    *
    * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
    * when the next set point arrives.
@@ -199,29 +244,26 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param tick for which data is sent
    * @param maybeNextTick option for the next tick data is sent
    * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
    */
-  protected void sendEmDataToSimona(
+  protected void sendEmFlexOptionsToSimona(
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
 
     if (inputData.getTick() != tick) {
       throw new RuntimeException(
-              String.format(
-                      "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-                      inputData.getTick(), tick));
+          String.format(
+              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+              inputData.getTick(), tick));
     }
 
-    sendEmDataToSimona(
-        extEmDataConnection,
-        tick,
-        inputData.getSimonaInputMap(),
-        maybeNextTick,
-        log);
+    sendEmFlexOptionsToSimona(
+        extEmDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
   }
 
   /**
-   * Function to send em data to SIMONA using the given {@link ExtEmDataConnection}.
+   * Function to send em flex options to SIMONA using the given {@link ExtEmDataConnection}.
    *
    * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
    * when the next set point arrives.
@@ -232,16 +274,70 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param maybeNextTick option for the next tick data is sent
    * @param log logger
    */
-  protected void sendEmDataToSimona(
+  protected void sendEmFlexOptionsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
       Map<String, Value> dataMap,
       Optional<Long> maybeNextTick,
       Logger log) {
-    log.debug("Received EmData from {}", extSimulatorName);
-    extEmDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
-    log.debug("Provided EmData to SIMONA!");
+    log.debug("Received em flex options from {}", extSimulatorName);
+    extEmDataConnection.convertAndSendFlexOptions(tick, dataMap, maybeNextTick, log);
+    log.debug("Provided em flex options to SIMONA!");
   }
+
+  /**
+   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
+   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   *
+   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
+   * when the next set point arrives.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
+   */
+  protected void sendEmSetPointsToSimona(
+      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
+    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+
+    if (inputData.getTick() != tick) {
+      throw new RuntimeException(
+          String.format(
+              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+              inputData.getTick(), tick));
+    }
+
+    sendEmSetPointsToSimona(
+        extEmDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
+  }
+
+  /**
+   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}.
+   *
+   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
+   * when the next set point arrives.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param dataMap map: id to value
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   */
+  protected void sendEmSetPointsToSimona(
+      ExtEmDataConnection extEmDataConnection,
+      long tick,
+      Map<String, Value> dataMap,
+      Optional<Long> maybeNextTick,
+      Logger log) {
+    log.debug("Received em set points from {}", extSimulatorName);
+    extEmDataConnection.convertAndSendSetPoints(tick, dataMap, maybeNextTick, log);
+    log.debug("Provided em set points to SIMONA!");
+  }
+
+  // result data methods
 
   /**
    * Function to send only participant result data from SIMONA to the external simulation using the
@@ -275,6 +371,27 @@ public abstract class ExtCoSimulation extends ExtSimulation {
         "flex option", connection.requestFlexOptionResults(tick), tick, nextTick, log);
   }
 
+  /**
+   * Function to send all result data from SIMONA to the external simulation using the given {@link
+   * ExtResultDataConnection}
+   *
+   * @param connection the connection to SIMONA
+   * @param tick for which data is received
+   * @param maybeNextTick option for the next tick data is received
+   * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
+   */
+  protected void sendResultToExt(
+      ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
+    log.debug("Request results from SIMONA!");
+    Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
+    log.debug("Received results from SIMONA!");
+    dataQueueSimonaApiToExtCoSimulator.queueData(
+        new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
+    log.debug("Sent results to {}", extSimulatorName);
+  }
+
   private void sendSingleResultType(
       String type,
       Map<String, ResultEntity> resultsToBeSend,
@@ -289,26 +406,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
-  }
-
-  /**
-   * Function to send all result data from SIMONA to the external simulation using the given {@link
-   * ExtResultDataConnection}
-   *
-   * @param connection the connection to SIMONA
-   * @param tick for which data is received
-   * @param maybeNextTick option for the next tick data is received
-   * @param log logger
-   */
-  protected void sendResultToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
-      throws InterruptedException {
-    log.debug("Request results from SIMONA!");
-    Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
-    log.debug("Received results from SIMONA!");
-    dataQueueSimonaApiToExtCoSimulator.queueData(
-        new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
-    log.debug("Sent results to {}", extSimulatorName);
   }
 
   // helper methods

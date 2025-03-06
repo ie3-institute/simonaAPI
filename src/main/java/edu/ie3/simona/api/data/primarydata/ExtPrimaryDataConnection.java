@@ -10,6 +10,7 @@ import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnectionWithMapping;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
+import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class ExtPrimaryDataConnection
   public void convertAndSend(
       long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
-    Map<UUID, Value> convertedMap = convert(data);
+    Map<UUID, Value> convertedMap = ExtEntityMapping.mapToSimona(data, extDataMapping);
 
     if (convertedMap.isEmpty()) {
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);

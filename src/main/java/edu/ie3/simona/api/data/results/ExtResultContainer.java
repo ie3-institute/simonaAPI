@@ -8,8 +8,8 @@ package edu.ie3.simona.api.data.results;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
-import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtDataContainer;
@@ -79,7 +79,8 @@ public class ExtResultContainer implements ExtDataContainer {
           Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
       return vMagDev.getValue().doubleValue();
     } else {
-      throw new IllegalArgumentException("VOLTAGE DEVIATION is only available for NodeResult's! AssetId: "+ assetId);
+      throw new IllegalArgumentException(
+          "VOLTAGE DEVIATION is only available for NodeResult's! AssetId: " + assetId);
     }
   }
 
