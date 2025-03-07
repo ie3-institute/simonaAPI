@@ -17,8 +17,8 @@ ext {
   scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
   // required for pekko
-  scalaVersion = "2.13"
-  scalaBinaryVersion = "2.13.16"
+  scalaVersion = '3'
+  scalaBinaryVersion = '3.6.2'
   pekkoVersion = "1.1.3"
 }
 
@@ -50,7 +50,7 @@ dependencies{
   implementation 'tech.units:indriya:2.2.2' // quantities
 
   // scala (needed for pekko)
-  implementation "org.scala-lang:scala-library:${scalaBinaryVersion}"
+  implementation "org.scala-lang:scala3-library_${scalaVersion}:${scalaBinaryVersion}"
 
   //PSU
   implementation('com.github.ie3-institute:PowerSystemUtils:2.2.1') {
