@@ -57,7 +57,7 @@ public class ExtEmDataConnection
       log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex options.");
-      sendExtMsg(new ProvideFlexOptions(tick, emFlexOptions, maybeNextTick));
+      sendExtMsg(new ProvideEmFlexOptionData(tick, emFlexOptions, maybeNextTick));
     }
   }
 

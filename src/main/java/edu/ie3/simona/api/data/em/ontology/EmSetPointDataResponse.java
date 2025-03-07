@@ -11,5 +11,5 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Message that provides em data (set points) to an external simulation. */
-public record EmSetPointDataResponse(long tick, Map<UUID, EmSetPointResult> emData)
+public record EmSetPointDataResponse(Map<UUID, EmSetPointResult> emData)
     implements EmDataResponseMessageToExt {}

@@ -11,5 +11,5 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Message that provides em data (flexibility options) to an external simulation. */
-public record FlexOptionsResponse(long tick, Map<UUID, FlexOptionsResult> flexOptions)
+public record FlexOptionsResponse(Map<UUID, FlexOptionsResult> flexOptions)
     implements EmDataResponseMessageToExt {}

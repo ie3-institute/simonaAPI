@@ -12,6 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 /** Message that provides em data (flexibility options) from an external simulation. */
-public record ProvideFlexOptions(
+public record ProvideEmFlexOptionData(
     long tick, Map<UUID, FlexOptionValue> flexOptions, Optional<Long> maybeNextTick)
     implements EmDataMessageFromExt {}
