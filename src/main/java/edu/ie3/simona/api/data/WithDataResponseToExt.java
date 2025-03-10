@@ -14,10 +14,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @param <T> type of response messages to ext
  */
-public class WithDataResponseToExt<T extends DataResponseMessageToExt> {
+public abstract class WithDataResponseToExt<T extends DataResponseMessageToExt> {
 
   /** Data message queue containing messages from SIMONA */
-  private final LinkedBlockingQueue<T> receiveTriggerQueue = new LinkedBlockingQueue<>();
+  public final LinkedBlockingQueue<T> receiveTriggerQueue = new LinkedBlockingQueue<>();
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
   public void queueExtResponseMsg(T msg) throws InterruptedException {
