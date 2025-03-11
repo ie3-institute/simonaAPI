@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.ModelResultEntity;
 import edu.ie3.datamodel.models.result.NodeResult;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputDataConnection;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -74,7 +74,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
-  private List<ModelResultEntity> requestResultList(long tick) throws InterruptedException {
+  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick));
     return receiveWithType(ProvideResultEntities.class).results();
   }
@@ -82,12 +82,12 @@ public class ExtResultDataConnection implements ExtOutputDataConnection {
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, ModelResultEntity> requestResults(long tick) throws InterruptedException {
+  public Map<String, ResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
 
-  protected Map<String, ModelResultEntity> createResultMap(List<ModelResultEntity> results) {
-    Map<String, ModelResultEntity> resultMap = new HashMap<>();
+  protected Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
+    Map<String, ResultEntity> resultMap = new HashMap<>();
     results.forEach(
         result -> {
           if (result instanceof NodeResult nodeResult) {
