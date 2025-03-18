@@ -60,6 +60,14 @@ public class ExtEntityMapping {
         .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
   }
 
+
+  public static List<UUID> toSimona(List<String> list, Map<String, UUID> mapping) {
+    return list.stream().map(str -> Optional.ofNullable(mapping.get(str)))
+            .filter(Optional::isPresent)
+            .map(Optional::get).toList();
+  }
+
+
   /**
    * Maps a map: ids to value to a map: uuids to value.
    *

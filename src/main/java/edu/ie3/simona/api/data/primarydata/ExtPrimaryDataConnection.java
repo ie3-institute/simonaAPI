@@ -54,6 +54,7 @@ public class ExtPrimaryDataConnection
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with primary data.");
+      log.info("Data: {}", convertedMap);
       provideData(tick, convertedMap, maybeNextTick);
     }
   }

@@ -26,6 +26,8 @@ public class ExtEmDataConnection
 
   /** Assets that provide data to ext */
   private final Map<UUID, String> mosaikMapping;
+  public final Map<String, UUID> simonaMapping;
+
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
     this.extEmMapping = extEmMapping;
@@ -33,6 +35,10 @@ public class ExtEmDataConnection
     this.mosaikMapping =
         extEmMapping.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
+    this.simonaMapping =
+            extEmMapping.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
