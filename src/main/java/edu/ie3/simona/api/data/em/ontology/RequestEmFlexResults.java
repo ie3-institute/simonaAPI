@@ -7,8 +7,9 @@
 package edu.ie3.simona.api.data.em.ontology;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /** Request em set points from SIMONA in the given tick. */
-public record RequestEmFlexResults(long tick, List<UUID> emEntities)
+public record RequestEmFlexResults(long tick, Map<UUID, List<UUID>> emEntities)
     implements EmDataMessageFromExt {}

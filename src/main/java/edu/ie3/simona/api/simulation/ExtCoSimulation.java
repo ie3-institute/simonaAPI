@@ -11,6 +11,7 @@ import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
+import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
@@ -189,6 +190,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   // energy management data methods
 
+
   /**
    * Function to send em flex options from SIMONA to the external simulation using the given {@link
    * ExtEmDataConnection}. This method will provide values to the {@link
@@ -203,9 +205,19 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmFlexResultsToExt(
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
+    // sending flex request to simona
+    ExtInputDataContainer container = dataQueueExtCoSimulatorToSimonaApi.takeData();
+
+    Map<String, List<String>> map = container.getSimonaInputMap().entrySet().stream().map(e ->
+            Map.entry(e.getKey(), ((FlexOptionRequestValue) e.getValue()).emEntities())
+    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    log.info("Request flex options for: {}", map);
+    Map<String, ResultEntity> results = extEmDataConnection.convertAndSendRequestFlexResults(tick, map, log);
+
     sendSingleResultType(
         "em flexibility option",
-        extEmDataConnection.requestEmFlexResults(tick, extEmDataConnection.getControlledEms()),
+            results,
         tick,
         maybeNextTick,
         log);

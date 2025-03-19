@@ -26,7 +26,6 @@ public class ExtEmDataConnection
 
   /** Assets that provide data to ext */
   private final Map<UUID, String> mosaikMapping;
-  public final Map<String, UUID> simonaMapping;
 
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
@@ -35,10 +34,6 @@ public class ExtEmDataConnection
     this.mosaikMapping =
         extEmMapping.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
-
-    this.simonaMapping =
-            extEmMapping.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
@@ -89,14 +84,33 @@ public class ExtEmDataConnection
   }
 
   /**
+   * Converts and requests em flexibility options from SIMONA.
+   *
+   * @param tick for which set points are requested
+   * @param emEntities for which set points are requested
+   * @return an {@link FlexOptionsResponse} message
+   * @throws InterruptedException - on interruptions
+   */
+  public Map<String, ResultEntity> convertAndSendRequestFlexResults(long tick, Map<String, List<String>> emEntities, Logger log) throws InterruptedException {
+    Map<String, List<UUID>> m = emEntities.entrySet().stream()
+            .map(e -> Map.entry(e.getKey(), ExtEntityMapping.toSimona(e.getValue(), extEmMapping)))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    Map<UUID, List<UUID>> map = ExtEntityMapping.mapToSimona(m, extEmMapping);
+    log.info("Provided SIMONA with em flex request: {}", map);
+
+    return requestEmFlexResults(tick, map);
+  }
+
+  /**
    * Method to request em flexibility options from SIMONA.
    *
    * @param tick for which set points are requested
    * @param emEntities for which set points are requested
-   * @return an {@link EmSetPointDataResponse} message
+   * @return an {@link FlexOptionsResponse} message
    * @throws InterruptedException - on interruptions
    */
-  public Map<String, ResultEntity> requestEmFlexResults(long tick, List<UUID> emEntities)
+  public Map<String, ResultEntity> requestEmFlexResults(long tick, Map<UUID, List<UUID>> emEntities)
       throws InterruptedException {
     sendExtMsg(new RequestEmFlexResults(tick, emEntities));
     return ExtEntityMapping.mapToExt(
