@@ -215,6 +215,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.info("Request flex options for: {}", map);
     Map<String, ResultEntity> results = extEmDataConnection.convertAndSendRequestFlexResults(tick, map, log);
 
+    log.warn("Flex results to ext : {}", results);
+
     sendSingleResultType(
         "em flexibility option",
             results,
@@ -413,8 +415,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       throws InterruptedException {
     log.info("Request results from SIMONA for {} for tick {}!", type, tick);
 
-    String resultString = resultMapToString(resultsToBeSend);
-    log.debug("[{}] Received {} results from SIMONA!\n{}", tick, type, resultString);
+    //String resultString = resultMapToString(resultsToBeSend);
+    //log.debug("[{}] Received {} results from SIMONA!\n{}", tick, type, resultString);
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);

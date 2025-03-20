@@ -13,9 +13,10 @@ import edu.ie3.simona.api.data.BiDirectional;
 import edu.ie3.simona.api.data.em.model.FlexOptionValue;
 import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
+import org.slf4j.Logger;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection
