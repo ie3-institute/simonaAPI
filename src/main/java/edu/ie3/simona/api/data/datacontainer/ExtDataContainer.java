@@ -11,13 +11,12 @@ import java.util.Map;
 
 /** Interface for data that are exchanged between an external simulation and SimonaAPI */
 public interface ExtDataContainer {
-    boolean isEmpty();
+  boolean isEmpty();
 
-
-    // private helper methods
-    default  <K, V> Map<K, V> copyAndClear(Map<K, V> map) {
-        Map<K, V> result = new HashMap<>(map);
-        map.clear();
-        return result;
-    }
+  // private helper methods
+  default <K, V> Map<K, V> copyAndClear(Map<K, V> map) {
+    Map<K, V> result = new HashMap<>(map);
+    map.clear();
+    return result;
+  }
 }

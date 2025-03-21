@@ -13,10 +13,9 @@ import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
-import org.slf4j.Logger;
-
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection
@@ -27,7 +26,6 @@ public class ExtEmDataConnection
 
   /** Assets that provide data to ext */
   private final Map<UUID, String> mosaikMapping;
-
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
     this.extEmMapping = extEmMapping;
@@ -51,7 +49,7 @@ public class ExtEmDataConnection
    * @param log logger
    */
   public void convertAndSendFlexOptions(
-          long tick, Map<String, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<String, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
     Map<UUID, List<FlexOptions>> emFlexOptions = ExtEntityMapping.mapToSimona(data, extEmMapping);
 
@@ -92,9 +90,16 @@ public class ExtEmDataConnection
    * @return an {@link FlexOptionsResponse} message
    * @throws InterruptedException - on interruptions
    */
-  public Map<String, ResultEntity> convertAndSendRequestFlexResults(long tick, Map<String, FlexOptionRequestValue> emEntities, Logger log) throws InterruptedException {
-    Map<String, List<UUID>> m = emEntities.entrySet().stream()
-            .map(e -> Map.entry(e.getKey(), ExtEntityMapping.toSimona(e.getValue().emEntities(), extEmMapping)))
+  public Map<String, ResultEntity> convertAndSendRequestFlexResults(
+      long tick, Map<String, FlexOptionRequestValue> emEntities, Logger log)
+      throws InterruptedException {
+    Map<String, List<UUID>> m =
+        emEntities.entrySet().stream()
+            .map(
+                e ->
+                    Map.entry(
+                        e.getKey(),
+                        ExtEntityMapping.toSimona(e.getValue().emEntities(), extEmMapping)))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     Map<UUID, List<UUID>> map = ExtEntityMapping.mapToSimona(m, extEmMapping);

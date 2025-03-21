@@ -6,15 +6,12 @@
 
 package edu.ie3.simona.api.data.em.model;
 
-import tech.units.indriya.ComparableQuantity;
-
-import javax.measure.quantity.Power;
 import java.util.UUID;
+import javax.measure.quantity.Power;
+import tech.units.indriya.ComparableQuantity;
 
 public record FlexOptions(
     UUID sender,
     ComparableQuantity<Power> pMin,
     ComparableQuantity<Power> pRef,
-    ComparableQuantity<Power> pMax) {
-
-}
+    ComparableQuantity<Power> pMax) {}

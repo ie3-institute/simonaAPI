@@ -12,14 +12,10 @@ import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.measure.quantity.Dimensionless;
-
-import edu.ie3.simona.api.data.em.model.EmSetPointResult;
-import edu.ie3.simona.api.data.em.model.FlexOptions;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
 
@@ -36,38 +32,48 @@ public class ExtResultContainer implements ExtDataContainer {
    * Map external id to result from SIMONA ATTENTION: The time stamp of the result entities is not
    * necessarily corresponding to the tick
    */
-  private final Map<String, ResultEntity> simonaResultsMap;
-
-  // em maps
-  private final Map<String, FlexOptions> flexOptions = new HashMap<>();
-  private final Map<String, EmSetPointResult> setPoints =  new HashMap<>();
-
+  private final Map<String, ResultEntity> resultMap;
 
   /**
    * Container class for result data from SIMONA
    *
    * @param tick current tick
-   * @param simonaResultsMap results from SIMONA with external id as key
+   * @param resultMap results from SIMONA with external id as key
    * @param nextTick tick the external simulation can expect the next results
    */
   public ExtResultContainer(
-      long tick, Map<String, ResultEntity> simonaResultsMap, Optional<Long> nextTick) {
+      long tick, Map<String, ResultEntity> resultMap, Optional<Long> nextTick) {
     this.tick = tick;
-    this.simonaResultsMap = simonaResultsMap;
+    this.resultMap = resultMap;
     this.maybeNextTick = nextTick;
   }
 
-  public ExtResultContainer(long tick, Map<String, ResultEntity> simonaResultsMap) {
-    this(tick, simonaResultsMap, Optional.empty());
+  public ExtResultContainer(long tick, Map<String, ResultEntity> resultMap) {
+    this(tick, resultMap, Optional.empty());
   }
 
   @Override
   public boolean isEmpty() {
-    return simonaResultsMap.isEmpty() && flexOptions.isEmpty() && setPoints.isEmpty();
+    return resultMap.isEmpty();
   }
 
   public Map<String, ResultEntity> getResults() {
-    return simonaResultsMap;
+    return resultMap;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <R extends ResultEntity> Map<String, R> getResults(Class<R> clazz) {
+    Map<String, R> result = new HashMap<>();
+
+    for (Map.Entry<String, ResultEntity> entry : resultMap.entrySet()) {
+      ResultEntity resultEntity = entry.getValue();
+
+      if (entry.getValue().getClass().equals(clazz)) {
+        result.put(entry.getKey(), (R) resultEntity);
+      }
+    }
+
+    return result;
   }
 
   public Long getTick() {
@@ -80,7 +86,7 @@ public class ExtResultContainer implements ExtDataContainer {
 
   /** Returns the result for a certain asset. */
   public ResultEntity getResult(String assetId) {
-    return simonaResultsMap.get(assetId);
+    return resultMap.get(assetId);
   }
 
   /**
@@ -88,7 +94,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * NodeResult}
    */
   public double getVoltageDeviation(String assetId) {
-    if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
+    if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       ComparableQuantity<Dimensionless> vMagDev =
           Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
       return vMagDev.getValue().doubleValue();
@@ -102,7 +108,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
    */
   public double getVoltage(String assetId) {
-    if (simonaResultsMap.get(assetId) instanceof NodeResult nodeResult) {
+    if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       return nodeResult.getvMag().getValue().doubleValue();
     } else {
       throw new IllegalArgumentException("VOLTAGE is only available for NodeResult's!");
@@ -114,7 +120,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * SystemParticipantResult}
    */
   public double getActivePower(String assetId) {
-    if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
+    if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getP().getValue().doubleValue();
     } else {
       throw new IllegalArgumentException(
@@ -127,7 +133,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * SystemParticipantResult}
    */
   public double getReactivePower(String assetId) {
-    if (simonaResultsMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
+    if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getQ().getValue().doubleValue();
     } else {
       throw new IllegalArgumentException(

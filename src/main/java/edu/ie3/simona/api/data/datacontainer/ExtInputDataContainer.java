@@ -10,7 +10,6 @@ import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
-
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
@@ -49,7 +48,10 @@ public final class ExtInputDataContainer implements ExtDataContainer {
 
   @Override
   public boolean isEmpty() {
-    return primaryData.isEmpty() && flexRequests.isEmpty() && flexOptions.isEmpty() && setPoints.isEmpty();
+    return primaryData.isEmpty()
+        && flexRequests.isEmpty()
+        && flexOptions.isEmpty()
+        && setPoints.isEmpty();
   }
 
   public long getTick() {
@@ -87,7 +89,6 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     return copyAndClear(primaryData);
   }
 
-
   // extract and delete data
   public Map<String, FlexOptionRequestValue> extractFlexRequests() {
     return copyAndClear(flexRequests);
@@ -101,21 +102,20 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     return copyAndClear(setPoints);
   }
 
-
   // data to string
   public String primaryDataString() {
-      return primaryData.toString();
-    }
+    return primaryData.toString();
+  }
 
-    public String flexRequestsString() {
+  public String flexRequestsString() {
     return flexRequests.toString();
   }
 
-   public String flexOptionsString() {
-      return flexOptions.toString();
-    }
+  public String flexOptionsString() {
+    return flexOptions.toString();
+  }
 
-      public String setPointsString() {
-        return setPoints.toString();
-      }
+  public String setPointsString() {
+    return setPoints.toString();
+  }
 }

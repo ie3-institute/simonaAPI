@@ -7,12 +7,11 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.datacontainer.ExtDataContainer;
-
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Function;
 
 /** Data queue to allow data flow between SimonaAPI and an external simulation */
-public class ExtDataContainerQueue<V extends ExtDataContainer> {
+public final class ExtDataContainerQueue<V extends ExtDataContainer> {
   private final LinkedBlockingDeque<V> receiverTriggerDeque = new LinkedBlockingDeque<>();
 
   public void queueData(V data) throws InterruptedException {
