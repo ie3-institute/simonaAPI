@@ -7,21 +7,24 @@
 package edu.ie3.simona.api.simulation;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
-import edu.ie3.simona.api.data.ExtInputDataContainer;
+import edu.ie3.simona.api.data.ExtDataContainerQueue;
+import edu.ie3.simona.api.data.datacontainer.ExtInputDataContainer;
+import edu.ie3.simona.api.data.datacontainer.ExtResultContainer;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
+import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
-import edu.ie3.simona.api.data.results.ExtResultContainer;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
+import org.slf4j.Logger;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -33,12 +36,10 @@ import org.slf4j.Logger;
 public abstract class ExtCoSimulation extends ExtSimulation {
 
   /** Queue for the data connection from the external co-simulation to SimonaAPI */
-  protected final DataQueueExtSimulationExtSimulator<ExtInputDataContainer>
-      dataQueueExtCoSimulatorToSimonaApi;
+  protected final ExtDataContainerQueue<ExtInputDataContainer> queueToSimona;
 
   /** Queue for the data connection from SimonaAPI to the external co-simulation */
-  protected final DataQueueExtSimulationExtSimulator<ExtResultContainer>
-      dataQueueSimonaApiToExtCoSimulator;
+  protected final ExtDataContainerQueue<ExtResultContainer> queueToExt;
 
   /** Name of the external co-simulation */
   protected final String extSimulatorName;
@@ -46,8 +47,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected ExtCoSimulation(String simulationName, String extSimulatorName) {
     super(simulationName);
     this.extSimulatorName = extSimulatorName;
-    this.dataQueueExtCoSimulatorToSimonaApi = new DataQueueExtSimulationExtSimulator<>();
-    this.dataQueueSimonaApiToExtCoSimulator = new DataQueueExtSimulationExtSimulator<>();
+    this.queueToSimona = new ExtDataContainerQueue<>();
+    this.queueToExt = new ExtDataContainerQueue<>();
   }
 
   // connection helper methods
@@ -137,11 +138,22 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
   }
 
+  private void checkTick(long expectedTick) throws InterruptedException {
+    long dataTick = queueToSimona.takeData(ExtInputDataContainer::getTick);
+
+        if (dataTick != expectedTick) {
+          throw new RuntimeException(
+              String.format(
+                  "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+                      dataTick, expectedTick));
+        }
+  }
+
   // primary data methods
 
   /**
    * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}. This
-   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   * method will take a value from the {@link #queueToSimona}.
    *
    * @param extPrimaryDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -154,17 +166,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       Optional<Long> maybeNextTick,
       Logger log)
       throws InterruptedException {
-    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-
-    if (inputData.getTick() != tick) {
-      throw new RuntimeException(
-          String.format(
-              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-              inputData.getTick(), tick));
-    }
-
-    sendPrimaryDataToSimona(
-        extPrimaryDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
+    checkTick(tick);
+    Map<String, Value> inputData = queueToSimona.takeData(ExtInputDataContainer::extractPrimaryData);
+    sendPrimaryDataToSimona(extPrimaryDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**
@@ -194,7 +198,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   /**
    * Function to send em flex options from SIMONA to the external simulation using the given {@link
    * ExtEmDataConnection}. This method will provide values to the {@link
-   * #dataQueueSimonaApiToExtCoSimulator}.
+   * #queueToExt}.
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -206,29 +210,19 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     // sending flex request to simona
-    ExtInputDataContainer container = dataQueueExtCoSimulatorToSimonaApi.takeData();
+    Map<String, FlexOptionRequestValue> inputData = queueToSimona.takeData(ExtInputDataContainer::extractFlexRequests);
 
-    Map<String, List<String>> map = container.getSimonaInputMap().entrySet().stream().map(e ->
-            Map.entry(e.getKey(), ((FlexOptionRequestValue) e.getValue()).emEntities())
-    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-    log.info("Request flex options for: {}", map);
-    Map<String, ResultEntity> results = extEmDataConnection.convertAndSendRequestFlexResults(tick, map, log);
-
+    log.info("Request flex options for: {}", inputData);
+    Map<String, ResultEntity> results = extEmDataConnection.convertAndSendRequestFlexResults(tick, inputData, log);
     log.warn("Flex results to ext : {}", results);
 
-    sendSingleResultType(
-        "em flexibility option",
-            results,
-        tick,
-        maybeNextTick,
-        log);
+    sendSingleResultType("em flexibility option", results, tick, maybeNextTick, log);
   }
 
   /**
    * Function to send em set points from SIMONA to the external simulation using the given {@link
    * ExtEmDataConnection}. This method will provide values to the {@link
-   * #dataQueueSimonaApiToExtCoSimulator}.
+   * #queueToExt}.
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -249,7 +243,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   /**
    * Function to send em flex options to SIMONA using the given {@link ExtEmDataConnection}. This
-   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   * method will take a value from the {@link #queueToSimona}.
    *
    * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
    * when the next set point arrives.
@@ -263,17 +257,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmFlexOptionsToSimona(
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
-    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
-
-    if (inputData.getTick() != tick) {
-      throw new RuntimeException(
-          String.format(
-              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-              inputData.getTick(), tick));
-    }
-
-    sendEmFlexOptionsToSimona(
-        extEmDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
+    checkTick(tick);
+    Map<String, List<FlexOptions>> inputData = queueToSimona.takeData(ExtInputDataContainer::extractFlexOptions);
+    sendEmFlexOptionsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**
@@ -291,7 +277,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmFlexOptionsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
-      Map<String, Value> dataMap,
+      Map<String, List<FlexOptions>> dataMap,
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em flex options from {}", extSimulatorName);
@@ -301,7 +287,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   /**
    * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
-   * method will take a value from the {@link #dataQueueExtCoSimulatorToSimonaApi}.
+   * method will take a value from the {@link #queueToSimona}.
    *
    * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
    * when the next set point arrives.
@@ -315,17 +301,10 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmSetPointsToSimona(
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
-    ExtInputDataContainer inputData = dataQueueExtCoSimulatorToSimonaApi.takeData();
+    checkTick(tick);
+    Map<String, PValue> inputData = queueToSimona.takeData(ExtInputDataContainer::extractSetPoints);
 
-    if (inputData.getTick() != tick) {
-      throw new RuntimeException(
-          String.format(
-              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-              inputData.getTick(), tick));
-    }
-
-    sendEmSetPointsToSimona(
-        extEmDataConnection, tick, inputData.getSimonaInputMap(), maybeNextTick, log);
+    sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**
@@ -343,7 +322,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendEmSetPointsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
-      Map<String, Value> dataMap,
+      Map<String, PValue> dataMap,
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em set points from {}", extSimulatorName);
@@ -401,7 +380,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Request results from SIMONA!");
     Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
-    dataQueueSimonaApiToExtCoSimulator.queueData(
+    queueToExt.queueData(
         new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
     log.debug("Sent results to {}", extSimulatorName);
   }
@@ -417,7 +396,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
     //String resultString = resultMapToString(resultsToBeSend);
     //log.debug("[{}] Received {} results from SIMONA!\n{}", tick, type, resultString);
-    dataQueueSimonaApiToExtCoSimulator.queueData(
+    queueToExt.queueData(
         new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
   }

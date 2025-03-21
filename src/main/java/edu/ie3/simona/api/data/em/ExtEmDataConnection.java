@@ -8,9 +8,9 @@ package edu.ie3.simona.api.data.em;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.PValue;
-import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.BiDirectional;
-import edu.ie3.simona.api.data.em.model.FlexOptionValue;
+import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
+import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
 import org.slf4j.Logger;
@@ -51,9 +51,9 @@ public class ExtEmDataConnection
    * @param log logger
    */
   public void convertAndSendFlexOptions(
-      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+          long tick, Map<String, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
-    Map<UUID, FlexOptionValue> emFlexOptions = ExtEntityMapping.mapToSimona(data, extEmMapping);
+    Map<UUID, List<FlexOptions>> emFlexOptions = ExtEntityMapping.mapToSimona(data, extEmMapping);
 
     if (emFlexOptions.isEmpty()) {
       log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
@@ -72,7 +72,7 @@ public class ExtEmDataConnection
    * @param log logger
    */
   public void convertAndSendSetPoints(
-      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<String, PValue> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
     Map<UUID, PValue> emSetPoints = ExtEntityMapping.mapToSimona(data, extEmMapping);
 
@@ -92,9 +92,9 @@ public class ExtEmDataConnection
    * @return an {@link FlexOptionsResponse} message
    * @throws InterruptedException - on interruptions
    */
-  public Map<String, ResultEntity> convertAndSendRequestFlexResults(long tick, Map<String, List<String>> emEntities, Logger log) throws InterruptedException {
+  public Map<String, ResultEntity> convertAndSendRequestFlexResults(long tick, Map<String, FlexOptionRequestValue> emEntities, Logger log) throws InterruptedException {
     Map<String, List<UUID>> m = emEntities.entrySet().stream()
-            .map(e -> Map.entry(e.getKey(), ExtEntityMapping.toSimona(e.getValue(), extEmMapping)))
+            .map(e -> Map.entry(e.getKey(), ExtEntityMapping.toSimona(e.getValue().emEntities(), extEmMapping)))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     Map<UUID, List<UUID>> map = ExtEntityMapping.mapToSimona(m, extEmMapping);

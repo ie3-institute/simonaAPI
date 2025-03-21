@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.results;
+package edu.ie3.simona.api.data.datacontainer;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 
@@ -12,10 +12,14 @@ import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
-import edu.ie3.simona.api.data.ExtDataContainer;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.measure.quantity.Dimensionless;
+
+import edu.ie3.simona.api.data.em.model.EmSetPointResult;
+import edu.ie3.simona.api.data.em.model.FlexOptions;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
 
@@ -34,6 +38,11 @@ public class ExtResultContainer implements ExtDataContainer {
    */
   private final Map<String, ResultEntity> simonaResultsMap;
 
+  // em maps
+  private final Map<String, FlexOptions> flexOptions = new HashMap<>();
+  private final Map<String, EmSetPointResult> setPoints =  new HashMap<>();
+
+
   /**
    * Container class for result data from SIMONA
    *
@@ -50,6 +59,11 @@ public class ExtResultContainer implements ExtDataContainer {
 
   public ExtResultContainer(long tick, Map<String, ResultEntity> simonaResultsMap) {
     this(tick, simonaResultsMap, Optional.empty());
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return simonaResultsMap.isEmpty() && flexOptions.isEmpty() && setPoints.isEmpty();
   }
 
   public Map<String, ResultEntity> getResults() {
