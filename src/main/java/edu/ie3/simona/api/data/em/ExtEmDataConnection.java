@@ -28,6 +28,8 @@ public class ExtEmDataConnection
   private final Map<UUID, String> mosaikMapping;
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
+    super(new EmCompletion());
+
     this.extEmMapping = extEmMapping;
 
     this.mosaikMapping =
@@ -40,6 +42,26 @@ public class ExtEmDataConnection
     return new ArrayList<>(extEmMapping.values());
   }
 
+
+  public void convertAndSendFlexRequests(
+          long tick, Map<String, FlexOptionRequestValue> data, Optional<Long> maybeNextTick, Logger log) {
+    // filtering the data and converting the keys
+    Map<UUID, List<UUID>> emFlexRequests = data.values().stream().map(value -> {
+      UUID requester = extEmMapping.get(value.requester());
+      List<UUID> emEntities = ExtEntityMapping.toSimona(value.emEntities(), extEmMapping);
+
+      return Map.entry(requester, emEntities);
+    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    if (emFlexRequests.isEmpty()) {
+      log.warn("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
+    } else {
+      log.debug("Provided SIMONA with em flex requests.");
+      sendExtMsg(new ProvideFlexRequestData(tick, emFlexRequests, maybeNextTick));
+    }
+  }
+
+
   /**
    * Converts the em flex options and sends them to SIMONA.
    *
@@ -51,7 +73,11 @@ public class ExtEmDataConnection
   public void convertAndSendFlexOptions(
       long tick, Map<String, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
     // filtering the data and converting the keys
-    Map<UUID, List<FlexOptions>> emFlexOptions = ExtEntityMapping.mapToSimona(data, extEmMapping);
+    Map<String, Map<UUID, FlexOptions>> inputData = new HashMap<>();
+    data.forEach((receiver, options) -> inputData.put(receiver, ExtEntityMapping.mapToSimona(options.stream().collect(Collectors.toMap(FlexOptions::sender, i -> i)), extEmMapping)));
+
+
+    Map<UUID, Map<UUID, FlexOptions>> emFlexOptions = ExtEntityMapping.mapToSimona(inputData, extEmMapping);
 
     if (emFlexOptions.isEmpty()) {
       log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);

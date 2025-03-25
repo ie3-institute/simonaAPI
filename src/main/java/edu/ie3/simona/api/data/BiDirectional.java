@@ -20,6 +20,15 @@ import org.apache.pekko.actor.ActorRef;
 public class BiDirectional<M extends DataMessageFromExt, R extends DataResponseMessageToExt>
     extends WithDataResponseToExt<R> implements ExtInputDataConnection<M> {
 
+  protected BiDirectional() {
+    super();
+  }
+
+  protected BiDirectional(R completionMsg) {
+    super(completionMsg);
+  }
+
+
   /** Actor reference to service that handles data within SIMONA */
   private ActorRef dataService;
 

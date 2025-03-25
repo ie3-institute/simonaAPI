@@ -7,6 +7,8 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
+
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -16,13 +18,38 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public abstract class WithDataResponseToExt<T extends DataResponseMessageToExt> {
 
+  private final Optional<T> completionMsg;
+
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<T> receiveTriggerQueue = new LinkedBlockingQueue<>();
+
+  protected WithDataResponseToExt() {
+    this.completionMsg = Optional.empty();
+  }
+
+  protected WithDataResponseToExt(T completion) {
+    this.completionMsg = Optional.of(completion);
+  }
+
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
   public void queueExtResponseMsg(T msg) throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
+
+  public void queueExtResponseMsg(T msg, boolean finishedStep) throws InterruptedException {
+    receiveTriggerQueue.put(msg);
+
+    if (finishedStep && completionMsg.isPresent()) {
+      receiveTriggerQueue.put(completionMsg.get());
+    }
+  }
+
+
+  public T receiveAny() throws InterruptedException {
+    return receiveTriggerQueue.take();
+  }
+
 
   /**
    * Waits until a message of given type is added to the queue. If the message has a different type,

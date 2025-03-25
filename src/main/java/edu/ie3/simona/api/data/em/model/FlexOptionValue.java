@@ -7,6 +7,7 @@
 package edu.ie3.simona.api.data.em.model;
 
 import edu.ie3.datamodel.models.value.Value;
-import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public record FlexOptionValue(List<FlexOptions> flexOptions) implements Value {}
+public record FlexOptionValue(Map<UUID, FlexOptions> flexOptions) implements Value {}

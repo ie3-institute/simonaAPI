@@ -68,6 +68,14 @@ public class ExtEntityMapping {
         .toList();
   }
 
+  public static List<String> toExt(List<UUID> list, Map<UUID, String> mapping) {
+    return list.stream()
+            .map(str -> Optional.ofNullable(mapping.get(str)))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+  }
+
   /**
    * Maps a map: ids to value to a map: uuids to value.
    *

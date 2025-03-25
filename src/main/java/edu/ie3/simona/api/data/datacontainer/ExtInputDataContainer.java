@@ -71,13 +71,12 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     flexRequests.put(requester, new FlexOptionRequestValue(requester, emEntities));
   }
 
-  public void addFlexOptions(String id, FlexOptions flexOption) {
+  public void addFlexOptions(String id, List<FlexOptions> flexOption) {
     if (!flexOptions.containsKey(id)) {
-      List<FlexOptions> flexOptionValues = new ArrayList<>();
-      flexOptionValues.add(flexOption);
+      List<FlexOptions> flexOptionValues = new ArrayList<>(flexOption);
       flexOptions.put(id, flexOptionValues);
     } else {
-      flexOptions.get(id).add(flexOption);
+      flexOptions.get(id).addAll(flexOption);
     }
   }
 
