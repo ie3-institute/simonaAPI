@@ -40,6 +40,7 @@ apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
 apply from: scriptsLocation + 'test.gradle'
+apply from: scriptsLocation + 'branchName.gradle' // checks naming scheme of branches
 
 repositories {
   mavenCentral()
