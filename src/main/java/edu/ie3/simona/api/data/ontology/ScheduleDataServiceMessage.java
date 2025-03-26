@@ -6,30 +6,8 @@
 
 package edu.ie3.simona.api.data.ontology;
 
-import java.util.Objects;
-import org.apache.pekko.actor.ActorRef;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import org.apache.pekko.actor.typed.ActorRef;
 
-public class ScheduleDataServiceMessage {
-  private final ActorRef dataService;
-
-  public ScheduleDataServiceMessage(ActorRef dataService) {
-    this.dataService = dataService;
-  }
-
-  public ActorRef getDataService() {
-    return dataService;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ScheduleDataServiceMessage that = (ScheduleDataServiceMessage) o;
-    return dataService.equals(that.dataService);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(dataService);
-  }
-}
+public record ScheduleDataServiceMessage(ActorRef<DataMessageFromExt> dataService)
+    implements ControlResponseMessageFromExt {}

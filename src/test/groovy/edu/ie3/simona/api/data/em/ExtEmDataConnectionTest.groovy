@@ -3,21 +3,17 @@ package edu.ie3.simona.api.data.em
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.test.common.DataServiceTestData
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.testkit.TestProbe
-import org.apache.pekko.testkit.javadsl.TestKit
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification
 
 class ExtEmDataConnectionTest extends Specification implements DataServiceTestData {
 
     @Shared
-    ActorSystem actorSystem
+    ActorTestKit testKit
 
     @Shared
     Map<String, UUID> extEmDataMapping = Map.of(
@@ -26,18 +22,18 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
     )
 
     def setupSpec() {
-        actorSystem = ActorSystem.create()
+        testKit = ActorTestKit.create()
     }
 
     def cleanupSpec() {
-        TestKit.shutdownActorSystem(actorSystem)
-        actorSystem = null
+        testKit.shutdownTestKit()
+        testKit = null
     }
 
     def "ExtEmDataConnection should provide em data correctly"() {
         given:
-        def dataService = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(
                 dataService.ref(),
@@ -54,14 +50,14 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         extEmDataConnection.provideEmData(0L, convertedEmData, Optional.of(900L))
 
         then:
-        dataService.expectMsg(new ProvideEmSetPointData(0, convertedEmData, Optional.of(900L)))
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
+        dataService.expectMessage(new ProvideEmSetPointData(0, convertedEmData, Optional.of(900L)))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
     def "ExtEmDataConnection should convert input data correctly"() {
         given:
-        def dataService = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(
                 dataService.ref(),
@@ -73,14 +69,14 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         extEmDataConnection.convertAndSend(0L, inputDataMap, Optional.of(900L), log)
 
         then:
-        dataService.expectMsg(new ProvideEmSetPointData(0L, Map.of(inputUuid, pValue), Optional.of(900L)))
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataService.ref()))
+        dataService.expectMessage(new ProvideEmSetPointData(0L, Map.of(inputUuid, pValue), Optional.of(900L)))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
     def "ExtEmDataConnection should send no message, if input data for a not requested asset was provided"() {
         given:
-        def dataService = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(
                 dataService.ref(),
