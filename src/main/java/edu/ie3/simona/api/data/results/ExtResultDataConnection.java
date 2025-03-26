@@ -10,6 +10,7 @@ import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputDataConnection;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
@@ -24,17 +25,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.typed.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDataMessageFromExt> {
+public class ExtResultDataConnection implements ExtOutputDataConnection {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles result data within SIMONA */
-  private ActorRef<ResultDataMessageFromExt> extResultDataService;
+  private ActorRef<DataMessageFromExt> extResultDataService;
 
   /** Actor reference to the dataServiceAdapter */
-  private ActorRef<ResultDataMessageFromExt> dataServiceActivation;
+  private ActorRef<DataMessageFromExt> dataServiceActivation;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
@@ -60,8 +61,8 @@ public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDa
    * @param extSimAdapter actor ref to the extSimAdapter
    */
   public void setActorRefs(
-      ActorRef<ResultDataMessageFromExt> extResultDataService,
-      ActorRef<ResultDataMessageFromExt> dataServiceActivation,
+      ActorRef<DataMessageFromExt> extResultDataService,
+      ActorRef<DataMessageFromExt> dataServiceActivation,
       ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.extResultDataService = extResultDataService;
     this.dataServiceActivation = dataServiceActivation;
@@ -117,7 +118,7 @@ public class ExtResultDataConnection implements ExtOutputDataConnection<ResultDa
   public void sendExtMsg(ResultDataMessageFromExt msg) {
     extResultDataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage<>(dataServiceActivation));
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataServiceActivation));
   }
 
   /** Queues message from SIMONA that should be handled by the external simulation. */

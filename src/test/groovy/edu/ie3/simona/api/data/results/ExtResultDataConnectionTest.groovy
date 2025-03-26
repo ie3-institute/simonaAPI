@@ -2,10 +2,10 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.connector.LineResult
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
-import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
 import edu.ie3.simona.api.simulation.ExtSimulation
 import edu.ie3.simona.api.test.common.DataServiceTestData
@@ -46,8 +46,8 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
 
     def "ExtResultsData should request and receive results correctly as ModelResultEntity"() {
         given:
-        def dataService = testKit.createTestProbe(ResultDataMessageFromExt)
-        def dataServiceActivation = testKit.createTestProbe(ResultDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def dataServiceActivation = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultDataConnection.setActorRefs(
@@ -71,8 +71,8 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
 
     def "ExtResultsData should fail if wrong response is sent"() {
         given:
-        def dataService = testKit.createTestProbe(ResultDataMessageFromExt)
-        def dataServiceActivation = testKit.createTestProbe(ResultDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def dataServiceActivation = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultDataConnection.setActorRefs(

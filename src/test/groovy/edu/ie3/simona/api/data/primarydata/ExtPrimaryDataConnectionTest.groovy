@@ -1,8 +1,8 @@
 package edu.ie3.simona.api.data.primarydata
 
 import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
@@ -31,7 +31,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
 
     def "ExtPrimaryDataConnection should provide primary data correctly"() {
         given:
-        def dataService = testKit.createTestProbe(PrimaryDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
         extPrimaryDataConnection.setActorRefs(
@@ -55,7 +55,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
 
     def "ExtPrimaryDataConnection should convert input data correctly"() {
         given:
-        def dataService = testKit.createTestProbe(PrimaryDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
         extPrimaryDataConnection.setActorRefs(
@@ -74,7 +74,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
 
     def "ExtPrimaryDataConnection should send no message, if input data for a not requested asset was provided"() {
         given:
-        def dataService = testKit.createTestProbe(PrimaryDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extPrimaryDataConnection = new ExtPrimaryDataConnection(extPrimaryDataMapping)
         extPrimaryDataConnection.setActorRefs(

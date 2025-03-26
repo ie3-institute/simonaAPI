@@ -2,9 +2,8 @@ package edu.ie3.simona.api.data.em
 
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
-import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData
-import edu.ie3.simona.api.data.ev.ontology.EvDataMessageFromExt
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
@@ -33,7 +32,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
 
     def "ExtEmDataConnection should provide em data correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EmDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(
@@ -57,7 +56,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
 
     def "ExtEmDataConnection should convert input data correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EmDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(
@@ -76,7 +75,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
 
     def "ExtEmDataConnection should send no message, if input data for a not requested asset was provided"() {
         given:
-        def dataService = testKit.createTestProbe(EmDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEmDataConnection = new ExtEmDataConnection(extEmDataMapping)
         extEmDataConnection.setActorRefs(

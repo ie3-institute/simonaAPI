@@ -8,20 +8,24 @@ package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.pekko.actor.typed.ActorRef;
 import org.slf4j.Logger;
 
 /** Enables data connection of primary data between SIMONA and SimonaAPI */
-public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryDataMessageFromExt> {
+public class ExtPrimaryDataConnection implements ExtInputDataConnection {
 
   /** Actor reference to service that handles primary data within SIMONA */
-  private ActorRef<PrimaryDataMessageFromExt> dataService;
+  private ActorRef<DataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
@@ -35,7 +39,7 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
 
   @Override
   public void setActorRefs(
-      ActorRef<PrimaryDataMessageFromExt> dataService,
+      ActorRef<DataMessageFromExt> dataService,
       ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
@@ -79,6 +83,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   public void sendExtMsg(PrimaryDataMessageFromExt msg) {
     dataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage<>(dataService));
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
   }
 }

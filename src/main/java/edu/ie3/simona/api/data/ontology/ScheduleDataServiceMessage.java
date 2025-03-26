@@ -9,5 +9,5 @@ package edu.ie3.simona.api.data.ontology;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import org.apache.pekko.actor.typed.ActorRef;
 
-public record ScheduleDataServiceMessage<T extends DataMessageFromExt>(ActorRef<T> dataService)
+public record ScheduleDataServiceMessage(ActorRef<DataMessageFromExt> dataService)
     implements ControlResponseMessageFromExt {}

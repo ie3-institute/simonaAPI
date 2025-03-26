@@ -11,6 +11,7 @@ import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.List;
@@ -22,10 +23,10 @@ import org.apache.pekko.actor.typed.ActorRef;
 import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
-public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessageFromExt> {
+public class ExtEmDataConnection implements ExtInputDataConnection {
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private ActorRef<EmDataMessageFromExt> emDataService;
+  private ActorRef<DataMessageFromExt> emDataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
@@ -39,7 +40,7 @@ public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessage
 
   @Override
   public void setActorRefs(
-      ActorRef<EmDataMessageFromExt> emDataService,
+      ActorRef<DataMessageFromExt> emDataService,
       ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.emDataService = emDataService;
     this.extSimAdapter = extSimAdapter;
@@ -82,6 +83,6 @@ public class ExtEmDataConnection implements ExtInputDataConnection<EmDataMessage
   public void sendExtMsg(EmDataMessageFromExt msg) {
     emDataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage<>(emDataService));
+    extSimAdapter.tell(new ScheduleDataServiceMessage(emDataService));
   }
 }

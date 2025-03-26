@@ -2,6 +2,7 @@ package edu.ie3.simona.api.data.ev
 
 import edu.ie3.simona.api.data.ev.model.EvModel
 import edu.ie3.simona.api.data.ev.ontology.*
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
@@ -23,7 +24,7 @@ class ExtEvDataConnectionTest extends Specification {
 
     def "ExtEvDataConnection should request and receive free evcs lots correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EvDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEvDataConnection = new ExtEvDataConnection()
         extEvDataConnection.setActorRefs(dataService.ref(), extSimAdapter.ref())
@@ -43,7 +44,7 @@ class ExtEvDataConnectionTest extends Specification {
 
     def "ExtEvDataConnection should request and receive current charging prices correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EvDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEvDataConnection = new ExtEvDataConnection()
         extEvDataConnection.setActorRefs(dataService.ref(), extSimAdapter.ref())
@@ -63,7 +64,7 @@ class ExtEvDataConnectionTest extends Specification {
 
     def "ExtEvDataConnection should request and receive departing EVs correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EvDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEvDataConnection = new ExtEvDataConnection()
         extEvDataConnection.setActorRefs(dataService.ref(), extSimAdapter.ref())
@@ -85,7 +86,7 @@ class ExtEvDataConnectionTest extends Specification {
 
     def "ExtEvDataConnection should provide arriving EVs correctly"() {
         given:
-        def dataService = testKit.createTestProbe(EvDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEvDataConnection = new ExtEvDataConnection()
         extEvDataConnection.setActorRefs(dataService.ref(), extSimAdapter.ref())
@@ -103,7 +104,7 @@ class ExtEvDataConnectionTest extends Specification {
 
     def "ExtEvDataConnection should fail if wrong response is sent"() {
         given:
-        def dataService = testKit.createTestProbe(EvDataMessageFromExt)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
         def extEvDataConnection = new ExtEvDataConnection()
         extEvDataConnection.setActorRefs(dataService.ref(), extSimAdapter.ref())
