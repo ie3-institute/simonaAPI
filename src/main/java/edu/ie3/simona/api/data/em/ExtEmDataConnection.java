@@ -28,7 +28,7 @@ public class ExtEmDataConnection
   private final Map<UUID, String> mosaikMapping;
 
   public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
-    super(new EmCompletion());
+    super();
 
     this.extEmMapping = extEmMapping;
 
@@ -162,5 +162,9 @@ public class ExtEmDataConnection
     sendExtMsg(new RequestEmSetPoints(tick, emEntities));
     return ExtEntityMapping.mapToExt(
         receiveWithType(EmSetPointDataResponse.class).emData(), mosaikMapping);
+  }
+
+  public void requestCompletion(long tick) {
+    sendExtMsg(new RequestEmCompletion(tick));
   }
 }

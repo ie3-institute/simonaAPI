@@ -17,17 +17,12 @@ import org.apache.pekko.actor.ActorRef;
  * @param <M> type of message to SIMONA
  * @param <R> type of response messages to ext
  */
-public class BiDirectional<M extends DataMessageFromExt, R extends DataResponseMessageToExt>
+public abstract class BiDirectional<M extends DataMessageFromExt, R extends DataResponseMessageToExt>
     extends WithDataResponseToExt<R> implements ExtInputDataConnection<M> {
 
   protected BiDirectional() {
     super();
   }
-
-  protected BiDirectional(R completionMsg) {
-    super(completionMsg);
-  }
-
 
   /** Actor reference to service that handles data within SIMONA */
   private ActorRef dataService;
