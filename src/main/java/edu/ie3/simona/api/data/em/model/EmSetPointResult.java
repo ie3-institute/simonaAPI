@@ -17,12 +17,21 @@ public class EmSetPointResult extends ResultEntity {
 
   private final PValue setPoint;
 
-  public EmSetPointResult(ZonedDateTime time, UUID inputModel, Optional<PValue> setPoint) {
+  public EmSetPointResult(ZonedDateTime time, UUID inputModel, PValue setPoint) {
     super(time, inputModel);
-    this.setPoint = setPoint.orElse(null);
+    this.setPoint = setPoint;
   }
 
   public Optional<PValue> getSetPoint() {
     return Optional.ofNullable(setPoint);
+  }
+
+  @Override
+  public String toString() {
+    return "EmSetPointResult{" +
+            "time=" + getTime() +
+            ", inputModel=" + getInputModel() +
+            ", setPoint=" + getSetPoint() +
+            '}';
   }
 }

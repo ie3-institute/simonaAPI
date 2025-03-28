@@ -21,14 +21,18 @@ import org.slf4j.Logger;
 public class ExtEmDataConnection
     extends BiDirectional<EmDataMessageFromExt, EmDataResponseMessageToExt> {
 
+  private final boolean useCommunication;
+
   /** Assets that provide data to SIMONA */
   private final Map<String, UUID> extEmMapping;
 
   /** Assets that provide data to ext */
   private final Map<UUID, String> mosaikMapping;
 
-  public ExtEmDataConnection(Map<String, UUID> extEmMapping) {
+  public ExtEmDataConnection(Map<String, UUID> extEmMapping, boolean useCommunication) {
     super();
+
+    this.useCommunication = useCommunication;
 
     this.extEmMapping = extEmMapping;
 
@@ -42,6 +46,9 @@ public class ExtEmDataConnection
     return new ArrayList<>(extEmMapping.values());
   }
 
+  public boolean useCommunication() {
+    return useCommunication;
+  }
 
   public void convertAndSendFlexRequests(
           long tick, Map<String, FlexOptionRequestValue> data, Optional<Long> maybeNextTick, Logger log) {

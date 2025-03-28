@@ -94,7 +94,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    * @return an ext em data connection
    */
-  public static ExtEmDataConnection buildEmConnection(ExtEntityMapping mapping, Logger log) {
+  public static ExtEmDataConnection buildEmConnection(ExtEntityMapping mapping, boolean useCommunication, Logger log) {
     Map<String, UUID> emMapping = mapping.getExtId2UuidMapping(DataType.EXT_EM_INPUT);
 
     if (emMapping.isEmpty()) {
@@ -102,7 +102,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       throw new ExtDataConnectionException(ExtEmDataConnection.class);
     } else {
       log.info("Em data connection with {} entities created.", emMapping.size());
-      return new ExtEmDataConnection(emMapping);
+      return new ExtEmDataConnection(emMapping, useCommunication);
     }
   }
 
