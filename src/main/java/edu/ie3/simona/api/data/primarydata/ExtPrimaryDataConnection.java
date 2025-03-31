@@ -7,33 +7,42 @@
 package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.ExtInputDataConnectionWithMapping;
+import edu.ie3.simona.api.data.ExtInputDataConnection;
+import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
+import org.apache.pekko.actor.ActorRef;
+import org.slf4j.Logger;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.slf4j.Logger;
 
 /** Enables data connection of primary data between SIMONA and SimonaAPI */
-public class ExtPrimaryDataConnection
-    extends ExtInputDataConnectionWithMapping<PrimaryDataMessageFromExt, Value> {
+public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryDataMessageFromExt> {
 
-  private Map<UUID, Class<Value>> valueClasses;
+    /** Actor reference to service that handles data within SIMONA */
+    private ActorRef dataService;
 
-  public ExtPrimaryDataConnection(Map<String, UUID> extPrimaryDataMapping) {
-    super(extPrimaryDataMapping);
-  }
+    /** Actor reference to adapter that handles scheduler control flow in SIMONA */
+    private ActorRef extSimAdapter;
 
-  public void setValueClasses(Map<UUID, Class<Value>> valueClasses) {
+  private final Map<UUID, Class<Value>> valueClasses;
+
+  public ExtPrimaryDataConnection(Map<UUID, Class<Value>> valueClasses) {
     this.valueClasses = valueClasses;
   }
 
   /** Returns a list of the uuids of the system participants that expect external primary data */
   public List<UUID> getPrimaryDataAssets() {
-    return getDataAssets();
+    return valueClasses.keySet().stream().toList();
+  }
+
+  @Override
+  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
+    this.dataService = dataService;
+    this.extSimAdapter = extSimAdapter;
   }
 
   /**
@@ -44,24 +53,24 @@ public class ExtPrimaryDataConnection
     return Optional.ofNullable(valueClasses.get(uuid));
   }
 
-  @Override
-  public void convertAndSend(
-      long tick, Map<String, Value> data, Optional<Long> maybeNextTick, Logger log) {
-    // filtering the data and converting the keys
-    Map<UUID, Value> convertedMap = ExtEntityMapping.mapToSimona(data, extDataMapping);
-
-    if (convertedMap.isEmpty()) {
+  public void sendPrimaryData(long tick, Map<UUID, Value> data, Optional<Long> maybeNextTick, Logger log) {
+    if (data.isEmpty()) {
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with primary data.");
-      log.info("Data: {}", convertedMap);
-      provideData(tick, convertedMap, maybeNextTick);
+      log.info("Data: {}", data);
+      provideData(tick, data, maybeNextTick);
     }
   }
 
   /** Provide primary data from an external simulation in one tick. */
-  @Override
   public void provideData(long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
     sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
+  }
+
+  public void sendExtMsg(PrimaryDataMessageFromExt msg) {
+    dataService.tell(msg, ActorRef.noSender());
+    // we need to schedule data receiver activation with scheduler
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
   }
 }

@@ -18,6 +18,10 @@ public class ExtEntityMapping {
 
   private final Map<DataType, List<ExtEntityEntry>> extEntities;
 
+  public ExtEntityMapping(Map<DataType, List<ExtEntityEntry>> extEntities) {
+    this.extEntities = extEntities;
+  }
+
   public ExtEntityMapping(List<ExtEntityEntry> extEntityEntryList) {
     this.extEntities =
         extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
@@ -47,6 +51,10 @@ public class ExtEntityMapping {
   public Map<String, UUID> getExtId2UuidMapping(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
         .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+  }
+
+  public Map<String, UUID> getFullMapping() {
+    return extEntities.values().stream().flatMap(Collection::stream).collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
   }
 
   /**

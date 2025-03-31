@@ -9,8 +9,10 @@ package edu.ie3.simona.api.data.em.model;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
+import java.util.UUID;
+
 public record FlexOptions(
-    String sender,
+        UUID sender,
     ComparableQuantity<Power> pMin,
     ComparableQuantity<Power> pRef,
     ComparableQuantity<Power> pMax) {}

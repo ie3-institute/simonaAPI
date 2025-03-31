@@ -6,10 +6,7 @@
 
 package edu.ie3.simona.api.data.results;
 
-import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
-import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import edu.ie3.simona.api.data.ExtOutputDataConnection;
 import edu.ie3.simona.api.data.WithDataResponseToExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
@@ -17,12 +14,13 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import java.util.HashMap;
+import org.apache.pekko.actor.ActorRef;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.pekko.actor.ActorRef;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
 public class ExtResultDataConnection extends WithDataResponseToExt<ResultDataResponseMessageToExt>
@@ -38,21 +36,21 @@ public class ExtResultDataConnection extends WithDataResponseToExt<ResultDataRes
   private ActorRef extSimAdapter;
 
   /** Map uuid to external id of grid related entities */
-  private final Map<UUID, String> gridResultAssetMapping;
+  private final List<UUID> gridResults;
 
   /** Map uuid to external id of system participants */
-  private final Map<UUID, String> participantResultAssetMapping;
+  private final List<UUID> participantResults;
 
   /** Map uuid to external id of participant flex options */
-  private final Map<UUID, String> flexOptionsMapping;
+  private final List<UUID> flexResults;
 
   public ExtResultDataConnection(
-      Map<UUID, String> participantResultAssetMapping,
-      Map<UUID, String> gridResultAssetMapping,
-      Map<UUID, String> flexOptionsMapping) {
-    this.participantResultAssetMapping = participantResultAssetMapping;
-    this.gridResultAssetMapping = gridResultAssetMapping;
-    this.flexOptionsMapping = flexOptionsMapping;
+      List<UUID> participantResults,
+      List<UUID> gridResults,
+      List<UUID> flexResults) {
+    this.participantResults = participantResults;
+    this.gridResults = gridResults;
+    this.flexResults = flexResults;
   }
 
   /**
@@ -71,15 +69,15 @@ public class ExtResultDataConnection extends WithDataResponseToExt<ResultDataRes
   }
 
   public List<UUID> getGridResultDataAssets() {
-    return gridResultAssetMapping.keySet().stream().toList();
+    return gridResults;
   }
 
   public List<UUID> getParticipantResultDataAssets() {
-    return participantResultAssetMapping.keySet().stream().toList();
+    return participantResults;
   }
 
   public List<UUID> getFlexOptionAssets() {
-    return flexOptionsMapping.keySet().stream().toList();
+    return flexResults;
   }
 
   /** Method that an external simulation can request results from SIMONA as a list. */
@@ -111,42 +109,25 @@ public class ExtResultDataConnection extends WithDataResponseToExt<ResultDataRes
   /**
    * Method that an external simulation can request results from SIMONA as a map string to object.
    */
-  public Map<String, ResultEntity> requestResults(long tick) throws InterruptedException {
+  public Map<UUID, ResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
 
-  public Map<String, ResultEntity> requestFlexOptionResults(long tick) throws InterruptedException {
+  public Map<UUID, ResultEntity> requestFlexOptionResults(long tick) throws InterruptedException {
     return createResultMap(requestFlexOptionResultsList(tick));
   }
 
-  public Map<String, ResultEntity> requestGridResults(long tick) throws InterruptedException {
+  public Map<UUID, ResultEntity> requestGridResults(long tick) throws InterruptedException {
     return createResultMap(requestGridResultsList(tick));
   }
 
-  public Map<String, ResultEntity> requestParticipantResults(long tick)
+  public Map<UUID, ResultEntity> requestParticipantResults(long tick)
       throws InterruptedException {
     return createResultMap(requestParticipantResultsList(tick));
   }
 
-  protected Map<String, ResultEntity> createResultMap(List<ResultEntity> results) {
-    Map<String, ResultEntity> resultMap = new HashMap<>();
-    results.forEach(
-        result -> {
-          if (result instanceof NodeResult nodeResult) {
-            resultMap.put(gridResultAssetMapping.get(nodeResult.getInputModel()), nodeResult);
-          } else if (result instanceof SystemParticipantResult systemParticipantResult) {
-            resultMap.put(
-                participantResultAssetMapping.get(systemParticipantResult.getInputModel()),
-                systemParticipantResult);
-          } else if (result instanceof FlexOptionsResult flexOptionsResult) {
-            resultMap.put(
-                flexOptionsMapping.get(flexOptionsResult.getInputModel()), flexOptionsResult);
-          } else {
-            throw new IllegalArgumentException(
-                "ExtResultData can only handle NodeResult's, FlexOptionResult's and SystemParticipantResult's!");
-          }
-        });
-    return resultMap;
+  protected Map<UUID, ResultEntity> createResultMap(List<ResultEntity> results) {
+    return results.stream().collect(Collectors.toMap(ResultEntity::getInputModel, i -> i));
   }
 
   /**

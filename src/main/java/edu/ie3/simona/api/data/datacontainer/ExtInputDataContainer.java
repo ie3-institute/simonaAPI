@@ -23,12 +23,12 @@ public final class ExtInputDataContainer implements ExtDataContainer {
 
   // primary map
   /** Map external id to primary input value for SIMONA */
-  private final Map<String, Value> primaryData = new HashMap<>();
+  private final Map<UUID, Value> primaryData = new HashMap<>();
 
   // em maps
-  private final Map<String, FlexOptionRequestValue> flexRequests = new HashMap<>();
-  private final Map<String, List<FlexOptions>> flexOptions = new HashMap<>();
-  private final Map<String, PValue> setPoints = new HashMap<>();
+  private final Map<UUID, FlexOptionRequestValue> flexRequests = new HashMap<>();
+  private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
+  private final Map<UUID, PValue> setPoints = new HashMap<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -63,15 +63,15 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   }
 
   // add data
-  public void addPrimaryValue(String id, Value value) {
+  public void addPrimaryValue(UUID id, Value value) {
     primaryData.put(id, value);
   }
 
-  public void addRequest(String requester, List<String> emEntities) {
+  public void addRequest(UUID requester, List<UUID> emEntities) {
     flexRequests.put(requester, new FlexOptionRequestValue(requester, emEntities));
   }
 
-  public void addFlexOptions(String id, List<FlexOptions> flexOption) {
+  public void addFlexOptions(UUID id, List<FlexOptions> flexOption) {
     if (!flexOptions.containsKey(id)) {
       List<FlexOptions> flexOptionValues = new ArrayList<>(flexOption);
       flexOptions.put(id, flexOptionValues);
@@ -80,24 +80,24 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     }
   }
 
-  public void addSetPoint(String id, PValue setPoint) {
+  public void addSetPoint(UUID id, PValue setPoint) {
     setPoints.put(id, setPoint);
   }
 
-  public Map<String, Value> extractPrimaryData() {
+  public Map<UUID, Value> extractPrimaryData() {
     return copyAndClear(primaryData);
   }
 
   // extract and delete data
-  public Map<String, FlexOptionRequestValue> extractFlexRequests() {
+  public Map<UUID, FlexOptionRequestValue> extractFlexRequests() {
     return copyAndClear(flexRequests);
   }
 
-  public Map<String, List<FlexOptions>> extractFlexOptions() {
+  public Map<UUID, List<FlexOptions>> extractFlexOptions() {
     return copyAndClear(flexOptions);
   }
 
-  public Map<String, PValue> extractSetPoints() {
+  public Map<UUID, PValue> extractSetPoints() {
     return copyAndClear(setPoints);
   }
 

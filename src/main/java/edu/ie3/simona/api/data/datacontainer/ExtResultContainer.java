@@ -15,6 +15,7 @@ import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import javax.measure.quantity.Dimensionless;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
@@ -32,7 +33,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Map external id to result from SIMONA ATTENTION: The time stamp of the result entities is not
    * necessarily corresponding to the tick
    */
-  private final Map<String, ResultEntity> resultMap;
+  private final Map<UUID, ResultEntity> resultMap;
 
   /**
    * Container class for result data from SIMONA
@@ -42,13 +43,13 @@ public class ExtResultContainer implements ExtDataContainer {
    * @param nextTick tick the external simulation can expect the next results
    */
   public ExtResultContainer(
-      long tick, Map<String, ResultEntity> resultMap, Optional<Long> nextTick) {
+          long tick, Map<UUID, ResultEntity> resultMap, Optional<Long> nextTick) {
     this.tick = tick;
     this.resultMap = resultMap;
     this.maybeNextTick = nextTick;
   }
 
-  public ExtResultContainer(long tick, Map<String, ResultEntity> resultMap) {
+  public ExtResultContainer(long tick, Map<UUID, ResultEntity> resultMap) {
     this(tick, resultMap, Optional.empty());
   }
 
@@ -57,15 +58,15 @@ public class ExtResultContainer implements ExtDataContainer {
     return resultMap.isEmpty();
   }
 
-  public Map<String, ResultEntity> getResults() {
+  public Map<UUID, ResultEntity> getResults() {
     return resultMap;
   }
 
   @SuppressWarnings("unchecked")
-  public <R extends ResultEntity> Map<String, R> getResults(Class<R> clazz) {
-    Map<String, R> result = new HashMap<>();
+  public <R extends ResultEntity> Map<UUID, R> getResults(Class<R> clazz) {
+    Map<UUID, R> result = new HashMap<>();
 
-    for (Map.Entry<String, ResultEntity> entry : resultMap.entrySet()) {
+    for (Map.Entry<UUID, ResultEntity> entry : resultMap.entrySet()) {
       ResultEntity resultEntity = entry.getValue();
 
       if (entry.getValue().getClass().equals(clazz)) {
@@ -85,7 +86,7 @@ public class ExtResultContainer implements ExtDataContainer {
   }
 
   /** Returns the result for a certain asset. */
-  public ResultEntity getResult(String assetId) {
+  public ResultEntity getResult(UUID assetId) {
     return resultMap.get(assetId);
   }
 
@@ -93,7 +94,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
    * NodeResult}
    */
-  public double getVoltageDeviation(String assetId) {
+  public double getVoltageDeviation(UUID assetId) {
     if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       ComparableQuantity<Dimensionless> vMagDev =
           Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
@@ -107,7 +108,7 @@ public class ExtResultContainer implements ExtDataContainer {
   /**
    * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
    */
-  public double getVoltage(String assetId) {
+  public double getVoltage(UUID assetId) {
     if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       return nodeResult.getvMag().getValue().doubleValue();
     } else {
@@ -119,7 +120,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the active power in kW for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
-  public double getActivePower(String assetId) {
+  public double getActivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getP().getValue().doubleValue();
     } else {
@@ -132,7 +133,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the reactive power in kVAr for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
-  public double getReactivePower(String assetId) {
+  public double getReactivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getQ().getValue().doubleValue();
     } else {
@@ -142,7 +143,7 @@ public class ExtResultContainer implements ExtDataContainer {
   }
 
   /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
-  public double getLineLoading(String assetId) {
+  public double getLineLoading(UUID assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }
 }
