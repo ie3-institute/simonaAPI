@@ -1,14 +1,8 @@
 package edu.ie3.simona.api.simulation
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.testkit.TestProbe
-import org.apache.pekko.testkit.javadsl.TestKit
 import edu.ie3.simona.api.data.ExtDataConnection
-import edu.ie3.simona.api.simulation.ontology.ActivationMessage
-import edu.ie3.simona.api.simulation.ontology.CompletionMessage
-import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt
-import edu.ie3.simona.api.simulation.ontology.TerminationMessage
-import edu.ie3.simona.api.simulation.ontology.TerminationCompleted
+import edu.ie3.simona.api.simulation.ontology.*
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -17,7 +11,7 @@ import java.lang.reflect.Method
 class ExtSimulationSpec extends Specification {
 
     @Shared
-    ActorSystem actorSystem
+    ActorTestKit testKit
 
     @Shared
     Method handleMessage
@@ -54,7 +48,7 @@ class ExtSimulationSpec extends Specification {
     }
 
     def setupSpec() {
-        actorSystem = ActorSystem.create()
+        testKit = ActorTestKit.create()
 
         // setup private method
         handleMessage = ExtSimulation.getDeclaredMethod("takeAndHandleMessage", null)
@@ -62,15 +56,15 @@ class ExtSimulationSpec extends Specification {
     }
 
     def cleanupSpec() {
-        TestKit.shutdownActorSystem(actorSystem)
-        actorSystem = null
+        testKit.shutdownTestKit()
+        testKit = null
     }
 
     def "An ExtSimulation should handle initialization"() {
         given:
         def tick = -1L
         def newTick = 0L
-        def extSimAdapter = new TestProbe(actorSystem)
+        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
         def extSim = new TestSimulation(newTick, Optional.of(-2L))
         extSim.setAdapterData(extSimData)
@@ -81,12 +75,12 @@ class ExtSimulationSpec extends Specification {
 
         then:
         finishedActual == false
-        extSimAdapter.expectMsg(new CompletionMessage(Optional.of(newTick)))
+        extSimAdapter.expectMessage(new CompletionMessage(Optional.of(newTick)))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
-        def extSimAdapter = new TestProbe(actorSystem)
+        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
         def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
@@ -99,7 +93,7 @@ class ExtSimulationSpec extends Specification {
 
         then:
         finishedActual == finished
-        extSimAdapter.expectMsg(new CompletionMessage(newTickOpt))
+        extSimAdapter.expectMessage(new CompletionMessage(newTickOpt))
 
         where:
         tick   | newTick       || finished
@@ -111,7 +105,7 @@ class ExtSimulationSpec extends Specification {
 
     def "An ExtSimulation should handle termination properly"() {
         given:
-        def extSimAdapter = new TestProbe(actorSystem)
+        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
         def extSim = new TestSimulation(-1L, Optional.empty())
         extSim.setAdapterData(extSimData)
@@ -122,7 +116,7 @@ class ExtSimulationSpec extends Specification {
 
         then:
         finishedActual == finished
-        extSimAdapter.expectMsg(new TerminationCompleted())
+        extSimAdapter.expectMessage(new TerminationCompleted())
 
         where:
         simlulationSuccessful || finished
@@ -134,7 +128,7 @@ class ExtSimulationSpec extends Specification {
 
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
-        def extSimAdapter = new TestProbe(actorSystem)
+        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimData = new ExtSimAdapterData(extSimAdapter.ref(), new String[0])
         def extSim = new TestSimulation(-1L, Optional.empty())
         extSim.setAdapterData(extSimData)
