@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.em;
+package edu.ie3.simona.api.data.em.model;
 
 import edu.ie3.datamodel.models.value.PValue;
 import javax.measure.quantity.Power;
