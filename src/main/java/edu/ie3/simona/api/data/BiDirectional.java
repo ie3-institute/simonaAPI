@@ -9,7 +9,8 @@ package edu.ie3.simona.api.data;
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import org.apache.pekko.actor.ActorRef;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import org.apache.pekko.actor.typed.ActorRef;
 
 /**
  * Enables bidirectional communication when extended by an external data connection.
@@ -25,21 +26,23 @@ public abstract class BiDirectional<M extends DataMessageFromExt, R extends Data
   }
 
   /** Actor reference to service that handles data within SIMONA */
-  private ActorRef dataService;
+  private ActorRef<DataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   @Override
-  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
+  public void setActorRefs(
+          ActorRef<DataMessageFromExt> dataService,
+          ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
 
   @Override
   public void sendExtMsg(M msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    dataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
   }
 }
