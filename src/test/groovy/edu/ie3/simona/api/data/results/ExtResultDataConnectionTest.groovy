@@ -2,12 +2,15 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.connector.LineResult
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
+import edu.ie3.simona.api.simulation.ExtSimulation
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.apache.pekko.testkit.TestProbe
 import org.apache.pekko.testkit.javadsl.TestKit
 import spock.lang.Shared
@@ -22,7 +25,7 @@ import java.time.ZonedDateTime
 class ExtResultDataConnectionTest extends Specification implements DataServiceTestData {
 
     @Shared
-    ActorSystem actorSystem
+    ActorTestKit testKit
 
     @Shared
     Map<UUID, String> participantResultAssetMapping = Map.of(inputUuid, "Load")
@@ -36,20 +39,20 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
     class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
     def setupSpec() {
-        actorSystem = ActorSystem.create()
+        testKit = ActorTestKit.create()
     }
 
     def cleanupSpec() {
-        TestKit.shutdownActorSystem(actorSystem)
-        actorSystem = null
+        testKit.shutdownTestKit()
+        testKit = null
     }
 
     def "ExtResultsData should request and receive results correctly as ModelResultEntity"() {
         given:
-        def dataService = new TestProbe(actorSystem)
-        def dataServiceActivation = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def dataServiceActivation = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -64,17 +67,17 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         def receivedResults = extResultDataConnection.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities(0L, [inputUuid]))
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
+        dataService.expectMessage(new RequestResultEntities(0L))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         receivedResults.get("Load") == loadResult
     }
 
     def "ExtResultsData should fail if wrong response is sent"() {
         given:
-        def dataService = new TestProbe(actorSystem)
-        def dataServiceActivation = new TestProbe(actorSystem)
-        def extSimAdapter = new TestProbe(actorSystem)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping, flexResultAssetMapping)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def dataServiceActivation = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        def extResultDataConnection = new ExtResultDataConnection(participantResultAssetMapping, gridResultAssetMapping)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 dataServiceActivation.ref(),
@@ -89,8 +92,8 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         extResultDataConnection.requestResults(0L)
 
         then:
-        dataService.expectMsg(new RequestResultEntities(0L, [inputUuid]))
-        extSimAdapter.expectMsg(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
+        dataService.expectMessage(new RequestResultEntities(0L))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataServiceActivation.ref()))
         thrown RuntimeException
     }
 

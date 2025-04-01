@@ -8,10 +8,17 @@ package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import org.apache.pekko.actor.ActorRef;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import org.apache.pekko.actor.typed.ActorRef;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -22,11 +29,11 @@ import java.util.UUID;
 /** Enables data connection of primary data between SIMONA and SimonaAPI */
 public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryDataMessageFromExt> {
 
-    /** Actor reference to service that handles data within SIMONA */
-    private ActorRef dataService;
+  /** Actor reference to service that handles data within SIMONA */
+  private ActorRef<DataMessageFromExt> dataService;
 
-    /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-    private ActorRef extSimAdapter;
+  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   private final Map<UUID, Class<Value>> valueClasses;
 
@@ -40,7 +47,9 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   }
 
   @Override
-  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
+  public void setActorRefs(
+      ActorRef<DataMessageFromExt> dataService,
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
@@ -69,8 +78,8 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   }
 
   public void sendExtMsg(PrimaryDataMessageFromExt msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    dataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
   }
 }

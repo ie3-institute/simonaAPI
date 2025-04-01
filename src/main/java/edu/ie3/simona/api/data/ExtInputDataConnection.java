@@ -7,8 +7,14 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
-import org.apache.pekko.actor.ActorRef;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import org.apache.pekko.actor.typed.ActorRef;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 
+/**
+ * Interface for a connection between SIMONA and an external simulation with data flow from external
+ * to SIMONA.
+ */
 public interface ExtInputDataConnection<M extends DataMessageFromExt> extends ExtDataConnection {
 
   /**
@@ -18,14 +24,16 @@ public interface ExtInputDataConnection<M extends DataMessageFromExt> extends Ex
    *     messages
    * @param extSimAdapter actor ref to the extSimAdapter
    */
-  void setActorRefs(ActorRef dataService, ActorRef extSimAdapter);
+  void setActorRefs(
+      ActorRef<DataMessageFromExt> dataService,
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter);
 
-  /**
-   * Send information from the external simulation to SIMONA's external data service. Furthermore,
-   * ExtSimAdapter within SIMONA is instructed to activate the external data service with the
-   * current tick.
-   *
-   * @param msg the data/information that is sent to SIMONA's result data service
-   */
-  void sendExtMsg(M msg);
+    /**
+     * Send information from the external simulation to SIMONA's external data service. Furthermore,
+     * ExtSimAdapter within SIMONA is instructed to activate the external data service with the
+     * current tick.
+     *
+     * @param msg the data/information that is sent to SIMONA's result data service
+     */
+    void sendExtMsg(M msg);
 }
