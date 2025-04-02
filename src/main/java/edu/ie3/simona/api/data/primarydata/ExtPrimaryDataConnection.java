@@ -27,13 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /** Enables data connection of primary data between SIMONA and SimonaAPI */
-public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryDataMessageFromExt> {
-
-  /** Actor reference to service that handles data within SIMONA */
-  private ActorRef<DataMessageFromExt> dataService;
-
-  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
+public class ExtPrimaryDataConnection extends ExtInputDataConnection<PrimaryDataMessageFromExt> {
 
   private final Map<UUID, Class<Value>> valueClasses;
 
@@ -44,14 +38,6 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   /** Returns a list of the uuids of the system participants that expect external primary data */
   public List<UUID> getPrimaryDataAssets() {
     return valueClasses.keySet().stream().toList();
-  }
-
-  @Override
-  public void setActorRefs(
-      ActorRef<DataMessageFromExt> dataService,
-      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
-    this.dataService = dataService;
-    this.extSimAdapter = extSimAdapter;
   }
 
   /**
@@ -75,11 +61,5 @@ public class ExtPrimaryDataConnection implements ExtInputDataConnection<PrimaryD
   /** Provide primary data from an external simulation in one tick. */
   public void provideData(long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
     sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
-  }
-
-  public void sendExtMsg(PrimaryDataMessageFromExt msg) {
-    dataService.tell(msg);
-    // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
   }
 }

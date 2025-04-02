@@ -6,31 +6,30 @@
 
 package edu.ie3.simona.api.data;
 
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-import org.apache.pekko.actor.typed.ActorRef;
+import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 
 /**
  * Interface for a connection between SIMONA and an external simulation with data flow from SIMONA
  * to external.
+ * @param <T> type of response messages to ext
  */
-public interface ExtOutputDataConnection<M extends DataMessageFromExt> extends ExtDataConnection {
+public interface ExtOutputDataConnection<T extends DataResponseMessageToExt> {
+
+  /** Queues message from SIMONA that should be handled by the external simulation. */
+  void queueExtResponseMsg(T msg) throws InterruptedException;
+
+
+  T receiveAny() throws InterruptedException;
 
   /**
-   * Sets the actor refs for data and control flow
+   * Waits until a message of given type is added to the queue. If the message has a different type,
+   * a RuntimeException is thrown. This method blocks until having received a response from SIMONA.
    *
-   * @param extResultDataService actor ref to the adapter of the data service for data messages
-   * @param extSimAdapter actor ref to the extSimAdapter
+   * @param expectedMessageClass the expected class of the message to be received
+   * @return a message of the expected type once it has been received
+   * @param <R> the type of the expected message
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
    */
-  void setActorRefs(
-      ActorRef<DataMessageFromExt> extResultDataService,
-      ActorRef<ControlResponseMessageFromExt> extSimAdapter);
-  /**
-   * Send information from the external simulation to SIMONA's external data service. Furthermore,
-   * ExtSimAdapter within SIMONA is instructed to activate the external data service with the
-   * current tick.
-   *
-   * @param msg the data/information that is sent to SIMONA's result data service
-   */
-  void sendExtMsg(M msg);
+  <R extends T> R receiveWithType(Class<R> expectedMessageClass) throws InterruptedException;
 }

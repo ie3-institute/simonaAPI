@@ -11,6 +11,8 @@ import edu.ie3.datamodel.exceptions.ParsingException;
 public enum DataType {
   EXT_PRIMARY_INPUT("primary_input"),
   EXT_EM_INPUT("em_input"),
+  EXT_EM_COMMUNICATION("em_communication"),
+  EXT_EM_OPTIMIZER("em_optimizer"),
   EXT_GRID_RESULT("grid_result"),
   EXT_PARTICIPANT_RESULT("participant_result"),
   EXT_FLEX_OPTIONS_RESULT("flex_options_result");

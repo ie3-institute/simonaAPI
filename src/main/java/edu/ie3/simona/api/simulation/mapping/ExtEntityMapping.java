@@ -38,7 +38,7 @@ public class ExtEntityMapping {
    * @param dataType for which entries should be returned
    * @return a list containing all entries or an empty list
    */
-  public List<ExtEntityEntry> getExtEntityEntries(DataType dataType) {
+  public List<ExtEntityEntry> getEntries(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList());
   }
 

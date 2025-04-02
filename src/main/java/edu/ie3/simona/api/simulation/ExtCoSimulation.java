@@ -12,17 +12,16 @@ import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
 import edu.ie3.simona.api.data.datacontainer.ExtInputDataContainer;
 import edu.ie3.simona.api.data.datacontainer.ExtResultContainer;
+import edu.ie3.simona.api.data.em.EmMode;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
+import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.simulation.mapping.DataType;
 import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 
@@ -80,15 +79,16 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    * @return an ext em data connection
    */
-  public static ExtEmDataConnection buildEmConnection(List<UUID> controlled, boolean useCommunication, Logger log) {
-    if (!useCommunication) {
-      if (controlled.isEmpty()) {
-        log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
-      } else {
-        log.info("Em data connection with {} controlled entities created.", controlled.size());
-      }
+  public static ExtEmDataConnection buildEmConnection(List<UUID> controlled, EmMode mode, Logger log) {
+    if (controlled.isEmpty()) {
+      log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
+    } else {
+      log.info("Em data connection with {} controlled entities created.", controlled.size());
     }
-    return new ExtEmDataConnection(controlled, useCommunication);
+
+    log.info("Em mode: {}", mode);
+
+    return new ExtEmDataConnection(controlled, mode);
   }
 
   /**
@@ -220,6 +220,81 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     extEmDataConnection.sendSetPoints(tick, dataMap, maybeNextTick, log);
     log.debug("Provided em set points to SIMONA!");
   }
+
+
+  protected void useFlexCommunication(ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log) throws InterruptedException {
+    // handle flex requests
+    boolean notFinished = true;
+
+    while (notFinished) {
+
+      long extTick = queueToSimona.takeData(ExtInputDataContainer::getTick);
+
+      log.warn("Current simulator tick: {}, SIMONA tick: {}", extTick, tick);
+
+      if (tick == extTick) {
+        ExtInputDataContainer container = queueToSimona.takeAll();
+
+        log.warn("Flex requests: {}", container.flexRequestsString());
+        log.warn("Flex options: {}", container.flexOptionsString());
+        log.warn("Set points: {}", container.setPointsString());
+
+        // send received data to SIMONA
+        var requests = container.extractFlexRequests();
+        var options = container.extractFlexOptions();
+        var setPoints = container.extractSetPoints();
+
+        extEmDataConnection.sendFlexRequests(tick, requests, maybeNextTick, log);
+
+        extEmDataConnection.sendFlexOptions(tick, options, maybeNextTick, log);
+
+        extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
+
+        log.warn("Unhandled flex requests: {}", container.flexRequestsString());
+        log.warn("Unhandled flex options: {}", container.flexOptionsString());
+        log.warn("Unhandled set points: {}", container.setPointsString());
+
+        if (requests.isEmpty() && options.isEmpty() && setPoints.isEmpty()) {
+          log.info("Requesting a service completion for tick: {}.", tick);
+          extEmDataConnection.requestCompletion(tick);
+        }
+
+      } else {
+        notFinished = false;
+
+        log.info("External simulator finished tick {}. Request completion.", tick);
+        extEmDataConnection.requestCompletion(tick);
+      }
+
+      EmDataResponseMessageToExt received = extEmDataConnection.receiveAny();
+
+      Map<UUID, ResultEntity> results = new HashMap<>();
+
+      if (received instanceof EmCompletion) {
+        notFinished = false;
+        log.info("Finished for tick: {}", tick);
+
+      } else if (received instanceof FlexRequestResponse flexRequestResponse) {
+        results.putAll(flexRequestResponse.flexRequests());
+
+      } else if (received instanceof FlexOptionsResponse flexOptionsResponse) {
+        results.putAll(flexOptionsResponse.flexOptions());
+
+      } else if (received instanceof EmSetPointDataResponse setPointDataResponse) {
+        results.putAll(setPointDataResponse.emData());
+
+      } else {
+        log.warn("Received unsupported data response: {}", received);
+      }
+
+      log.warn("Results to ext: {}", results);
+
+      ExtResultContainer resultContainer = new ExtResultContainer(tick, results, maybeNextTick);
+
+      queueToExt.queueData(resultContainer);
+    }
+  }
+
 
   // result data methods
 

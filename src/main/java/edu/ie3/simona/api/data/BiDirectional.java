@@ -8,9 +8,8 @@ package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-import org.apache.pekko.actor.typed.ActorRef;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Enables bidirectional communication when extended by an external data connection.
@@ -19,30 +18,38 @@ import org.apache.pekko.actor.typed.ActorRef;
  * @param <R> type of response messages to ext
  */
 public abstract class BiDirectional<M extends DataMessageFromExt, R extends DataResponseMessageToExt>
-    extends WithDataResponseToExt<R> implements ExtInputDataConnection<M> {
+    extends ExtInputDataConnection<M> implements ExtOutputDataConnection<R> {
+
+  /** Data message queue containing messages from SIMONA */
+  public final LinkedBlockingQueue<R> receiveTriggerQueue = new LinkedBlockingQueue<>();
 
   protected BiDirectional() {
     super();
   }
 
-  /** Actor reference to service that handles data within SIMONA */
-  private ActorRef<DataMessageFromExt> dataService;
-
-  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
-
-  @Override
-  public void setActorRefs(
-          ActorRef<DataMessageFromExt> dataService,
-          ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
-    this.dataService = dataService;
-    this.extSimAdapter = extSimAdapter;
+  public final void queueExtResponseMsg(R msg) throws InterruptedException {
+    receiveTriggerQueue.put(msg);
   }
 
-  @Override
-  public void sendExtMsg(M msg) {
-    dataService.tell(msg);
-    // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
+  public final R receiveAny() throws InterruptedException {
+    return receiveTriggerQueue.take();
   }
+
+  @SuppressWarnings("unchecked")
+  public final <T extends R> T receiveWithType(Class<T> expectedMessageClass)
+          throws InterruptedException {
+    // blocks until actor puts something here
+    R msg = receiveTriggerQueue.take();
+
+    if (msg.getClass().equals(expectedMessageClass)) {
+      return (T) msg;
+    } else
+      throw new RuntimeException(
+              "Received unexpected message '"
+                      + msg
+                      + "', expected type '"
+                      + expectedMessageClass
+                      + "'");
+  }
+
 }

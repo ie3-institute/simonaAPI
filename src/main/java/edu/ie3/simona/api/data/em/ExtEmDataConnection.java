@@ -20,15 +20,15 @@ import java.util.*;
 public class ExtEmDataConnection
     extends BiDirectional<EmDataMessageFromExt, EmDataResponseMessageToExt> {
 
-  private final boolean useCommunication;
+  public final EmMode mode;
 
   /** Assets that are controlled by external simulation */
   private final List<UUID> controlled;
 
-  public ExtEmDataConnection(List<UUID> controlled, boolean useCommunication) {
+  public ExtEmDataConnection(List<UUID> controlled, EmMode mode) {
     super();
 
-    this.useCommunication = useCommunication;
+    this.mode = mode;
     this.controlled = controlled;
   }
 
@@ -38,7 +38,7 @@ public class ExtEmDataConnection
   }
 
   public boolean useCommunication() {
-    return useCommunication;
+    return mode == EmMode.EM_COMMUNICATION;
   }
 
 

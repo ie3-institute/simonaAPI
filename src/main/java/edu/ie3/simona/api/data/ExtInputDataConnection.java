@@ -7,27 +7,34 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
+import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import org.apache.pekko.actor.typed.ActorRef;
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 
 /**
- * Interface for a connection between SIMONA and an external simulation with data flow from external
+ * Abstract base class for a connection between SIMONA and an external simulation with data flow from external
  * to SIMONA.
  */
-public interface ExtInputDataConnection<M extends DataMessageFromExt> extends ExtDataConnection {
+public abstract class ExtInputDataConnection<M extends DataMessageFromExt> implements ExtDataConnection {
 
-  /**
-   * Sets the actor refs for data and control flow.
-   *
-   * @param dataService actor ref to the adapter of the data service for schedule activation
-   *     messages
-   * @param extSimAdapter actor ref to the extSimAdapter
-   */
-  void setActorRefs(
-      ActorRef<DataMessageFromExt> dataService,
-      ActorRef<ControlResponseMessageFromExt> extSimAdapter);
+    /** Actor reference to service that handles data within SIMONA */
+    private ActorRef<DataMessageFromExt> dataService;
 
+    /** Actor reference to adapter that handles scheduler control flow in SIMONA */
+    private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
+
+    /**
+     * Sets the actor refs for data and control flow
+     *
+     * @param extResultDataService actor ref to the adapter of the data service for data messages
+     * @param extSimAdapter actor ref to the extSimAdapter
+     */
+    public final void setActorRefs(
+            ActorRef<DataMessageFromExt> extResultDataService,
+            ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
+        this.dataService = extResultDataService;
+        this.extSimAdapter = extSimAdapter;
+    }
     /**
      * Send information from the external simulation to SIMONA's external data service. Furthermore,
      * ExtSimAdapter within SIMONA is instructed to activate the external data service with the
@@ -35,5 +42,9 @@ public interface ExtInputDataConnection<M extends DataMessageFromExt> extends Ex
      *
      * @param msg the data/information that is sent to SIMONA's result data service
      */
-    void sendExtMsg(M msg);
+    public final void sendExtMsg(M msg) {
+        dataService.tell(msg);
+        // we need to schedule data receiver activation with scheduler
+        extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
+    }
 }

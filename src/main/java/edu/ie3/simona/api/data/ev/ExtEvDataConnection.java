@@ -6,37 +6,28 @@
 
 package edu.ie3.simona.api.data.ev;
 
-import edu.ie3.simona.api.data.ExtInputDataConnection;
+import edu.ie3.simona.api.data.BiDirectional;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.typed.ActorRef;
 
-public class ExtEvDataConnection implements ExtInputDataConnection<EvDataMessageFromExt> {
-  /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<EvDataResponseMessageToExt> receiveTriggerQueue =
-      new LinkedBlockingQueue<>();
+public class ExtEvDataConnection extends BiDirectional<EvDataMessageFromExt, EvDataResponseMessageToExt> {
+
+  public ExtEvDataConnection() {
+    super();
+  }
 
   /** Actor reference to service that handles ev data within SIMONA */
   private ActorRef<DataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
   private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
-
-  @Override
-  public void setActorRefs(
-      ActorRef<DataMessageFromExt> dataService,
-      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
-    this.dataService = dataService;
-    this.extSimAdapter = extSimAdapter;
-  }
 
   /**
    * Requests currently available evcs charging stations lots from SIMONA. This method blocks until
@@ -93,58 +84,5 @@ public class ExtEvDataConnection implements ExtInputDataConnection<EvDataMessage
    */
   public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals, Optional<Long> maybeNextTick) {
     sendExtMsg(new ProvideArrivingEvs(arrivals, maybeNextTick));
-  }
-
-  /**
-   * Send information from the external ev simulation to SIMONA's ev data service. Furthermore,
-   * ExtSimAdapter within SIMONA is instructed to activate the ev data service with the current
-   * tick.
-   *
-   * @param msg the data/information that is sent to SIMONA's ev data service
-   */
-  public void sendExtMsg(EvDataMessageFromExt msg) {
-    dataService.tell(msg);
-    // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
-  }
-
-  /**
-   * Queues message from SIMONA that should be handled by the external ev simulation.
-   *
-   * @param extEvResponse the message to be handled
-   * @throws InterruptedException if the thread running this has been interrupted during waiting for
-   *     the message to be queued
-   */
-  public void queueExtResponseMsg(EvDataResponseMessageToExt extEvResponse)
-      throws InterruptedException {
-    receiveTriggerQueue.put(extEvResponse);
-  }
-
-  /**
-   * Waits until a message of given type is added to the queue. If the message has a different type,
-   * a RuntimeException is thrown. This method blocks until having received a response from SIMONA.
-   *
-   * @param expectedMessageClass the expected class of the message to be received
-   * @return a message of the expected type once it has been received
-   * @param <T> the type of the expected message
-   * @throws InterruptedException if the thread running this has been interrupted during the
-   *     blocking operation
-   */
-  @SuppressWarnings("unchecked")
-  private <T extends EvDataResponseMessageToExt> T receiveWithType(Class<T> expectedMessageClass)
-      throws InterruptedException {
-
-    // blocks until actor puts something here
-    EvDataResponseMessageToExt evMessage = receiveTriggerQueue.take();
-
-    if (evMessage.getClass().equals(expectedMessageClass)) {
-      return (T) evMessage;
-    } else
-      throw new RuntimeException(
-          "Received unexpected message '"
-              + evMessage
-              + "', expected type '"
-              + expectedMessageClass
-              + "'");
   }
 }
