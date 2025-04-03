@@ -2,7 +2,7 @@ package edu.ie3.simona.api.data.results
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
-import edu.ie3.simona.api.data.datacontainer.ExtResultContainer
+import edu.ie3.simona.api.data.container.ExtResultContainer
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared

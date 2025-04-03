@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation.mapping;
+package edu.ie3.simona.api.data.mapping;
 
 import edu.ie3.datamodel.exceptions.ParsingException;
 

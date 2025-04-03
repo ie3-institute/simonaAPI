@@ -10,15 +10,15 @@ import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
-import edu.ie3.simona.api.data.datacontainer.ExtInputDataContainer;
-import edu.ie3.simona.api.data.datacontainer.ExtResultContainer;
+import edu.ie3.simona.api.data.container.ExtInputDataContainer;
+import edu.ie3.simona.api.data.container.ExtResultContainer;
 import edu.ie3.simona.api.data.em.EmMode;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
-import edu.ie3.simona.api.simulation.mapping.DataType;
+import edu.ie3.simona.api.data.mapping.DataType;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -361,26 +361,5 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
     queueToExt.queueData(new ExtResultContainer(tick, resultsToBeSend, nextTick));
     log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
-  }
-
-  // helper methods
-
-  private String resultMapToString(Map<String, ResultEntity> results) {
-    StringBuilder resultString = new StringBuilder();
-
-    for (Map.Entry<String, ResultEntity> entry : results.entrySet()) {
-      String key = entry.getKey();
-      ResultEntity value = entry.getValue();
-
-      resultString
-          .append("id = ")
-          .append(key)
-          .append(", time = ")
-          .append(value.getTime())
-          .append(", result = ")
-          .append(value.getClass().getSimpleName())
-          .append("\n");
-    }
-    return resultString.toString();
   }
 }

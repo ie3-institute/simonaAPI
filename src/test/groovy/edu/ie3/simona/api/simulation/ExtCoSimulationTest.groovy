@@ -1,9 +1,9 @@
 package edu.ie3.simona.api.simulation
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
-import edu.ie3.simona.api.simulation.mapping.DataType
-import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry
-import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping
+import edu.ie3.simona.api.data.mapping.DataType
+import edu.ie3.simona.api.data.mapping.ExtEntityEntry
+import edu.ie3.simona.api.data.mapping.ExtEntityMapping
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared

@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data;
 
-import edu.ie3.simona.api.data.datacontainer.ExtDataContainer;
+import edu.ie3.simona.api.data.container.ExtDataContainer;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Function;
 

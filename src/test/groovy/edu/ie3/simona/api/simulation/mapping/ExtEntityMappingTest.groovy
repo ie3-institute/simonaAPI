@@ -1,6 +1,9 @@
 package edu.ie3.simona.api.simulation.mapping
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
+import edu.ie3.simona.api.data.mapping.DataType
+import edu.ie3.simona.api.data.mapping.ExtEntityEntry
+import edu.ie3.simona.api.data.mapping.ExtEntityMapping
 import spock.lang.Shared
 import spock.lang.Specification
 

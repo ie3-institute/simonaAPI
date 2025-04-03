@@ -1,6 +1,6 @@
 package edu.ie3.simona.api.data.em;
 
-import edu.ie3.simona.api.simulation.mapping.DataType;
+import edu.ie3.simona.api.data.mapping.DataType;
 
 public enum EmMode {
     SET_POINT("setPoint"),

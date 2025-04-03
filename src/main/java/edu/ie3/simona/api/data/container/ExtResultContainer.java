@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.datacontainer;
+package edu.ie3.simona.api.data.container;
 
 import static edu.ie3.util.quantities.PowerSystemUnits.PU;
 

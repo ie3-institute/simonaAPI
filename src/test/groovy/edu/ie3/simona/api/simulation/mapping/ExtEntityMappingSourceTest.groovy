@@ -1,6 +1,9 @@
 package edu.ie3.simona.api.simulation.mapping
 
 import edu.ie3.datamodel.models.input.NodeInput
+import edu.ie3.simona.api.data.mapping.DataType
+import edu.ie3.simona.api.data.mapping.ExtEntityEntry
+import edu.ie3.simona.api.data.mapping.ExtEntityMappingSource
 import spock.lang.Specification
 
 import java.nio.file.Path
