@@ -1,6 +1,7 @@
 package edu.ie3.simona.api.simulation.mapping
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
+import edu.ie3.simona.api.mapping.DataType
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -12,7 +13,7 @@ class ExtEntityMappingTest extends Specification {
     ExtEntityEntry extResultEntry = new ExtEntityEntry(
             loadUuid,
             "Load",
-            ColumnScheme.parse("p").get(),
+            ColumnScheme.parse("p"),
             DataType.EXT_PARTICIPANT_RESULT
     )
 
@@ -20,7 +21,7 @@ class ExtEntityMappingTest extends Specification {
     ExtEntityEntry extInputEntry = new ExtEntityEntry(
             loadUuid,
             "Load",
-            ColumnScheme.parse("p").get(),
+            ColumnScheme.parse("p"),
             DataType.EXT_PRIMARY_INPUT
     )
 

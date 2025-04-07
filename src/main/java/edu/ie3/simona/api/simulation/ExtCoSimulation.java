@@ -6,16 +6,20 @@
 
 package edu.ie3.simona.api.simulation;
 
+import static java.util.Collections.emptyList;
+
 import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
-import edu.ie3.simona.api.data.ExtInputDataContainer;
-import edu.ie3.simona.api.data.em.ExtEmDataConnection;
-import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
-import edu.ie3.simona.api.data.results.ExtResultContainer;
-import edu.ie3.simona.api.data.results.ExtResultDataConnection;
-import edu.ie3.simona.api.simulation.mapping.DataType;
-import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping;
+import edu.ie3.simona.api.data.ExtDataContainerQueue;
+import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
+import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
+import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
+import edu.ie3.simona.api.data.container.ExtInputContainer;
+import edu.ie3.simona.api.data.container.ExtResultContainer;
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
+import edu.ie3.simona.api.mapping.DataType;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,18 +27,18 @@ import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
- * - extsimulation - simonaAPI - simona It contains all function to transfer primary data and em
- * data to SIMONA and results to the external co-simulation.
+ * - ext-simulation - simonaAPI - simona
+ *
+ * <p>It contains all function to transfer primary data and em data to SIMONA and results to the
+ * external co-simulation.
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
 
   /** Queue for the data connection from the external co-simulation to SimonaAPI */
-  protected final DataQueueExtSimulationExtSimulator<ExtInputDataContainer>
-      dataQueueExtCoSimulatorToSimonaApi;
+  protected final ExtDataContainerQueue<ExtInputContainer> queueToSimona;
 
   /** Queue for the data connection from SimonaAPI to the external co-simulation */
-  protected final DataQueueExtSimulationExtSimulator<ExtResultContainer>
-      dataQueueSimonaApiToExtCoSimulator;
+  protected final ExtDataContainerQueue<ExtResultContainer> queueToExt;
 
   /** Name of the external co-simulation */
   protected final String extSimulatorName;
@@ -42,50 +46,50 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected ExtCoSimulation(String simulationName, String extSimulatorName) {
     super(simulationName);
     this.extSimulatorName = extSimulatorName;
-    this.dataQueueExtCoSimulatorToSimonaApi = new DataQueueExtSimulationExtSimulator<>();
-    this.dataQueueSimonaApiToExtCoSimulator = new DataQueueExtSimulationExtSimulator<>();
+    this.queueToSimona = new ExtDataContainerQueue<>();
+    this.queueToExt = new ExtDataContainerQueue<>();
   }
+
+  // connection helper methods
 
   /**
    * Builds an {@link ExtPrimaryDataConnection}.
    *
-   * @param mapping between the external simulation and SIMONA.
+   * @param assetToValueClasses between primary asset and its value class.
    * @param log logger
    * @return an ext primary data connection
    */
-  protected static ExtPrimaryDataConnection buildPrimaryConnection(
-      ExtEntityMapping mapping, Logger log) {
-    Map<String, UUID> primaryMapping = mapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT);
-    ExtPrimaryDataConnection extPrimaryDataConnection =
-        new ExtPrimaryDataConnection(primaryMapping);
+  public static ExtPrimaryDataConnection buildPrimaryConnection(
+      Map<UUID, Class<Value>> assetToValueClasses, Logger log) {
 
-    if (primaryMapping.isEmpty()) {
-      log.warn("Primary with 0 entities created.");
+    if (assetToValueClasses.isEmpty()) {
+      log.warn("No primary data connection was created.");
+      throw new ExtDataConnectionException(ExtPrimaryDataConnection.class);
     } else {
-      log.info("Primary connection with {} entities created.", primaryMapping.size());
-    }
+      log.info("Primary data connection with {} entities created.", assetToValueClasses.size());
 
-    return extPrimaryDataConnection;
+      return new ExtPrimaryDataConnection(assetToValueClasses);
+    }
   }
 
   /**
    * Builds an {@link ExtEmDataConnection}.
    *
-   * @param mapping between the external simulation and SIMONA.
+   * @param controlled uuids for controlled em agents.
    * @param log logger
    * @return an ext em data connection
    */
-  protected static ExtEmDataConnection buildEmConnection(ExtEntityMapping mapping, Logger log) {
-    Map<String, UUID> emMapping = mapping.getExtId2UuidMapping(DataType.EXT_EM_INPUT);
-    ExtEmDataConnection extEmDataConnection = new ExtEmDataConnection(emMapping);
-
-    if (emMapping.isEmpty()) {
-      log.warn("Em connection with 0 entities created.");
+  public static ExtEmDataConnection buildEmConnection(
+      List<UUID> controlled, ExtEmDataConnection.EmMode mode, Logger log) {
+    if (controlled.isEmpty()) {
+      log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
     } else {
-      log.info("Em connection with {} entities created.", emMapping.size());
+      log.info("Em data connection with {} controlled entities created.", controlled.size());
     }
 
-    return extEmDataConnection;
+    log.info("Em mode: {}", mode);
+
+    return new ExtEmDataConnection(controlled, mode);
   }
 
   /**
@@ -95,24 +99,24 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    * @return an ext result data connection
    */
-  protected static ExtResultDataConnection buildResultConnection(
-      ExtEntityMapping mapping, Logger log) {
-    Map<UUID, String> resultParticipantMapping =
-        mapping.getExtUuid2IdMapping(DataType.EXT_PARTICIPANT_RESULT);
-    Map<UUID, String> resultGridMapping = mapping.getExtUuid2IdMapping(DataType.EXT_GRID_RESULT);
-    ExtResultDataConnection extResultDataConnection =
-        new ExtResultDataConnection(resultParticipantMapping, resultGridMapping);
+  public static ExtResultDataConnection buildResultConnection(
+      Map<DataType, List<UUID>> mapping, Logger log) {
+    List<UUID> participantResults =
+        mapping.getOrDefault(DataType.EXT_PARTICIPANT_RESULT, emptyList());
+    List<UUID> gridResults = mapping.getOrDefault(DataType.EXT_GRID_RESULT, emptyList());
+    List<UUID> flexResults = mapping.getOrDefault(DataType.EXT_FLEX_OPTIONS_RESULT, emptyList());
 
-    if (resultParticipantMapping.isEmpty() && resultGridMapping.isEmpty()) {
-      log.warn("Result connection with 0 participants and 0 grid assets created.");
+    if (participantResults.isEmpty() && gridResults.isEmpty() && flexResults.isEmpty()) {
+      log.warn("No result connection was created.");
+      throw new ExtDataConnectionException(ExtResultDataConnection.class);
     } else {
       log.info(
-          "Result connection with {} participants and {} grid assets created.",
-          resultParticipantMapping.size(),
-          resultGridMapping.size());
+          "Result connection with {} participants, {} grid assets and {} flex option mappings created.",
+          participantResults.size(),
+          gridResults.size(),
+          flexResults.size());
+      return new ExtResultDataConnection(participantResults, gridResults, flexResults);
     }
-
-    return extResultDataConnection;
   }
 
   /**
@@ -127,12 +131,12 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected void sendPrimaryDataToSimona(
       ExtPrimaryDataConnection extPrimaryDataConnection,
       long tick,
-      Map<String, Value> dataMap,
+      Map<UUID, Value> dataMap,
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Wait for Primary Data from {}", extSimulatorName);
     log.debug("Received Primary Data from {}", extSimulatorName);
-    extPrimaryDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
+    extPrimaryDataConnection.sendPrimaryData(tick, dataMap, maybeNextTick, log);
     log.debug("Provided Primary Data to SIMONA!");
   }
 
@@ -146,15 +150,15 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param maybeNextTick option for the next tick data is sent
    * @param log logger
    */
-  protected void sendEmDataToSimona(
+  protected void sendEmSetPointsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
-      Map<String, Value> dataMap,
+      Map<UUID, PValue> dataMap,
       Optional<Long> maybeNextTick,
       Logger log) {
-    log.debug("Received EmData from {}", extSimulatorName);
-    extEmDataConnection.convertAndSend(tick, dataMap, maybeNextTick, log);
-    log.debug("Provided EmData to SIMONA!");
+    log.debug("Received em set points from {}", extSimulatorName);
+    extEmDataConnection.sendSetPoints(tick, dataMap, maybeNextTick, log);
+    log.debug("Provided em set points to SIMONA!");
   }
 
   /**
@@ -164,15 +168,15 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param tick for which data is received
    * @param maybeNextTick option for the next tick data is received
    * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
    */
-  protected void sendDataToExt(
+  protected void sendResultToExt(
       ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
-    Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
+    Map<UUID, ResultEntity> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
-    dataQueueSimonaApiToExtCoSimulator.queueData(
-        new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
+    queueToExt.queueData(new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
     log.debug("Sent results to {}", extSimulatorName);
   }
 }
