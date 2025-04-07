@@ -83,13 +83,15 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       List<UUID> controlled, ExtEmDataConnection.EmMode mode, Logger log) {
     if (controlled.isEmpty()) {
       log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
+      throw new ExtDataConnectionException(ExtEmDataConnection.class);
     } else {
-      log.info("Em data connection with {} controlled entities created.", controlled.size());
+      log.info(
+          "Em data connection with mode '{}' and {} controlled entities created.",
+          mode,
+          controlled.size());
+
+      return new ExtEmDataConnection(controlled, mode);
     }
-
-    log.info("Em mode: {}", mode);
-
-    return new ExtEmDataConnection(controlled, mode);
   }
 
   /**

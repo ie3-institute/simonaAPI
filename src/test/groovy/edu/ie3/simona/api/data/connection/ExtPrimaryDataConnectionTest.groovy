@@ -40,7 +40,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
         def primaryData = Map.of(inputUuid, pValue as Value)
 
         when:
-        extPrimaryDataConnection.provideData(0L, primaryData, Optional.of(900L))
+        extPrimaryDataConnection.sendPrimaryData(0L, primaryData, Optional.of(900L), log)
 
         then:
         dataService.expectMessage(new ProvidePrimaryData(0L, primaryData, Optional.of(900L)))

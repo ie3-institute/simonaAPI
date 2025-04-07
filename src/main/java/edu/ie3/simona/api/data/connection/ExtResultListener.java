@@ -7,43 +7,46 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
+import edu.ie3.simona.api.exceptions.WrongResponseTypeException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * External result listener. This listener is similar to the {@link ExtResultDataConnection}, but is
  * not able to request results from SIMONA.
  */
-public non-sealed class ExtResultListener<R extends ResultDataResponseMessageToExt>
-    implements ExtOutputDataConnection<R> {
+public non-sealed class ExtResultListener
+    implements ExtOutputDataConnection<ResultDataResponseMessageToExt> {
 
   /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<R> receiveTriggerQueue = new LinkedBlockingQueue<>();
+  public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
+      new LinkedBlockingQueue<>();
 
-  protected ExtResultListener() {
+  public ExtResultListener() {
     super();
   }
 
   @Override
-  public final void queueExtResponseMsg(R msg) throws InterruptedException {
+  public final void queueExtResponseMsg(ResultDataResponseMessageToExt msg)
+      throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
 
   @Override
-  public final R receiveAny() throws InterruptedException {
+  public final ResultDataResponseMessageToExt receiveAny() throws InterruptedException {
     return receiveTriggerQueue.take();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public final <T extends R> T receiveWithType(Class<T> expectedMessageClass)
-      throws InterruptedException {
+  public final <T extends ResultDataResponseMessageToExt> T receiveWithType(
+      Class<T> expectedMessageClass) throws InterruptedException {
     // blocks until actor puts something here
-    R msg = receiveTriggerQueue.take();
+    ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
 
     if (msg.getClass().equals(expectedMessageClass)) {
       return (T) msg;
     } else
-      throw new RuntimeException(
+      throw new WrongResponseTypeException(
           "Received unexpected message '"
               + msg
               + "', expected type '"

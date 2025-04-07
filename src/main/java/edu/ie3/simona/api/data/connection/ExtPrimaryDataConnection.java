@@ -38,19 +38,22 @@ public final class ExtPrimaryDataConnection
     return Optional.ofNullable(valueClasses.get(uuid));
   }
 
+  /**
+   * Sends primary data from an external simulation to SIMONA
+   *
+   * @param tick current tick
+   * @param primaryData to be sent
+   * @param maybeNextTick option for the next tick in the simulation
+   * @param log logger
+   */
   public void sendPrimaryData(
-      long tick, Map<UUID, Value> data, Optional<Long> maybeNextTick, Logger log) {
-    if (data.isEmpty()) {
+      long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick, Logger log) {
+    if (primaryData.isEmpty()) {
       log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
-      log.debug("Provided SIMONA with primary data.");
-      log.info("Data: {}", data);
-      provideData(tick, data, maybeNextTick);
-    }
-  }
+      log.debug("Provided SIMONA with primary data. Data: {}", primaryData);
 
-  /** Provide primary data from an external simulation in one tick. */
-  public void provideData(long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick) {
-    sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
+      sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
+    }
   }
 }
