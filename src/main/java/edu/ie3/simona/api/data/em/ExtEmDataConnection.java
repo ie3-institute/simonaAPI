@@ -6,9 +6,9 @@
 
 package edu.ie3.simona.api.data.em;
 
-import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.BiDirectional;
+import edu.ie3.simona.api.data.em.model.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
@@ -97,10 +97,10 @@ public class ExtEmDataConnection
    * @return an {@link FlexOptionsResponse} message
    * @throws InterruptedException - on interruptions
    */
-  public Map<UUID, FlexOptionsResult> requestEmFlexResults(long tick, Map<UUID, List<UUID>> emEntities)
+  public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(long tick, Map<UUID, List<UUID>> emEntities)
       throws InterruptedException {
     sendExtMsg(new RequestEmFlexResults(tick, emEntities));
-    return receiveWithType(FlexOptionsResponse.class).flexOptions();
+    return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
 
   public void requestCompletion(long tick) {

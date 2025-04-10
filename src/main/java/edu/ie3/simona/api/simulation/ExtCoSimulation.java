@@ -278,7 +278,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
         results.putAll(flexRequestResponse.flexRequests());
 
       } else if (received instanceof FlexOptionsResponse flexOptionsResponse) {
-        results.putAll(flexOptionsResponse.flexOptions());
+        results.putAll(flexOptionsResponse.receiverToFlexOptions());
 
       } else if (received instanceof EmSetPointDataResponse setPointDataResponse) {
         results.putAll(setPointDataResponse.emData());
