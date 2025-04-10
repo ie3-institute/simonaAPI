@@ -8,17 +8,8 @@ package edu.ie3.simona.api.data.primarydata;
 
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
 import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
-import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import org.apache.pekko.actor.typed.ActorRef;
 import org.slf4j.Logger;
 
 import java.util.List;

@@ -9,7 +9,7 @@ package edu.ie3.simona.api.data.em;
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.BiDirectional;
-import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
+import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
 import org.slf4j.Logger;
@@ -42,14 +42,14 @@ public class ExtEmDataConnection
   }
 
 
-  public void sendFlexRequests(long tick, Map<UUID, FlexOptionRequestValue> data, Optional<Long> maybeNextTick, Logger log) {
+  public void sendFlexRequests(long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
       log.warn("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex requests.");
 
-      Map<UUID, List<UUID>> emFlexRequests = new HashMap<>();
-      data.forEach((receiver, requests) -> emFlexRequests.put(receiver, requests.emEntities()));
+      Map<UUID, Optional<UUID>> emFlexRequests = new HashMap<>();
+      data.forEach((receiver, value) -> emFlexRequests.put(receiver, value.sender()));
 
       sendExtMsg(new ProvideFlexRequestData(tick, emFlexRequests, maybeNextTick));
     }

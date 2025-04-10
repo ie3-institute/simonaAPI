@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.em.model.FlexOptionRequestValue;
+import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import java.util.*;
 
@@ -26,7 +26,7 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
   // em maps
-  private final Map<UUID, FlexOptionRequestValue> flexRequests = new HashMap<>();
+  private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
   private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
   private final Map<UUID, PValue> setPoints = new HashMap<>();
 
@@ -67,8 +67,8 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     primaryData.put(id, value);
   }
 
-  public void addRequest(UUID requester, List<UUID> emEntities) {
-    flexRequests.put(requester, new FlexOptionRequestValue(requester, emEntities));
+  public void addRequest(UUID receiver, Optional<UUID> sender) {
+    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
   }
 
   public void addFlexOptions(UUID id, List<FlexOptions> flexOption) {
@@ -89,7 +89,7 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   }
 
   // extract and delete data
-  public Map<UUID, FlexOptionRequestValue> extractFlexRequests() {
+  public Map<UUID, FlexOptionRequest> extractFlexRequests() {
     return copyAndClear(flexRequests);
   }
 

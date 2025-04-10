@@ -57,6 +57,10 @@ public class ExtEntityMapping {
     return extEntities.values().stream().flatMap(Collection::stream).collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
   }
 
+  public Map<UUID, String> getFullMappingReverse() {
+    return extEntities.values().stream().flatMap(Collection::stream).collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+  }
+
   /**
    * Mapping SIMONA uuid to external id
    *

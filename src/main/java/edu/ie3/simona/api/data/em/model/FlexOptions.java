@@ -12,6 +12,7 @@ import tech.units.indriya.ComparableQuantity;
 import java.util.UUID;
 
 public record FlexOptions(
+        UUID receiver,
         UUID sender,
     ComparableQuantity<Power> pMin,
     ComparableQuantity<Power> pRef,
