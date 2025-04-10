@@ -26,13 +26,13 @@ public final class ExtInputContainer implements ExtDataContainer {
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
   // em maps
-  /** Map uuid to flex option request. */
+  /** Map uuid to flex option requests. */
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
 
   /** Map uuid to flex options. */
   private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
 
-  /** Map uuid to em set point. */
+  /** Map uuid to em set points. */
   private final Map<UUID, PValue> setPoints = new HashMap<>();
 
   /**
@@ -84,11 +84,11 @@ public final class ExtInputContainer implements ExtDataContainer {
   /**
    * Method for adding flex option requests.
    *
-   * @param requester the uuid of the requesting agent
-   * @param emEntities list of em agents, that will receive a request
+   * @param receiver the uuid of the agent, that will receive the request
+   * @param sender option for the uuid of the sender
    */
-  public void addRequest(UUID requester, List<UUID> emEntities) {
-    flexRequests.put(requester, new FlexOptionRequest(requester, emEntities));
+  public void addRequest(UUID receiver, Optional<UUID> sender) {
+    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
   }
 
   /**

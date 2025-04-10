@@ -6,8 +6,13 @@
 
 package edu.ie3.simona.api.data.model.em;
 
-import edu.ie3.datamodel.models.value.Value;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public record FlexOptionRequest(UUID requester, List<UUID> emEntities) implements Value {}
+/**
+ * Flex option request that will be sent to SIMONA.
+ *
+ * @param receiver uuid of the agent, that will receive the request
+ * @param sender option for the uuid of the agent, that sent the request
+ */
+public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {}

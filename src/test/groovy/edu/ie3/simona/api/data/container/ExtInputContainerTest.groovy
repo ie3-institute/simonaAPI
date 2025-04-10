@@ -27,22 +27,21 @@ class ExtInputContainerTest extends Specification {
     def "An ExtInputContainer should add flex option request data correctly"() {
         given:
         UUID requester = UUID.randomUUID()
-        UUID uuid = UUID.randomUUID()
 
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addRequest(requester, [uuid])
+        container.addRequest(requester, Optional.empty())
 
         then:
-        container.flexRequests == [(requester): new FlexOptionRequest(requester, [uuid])]
+        container.flexRequests == [(requester): new FlexOptionRequest(requester, Optional.empty())]
     }
 
     def "An ExtInputContainer should add flex option data correctly"() {
         given:
         UUID receiver = UUID.randomUUID()
         UUID sender = UUID.randomUUID()
-        def flexOptions = new FlexOptions(sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new FlexOptions(receiver, sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
 
         def container = new ExtInputContainer(0L)
 
@@ -75,12 +74,11 @@ class ExtInputContainerTest extends Specification {
         PValue primaryValue = new PValue(Quantities.getQuantity(10d, KILOWATT))
         container.addPrimaryValue(primaryUuid, primaryValue)
 
-        UUID requester = UUID.randomUUID()
-        UUID requested = UUID.randomUUID()
-        container.addRequest(requester, [requested])
+        UUID requestReceiver = UUID.randomUUID()
+        container.addRequest(requestReceiver, Optional.empty())
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new FlexOptions(UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
@@ -108,12 +106,11 @@ class ExtInputContainerTest extends Specification {
         PValue primaryValue = new PValue(Quantities.getQuantity(10d, KILOWATT))
         container.addPrimaryValue(primaryUuid, primaryValue)
 
-        UUID requester = UUID.randomUUID()
-        UUID requested = UUID.randomUUID()
-        container.addRequest(requester, [requested])
+        UUID requestReceiver = UUID.randomUUID()
+        container.addRequest(requestReceiver, Optional.empty())
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new FlexOptions(UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
@@ -125,7 +122,7 @@ class ExtInputContainerTest extends Specification {
 
         then:
         extracted.size() == 1
-        extracted == [(requester): new FlexOptionRequest(requester, [requested])]
+        extracted == [(requestReceiver): new FlexOptionRequest(requestReceiver, Optional.empty())]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 0
@@ -141,12 +138,11 @@ class ExtInputContainerTest extends Specification {
         PValue primaryValue = new PValue(Quantities.getQuantity(10d, KILOWATT))
         container.addPrimaryValue(primaryUuid, primaryValue)
 
-        UUID requester = UUID.randomUUID()
-        UUID requested = UUID.randomUUID()
-        container.addRequest(requester, [requested])
+        UUID requestReceiver = UUID.randomUUID()
+        container.addRequest(requestReceiver, Optional.empty())
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new FlexOptions(UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
@@ -174,12 +170,11 @@ class ExtInputContainerTest extends Specification {
         PValue primaryValue = new PValue(Quantities.getQuantity(10d, KILOWATT))
         container.addPrimaryValue(primaryUuid, primaryValue)
 
-        UUID requester = UUID.randomUUID()
-        UUID requested = UUID.randomUUID()
-        container.addRequest(requester, [requested])
+        UUID requestReceiver = UUID.randomUUID()
+        container.addRequest(requestReceiver, Optional.empty())
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new FlexOptions(UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
