@@ -9,29 +9,36 @@ package edu.ie3.simona.api.data.em.model;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.PValue;
 import java.time.ZonedDateTime;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 
 /** Em set point result. */
 public class EmSetPointResult extends ResultEntity {
 
-  private final PValue setPoint;
+  private final Map<UUID, PValue> receiverToSetPoints;
 
-  public EmSetPointResult(ZonedDateTime time, UUID inputModel, PValue setPoint) {
-    super(time, inputModel);
-    this.setPoint = setPoint;
+  public EmSetPointResult(ZonedDateTime time, UUID sender, Map<UUID, PValue> receiverToSetPoints) {
+    super(time, sender);
+    this.receiverToSetPoints = receiverToSetPoints;
   }
 
-  public Optional<PValue> getSetPoint() {
-    return Optional.ofNullable(setPoint);
+  public UUID getSender() {
+    return getInputModel();
+  }
+
+  public Map<UUID, PValue> getReceiverToSetPoint() {
+    return receiverToSetPoints;
   }
 
   @Override
   public String toString() {
-    return "EmSetPointResult{" +
-            "time=" + getTime() +
-            ", inputModel=" + getInputModel() +
-            ", setPoint=" + getSetPoint() +
-            '}';
+    return "EmSetPointResult{"
+            + "time="
+            + getTime()
+            + ", sender="
+            + getInputModel()
+            + ", receiverToSetPoints="
+            + receiverToSetPoints
+            + '}';
   }
 }
