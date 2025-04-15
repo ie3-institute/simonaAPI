@@ -60,7 +60,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @return an ext primary data connection
    */
   public static ExtPrimaryDataConnection buildPrimaryConnection(
-      Map<UUID, Class<Value>> assetToValueClasses, Logger log) {
+      Map<UUID, Class<? extends Value>> assetToValueClasses, Logger log) {
 
     if (assetToValueClasses.isEmpty()) {
       log.warn("No primary data connection was created.");
