@@ -16,8 +16,8 @@ public class ExtendedFlexOptionsResult extends FlexOptionsResult {
      *
      * @param time       date and time when the result is produced
      * @param sender uuid of the input model that produces the result
-     * @param pRef       active power that was suggested for regular usage by the system participant
      * @param receiver uuid of the receiver that will receive this result
+     * @param pRef       active power that was suggested for regular usage by the system participant
      * @param pMin       active minimal power that was determined by the system participant
      * @param pMax       active maximum power that was determined by the system participant
      */
