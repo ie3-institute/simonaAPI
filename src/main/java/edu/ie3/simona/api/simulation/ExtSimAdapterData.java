@@ -9,7 +9,7 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
 import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.typed.ActorRef;
 
 public class ExtSimAdapterData {
 
@@ -18,19 +18,20 @@ public class ExtSimAdapterData {
       new LinkedBlockingQueue<>();
 
   /** Actor reference to the adapter for the phases that handles scheduler control flow in SIMONA */
-  private final ActorRef extSimAdapter;
+  private final ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
   // important trigger queue must be the same as held in actor
   // to make it safer one might consider asking the actor for a reference on its trigger queue?!
-  public ExtSimAdapterData(ActorRef extSimAdapter, String[] mainArgs) {
+  public ExtSimAdapterData(
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter, String[] mainArgs) {
     this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
   }
 
-  public ActorRef getAdapter() {
+  public ActorRef<ControlResponseMessageFromExt> getAdapter() {
     return extSimAdapter;
   }
 
@@ -52,7 +53,7 @@ public class ExtSimAdapterData {
    * @param msg the message to send
    */
   public void send(ControlResponseMessageFromExt msg) {
-    extSimAdapter.tell(msg, ActorRef.noSender());
+    extSimAdapter.tell(msg);
   }
 
   public String[] getMainArgs() {

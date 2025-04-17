@@ -1,10 +1,10 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '7.0.2'//code format
+  id 'com.diffplug.spotless' version '7.0.3'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '6.1.7' // code check, working on byte code
-  id "org.sonarqube" version "6.0.1.5171" // sonarqube
+  id "org.sonarqube" version "6.1.0.5360" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -40,6 +40,7 @@ apply from: scriptsLocation + 'mavenCentralPublish.gradle'
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
 apply from: scriptsLocation + 'test.gradle'
+apply from: scriptsLocation + 'branchName.gradle'
 
 repositories {
   mavenCentral()
@@ -75,8 +76,9 @@ dependencies{
   implementation 'org.apache.logging.log4j:log4j-slf4j-impl' // log4j -> slf4j
 
   // pekko
-  implementation "org.apache.pekko:pekko-actor_${scalaVersion}:${pekkoVersion}"
-  testImplementation "org.apache.pekko:pekko-testkit_${scalaVersion}:${pekkoVersion}" // pekko testkit
+  implementation "org.apache.pekko:pekko-actor-typed_${scalaVersion}:${pekkoVersion}"
+
+  testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
 
   // TESTING
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
