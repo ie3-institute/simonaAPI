@@ -12,7 +12,6 @@ import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
 import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
 import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,7 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultDataConnection extends BiDirectional<ResultDataMessageFromExt, ResultDataResponseMessageToExt> {
+public class ExtResultDataConnection
+    extends BiDirectional<ResultDataMessageFromExt, ResultDataResponseMessageToExt> {
 
   /** Map uuid to external id of grid related entities */
   private final List<UUID> gridResults;
@@ -32,9 +32,7 @@ public class ExtResultDataConnection extends BiDirectional<ResultDataMessageFrom
   private final List<UUID> flexResults;
 
   public ExtResultDataConnection(
-      List<UUID> participantResults,
-      List<UUID> gridResults,
-      List<UUID> flexResults) {
+      List<UUID> participantResults, List<UUID> gridResults, List<UUID> flexResults) {
     this.participantResults = participantResults;
     this.gridResults = gridResults;
     this.flexResults = flexResults;
@@ -93,8 +91,7 @@ public class ExtResultDataConnection extends BiDirectional<ResultDataMessageFrom
     return createResultMap(requestGridResultsList(tick));
   }
 
-  public Map<UUID, ResultEntity> requestParticipantResults(long tick)
-      throws InterruptedException {
+  public Map<UUID, ResultEntity> requestParticipantResults(long tick) throws InterruptedException {
     return createResultMap(requestParticipantResultsList(tick));
   }
 

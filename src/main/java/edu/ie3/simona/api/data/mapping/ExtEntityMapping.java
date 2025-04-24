@@ -54,11 +54,15 @@ public class ExtEntityMapping {
   }
 
   public Map<String, UUID> getFullMapping() {
-    return extEntities.values().stream().flatMap(Collection::stream).collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+    return extEntities.values().stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
   }
 
   public Map<UUID, String> getFullMappingReverse() {
-    return extEntities.values().stream().flatMap(Collection::stream).collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+    return extEntities.values().stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
   }
 
   /**
@@ -82,10 +86,10 @@ public class ExtEntityMapping {
 
   public static List<String> toExt(List<UUID> list, Map<UUID, String> mapping) {
     return list.stream()
-            .map(str -> Optional.ofNullable(mapping.get(str)))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .toList();
+        .map(str -> Optional.ofNullable(mapping.get(str)))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .toList();
   }
 
   /**

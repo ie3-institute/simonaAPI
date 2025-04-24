@@ -33,12 +33,12 @@ public class EmSetPointResult extends ResultEntity {
   @Override
   public String toString() {
     return "EmSetPointResult{"
-            + "time="
-            + getTime()
-            + ", sender="
-            + getInputModel()
-            + ", receiverToSetPoints="
-            + receiverToSetPoints
-            + '}';
+        + "time="
+        + getTime()
+        + ", sender="
+        + getInputModel()
+        + ", receiverToSetPoints="
+        + receiverToSetPoints
+        + '}';
   }
 }

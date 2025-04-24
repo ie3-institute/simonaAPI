@@ -17,7 +17,8 @@ import java.util.Optional;
 import java.util.UUID;
 import org.apache.pekko.actor.typed.ActorRef;
 
-public class ExtEvDataConnection extends BiDirectional<EvDataMessageFromExt, EvDataResponseMessageToExt> {
+public class ExtEvDataConnection
+    extends BiDirectional<EvDataMessageFromExt, EvDataResponseMessageToExt> {
 
   public ExtEvDataConnection() {
     super();

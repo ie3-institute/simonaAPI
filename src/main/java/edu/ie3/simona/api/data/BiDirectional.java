@@ -8,7 +8,6 @@ package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
-
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -17,7 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @param <M> type of message to SIMONA
  * @param <R> type of response messages to ext
  */
-public abstract class BiDirectional<M extends DataMessageFromExt, R extends DataResponseMessageToExt>
+public abstract class BiDirectional<
+        M extends DataMessageFromExt, R extends DataResponseMessageToExt>
     extends ExtInputDataConnection<M> implements ExtOutputDataConnection<R> {
 
   /** Data message queue containing messages from SIMONA */
@@ -37,7 +37,7 @@ public abstract class BiDirectional<M extends DataMessageFromExt, R extends Data
 
   @SuppressWarnings("unchecked")
   public final <T extends R> T receiveWithType(Class<T> expectedMessageClass)
-          throws InterruptedException {
+      throws InterruptedException {
     // blocks until actor puts something here
     R msg = receiveTriggerQueue.take();
 
@@ -45,11 +45,10 @@ public abstract class BiDirectional<M extends DataMessageFromExt, R extends Data
       return (T) msg;
     } else
       throw new RuntimeException(
-              "Received unexpected message '"
-                      + msg
-                      + "', expected type '"
-                      + expectedMessageClass
-                      + "'");
+          "Received unexpected message '"
+              + msg
+              + "', expected type '"
+              + expectedMessageClass
+              + "'");
   }
-
 }

@@ -42,8 +42,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * @param resultMap results from SIMONA with external id as key
    * @param nextTick tick the external simulation can expect the next results
    */
-  public ExtResultContainer(
-          long tick, Map<UUID, ResultEntity> resultMap, Optional<Long> nextTick) {
+  public ExtResultContainer(long tick, Map<UUID, ResultEntity> resultMap, Optional<Long> nextTick) {
     this.tick = tick;
     this.resultMap = resultMap;
     this.maybeNextTick = nextTick;
@@ -94,6 +93,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
    * NodeResult}
    */
+  @Deprecated
   public double getVoltageDeviation(UUID assetId) {
     if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       ComparableQuantity<Dimensionless> vMagDev =
@@ -108,6 +108,7 @@ public class ExtResultContainer implements ExtDataContainer {
   /**
    * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
    */
+  @Deprecated
   public double getVoltage(UUID assetId) {
     if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       return nodeResult.getvMag().getValue().doubleValue();
@@ -120,6 +121,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the active power in kW for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
+  @Deprecated
   public double getActivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getP().getValue().doubleValue();
@@ -133,6 +135,7 @@ public class ExtResultContainer implements ExtDataContainer {
    * Returns the reactive power in kVAr for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
+  @Deprecated
   public double getReactivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
       return systemParticipantResult.getQ().getValue().doubleValue();
@@ -143,6 +146,7 @@ public class ExtResultContainer implements ExtDataContainer {
   }
 
   /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
+  @Deprecated
   public double getLineLoading(UUID assetId) {
     throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }

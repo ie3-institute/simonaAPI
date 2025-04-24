@@ -11,13 +11,13 @@ import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 /**
  * Interface for a connection between SIMONA and an external simulation with data flow from SIMONA
  * to external.
+ *
  * @param <T> type of response messages to ext
  */
 public interface ExtOutputDataConnection<T extends DataResponseMessageToExt> {
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
   void queueExtResponseMsg(T msg) throws InterruptedException;
-
 
   T receiveAny() throws InterruptedException;
 
