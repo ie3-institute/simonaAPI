@@ -6,19 +6,11 @@
 
 package edu.ie3.simona.api.data.container;
 
-import static edu.ie3.util.quantities.PowerSystemUnits.PU;
-
-import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.datamodel.models.result.connector.LineResult;
-import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.measure.quantity.Dimensionless;
-import tech.units.indriya.ComparableQuantity;
-import tech.units.indriya.quantity.Quantities;
 
 /** Contains all results from SIMONA for a certain tick */
 public class ExtResultContainer implements ExtDataContainer {
@@ -87,67 +79,5 @@ public class ExtResultContainer implements ExtDataContainer {
   /** Returns the result for a certain asset. */
   public ResultEntity getResult(UUID assetId) {
     return resultMap.get(assetId);
-  }
-
-  /**
-   * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
-   * NodeResult}
-   */
-  @Deprecated
-  public double getVoltageDeviation(UUID assetId) {
-    if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
-      ComparableQuantity<Dimensionless> vMagDev =
-          Quantities.getQuantity(-1.0, PU).add(nodeResult.getvMag());
-      return vMagDev.getValue().doubleValue();
-    } else {
-      throw new IllegalArgumentException(
-          "VOLTAGE DEVIATION is only available for NodeResult's! AssetId: " + assetId);
-    }
-  }
-
-  /**
-   * Returns the voltage deviation for certain asset, if this asset provided a {@link NodeResult}
-   */
-  @Deprecated
-  public double getVoltage(UUID assetId) {
-    if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
-      return nodeResult.getvMag().getValue().doubleValue();
-    } else {
-      throw new IllegalArgumentException("VOLTAGE is only available for NodeResult's!");
-    }
-  }
-
-  /**
-   * Returns the active power in kW for certain asset, if this asset provided a {@link
-   * SystemParticipantResult}
-   */
-  @Deprecated
-  public double getActivePower(UUID assetId) {
-    if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
-      return systemParticipantResult.getP().getValue().doubleValue();
-    } else {
-      throw new IllegalArgumentException(
-          "ACTIVE POWER is only available for SystemParticipantResult's!");
-    }
-  }
-
-  /**
-   * Returns the reactive power in kVAr for certain asset, if this asset provided a {@link
-   * SystemParticipantResult}
-   */
-  @Deprecated
-  public double getReactivePower(UUID assetId) {
-    if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
-      return systemParticipantResult.getQ().getValue().doubleValue();
-    } else {
-      throw new IllegalArgumentException(
-          "REACTIVE POWER is only available for SystemParticipantResult's!");
-    }
-  }
-
-  /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
-  @Deprecated
-  public double getLineLoading(UUID assetId) {
-    throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
   }
 }
