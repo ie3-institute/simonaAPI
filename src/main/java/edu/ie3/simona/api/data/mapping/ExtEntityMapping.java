@@ -8,6 +8,7 @@ package edu.ie3.simona.api.data.mapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,12 @@ public class ExtEntityMapping {
         .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
   }
 
+  public Map<String, UUID> getExtId2UuidMapping(DataType... dataType) {
+    return Stream.of(dataType)
+        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
+        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+  }
+
   public Map<String, UUID> getFullMapping() {
     return extEntities.values().stream()
         .flatMap(Collection::stream)
@@ -73,6 +80,12 @@ public class ExtEntityMapping {
    */
   public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
+        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+  }
+
+  public Map<UUID, String> getExtUuid2IdMapping(DataType... dataType) {
+    return Stream.of(dataType)
+        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
         .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
   }
 
