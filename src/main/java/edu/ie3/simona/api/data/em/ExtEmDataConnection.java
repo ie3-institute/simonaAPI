@@ -36,10 +36,6 @@ public class ExtEmDataConnection
     return new ArrayList<>(controlled);
   }
 
-  public boolean useCommunication() {
-    return mode == EmMode.EM_COMMUNICATION;
-  }
-
   public void sendFlexRequests(
       long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
@@ -99,7 +95,7 @@ public class ExtEmDataConnection
    * @throws InterruptedException - on interruptions
    */
   public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(
-      long tick, Map<UUID, List<UUID>> emEntities) throws InterruptedException {
+      long tick, List<UUID> emEntities) throws InterruptedException {
     sendExtMsg(new RequestEmFlexResults(tick, emEntities));
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
