@@ -22,6 +22,7 @@ import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 /**
@@ -194,6 +195,21 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     Map<UUID, PValue> inputData = queueToSimona.takeData(ExtInputDataContainer::extractSetPoints);
 
     sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
+  }
+
+  protected void sendFlexOptionsToExt(
+      ExtEmDataConnection extEmDataConnection, long tick, boolean disaggregated, Logger log)
+      throws InterruptedException {
+    log.debug("Request results from SIMONA!");
+    Map<UUID, ResultEntity> results =
+        extEmDataConnection
+            .requestEmFlexResults(tick, extEmDataConnection.getControlledEms(), disaggregated)
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, v -> (ResultEntity) v));
+    log.debug("Received results from SIMONA!");
+    queueToExt.queueData(new ExtResultContainer(tick, results));
+    log.debug("Sent results to {}", extSimulatorName);
   }
 
   /**

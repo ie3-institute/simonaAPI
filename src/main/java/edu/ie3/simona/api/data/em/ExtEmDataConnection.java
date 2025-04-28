@@ -95,8 +95,8 @@ public class ExtEmDataConnection
    * @throws InterruptedException - on interruptions
    */
   public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(
-      long tick, List<UUID> emEntities) throws InterruptedException {
-    sendExtMsg(new RequestEmFlexResults(tick, emEntities));
+      long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
+    sendExtMsg(new RequestEmFlexResults(tick, emEntities, disaggregated));
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
 
