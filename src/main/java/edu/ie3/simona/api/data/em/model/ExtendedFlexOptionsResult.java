@@ -9,6 +9,7 @@ package edu.ie3.simona.api.data.em.model;
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Power;
@@ -39,7 +40,7 @@ public class ExtendedFlexOptionsResult extends FlexOptionsResult {
       ComparableQuantity<Power> pMax) {
     super(time, sender, pRef, pMin, pMax);
     this.receiver = receiver;
-    this.disaggregated = Collections.emptyMap();
+    this.disaggregated = new HashMap<>();
   }
 
   /**
@@ -63,6 +64,10 @@ public class ExtendedFlexOptionsResult extends FlexOptionsResult {
     super(time, sender, pRef, pMin, pMax);
     this.receiver = receiver;
     this.disaggregated = disaggregated;
+  }
+
+  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
+    this.disaggregated.put(uuid, flexOptionsResult);
   }
 
   public UUID getSender() {
