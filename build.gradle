@@ -3,7 +3,7 @@ plugins {
   id 'java' // java support
   id 'com.diffplug.spotless' version '7.0.3'//code format
   id 'pmd' // code check, working on source code
-  id 'com.github.spotbugs' version '6.1.7' // code check, working on byte code
+  id 'com.github.spotbugs' version '6.1.10' // code check, working on byte code
   id "org.sonarqube" version "6.1.0.5360" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
@@ -48,7 +48,7 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.2.2' // quantities
+  implementation 'tech.units:indriya:2.2.3' // quantities
 
   // scala (needed for pekko)
   implementation "org.scala-lang:scala3-library_${scalaVersion}:${scalaBinaryVersion}"
