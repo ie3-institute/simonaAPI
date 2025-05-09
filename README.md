@@ -9,3 +9,5 @@
 
 
 API to create modules and add-ons for simona
+
+For more information visit [ReadTheDocs](https://simonaapi.readthedocs.io/latest/).
