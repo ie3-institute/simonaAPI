@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Changed
+- Removed Jenkinsfile [#290](https://github.com/ie3-institute/simonaAPI/issues/290)
+
 ## [0.9.0] - 2025-05-09
 
 ### Changed
