@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Removed Jenkinsfile [#290](https://github.com/ie3-institute/simonaAPI/issues/290)
+- Refactoring external data connection [#267](https://github.com/ie3-institute/simonaAPI/issues/267)
+- Refactoring data containers [#268](https://github.com/ie3-institute/simonaAPI/issues/268)
 
 ## [0.9.0] - 2025-05-09
 
@@ -26,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Converting pekko classic to typed [#232](https://github.com/ie3-institute/simonaAPI/issues/232)
-- Refactoring external data connection [#267](https://github.com/ie3-institute/simonaAPI/issues/267)
-- Refactoring data containers [#268](https://github.com/ie3-institute/simonaAPI/issues/268)
 
 ## [0.7.0] - 2025-03-11
 
