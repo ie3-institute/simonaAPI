@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Changed
+- Updated to `scala3` [#251](https://github.com/ie3-institute/simonaAPI/issues/251)
+
+### Updates
+- Updated PSU to 3.1.0
+- Updated PSDM to 7.0.0
+
 ## [0.8.0] - 2025-04-17
 
 ### Added
