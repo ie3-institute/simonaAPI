@@ -6,8 +6,14 @@
 
 package edu.ie3.simona.api.data;
 
-import org.apache.pekko.actor.ActorRef;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import org.apache.pekko.actor.typed.ActorRef;
 
+/**
+ * Interface for a connection between SIMONA and an external simulation with data flow from external
+ * to SIMONA.
+ */
 public interface ExtInputDataConnection extends ExtDataConnection {
 
   /**
@@ -17,5 +23,7 @@ public interface ExtInputDataConnection extends ExtDataConnection {
    *     messages
    * @param extSimAdapter actor ref to the extSimAdapter
    */
-  void setActorRefs(ActorRef dataService, ActorRef extSimAdapter);
+  void setActorRefs(
+      ActorRef<DataMessageFromExt> dataService,
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter);
 }

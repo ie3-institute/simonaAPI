@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.datamodel.models.result.ModelResultEntity;
+import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.DataQueueExtSimulationExtSimulator;
 import edu.ie3.simona.api.data.ExtInputDataContainer;
@@ -169,7 +169,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
-    Map<String, ModelResultEntity> resultsToBeSend = connection.requestResults(tick);
+    Map<String, ResultEntity> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
     dataQueueSimonaApiToExtCoSimulator.queueData(
         new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));

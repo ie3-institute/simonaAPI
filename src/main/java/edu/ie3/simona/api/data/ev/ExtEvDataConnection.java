@@ -9,13 +9,15 @@ package edu.ie3.simona.api.data.ev;
 import edu.ie3.simona.api.data.ExtInputDataConnection;
 import edu.ie3.simona.api.data.ev.model.EvModel;
 import edu.ie3.simona.api.data.ev.ontology.*;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
+import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.typed.ActorRef;
 
 public class ExtEvDataConnection implements ExtInputDataConnection {
   /** Data message queue containing messages from SIMONA */
@@ -23,13 +25,15 @@ public class ExtEvDataConnection implements ExtInputDataConnection {
       new LinkedBlockingQueue<>();
 
   /** Actor reference to service that handles ev data within SIMONA */
-  private ActorRef dataService;
+  private ActorRef<DataMessageFromExt> dataService;
 
   /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef extSimAdapter;
+  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   @Override
-  public void setActorRefs(ActorRef dataService, ActorRef extSimAdapter) {
+  public void setActorRefs(
+      ActorRef<DataMessageFromExt> dataService,
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter) {
     this.dataService = dataService;
     this.extSimAdapter = extSimAdapter;
   }
@@ -99,9 +103,9 @@ public class ExtEvDataConnection implements ExtInputDataConnection {
    * @param msg the data/information that is sent to SIMONA's ev data service
    */
   public void sendExtMsg(EvDataMessageFromExt msg) {
-    dataService.tell(msg, ActorRef.noSender());
+    dataService.tell(msg);
     // we need to schedule data receiver activation with scheduler
-    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService), ActorRef.noSender());
+    extSimAdapter.tell(new ScheduleDataServiceMessage(dataService));
   }
 
   /**
