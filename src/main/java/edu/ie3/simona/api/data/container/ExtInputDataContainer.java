@@ -8,8 +8,10 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.simona.api.data.em.model.EmSetPoint;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
+
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
@@ -28,7 +30,7 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   // em maps
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
   private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
-  private final Map<UUID, PValue> setPoints = new HashMap<>();
+  private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -67,8 +69,8 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     primaryData.put(id, value);
   }
 
-  public void addRequest(UUID receiver, Optional<UUID> sender) {
-    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
+  public void addRequest(UUID receiver, FlexOptionRequest request) {
+    flexRequests.put(receiver, request);
   }
 
   public void addFlexOptions(UUID id, List<FlexOptions> flexOption) {
@@ -81,7 +83,11 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   }
 
   public void addSetPoint(UUID id, PValue setPoint) {
-    setPoints.put(id, setPoint);
+    setPoints.put(id, EmSetPoint.from(id, setPoint));
+  }
+
+  public void addSetPoint(EmSetPoint setPoint) {
+    setPoints.put(setPoint.receiver(), setPoint);
   }
 
   public Map<UUID, Value> extractPrimaryData() {
@@ -97,7 +103,7 @@ public final class ExtInputDataContainer implements ExtDataContainer {
     return copyAndClear(flexOptions);
   }
 
-  public Map<UUID, PValue> extractSetPoints() {
+  public Map<UUID, EmSetPoint> extractSetPoints() {
     return copyAndClear(setPoints);
   }
 

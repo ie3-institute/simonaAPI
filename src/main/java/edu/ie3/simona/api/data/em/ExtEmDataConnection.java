@@ -6,14 +6,15 @@
 
 package edu.ie3.simona.api.data.em;
 
-import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.BiDirectional;
+import edu.ie3.simona.api.data.em.model.EmSetPoint;
 import edu.ie3.simona.api.data.em.model.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
-import java.util.*;
 import org.slf4j.Logger;
+
+import java.util.*;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection
@@ -42,11 +43,7 @@ public class ExtEmDataConnection
       log.warn("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex requests.");
-
-      Map<UUID, Optional<UUID>> emFlexRequests = new HashMap<>();
-      data.forEach((receiver, value) -> emFlexRequests.put(receiver, value.sender()));
-
-      sendExtMsg(new ProvideFlexRequestData(tick, emFlexRequests, maybeNextTick));
+      sendExtMsg(new ProvideFlexRequestData(tick, data, maybeNextTick));
     }
   }
 
@@ -77,7 +74,7 @@ public class ExtEmDataConnection
    * @param log logger
    */
   public void sendSetPoints(
-      long tick, Map<UUID, PValue> data, Optional<Long> maybeNextTick, Logger log) {
+          long tick, Map<UUID, EmSetPoint> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
       log.warn("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
