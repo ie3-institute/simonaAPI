@@ -9,7 +9,6 @@ package edu.ie3.simona.api.simulation;
 import static java.util.Collections.emptyList;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
@@ -17,6 +16,7 @@ import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
 import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtResultContainer;
+import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
 import java.util.List;
@@ -148,18 +148,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
-   * @param dataMap map: id to value
+   * @param setPoints map: id to set point
    * @param maybeNextTick option for the next tick data is sent
    * @param log logger
    */
   protected void sendEmSetPointsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
-      Map<UUID, PValue> dataMap,
+      Map<UUID, EmSetPoint> setPoints,
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em set points from {}", extSimulatorName);
-    extEmDataConnection.sendSetPoints(tick, dataMap, maybeNextTick, log);
+    extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
     log.debug("Provided em set points to SIMONA!");
   }
 

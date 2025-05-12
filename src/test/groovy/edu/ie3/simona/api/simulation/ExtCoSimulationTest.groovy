@@ -50,7 +50,7 @@ class ExtCoSimulationTest extends Specification {
         def controlled = [uuid1, uuid2]
 
         when:
-        def actual = ExtCoSimulation.buildEmConnection(controlled, EmMode.SET_POINT, log)
+        def actual = ExtCoSimulation.buildEmConnection(controlled, EmMode.BASE, log)
 
         then:
         actual.getControlledEms() == [uuid1, uuid2]
@@ -58,7 +58,7 @@ class ExtCoSimulationTest extends Specification {
 
     def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty em data connection"() {
         when:
-        ExtCoSimulation.buildEmConnection([], EmMode.SET_POINT, log)
+        ExtCoSimulation.buildEmConnection([], EmMode.BASE, log)
 
         then:
         ExtDataConnectionException ex = thrown(ExtDataConnectionException)

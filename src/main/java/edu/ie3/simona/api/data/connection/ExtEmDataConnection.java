@@ -6,11 +6,10 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
 import edu.ie3.simona.api.data.em.ontology.EmDataResponseMessageToExt;
 import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
-import edu.ie3.simona.api.mapping.DataType;
+import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import java.util.*;
 import org.slf4j.Logger;
 
@@ -39,46 +38,23 @@ public final class ExtEmDataConnection
    * Sends the em set points to SIMONA.
    *
    * @param tick current tick
-   * @param data to be sent
+   * @param setPoints to be sent
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
   public void sendSetPoints(
-      long tick, Map<UUID, PValue> data, Optional<Long> maybeNextTick, Logger log) {
-    if (data.isEmpty()) {
+      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick, Logger log) {
+    if (setPoints.isEmpty()) {
       log.warn("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em set points.");
-      sendExtMsg(new ProvideEmSetPointData(tick, data, maybeNextTick));
+      sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
     }
   }
 
   /** Mode of the em connection */
   public enum EmMode {
-    SET_POINT("setPoint"),
-    EM_COMMUNICATION("emCommunication"),
-    EM_OPTIMIZATION("emOptimization");
-
-    public final String mode;
-
-    EmMode(String mode) {
-      this.mode = mode;
-    }
-
-    /**
-     * Method to get the {@link EmMode} from the em {@link DataType}.
-     *
-     * @param dataType given data type
-     * @return an {@link EmMode}, or throws an exception if no mode is found for the provided data
-     *     type
-     */
-    public static EmMode fromDataType(DataType dataType) {
-      return switch (dataType) {
-        case EXT_EM_INPUT -> EmMode.SET_POINT;
-        case EXT_EM_COMMUNICATION -> EmMode.EM_COMMUNICATION;
-        case EXT_EM_OPTIMIZER -> EmMode.EM_OPTIMIZATION;
-        default -> throw new IllegalStateException("Unexpected data type: " + dataType);
-      };
-    }
+    BASE,
+    EM_COMMUNICATION
   }
 }
