@@ -1,7 +1,13 @@
 package edu.ie3.simona.api.simulation
 
-import edu.ie3.simona.api.data.ExtDataConnection
-import edu.ie3.simona.api.simulation.ontology.*
+import edu.ie3.simona.api.data.ExtSimAdapterData
+import edu.ie3.simona.api.data.connection.ExtDataConnection
+import edu.ie3.simona.api.ontology.simulation.ActivationMessage
+import edu.ie3.simona.api.ontology.simulation.CompletionMessage
+import edu.ie3.simona.api.ontology.simulation.ControlMessageToExt
+import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt
+import edu.ie3.simona.api.ontology.simulation.TerminationCompleted
+import edu.ie3.simona.api.ontology.simulation.TerminationMessage
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification
