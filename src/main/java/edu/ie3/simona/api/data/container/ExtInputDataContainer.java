@@ -83,11 +83,11 @@ public final class ExtInputDataContainer implements ExtDataContainer {
   }
 
   public void addSetPoint(UUID id, PValue setPoint) {
-    setPoints.put(id, EmSetPoint.from(id, setPoint));
+    setPoints.put(id, new EmSetPoint(id, setPoint));
   }
 
   public void addSetPoint(EmSetPoint setPoint) {
-    setPoints.put(setPoint.receiver(), setPoint);
+    setPoints.put(setPoint.receiver, setPoint);
   }
 
   public Map<UUID, Value> extractPrimaryData() {

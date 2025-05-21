@@ -10,6 +10,7 @@ import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.PValue;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /** Em set point result. */
@@ -28,6 +29,19 @@ public class EmSetPointResult extends ResultEntity {
 
   public Map<UUID, PValue> getReceiverToSetPoint() {
     return receiverToSetPoints;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    EmSetPointResult that = (EmSetPointResult) o;
+    return Objects.equals(receiverToSetPoints, that.receiverToSetPoints);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), receiverToSetPoints);
   }
 
   @Override
