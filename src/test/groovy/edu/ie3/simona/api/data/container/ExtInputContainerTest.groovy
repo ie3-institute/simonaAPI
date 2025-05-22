@@ -1,6 +1,7 @@
 package edu.ie3.simona.api.data.container
 
 import edu.ie3.datamodel.models.value.PValue
+import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
 import edu.ie3.simona.api.data.model.em.FlexOptions
 import spock.lang.Specification
@@ -55,12 +56,26 @@ class ExtInputContainerTest extends Specification {
     def "An ExtInputContainer should add set point data correctly"() {
         given:
         UUID uuid = UUID.randomUUID()
-        def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
+        def power = new PValue(Quantities.getQuantity(5d, KILOWATT))
 
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addSetPoint(uuid, setPoint)
+        container.addSetPoint(uuid, power)
+
+        then:
+        container.setPoints == [(uuid): new EmSetPoint(uuid, power)]
+    }
+
+    def "An ExtInputContainer should add set point data correctly"() {
+        given:
+        UUID uuid = UUID.randomUUID()
+        def setPoint = new EmSetPoint(uuid, new PValue(Quantities.getQuantity(5d, KILOWATT)))
+
+        def container = new ExtInputContainer(0L)
+
+        when:
+        container.addSetPoint(setPoint)
 
         then:
         container.setPoints == [(uuid): setPoint]
@@ -178,15 +193,15 @@ class ExtInputContainerTest extends Specification {
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
-        def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
-        container.addSetPoint(emAsset, setPoint)
+        def power = new PValue(Quantities.getQuantity(5d, KILOWATT))
+        container.addSetPoint(emAsset, power)
 
         when:
         def extracted = container.extractSetPoints()
 
         then:
         extracted.size() == 1
-        extracted == [(emAsset): setPoint]
+        extracted == [(emAsset): new EmSetPoint(emAsset, power)]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 1

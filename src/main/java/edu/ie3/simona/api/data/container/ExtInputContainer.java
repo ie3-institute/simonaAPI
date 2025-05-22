@@ -8,6 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
 import java.util.*;
@@ -33,7 +34,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
 
   /** Map uuid to em set points. */
-  private final Map<UUID, PValue> setPoints = new HashMap<>();
+  private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -110,10 +111,19 @@ public final class ExtInputContainer implements ExtDataContainer {
    * Method for adding an em set point for a given asset.
    *
    * @param asset that will receive the set point
+   * @param power of the set point
+   */
+  public void addSetPoint(UUID asset, PValue power) {
+    setPoints.put(asset, new EmSetPoint(asset, power));
+  }
+
+  /**
+   * Method for adding an em set point for a given asset.
+   *
    * @param setPoint given set point
    */
-  public void addSetPoint(UUID asset, PValue setPoint) {
-    setPoints.put(asset, setPoint);
+  public void addSetPoint(EmSetPoint setPoint) {
+    setPoints.put(setPoint.receiver, setPoint);
   }
 
   /** Extracts the primary input data from this container. All other input data remains the same. */
@@ -139,7 +149,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   /**
    * Extracts the set point input data from this container. All other input data remains the same.
    */
-  public Map<UUID, PValue> extractSetPoints() {
+  public Map<UUID, EmSetPoint> extractSetPoints() {
     return copyAndClear(setPoints);
   }
 

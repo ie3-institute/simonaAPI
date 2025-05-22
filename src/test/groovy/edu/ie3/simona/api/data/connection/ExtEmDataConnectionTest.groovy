@@ -37,7 +37,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, new EmSetPoint(inputUuid, Optional.of(pValue)))
+        def emData = Map.of(inputUuid, new EmSetPoint(inputUuid, pValue))
 
         when:
         extEmDataConnection.sendSetPoints(0L, emData, Optional.of(900L), log)
