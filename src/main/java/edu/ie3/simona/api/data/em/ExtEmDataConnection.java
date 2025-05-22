@@ -12,9 +12,8 @@ import edu.ie3.simona.api.data.em.model.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
 import edu.ie3.simona.api.data.em.ontology.*;
-import org.slf4j.Logger;
-
 import java.util.*;
+import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public class ExtEmDataConnection
@@ -37,6 +36,14 @@ public class ExtEmDataConnection
     return new ArrayList<>(controlled);
   }
 
+  /**
+   * Sends the em flex requests to SIMONA.
+   *
+   * @param tick current tick
+   * @param data to be sent
+   * @param maybeNextTick option for the next tick in the simulation
+   * @param log logger
+   */
   public void sendFlexRequests(
       long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
@@ -48,7 +55,7 @@ public class ExtEmDataConnection
   }
 
   /**
-   * Sends the em flex options and to SIMONA.
+   * Sends the em flex options to SIMONA.
    *
    * @param tick current tick
    * @param data to be sent
@@ -74,7 +81,7 @@ public class ExtEmDataConnection
    * @param log logger
    */
   public void sendSetPoints(
-          long tick, Map<UUID, EmSetPoint> data, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<UUID, EmSetPoint> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
       log.warn("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
     } else {

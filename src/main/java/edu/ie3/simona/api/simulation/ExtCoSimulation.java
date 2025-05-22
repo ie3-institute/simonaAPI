@@ -6,6 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
+import static java.util.Collections.emptyList;
+
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
@@ -19,11 +21,8 @@ import edu.ie3.simona.api.data.mapping.DataType;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
-import org.slf4j.Logger;
-
 import java.util.*;
-
-import static java.util.Collections.emptyList;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
@@ -188,8 +187,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Received results from SIMONA!");
     queueToExt.queueData(new ExtResultContainer(tick, results));
     log.debug("Sent results to {}", extSimulatorName);
-  }  
-  
+  }
+
   /**
    * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
    * method will take a value from the {@link #queueToSimona}.
@@ -207,7 +206,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     checkTick(tick);
-    Map<UUID, EmSetPoint> inputData = queueToSimona.takeData(ExtInputDataContainer::extractSetPoints);
+    Map<UUID, EmSetPoint> inputData =
+        queueToSimona.takeData(ExtInputDataContainer::extractSetPoints);
 
     sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }
@@ -259,11 +259,14 @@ public abstract class ExtCoSimulation extends ExtSimulation {
         var options = container.extractFlexOptions();
         var setPoints = container.extractSetPoints();
 
-        extEmDataConnection.sendFlexRequests(tick, requests, maybeNextTick, log);
-
-        extEmDataConnection.sendFlexOptions(tick, options, maybeNextTick, log);
-
-        extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
+        if (!requests.isEmpty())
+          extEmDataConnection.sendFlexRequests(tick, requests, maybeNextTick, log);
+        
+        if (!options.isEmpty())
+          extEmDataConnection.sendFlexOptions(tick, options, maybeNextTick, log);
+        
+        if (!setPoints.isEmpty())
+          extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
 
         log.debug("Unhandled flex requests: {}", container.flexRequestsString());
         log.debug("Unhandled flex options: {}", container.flexOptionsString());

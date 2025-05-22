@@ -11,7 +11,6 @@ import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.em.model.EmSetPoint;
 import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
 import edu.ie3.simona.api.data.em.model.FlexOptions;
-
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
