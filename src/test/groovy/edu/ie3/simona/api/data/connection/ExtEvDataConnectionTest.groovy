@@ -1,4 +1,4 @@
-package edu.ie3.simona.api.data.ev
+package edu.ie3.simona.api.data.connection
 
 import edu.ie3.simona.api.data.ev.model.EvModel
 import edu.ie3.simona.api.data.ev.ontology.*
