@@ -26,11 +26,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 
 /**
- * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
- * - ext-simulation - simonaAPI - simona
+ * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
  *
- * <p>It contains all function to transfer primary data and em data to SIMONA and results to the
- * external co-simulation.
+ * <p>It contains functions to simplify the transfer of primary data and em data to SIMONA and
+ * results to the external co-simulation.
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
 

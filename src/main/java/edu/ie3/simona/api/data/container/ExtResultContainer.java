@@ -12,6 +12,7 @@ import edu.ie3.datamodel.models.result.NodeResult;
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.result.connector.LineResult;
 import edu.ie3.datamodel.models.result.system.SystemParticipantResult;
+import edu.ie3.util.quantities.PowerSystemUnits;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,17 +21,17 @@ import javax.measure.quantity.Dimensionless;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
 
-/** Contains all results from SIMONA for a certain tick */
+/** Contains all SIMONA results for a certain tick. */
 public final class ExtResultContainer implements ExtDataContainer {
 
-  /** Tick the results are meant for */
+  /** Tick for which the results are meant for. */
   private final long tick;
 
-  /** Tick the external simulation can expect the next results */
+  /** Tick where the external simulation can expect the next results from SIMONA. */
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Map uuid to result from SIMONA
+   * Map uuid to result from SIMONA.
    *
    * <p>ATTENTION: The time stamp of the result entities is not necessarily corresponding to the
    * tick
@@ -38,7 +39,7 @@ public final class ExtResultContainer implements ExtDataContainer {
   private final Map<UUID, ResultEntity> resultMap;
 
   /**
-   * Container class for result data from SIMONA
+   * Container class for result data from SIMONA.
    *
    * @param tick current tick
    * @param resultMap results from SIMONA with external id as key
@@ -65,12 +66,12 @@ public final class ExtResultContainer implements ExtDataContainer {
   }
 
   /**
-   * Method to extract a specific type of results.
+   * Method to extract results of a specific type.
    *
    * @param clazz of the results
    * @return a map: uuid to requested result, or an empty map, if no results for the requested type
    *     are present
-   * @param <R> type of result
+   * @param <R> result type
    */
   @SuppressWarnings("unchecked")
   public <R extends ResultEntity> Map<UUID, R> getResults(Class<R> clazz) {
@@ -88,12 +89,12 @@ public final class ExtResultContainer implements ExtDataContainer {
     return result;
   }
 
-  /** Returns the tick data is provided for. */
+  /** Returns the tick the data is provided for. */
   public long getTick() {
     return tick;
   }
 
-  /** Returns an option for the next tick, data will be provided. */
+  /** Returns an option for the next tick, where data will be provided. */
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }
@@ -104,7 +105,7 @@ public final class ExtResultContainer implements ExtDataContainer {
   }
 
   /**
-   * Returns the voltage deviation in pu for certain asset, if this asset provided a {@link
+   * Returns the voltage deviation in pu for a certain asset, if this asset provided a {@link
    * NodeResult}
    */
   public double getVoltageDeviation(UUID assetId) {
@@ -114,7 +115,7 @@ public final class ExtResultContainer implements ExtDataContainer {
       return vMagDev.getValue().doubleValue();
     } else {
       throw new IllegalArgumentException(
-          "VOLTAGE DEVIATION is only available for NodeResult's! AssetId: " + assetId);
+          "Voltage deviation is only available for NodeResult's! AssetId: " + assetId);
     }
   }
 
@@ -125,38 +126,38 @@ public final class ExtResultContainer implements ExtDataContainer {
     if (resultMap.get(assetId) instanceof NodeResult nodeResult) {
       return nodeResult.getvMag().getValue().doubleValue();
     } else {
-      throw new IllegalArgumentException("VOLTAGE is only available for NodeResult's!");
+      throw new IllegalArgumentException("Voltage is only available for NodeResult's!");
     }
   }
 
   /**
-   * Returns the active power in kW for certain asset, if this asset provided a {@link
+   * Returns the active power in MW for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
   public double getActivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
-      return systemParticipantResult.getP().getValue().doubleValue();
+      return systemParticipantResult.getP().to(PowerSystemUnits.MEGAWATT).getValue().doubleValue();
     } else {
       throw new IllegalArgumentException(
-          "ACTIVE POWER is only available for SystemParticipantResult's!");
+          "Active power is only available for SystemParticipantResult's!");
     }
   }
 
   /**
-   * Returns the reactive power in kVAr for certain asset, if this asset provided a {@link
+   * Returns the reactive power in MVAr for certain asset, if this asset provided a {@link
    * SystemParticipantResult}
    */
   public double getReactivePower(UUID assetId) {
     if (resultMap.get(assetId) instanceof SystemParticipantResult systemParticipantResult) {
-      return systemParticipantResult.getQ().getValue().doubleValue();
+      return systemParticipantResult.getQ().to(PowerSystemUnits.MEGAVAR).getValue().doubleValue();
     } else {
       throw new IllegalArgumentException(
-          "REACTIVE POWER is only available for SystemParticipantResult's!");
+          "Reactive power is only available for SystemParticipantResult's!");
     }
   }
 
   /** Returns the line loading for certain asset, if this asset provided a {@link LineResult} */
   public double getLineLoading(UUID assetId) {
-    throw new IllegalArgumentException("LINE LOADING is not implemented yet!");
+    throw new IllegalArgumentException("Line loading is not implemented yet!");
   }
 }

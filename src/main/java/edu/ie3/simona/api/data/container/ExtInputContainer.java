@@ -22,11 +22,11 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** The next tick, when data will be provided, if available. */
   private final Optional<Long> maybeNextTick;
 
-  // primary map
+  // mapping for primary data
   /** Map uuid to primary input value for SIMONA. */
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
-  // em maps
+  // mapping for em data
   /** Map uuid to flex option requests. */
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
 
@@ -60,12 +60,12 @@ public final class ExtInputContainer implements ExtDataContainer {
         && setPoints.isEmpty();
   }
 
-  /** Returns the tick data is provided for. */
+  /** Returns the tick the data is provided for. */
   public long getTick() {
     return tick;
   }
 
-  /** Returns an option for the next tick, data will be provided. */
+  /** Returns an option for the next tick, where data will be provided. */
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }
@@ -126,7 +126,9 @@ public final class ExtInputContainer implements ExtDataContainer {
     setPoints.put(setPoint.receiver, setPoint);
   }
 
-  /** Extracts the primary input data from this container. All other input data remains the same. */
+  /**
+   * Extracts the primary input data from this container. All other input data remains unchanged.
+   */
   public Map<UUID, Value> extractPrimaryData() {
     return copyAndClear(primaryData);
   }
