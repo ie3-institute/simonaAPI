@@ -1,6 +1,6 @@
 package edu.ie3.simona.api.simulation
 
-import edu.ie3.simona.api.data.ExtDataConnection
+import edu.ie3.simona.api.data.connection.ExtDataConnection
 import edu.ie3.simona.api.simulation.ontology.*
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
