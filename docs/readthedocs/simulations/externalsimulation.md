@@ -32,3 +32,20 @@ method should provide a new tick as long as there are future activities.
 
 The method `getDataConnections` returns all [data connections](/connections/connections) that are used to connect the
 external simulation to SIMONA.
+
+
+## Communication between SIMONA and an external simulation
+
+Depending on the connections used by the external simulation, the following communication structures are used:
+
+- Input connections: external simulation -> simonaAPI -> SIMONA
+- Output connections: SIMONA -> simonaAPI -> external simulation
+
+Bidirectional connections can use both structures.
+
+
+## Co-simulations
+
+This API provides an extension to the class `edu.ie3.simona.api.simulation.ExtSimulation` in the form of 
+`edu.ie3.simona.api.simulation.ExtCoSimulation`. This class contains some methods to simplify the definition of external
+co-simulations.

@@ -7,7 +7,7 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
-import edu.ie3.simona.api.exceptions.WrongResponseTypeException;
+import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -46,7 +46,7 @@ public non-sealed class ExtResultListener
     if (msg.getClass().equals(expectedMessageClass)) {
       return (T) msg;
     } else
-      throw new WrongResponseTypeException(
+      throw new UnexpectedResponseMessageException(
           "Received unexpected message '"
               + msg
               + "', expected type '"

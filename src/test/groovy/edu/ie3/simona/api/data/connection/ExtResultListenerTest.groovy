@@ -2,7 +2,7 @@ package edu.ie3.simona.api.data.connection
 
 import edu.ie3.datamodel.models.result.NodeResult
 import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
-import edu.ie3.simona.api.exceptions.WrongResponseTypeException
+import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import spock.lang.Specification
 
@@ -43,6 +43,6 @@ class ExtResultListenerTest extends Specification implements DataServiceTestData
         listener.receiveWithType(NodeResult)
 
         then:
-        thrown(WrongResponseTypeException)
+        thrown(UnexpectedResponseMessageException)
     }
 }

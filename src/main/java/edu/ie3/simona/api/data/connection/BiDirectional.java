@@ -8,7 +8,7 @@ package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
-import edu.ie3.simona.api.exceptions.WrongResponseTypeException;
+import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -48,7 +48,7 @@ public abstract non-sealed class BiDirectional<
     if (msg.getClass().equals(expectedMessageClass)) {
       return (T) msg;
     } else
-      throw new WrongResponseTypeException(
+      throw new UnexpectedResponseMessageException(
           "Received unexpected message '"
               + msg
               + "', expected type '"
