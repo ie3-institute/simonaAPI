@@ -6,4 +6,6 @@
 
 package edu.ie3.simona.api.data.em.ontology;
 
-public record EmCompletion() implements EmDataResponseMessageToExt {}
+import java.util.Optional;
+
+public record EmCompletion(Optional<Long> maybeNextTick) implements EmDataResponseMessageToExt {}

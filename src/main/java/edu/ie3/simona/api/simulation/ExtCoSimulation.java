@@ -16,7 +16,6 @@ import edu.ie3.simona.api.data.container.ExtResultContainer;
 import edu.ie3.simona.api.data.em.EmMode;
 import edu.ie3.simona.api.data.em.ExtEmDataConnection;
 import edu.ie3.simona.api.data.em.model.EmSetPoint;
-import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.mapping.DataType;
 import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.results.ExtResultDataConnection;
@@ -233,84 +232,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Received em set points from {}", extSimulatorName);
     extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
     log.debug("Provided em set points to SIMONA!");
-  }
-
-  protected void useFlexCommunication(
-      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
-      throws InterruptedException {
-    // handle flex requests
-    boolean notFinished = true;
-
-    while (notFinished) {
-
-      long extTick = queueToSimona.takeData(ExtInputDataContainer::getTick);
-
-      log.info("Current simulator tick: {}, SIMONA tick: {}", extTick, tick);
-
-      if (tick == extTick) {
-        ExtInputDataContainer container = queueToSimona.takeAll();
-
-        log.info("Flex requests: {}", container.flexRequestsString());
-        log.info("Flex options: {}", container.flexOptionsString());
-        log.info("Set points: {}", container.setPointsString());
-
-        // send received data to SIMONA
-        var requests = container.extractFlexRequests();
-        var options = container.extractFlexOptions();
-        var setPoints = container.extractSetPoints();
-
-        if (!requests.isEmpty())
-          extEmDataConnection.sendFlexRequests(tick, requests, maybeNextTick, log);
-        
-        if (!options.isEmpty())
-          extEmDataConnection.sendFlexOptions(tick, options, maybeNextTick, log);
-        
-        if (!setPoints.isEmpty())
-          extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
-
-        log.debug("Unhandled flex requests: {}", container.flexRequestsString());
-        log.debug("Unhandled flex options: {}", container.flexOptionsString());
-        log.debug("Unhandled set points: {}", container.setPointsString());
-
-        if (requests.isEmpty() && options.isEmpty() && setPoints.isEmpty()) {
-          log.info("Requesting a service completion for tick: {}.", tick);
-          extEmDataConnection.requestCompletion(tick);
-        }
-
-      } else {
-        notFinished = false;
-
-        log.info("External simulator finished tick {}. Request completion.", tick);
-        extEmDataConnection.requestCompletion(tick);
-      }
-
-      EmDataResponseMessageToExt received = extEmDataConnection.receiveAny();
-
-      Map<UUID, ResultEntity> results = new HashMap<>();
-
-      if (received instanceof EmCompletion) {
-        notFinished = false;
-        log.info("Finished for tick: {}", tick);
-
-      } else if (received instanceof FlexRequestResponse flexRequestResponse) {
-        results.putAll(flexRequestResponse.flexRequests());
-
-      } else if (received instanceof FlexOptionsResponse flexOptionsResponse) {
-        results.putAll(flexOptionsResponse.receiverToFlexOptions());
-
-      } else if (received instanceof EmSetPointDataResponse setPointDataResponse) {
-        results.putAll(setPointDataResponse.emData());
-
-      } else {
-        log.warn("Received unsupported data response: {}", received);
-      }
-
-      log.warn("Results to ext: {}", results);
-
-      ExtResultContainer resultContainer = new ExtResultContainer(tick, results, maybeNextTick);
-
-      queueToExt.queueData(resultContainer);
-    }
   }
 
   // result data methods
