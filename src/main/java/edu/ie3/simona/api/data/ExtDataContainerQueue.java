@@ -7,7 +7,10 @@
 package edu.ie3.simona.api.data;
 
 import edu.ie3.simona.api.data.container.ExtDataContainer;
+
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /** Data queue to allow data flow between SimonaAPI and an external simulation */
@@ -20,6 +23,10 @@ public final class ExtDataContainerQueue<V extends ExtDataContainer> {
 
   public V takeAll() throws InterruptedException {
     return receiverTriggerDeque.takeFirst();
+  }
+
+  public Optional<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
+    return Optional.ofNullable(receiverTriggerDeque.pollFirst(timeout, unit));
   }
 
   public <R> R takeData(Function<V, R> extractor) throws InterruptedException {
