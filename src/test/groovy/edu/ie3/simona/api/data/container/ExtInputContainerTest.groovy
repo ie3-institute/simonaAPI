@@ -67,20 +67,6 @@ class ExtInputContainerTest extends Specification {
         container.setPoints == [(uuid): new EmSetPoint(uuid, power)]
     }
 
-    def "An ExtInputContainer should add set point data correctly"() {
-        given:
-        UUID uuid = UUID.randomUUID()
-        def setPoint = new EmSetPoint(uuid, new PValue(Quantities.getQuantity(5d, KILOWATT)))
-
-        def container = new ExtInputContainer(0L)
-
-        when:
-        container.addSetPoint(setPoint)
-
-        then:
-        container.setPoints == [(uuid): setPoint]
-    }
-
     def "An ExtInputContainer should extract primary data correctly"() {
         given:
         def container = new ExtInputContainer(0L)
