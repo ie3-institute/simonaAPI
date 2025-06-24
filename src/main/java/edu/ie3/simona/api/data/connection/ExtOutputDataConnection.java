@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
+import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
 
 /**
  * Interface for a connection between SIMONA and an external simulation with data flow from SIMONA
@@ -14,11 +14,22 @@ import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
  *
  * @param <T> type of response messages to ext
  */
-public interface ExtOutputDataConnection<T extends DataResponseMessageToExt> {
+public sealed interface ExtOutputDataConnection<T extends DataResponseMessageToExt>
+    permits BiDirectional, ExtResultListener {
 
   /** Queues message from SIMONA that should be handled by the external simulation. */
   void queueExtResponseMsg(T msg) throws InterruptedException;
 
+  /**
+   * Waits until a message of given type is added to the queue. All messages that extends the given
+   * type can be received. This method blocks until having received a response from SIMONA.
+   *
+   * <p>To receive only specific types of messages, use {@link #receiveWithType(Class)} instead.
+   *
+   * @return a message of the given type
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
+   */
   T receiveAny() throws InterruptedException;
 
   /**

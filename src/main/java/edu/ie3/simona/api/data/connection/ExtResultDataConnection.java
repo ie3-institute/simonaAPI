@@ -7,27 +7,27 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.simona.api.ontology.result.ProvideResultEntities;
-import edu.ie3.simona.api.ontology.result.RequestResultEntities;
-import edu.ie3.simona.api.ontology.result.ResultDataMessageFromExt;
-import edu.ie3.simona.api.ontology.result.ResultDataResponseMessageToExt;
+import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
+import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
+import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
+import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Enables data connection of results between SIMONA and SimonaAPI */
-public class ExtResultDataConnection
+/** Enables data connection of results between SIMONA and SimonaAPI. */
+public final class ExtResultDataConnection
     extends BiDirectional<ResultDataMessageFromExt, ResultDataResponseMessageToExt> {
 
-  /** Map uuid to external id of grid related entities */
+  /** Map uuid to external id of grid related entities. */
   private final List<UUID> gridResults;
 
-  /** Map uuid to external id of system participants */
+  /** Map uuid to external id of system participants. */
   private final List<UUID> participantResults;
 
-  /** Map uuid to external id of participant flex options */
+  /** Map uuid to external id of participant flex options. */
   private final List<UUID> flexResults;
 
   public ExtResultDataConnection(
@@ -49,7 +49,7 @@ public class ExtResultDataConnection
     return flexResults;
   }
 
-  /** Method that an external simulation can request results from SIMONA as a list. */
+  /** Method for requesting SIMONA results as list from an external simulation. */
   private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     List<UUID> allExtEntities =
         Stream.concat(
@@ -75,9 +75,7 @@ public class ExtResultDataConnection
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  /**
-   * Method that an external simulation can request results from SIMONA as a map string to object.
-   */
+  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
   public Map<UUID, ResultEntity> requestResults(long tick) throws InterruptedException {
     return createResultMap(requestResultList(tick));
   }
@@ -94,7 +92,7 @@ public class ExtResultDataConnection
     return createResultMap(requestParticipantResultsList(tick));
   }
 
-  protected Map<UUID, ResultEntity> createResultMap(List<ResultEntity> results) {
+  private Map<UUID, ResultEntity> createResultMap(List<ResultEntity> results) {
     return results.stream().collect(Collectors.toMap(ResultEntity::getInputModel, i -> i));
   }
 }

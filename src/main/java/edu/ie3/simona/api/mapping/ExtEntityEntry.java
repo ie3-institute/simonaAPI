@@ -4,10 +4,11 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.mapping;
+package edu.ie3.simona.api.simulation.mapping;
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.InputEntity;
+import edu.ie3.simona.api.mapping.DataType;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
  *
  * @param uuid SIMONA uuid
  * @param id external id
- * @param columnScheme option for data types the external asset expects
+ * @param columnScheme data types the external asset expects
  * @param dataType data types the external asset expects
  */
 public record ExtEntityEntry(

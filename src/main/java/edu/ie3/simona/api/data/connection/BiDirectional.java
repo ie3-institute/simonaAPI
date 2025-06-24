@@ -6,8 +6,9 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
+import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
+import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -16,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @param <M> type of message to SIMONA
  * @param <R> type of response messages to ext
  */
-public abstract class BiDirectional<
+public abstract non-sealed class BiDirectional<
         M extends DataMessageFromExt, R extends DataResponseMessageToExt>
     extends ExtInputDataConnection<M> implements ExtOutputDataConnection<R> {
 
@@ -27,14 +28,17 @@ public abstract class BiDirectional<
     super();
   }
 
+  @Override
   public final void queueExtResponseMsg(R msg) throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
 
+  @Override
   public final R receiveAny() throws InterruptedException {
     return receiveTriggerQueue.take();
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public final <T extends R> T receiveWithType(Class<T> expectedMessageClass)
       throws InterruptedException {
@@ -44,7 +48,7 @@ public abstract class BiDirectional<
     if (msg.getClass().equals(expectedMessageClass)) {
       return (T) msg;
     } else
-      throw new RuntimeException(
+      throw new UnexpectedResponseMessageException(
           "Received unexpected message '"
               + msg
               + "', expected type '"

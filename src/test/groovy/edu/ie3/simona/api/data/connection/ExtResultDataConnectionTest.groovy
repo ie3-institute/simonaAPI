@@ -1,22 +1,14 @@
 package edu.ie3.simona.api.data.connection
 
-import edu.ie3.datamodel.models.StandardUnits
-import edu.ie3.datamodel.models.result.connector.LineResult
-import edu.ie3.simona.api.ontology.DataMessageFromExt
-import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.result.ProvideResultEntities
-import edu.ie3.simona.api.ontology.result.RequestResultEntities
-import edu.ie3.simona.api.ontology.result.ResultDataResponseMessageToExt
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
+import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
+import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
+import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification
-import tech.units.indriya.quantity.Quantities
-
-import javax.measure.Quantity
-import javax.measure.quantity.Angle
-import javax.measure.quantity.ElectricCurrent
-import java.time.ZonedDateTime
 
 class ExtResultDataConnectionTest extends Specification implements DataServiceTestData {
 

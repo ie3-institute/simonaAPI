@@ -6,28 +6,19 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.model.ev.EvModel;
-import edu.ie3.simona.api.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.ontology.ev.*;
-import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt;
+import edu.ie3.simona.api.data.ev.model.EvModel;
+import edu.ie3.simona.api.data.ev.ontology.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.apache.pekko.actor.typed.ActorRef;
 
-public class ExtEvDataConnection
+public final class ExtEvDataConnection
     extends BiDirectional<EvDataMessageFromExt, EvDataResponseMessageToExt> {
 
   public ExtEvDataConnection() {
     super();
   }
-
-  /** Actor reference to service that handles ev data within SIMONA */
-  private ActorRef<DataMessageFromExt> dataService;
-
-  /** Actor reference to adapter that handles scheduler control flow in SIMONA */
-  private ActorRef<ControlResponseMessageFromExt> extSimAdapter;
 
   /**
    * Requests currently available evcs charging stations lots from SIMONA. This method blocks until

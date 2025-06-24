@@ -11,6 +11,7 @@ import edu.ie3.datamodel.exceptions.ParsingException;
 import edu.ie3.datamodel.io.factory.EntityData;
 import edu.ie3.datamodel.io.factory.EntityFactory;
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
+import edu.ie3.simona.api.mapping.DataType;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

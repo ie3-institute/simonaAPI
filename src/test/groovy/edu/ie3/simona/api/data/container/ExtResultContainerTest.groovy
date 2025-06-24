@@ -2,6 +2,8 @@ package edu.ie3.simona.api.data.container
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult
+import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -22,6 +24,39 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
             Quantities.getQuantity(0.95, PowerSystemUnits.PU),
             Quantities.getQuantity(45, StandardUnits.VOLTAGE_ANGLE)
     )
+
+    def "ExtResultContainer should return all results correctly"() {
+        given:
+        def expected = [
+                (nodeUuid): nodeResult,
+                (inputUuid): loadResult
+        ]
+
+        def container = new ExtResultContainer(0L, expected)
+
+        expect:
+        container.getResults() == expected
+    }
+
+    def "ExtResultContainer should return specific results correctly"() {
+        given:
+        def expected = [
+                (nodeUuid): nodeResult,
+                (inputUuid): loadResult
+        ]
+
+        def container = new ExtResultContainer(0L, expected)
+
+        when:
+        def nodeResults = container.getResults(NodeResult)
+        def loadResults = container.getResults(LoadResult)
+        def flexOptionsResults = container.getResults(FlexOptionsResult)
+
+        then:
+        nodeResults == [(nodeUuid): nodeResult]
+        loadResults == [(inputUuid): loadResult]
+        flexOptionsResults == [:]
+    }
 
     def "ExtResultContainer should return voltage deviation correctly"() {
         given:

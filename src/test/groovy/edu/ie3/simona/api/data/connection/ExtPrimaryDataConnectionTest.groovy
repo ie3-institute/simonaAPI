@@ -2,9 +2,9 @@ package edu.ie3.simona.api.data.connection
 
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.Value
-import edu.ie3.simona.api.ontology.DataMessageFromExt
-import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.primary.ProvidePrimaryData
+import edu.ie3.simona.api.data.ontology.DataMessageFromExt
+import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
@@ -40,7 +40,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
         def primaryData = Map.of(inputUuid, pValue as Value)
 
         when:
-        extPrimaryDataConnection.provideData(0L, primaryData, Optional.of(900L))
+        extPrimaryDataConnection.sendPrimaryData(0L, primaryData, Optional.of(900L), log)
 
         then:
         dataService.expectMessage(new ProvidePrimaryData(0L, primaryData, Optional.of(900L)))

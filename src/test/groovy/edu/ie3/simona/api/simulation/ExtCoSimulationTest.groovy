@@ -4,6 +4,7 @@ import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.SValue
 import edu.ie3.datamodel.models.value.Value
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,6 +33,15 @@ class ExtCoSimulationTest extends Specification {
         actual.getPrimaryDataAssets() == [uuid1, uuid2]
     }
 
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty primary data connection"() {
+        when:
+        ExtCoSimulation.buildPrimaryConnection([:], log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtPrimaryDataConnection' could not be build!"
+    }
+
     def "An ExtCoSimulation can build an em data connection correctly"() {
         given:
         UUID uuid1 = UUID.randomUUID()
@@ -40,10 +50,19 @@ class ExtCoSimulationTest extends Specification {
         def controlled = [uuid1, uuid2]
 
         when:
-        def actual = ExtCoSimulation.buildEmConnection(controlled, EmMode.SET_POINT, log)
+        def actual = ExtCoSimulation.buildEmConnection(controlled, EmMode.BASE, log)
 
         then:
         actual.getControlledEms() == [uuid1, uuid2]
+    }
+
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty em data connection"() {
+        when:
+        ExtCoSimulation.buildEmConnection([], EmMode.BASE, log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtEmDataConnection' could not be build!"
     }
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
@@ -64,5 +83,14 @@ class ExtCoSimulationTest extends Specification {
         then:
         actual.getGridResultDataAssets() == [uuid1]
         actual.getParticipantResultDataAssets() == [uuid2]
+    }
+
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty result data connection"() {
+        when:
+        ExtCoSimulation.buildResultConnection([:], log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtResultDataConnection' could not be build!"
     }
 }

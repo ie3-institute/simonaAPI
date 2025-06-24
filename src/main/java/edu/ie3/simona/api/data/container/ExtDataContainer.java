@@ -10,10 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Interface for data that are exchanged between an external simulation and SimonaAPI */
-public interface ExtDataContainer {
+public sealed interface ExtDataContainer permits ExtInputContainer, ExtResultContainer {
+
+  /** Returns true, if the container is empty. */
   boolean isEmpty();
 
-  // private helper methods
+  /**
+   * Method to copy a given map and clear the original.
+   *
+   * @param map to be copied and cleared
+   * @return the copy
+   * @param <K> type of key
+   * @param <V> type of value
+   */
   default <K, V> Map<K, V> copyAndClear(Map<K, V> map) {
     Map<K, V> result = new HashMap<>(map);
     map.clear();
