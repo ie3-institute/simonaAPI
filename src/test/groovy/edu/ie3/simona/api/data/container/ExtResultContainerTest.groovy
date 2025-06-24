@@ -1,7 +1,9 @@
-package edu.ie3.simona.api.data.results
+package edu.ie3.simona.api.data.container
 
 import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult
+import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -23,15 +25,46 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
             Quantities.getQuantity(45, StandardUnits.VOLTAGE_ANGLE)
     )
 
+    def "ExtResultContainer should return all results correctly"() {
+        given:
+        def expected = [
+                (nodeUuid): nodeResult,
+                (inputUuid): loadResult
+        ]
+
+        def container = new ExtResultContainer(0L, expected)
+
+        expect:
+        container.getResults() == expected
+    }
+
+    def "ExtResultContainer should return specific results correctly"() {
+        given:
+        def expected = [
+                (nodeUuid): nodeResult,
+                (inputUuid): loadResult
+        ]
+
+        def container = new ExtResultContainer(0L, expected)
+
+        when:
+        def nodeResults = container.getResults(NodeResult)
+        def loadResults = container.getResults(LoadResult)
+        def flexOptionsResults = container.getResults(FlexOptionsResult)
+
+        then:
+        nodeResults == [(nodeUuid): nodeResult]
+        loadResults == [(inputUuid): loadResult]
+        flexOptionsResults == [:]
+    }
+
     def "ExtResultContainer should return voltage deviation correctly"() {
         given:
-        def resultMap = Map.of(
-                "Node", nodeResult
-        )
+        def resultMap = Map.of(nodeUuid, nodeResult)
         def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def calculatedVoltageDeviation = extResultContainer.getVoltageDeviation("Node")
+        def calculatedVoltageDeviation = extResultContainer.getVoltageDeviation(nodeUuid)
 
         then:
         calculatedVoltageDeviation == -0.05d
@@ -39,13 +72,11 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
 
     def "ExtResultContainer should throw an exception, if voltage deviation was requested for a not NodeResult"() {
         given:
-        def resultMap = Map.of(
-                "Load", loadResult
-        )
+        def resultMap = Map.of(inputUuid, loadResult)
         def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        extResultContainer.getVoltageDeviation("Load")
+        extResultContainer.getVoltageDeviation(inputUuid)
 
         then:
         thrown IllegalArgumentException
@@ -53,13 +84,11 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
 
     def "ExtResultContainer should return active power correctly"() {
         given:
-        def resultMap = Map.of(
-                "Load", loadResult
-        )
+        def resultMap = Map.of(inputUuid, loadResult)
         def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def returnedActivePower = extResultContainer.getActivePower("Load")
+        def returnedActivePower = extResultContainer.getActivePower(inputUuid)
 
         then:
         returnedActivePower == 10d
@@ -67,13 +96,11 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
 
     def "ExtResultContainer should return reactive power correctly"() {
         given:
-        def resultMap = Map.of(
-                "Load", loadResult
-        )
+        def resultMap = Map.of(inputUuid, loadResult)
         def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        def returnedReactivePower = extResultContainer.getReactivePower("Load")
+        def returnedReactivePower = extResultContainer.getReactivePower(inputUuid)
 
         then:
         returnedReactivePower == 5d
@@ -82,12 +109,12 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
     def "ExtResultContainer should throw an exception, if active power was requested for a not SystemParticipantResult"() {
         given:
         def resultMap = Map.of(
-                "Node", nodeResult
+                nodeUuid, nodeResult
         )
         def extResultContainer = new ExtResultContainer(0L, resultMap)
 
         when:
-        extResultContainer.getActivePower("Node")
+        extResultContainer.getActivePower(nodeUuid)
 
         then:
         thrown IllegalArgumentException
