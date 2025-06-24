@@ -6,10 +6,10 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
-import edu.ie3.simona.api.data.em.ontology.EmDataResponseMessageToExt;
-import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
+import edu.ie3.simona.api.ontology.em.EmDataMessageFromExt;
+import edu.ie3.simona.api.ontology.em.EmDataResponseMessageToExt;
+import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData;
 import java.util.*;
 import org.slf4j.Logger;
 

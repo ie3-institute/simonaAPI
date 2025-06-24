@@ -1,7 +1,7 @@
 package edu.ie3.simona.api.data.connection
 
 import edu.ie3.datamodel.models.result.NodeResult
-import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
+import edu.ie3.simona.api.ontology.results.ProvideResultEntities
 import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import spock.lang.Specification

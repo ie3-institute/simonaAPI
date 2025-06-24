@@ -7,10 +7,10 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
-import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities;
-import edu.ie3.simona.api.data.results.ontology.RequestResultEntities;
-import edu.ie3.simona.api.data.results.ontology.ResultDataMessageFromExt;
-import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
+import edu.ie3.simona.api.ontology.results.ProvideResultEntities;
+import edu.ie3.simona.api.ontology.results.RequestResultEntities;
+import edu.ie3.simona.api.ontology.results.ResultDataMessageFromExt;
+import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

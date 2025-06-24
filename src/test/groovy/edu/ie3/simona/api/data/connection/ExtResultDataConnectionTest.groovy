@@ -1,10 +1,10 @@
 package edu.ie3.simona.api.data.connection
 
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.data.results.ontology.ProvideResultEntities
-import edu.ie3.simona.api.data.results.ontology.RequestResultEntities
-import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt
+import edu.ie3.simona.api.ontology.DataMessageFromExt
+import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.ontology.results.ProvideResultEntities
+import edu.ie3.simona.api.ontology.results.RequestResultEntities
+import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
