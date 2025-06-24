@@ -1,9 +1,15 @@
 package edu.ie3.simona.api.data.connection
 
-import edu.ie3.simona.api.data.ev.model.EvModel
-import edu.ie3.simona.api.data.ev.ontology.*
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.data.model.ev.EvModel
+import edu.ie3.simona.api.ontology.DataMessageFromExt
+import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.ontology.ev.ProvideArrivingEvs
+import edu.ie3.simona.api.ontology.ev.ProvideCurrentPrices
+import edu.ie3.simona.api.ontology.ev.ProvideDepartingEvs
+import edu.ie3.simona.api.ontology.ev.ProvideEvcsFreeLots
+import edu.ie3.simona.api.ontology.ev.RequestCurrentPrices
+import edu.ie3.simona.api.ontology.ev.RequestDepartingEvs
+import edu.ie3.simona.api.ontology.ev.RequestEvcsFreeLots
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adapted dependabot workflow and added CODEOWNERS [#294](https://github.com/ie3-institute/simonaAPI/issues/294)
 - Refactoring external data connection [#267](https://github.com/ie3-institute/simonaAPI/issues/267)
 - Refactoring data containers [#268](https://github.com/ie3-institute/simonaAPI/issues/268)
+- Refactoring messages [#269](https://github.com/ie3-institute/simonaAPI/issues/269)
+- Refactoring models [#270](https://github.com/ie3-institute/simonaAPI/issues/270)
 
 ## [0.9.0] - 2025-05-09
 

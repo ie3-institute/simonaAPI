@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.ontology.DataResponseMessageToExt;
+import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
 
 /**
  * Interface for a connection between SIMONA and an external simulation with data flow from SIMONA

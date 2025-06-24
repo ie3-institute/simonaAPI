@@ -7,7 +7,7 @@
 package edu.ie3.simona.api.simulation;
 
 import edu.ie3.simona.api.data.connection.ExtDataConnection;
-import edu.ie3.simona.api.simulation.ontology.*;
+import edu.ie3.simona.api.ontology.simulation.*;
 import java.util.Optional;
 import java.util.Set;
 

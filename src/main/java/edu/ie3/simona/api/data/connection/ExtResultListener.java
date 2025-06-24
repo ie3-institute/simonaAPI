@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.results.ontology.ResultDataResponseMessageToExt;
 import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
+import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
