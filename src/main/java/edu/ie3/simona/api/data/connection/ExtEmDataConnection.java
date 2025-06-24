@@ -6,12 +6,14 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.em.ontology.EmDataMessageFromExt;
-import edu.ie3.simona.api.data.em.ontology.EmDataResponseMessageToExt;
-import edu.ie3.simona.api.data.em.ontology.ProvideEmSetPointData;
+import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
-import java.util.*;
+import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
+import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
+import edu.ie3.simona.api.data.model.em.FlexOptions;
 import org.slf4j.Logger;
+
+import java.util.*;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public final class ExtEmDataConnection
