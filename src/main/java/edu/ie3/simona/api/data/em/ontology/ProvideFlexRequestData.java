@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.em.ontology;
 
-import edu.ie3.simona.api.data.em.model.FlexOptionRequest;
+import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

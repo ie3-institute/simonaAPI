@@ -6,34 +6,33 @@
 
 package edu.ie3.simona.api.simulation;
 
-import static java.util.Collections.emptyList;
-
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
-import edu.ie3.simona.api.data.container.ExtInputDataContainer;
+import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
+import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
+import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
+import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtResultContainer;
-import edu.ie3.simona.api.data.em.EmMode;
-import edu.ie3.simona.api.data.em.ExtEmDataConnection;
-import edu.ie3.simona.api.data.em.model.EmSetPoint;
-import edu.ie3.simona.api.data.mapping.DataType;
-import edu.ie3.simona.api.data.primarydata.ExtPrimaryDataConnection;
-import edu.ie3.simona.api.data.results.ExtResultDataConnection;
+import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
-import java.util.*;
+import edu.ie3.simona.api.mapping.DataType;
 import org.slf4j.Logger;
 
+import java.util.*;
+
+import static java.util.Collections.emptyList;
+
 /**
- * Abstract class for an external co-simulation with the structure: external api - ext-co-simulation
- * - ext-simulation - simonaAPI - simona
+ * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
  *
- * <p>It contains all function to transfer primary data and em data to SIMONA and results to the
- * external co-simulation.
+ * <p>It contains functions to simplify the transfer of primary data and em data to SIMONA and
+ * results to the external co-simulation.
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
 
   /** Queue for the data connection from the external co-simulation to SimonaAPI */
-  protected final ExtDataContainerQueue<ExtInputDataContainer> queueToSimona;
+  protected final ExtDataContainerQueue<ExtInputContainer> queueToSimona;
 
   /** Queue for the data connection from SimonaAPI to the external co-simulation */
   protected final ExtDataContainerQueue<ExtResultContainer> queueToExt;
@@ -78,16 +77,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @return an ext em data connection
    */
   public static ExtEmDataConnection buildEmConnection(
-      List<UUID> controlled, EmMode mode, Logger log) {
+      List<UUID> controlled, ExtEmDataConnection.EmMode mode, Logger log) {
     if (controlled.isEmpty()) {
       log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
+      throw new ExtDataConnectionException(ExtEmDataConnection.class);
     } else {
-      log.info("Em data connection with {} controlled entities created.", controlled.size());
+      log.info(
+          "Em data connection with mode '{}' and {} controlled entities created.",
+          mode,
+          controlled.size());
+
+      return new ExtEmDataConnection(controlled, mode);
     }
-
-    log.info("Em mode: {}", mode);
-
-    return new ExtEmDataConnection(controlled, mode);
   }
 
   /**
@@ -118,7 +119,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   private void checkTick(long expectedTick) throws InterruptedException {
-    long dataTick = queueToSimona.takeData(ExtInputDataContainer::getTick);
+    long dataTick = queueToSimona.takeData(ExtInputContainer::getTick);
 
     if (dataTick != expectedTick) {
       throw new RuntimeException(
@@ -140,18 +141,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    */
   protected void sendPrimaryDataToSimona(
-      ExtPrimaryDataConnection extPrimaryDataConnection,
-      long tick,
-      Optional<Long> maybeNextTick,
-      Logger log)
-      throws InterruptedException {
+          ExtPrimaryDataConnection extPrimaryDataConnection,
+          long tick,
+          Optional<Long> maybeNextTick,
+          Logger log)
+          throws InterruptedException {
     checkTick(tick);
-    Map<UUID, Value> inputData = queueToSimona.takeData(ExtInputDataContainer::extractPrimaryData);
+    Map<UUID, Value> inputData = queueToSimona.takeData(ExtInputContainer::extractPrimaryData);
     sendPrimaryDataToSimona(extPrimaryDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**
-   * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}.
+   * Function to send primary data to SIMONA using ExtPrimaryData
    *
    * @param extPrimaryDataConnection the connection to SIMONA
    * @param tick for which data is sent
@@ -202,24 +203,22 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @throws InterruptedException if the fetching of data is interrupted
    */
   protected void sendEmSetPointsToSimona(
-      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
-      throws InterruptedException {
+          ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+          throws InterruptedException {
     checkTick(tick);
     Map<UUID, EmSetPoint> inputData =
-        queueToSimona.takeData(ExtInputDataContainer::extractSetPoints);
+            queueToSimona.takeData(ExtInputContainer::extractSetPoints);
 
     sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**
-   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}.
-   *
-   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
-   * when the next set point arrives.
+   * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
+   * agents have an own scheduler that should know, when the next set point arrives.
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
-   * @param setPoints map: id to value
+   * @param setPoints map: id to set point
    * @param maybeNextTick option for the next tick data is sent
    * @param log logger
    */

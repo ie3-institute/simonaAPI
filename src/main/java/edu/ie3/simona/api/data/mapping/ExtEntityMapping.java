@@ -9,6 +9,9 @@ package edu.ie3.simona.api.data.mapping;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.ie3.simona.api.mapping.DataType;
+import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

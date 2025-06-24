@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.em.ontology;
 
-import edu.ie3.simona.api.data.em.model.EmSetPoint;
+import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

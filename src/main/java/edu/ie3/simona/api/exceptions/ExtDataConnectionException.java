@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.exceptions;
 
-import edu.ie3.simona.api.data.ExtDataConnection;
+import edu.ie3.simona.api.data.connection.ExtDataConnection;
 
 public class ExtDataConnectionException extends RuntimeException {
 

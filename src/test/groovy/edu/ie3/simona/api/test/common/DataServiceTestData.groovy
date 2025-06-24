@@ -18,7 +18,7 @@ trait DataServiceTestData {
     LoadResult loadResult = new LoadResult(
             ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"),
             inputUuid,
-            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN),
-            Quantities.getQuantity(5, StandardUnits.REACTIVE_POWER_IN)
+            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_RESULT),
+            Quantities.getQuantity(5, StandardUnits.REACTIVE_POWER_RESULT)
     )
 }
