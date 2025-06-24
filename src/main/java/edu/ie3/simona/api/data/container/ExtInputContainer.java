@@ -65,7 +65,7 @@ public final class ExtInputContainer implements ExtDataContainer {
     return tick;
   }
 
-  /** Returns an option for the next tick, where data will be provided. */
+  /** Returns an option for the next tick, when data will be provided. */
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }

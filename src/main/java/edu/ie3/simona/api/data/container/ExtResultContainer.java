@@ -27,7 +27,7 @@ public final class ExtResultContainer implements ExtDataContainer {
   /** Tick for which the results are meant for. */
   private final long tick;
 
-  /** Tick where the external simulation can expect the next results from SIMONA. */
+  /** Tick when the external simulation can expect the next results from SIMONA. */
   private final Optional<Long> maybeNextTick;
 
   /**
@@ -94,7 +94,7 @@ public final class ExtResultContainer implements ExtDataContainer {
     return tick;
   }
 
-  /** Returns an option for the next tick, where data will be provided. */
+  /** Returns an option for the next tick, when data will be provided. */
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
   }

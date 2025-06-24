@@ -49,10 +49,9 @@ public final class ExtPrimaryDataConnection
   public void sendPrimaryData(
       long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick, Logger log) {
     if (primaryData.isEmpty()) {
-      log.warn("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
+      log.debug("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with primary data. Data: {}", primaryData);
-
       sendExtMsg(new ProvidePrimaryData(tick, primaryData, maybeNextTick));
     }
   }

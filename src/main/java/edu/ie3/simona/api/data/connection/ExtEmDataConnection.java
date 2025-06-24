@@ -45,7 +45,7 @@ public final class ExtEmDataConnection
   public void sendSetPoints(
       long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick, Logger log) {
     if (setPoints.isEmpty()) {
-      log.warn("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
+      log.debug("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em set points.");
       sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
