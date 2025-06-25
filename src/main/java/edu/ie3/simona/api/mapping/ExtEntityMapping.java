@@ -10,8 +10,6 @@ import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
