@@ -6,9 +6,9 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.ontology.DataMessageFromExt;
-import edu.ie3.simona.api.data.ontology.ScheduleDataServiceMessage;
-import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import edu.ie3.simona.api.ontology.DataMessageFromExt;
+import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage;
+import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt;
 import org.apache.pekko.actor.typed.ActorRef;
 
 /**

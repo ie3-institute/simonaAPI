@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.ev.model.EvModel;
-import edu.ie3.simona.api.data.ev.ontology.*;
+import edu.ie3.simona.api.data.model.ev.EvModel;
+import edu.ie3.simona.api.ontology.ev.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

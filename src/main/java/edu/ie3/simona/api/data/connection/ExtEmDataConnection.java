@@ -8,6 +8,10 @@ package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
+import edu.ie3.simona.api.ontology.em.EmDataMessageFromExt;
+import edu.ie3.simona.api.ontology.em.EmDataResponseMessageToExt;
+import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData;
+import java.util.*;
 import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;

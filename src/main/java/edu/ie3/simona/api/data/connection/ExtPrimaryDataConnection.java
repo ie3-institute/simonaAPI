@@ -7,8 +7,8 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.primarydata.ontology.PrimaryDataMessageFromExt;
-import edu.ie3.simona.api.data.primarydata.ontology.ProvidePrimaryData;
+import edu.ie3.simona.api.ontology.primary.PrimaryDataMessageFromExt;
+import edu.ie3.simona.api.ontology.primary.ProvidePrimaryData;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
