@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

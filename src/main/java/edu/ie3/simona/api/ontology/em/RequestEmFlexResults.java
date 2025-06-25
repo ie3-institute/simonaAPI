@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.em.ontology;
+package edu.ie3.simona.api.ontology.em;
 
 import java.util.List;
 import java.util.UUID;

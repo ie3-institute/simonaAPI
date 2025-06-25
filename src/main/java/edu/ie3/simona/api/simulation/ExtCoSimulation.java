@@ -6,6 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
+import static java.util.Collections.emptyList;
+
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
@@ -17,11 +19,8 @@ import edu.ie3.simona.api.data.container.ExtResultContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
-import org.slf4j.Logger;
-
 import java.util.*;
-
-import static java.util.Collections.emptyList;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -141,11 +140,11 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @param log logger
    */
   protected void sendPrimaryDataToSimona(
-          ExtPrimaryDataConnection extPrimaryDataConnection,
-          long tick,
-          Optional<Long> maybeNextTick,
-          Logger log)
-          throws InterruptedException {
+      ExtPrimaryDataConnection extPrimaryDataConnection,
+      long tick,
+      Optional<Long> maybeNextTick,
+      Logger log)
+      throws InterruptedException {
     checkTick(tick);
     Map<UUID, Value> inputData = queueToSimona.takeData(ExtInputContainer::extractPrimaryData);
     sendPrimaryDataToSimona(extPrimaryDataConnection, tick, inputData, maybeNextTick, log);
@@ -203,11 +202,10 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @throws InterruptedException if the fetching of data is interrupted
    */
   protected void sendEmSetPointsToSimona(
-          ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
-          throws InterruptedException {
+      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
+      throws InterruptedException {
     checkTick(tick);
-    Map<UUID, EmSetPoint> inputData =
-            queueToSimona.takeData(ExtInputContainer::extractSetPoints);
+    Map<UUID, EmSetPoint> inputData = queueToSimona.takeData(ExtInputContainer::extractSetPoints);
 
     sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }

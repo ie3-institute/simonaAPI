@@ -7,13 +7,12 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.value.PValue;
-import tech.units.indriya.ComparableQuantity;
-
-import javax.measure.quantity.Power;
-import javax.measure.quantity.Time;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import javax.measure.quantity.Power;
+import javax.measure.quantity.Time;
+import tech.units.indriya.ComparableQuantity;
 
 /** Energy management set point that will be sent to SIMONA. */
 public final class EmSetPoint {

@@ -6,18 +6,13 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.data.em.ontology.*;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
-import edu.ie3.simona.api.ontology.em.EmDataMessageFromExt;
-import edu.ie3.simona.api.ontology.em.EmDataResponseMessageToExt;
-import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData;
-import java.util.*;
 import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
-import org.slf4j.Logger;
-
+import edu.ie3.simona.api.ontology.em.*;
 import java.util.*;
+import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public final class ExtEmDataConnection
@@ -49,7 +44,7 @@ public final class ExtEmDataConnection
    * @param log logger
    */
   public void sendFlexRequests(
-          long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
       log.warn("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
@@ -67,7 +62,7 @@ public final class ExtEmDataConnection
    * @param log logger
    */
   public void sendFlexOptions(
-          long tick, Map<UUID, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<UUID, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
       log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
@@ -103,7 +98,7 @@ public final class ExtEmDataConnection
    * @throws InterruptedException - on interruptions
    */
   public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(
-          long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
+      long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
     sendExtMsg(new RequestEmFlexResults(tick, emEntities, disaggregated));
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }

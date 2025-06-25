@@ -4,14 +4,12 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.data.mapping;
+package edu.ie3.simona.api.mapping;
 
+import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import edu.ie3.simona.api.mapping.DataType;
-import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
