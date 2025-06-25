@@ -6,13 +6,74 @@
 
 package edu.ie3.simona.api.data.model.em;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import javax.measure.quantity.Time;
+import tech.units.indriya.ComparableQuantity;
 
-/**
- * Flex option request that will be sent to SIMONA.
- *
- * @param receiver uuid of the agent, that will receive the request
- * @param sender option for the uuid of the agent, that sent the request
- */
-public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {}
+/** Energy management flex option request that will be sent to SIMONA. */
+public final class FlexOptionRequest extends EmMessageBase {
+
+  /** The sender of the request. */
+  public final Optional<UUID> sender;
+
+  /**
+   * Constructor for {@link FlexOptionRequest}. Equals {@code new FlexOptionRequest(receiver,
+   * Optional.empty())}.
+   *
+   * @param receiver of the request
+   */
+  public FlexOptionRequest(UUID receiver) {
+    this(receiver, Optional.empty());
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   */
+  public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
+    super(receiver);
+    this.sender = sender;
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   * @param delay option for the delay of this message
+   */
+  public FlexOptionRequest(
+      UUID receiver, Optional<UUID> sender, Optional<ComparableQuantity<Time>> delay) {
+    super(receiver, delay);
+    this.sender = sender;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    FlexOptionRequest that = (FlexOptionRequest) o;
+    return Objects.equals(sender, that.sender);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), delay);
+  }
+
+  @Override
+  public String toString() {
+    return "FlexOptionRequest{"
+        + "receiver="
+        + receiver
+        + ", sender="
+        + sender
+        + ", delay="
+        + delay
+        + '}';
+  }
+}

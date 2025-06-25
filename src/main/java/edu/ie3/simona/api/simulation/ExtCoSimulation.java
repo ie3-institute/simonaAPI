@@ -19,10 +19,7 @@ import edu.ie3.simona.api.data.container.ExtResultContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import org.slf4j.Logger;
 
 /**
@@ -59,7 +56,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @return an ext primary data connection
    */
   public static ExtPrimaryDataConnection buildPrimaryConnection(
-      Map<UUID, Class<Value>> assetToValueClasses, Logger log) {
+      Map<UUID, Class<? extends Value>> assetToValueClasses, Logger log) {
 
     if (assetToValueClasses.isEmpty()) {
       log.warn("No primary data connection was created.");
@@ -120,6 +117,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
   }
 
+  // primary data methods
+
   /**
    * Function to send primary data to SIMONA using ExtPrimaryData
    *
@@ -141,6 +140,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Provided Primary Data to SIMONA!");
   }
 
+  // energy management data methods
+
   /**
    * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
    * agents have an own scheduler that should know, when the next set point arrives.
@@ -161,6 +162,8 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
     log.debug("Provided em set points to SIMONA!");
   }
+
+  // result data methods
 
   /**
    * Function to get result data from SIMONA using the available {@link ExtResultDataConnection}

@@ -7,9 +7,10 @@
 package edu.ie3.simona.api.data.connection;
 
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
-import edu.ie3.simona.api.ontology.em.EmDataMessageFromExt;
-import edu.ie3.simona.api.ontology.em.EmDataResponseMessageToExt;
-import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData;
+import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
+import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
+import edu.ie3.simona.api.data.model.em.FlexOptions;
+import edu.ie3.simona.api.ontology.em.*;
 import java.util.*;
 import org.slf4j.Logger;
 
@@ -35,10 +36,46 @@ public final class ExtEmDataConnection
   }
 
   /**
+   * Sends the em flex requests to SIMONA.
+   *
+   * @param tick current tick
+   * @param data receiver to flex request, that should be sent to SIMONA
+   * @param maybeNextTick option for the next tick in the simulation
+   * @param log logger
+   */
+  public void sendFlexRequests(
+      long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
+    if (data.isEmpty()) {
+      log.debug("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
+    } else {
+      log.debug("Provided SIMONA with em flex requests.");
+      sendExtMsg(new ProvideFlexRequestData(tick, data, maybeNextTick));
+    }
+  }
+
+  /**
+   * Sends the em flex options to SIMONA.
+   *
+   * @param tick current tick
+   * @param data receiver to flex options, that should be sent to SIMONA
+   * @param maybeNextTick option for the next tick in the simulation
+   * @param log logger
+   */
+  public void sendFlexOptions(
+      long tick, Map<UUID, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
+    if (data.isEmpty()) {
+      log.debug("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
+    } else {
+      log.debug("Provided SIMONA with em flex options.");
+      sendExtMsg(new ProvideEmFlexOptionData(tick, data, maybeNextTick));
+    }
+  }
+
+  /**
    * Sends the em set points to SIMONA.
    *
    * @param tick current tick
-   * @param setPoints to be sent
+   * @param setPoints receiver to set point, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
@@ -50,6 +87,31 @@ public final class ExtEmDataConnection
       log.debug("Provided SIMONA with em set points.");
       sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
     }
+  }
+
+  /**
+   * Method to request em flexibility options from SIMONA.
+   *
+   * @param tick for which set points are requested
+   * @param emEntities for which set points are requested
+   * @return an {@link FlexOptionsResponse} message
+   * @throws InterruptedException - on interruptions
+   */
+  public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(
+      long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
+    sendExtMsg(new RequestEmFlexResults(tick, emEntities, disaggregated));
+    return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
+  }
+
+  /**
+   * Method to request the completion of the em service in SIMONA for the given tick.
+   *
+   * @param tick for which the em service should stop
+   * @return an option for the next tick in SIMONA
+   */
+  public Optional<Long> requestCompletion(long tick) throws InterruptedException {
+    sendExtMsg(new RequestEmCompletion(tick));
+    return receiveWithType(EmCompletion.class).maybeNextTick();
   }
 
   /** Mode of the em connection */
