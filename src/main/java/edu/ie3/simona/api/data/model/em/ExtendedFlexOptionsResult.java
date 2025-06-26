@@ -10,6 +10,8 @@ import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import java.time.ZonedDateTime;
 import java.util.*;
 import javax.measure.quantity.Power;
+
+import org.slf4j.Logger;
 import tech.units.indriya.ComparableQuantity;
 
 /**
@@ -67,6 +69,66 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
     super(time, sender, pRef, pMin, pMax);
     this.receiver = receiver;
     this.disaggregated = disaggregated;
+  }
+
+  public boolean validate(Logger log) {
+    List<ComparableQuantity<Power>> refs = new ArrayList<>();
+    List<ComparableQuantity<Power>> mins = new ArrayList<>();
+    List<ComparableQuantity<Power>> maxs = new ArrayList<>();
+
+    disaggregated.forEach((uuid, flexOptionsResult) -> {
+      refs.add(flexOptionsResult.getpRef());
+      mins.add(flexOptionsResult.getpMin());
+      maxs.add(flexOptionsResult.getpMax());
+    });
+
+    ComparableQuantity<Power> ref = getpRef();
+    ComparableQuantity<Power> min = getpMin();
+    ComparableQuantity<Power> max = getpMax();
+
+    Optional<ComparableQuantity<Power>> refSum = refs.stream().reduce(ComparableQuantity::add);
+    Optional<ComparableQuantity<Power>> minSum = mins.stream().reduce(ComparableQuantity::add);
+    Optional<ComparableQuantity<Power>> maxSum = maxs.stream().reduce(ComparableQuantity::add);
+
+    boolean isRefValid = false;
+    boolean isMinValid = false;
+    boolean isMaxValid = false;
+
+    if (refSum.isPresent()) {
+      isRefValid = refSum.get() != ref;
+      
+      if (!isRefValid) {
+        log.warn("Disaggregated reference power does not match total reference power.");
+      }
+    } else {
+      log.warn("Cannot check disaggregated reference power.");
+    }
+
+    if (minSum.isPresent()) {
+      isMinValid = minSum.get() != min;
+
+      if (!isMinValid) {
+        log.warn("Disaggregated minimum power does not match total minimum power.");
+      }
+    } else {
+      log.warn("Cannot check disaggregated minimum power.");
+    }
+
+    if (maxSum.isPresent()) {
+      isMaxValid = maxSum.get() != max;
+
+      if (!isMaxValid) {
+        log.warn("Disaggregated maximum power does not match total maximum power.");
+      }
+    } else {
+      log.warn("Cannot check disaggregated maximum power.");
+    }
+
+    return isRefValid  && isMinValid && isMaxValid;
+  }
+
+  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
+    this.disaggregated.put(uuid, flexOptionsResult);
   }
 
   /** Returns the uuid of the sender ({@link #getInputModel()}) of the results. */
