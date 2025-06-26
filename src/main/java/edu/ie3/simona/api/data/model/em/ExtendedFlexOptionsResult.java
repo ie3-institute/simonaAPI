@@ -8,10 +8,7 @@ package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
@@ -95,6 +92,20 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
    */
   public Map<UUID, FlexOptionsResult> getDisaggregated() {
     return Collections.unmodifiableMap(disaggregated);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ExtendedFlexOptionsResult that = (ExtendedFlexOptionsResult) o;
+    return Objects.equals(receiver, that.receiver)
+        && Objects.equals(disaggregated, that.disaggregated);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), receiver, disaggregated);
   }
 
   @Override

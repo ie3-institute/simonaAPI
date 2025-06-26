@@ -66,7 +66,7 @@ public final class FlexOptions extends EmMessageBase {
    * @param pRef current active power
    * @param pMin minimal active power
    * @param pMax maximal active power
-   * @param delay the delay of the message
+   * @param delay option for the delay of the message
    */
   public FlexOptions(
       UUID receiver,

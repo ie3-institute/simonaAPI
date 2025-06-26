@@ -58,7 +58,7 @@ public final class EmSetPoint extends EmMessageBase {
    * Constructor for {@link EmSetPoint}.
    *
    * @param receiver of the set point.
-   * @param power value of the set point
+   * @param power option for the set point
    * @param delay option for the delay of this message
    */
   public EmSetPoint(

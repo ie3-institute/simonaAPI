@@ -57,6 +57,18 @@ public final class FlexOptionRequest extends EmMessageBase {
    * @param sender of the request
    * @param delay option for the delay of this message
    */
+  public FlexOptionRequest(UUID receiver, UUID sender, Optional<ComparableQuantity<Time>> delay) {
+    super(receiver, delay);
+    this.sender = Optional.ofNullable(sender);
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender option for the sender of the request
+   * @param delay option for the delay of this message
+   */
   public FlexOptionRequest(
       UUID receiver, Optional<UUID> sender, Optional<ComparableQuantity<Time>> delay) {
     super(receiver, delay);

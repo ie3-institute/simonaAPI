@@ -8,10 +8,7 @@ package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /** Em flex request result. */
 public final class FlexOptionRequestResult extends ResultEntity {
@@ -42,6 +39,19 @@ public final class FlexOptionRequestResult extends ResultEntity {
    */
   public List<UUID> getReceivers() {
     return receivers;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    FlexOptionRequestResult that = (FlexOptionRequestResult) o;
+    return Objects.equals(receivers, that.receivers);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), receivers);
   }
 
   @Override
