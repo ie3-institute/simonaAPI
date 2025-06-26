@@ -19,7 +19,6 @@ public final class EmSetPoint extends EmMessageBase {
 
   /** An option for the em set point. */
   public final Optional<PValue> power;
-  public final Optional<ComparableQuantity<Time>> delay;
 
   /**
    * Constructor for {@link EmSetPoint}.
@@ -31,7 +30,6 @@ public final class EmSetPoint extends EmMessageBase {
   public EmSetPoint(UUID receiver) {
     super(receiver);
     this.power = Optional.empty();
-    this.delay = Optional.empty();
   }
 
   /**
@@ -43,7 +41,6 @@ public final class EmSetPoint extends EmMessageBase {
   public EmSetPoint(UUID receiver, ComparableQuantity<Power> p) {
     super(receiver);
     this.power = Optional.of(new PValue(p));
-    this.delay = Optional.empty();
   }
 
   /**
@@ -55,14 +52,6 @@ public final class EmSetPoint extends EmMessageBase {
   public EmSetPoint(UUID receiver, PValue power) {
     super(receiver);
     this.power = Optional.of(power);
-    this.delay = Optional.empty();
-  }
-
-  public EmSetPoint(
-      UUID receiver, Optional<PValue> power, Optional<ComparableQuantity<Time>> delay) {
-    this.receiver = receiver;
-    this.power = power;
-    this.delay = delay;
   }
 
   /**

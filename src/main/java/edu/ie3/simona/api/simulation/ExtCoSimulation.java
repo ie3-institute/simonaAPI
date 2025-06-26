@@ -117,38 +117,38 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     }
   }
 
-    private void checkTick(long expectedTick) throws InterruptedException {
-        long dataTick = queueToSimona.takeData(ExtInputContainer::getTick);
+  private void checkTick(long expectedTick) throws InterruptedException {
+    long dataTick = queueToSimona.takeData(ExtInputContainer::getTick);
 
-        if (dataTick != expectedTick) {
-            throw new RuntimeException(
-                    String.format(
-                            "Provided input data for tick %d, but SIMONA expects input data for tick %d",
-                            dataTick, expectedTick));
-        }
+    if (dataTick != expectedTick) {
+      throw new RuntimeException(
+          String.format(
+              "Provided input data for tick %d, but SIMONA expects input data for tick %d",
+              dataTick, expectedTick));
     }
+  }
 
   // primary data methods
 
-    /**
-     * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}. This
-     * method will take a value from the {@link #queueToSimona}.
-     *
-     * @param extPrimaryDataConnection the connection to SIMONA
-     * @param tick for which data is sent
-     * @param maybeNextTick option for the next tick data is sent
-     * @param log logger
-     */
-    protected void sendPrimaryDataToSimona(
-            ExtPrimaryDataConnection extPrimaryDataConnection,
-            long tick,
-            Optional<Long> maybeNextTick,
-            Logger log)
-            throws InterruptedException {
-        checkTick(tick);
-        Map<UUID, Value> inputData = queueToSimona.takeData(ExtInputContainer::extractPrimaryData);
-        sendPrimaryDataToSimona(extPrimaryDataConnection, tick, inputData, maybeNextTick, log);
-    }
+  /**
+   * Function to send primary data to SIMONA using the given {@link ExtPrimaryDataConnection}. This
+   * method will take a value from the {@link #queueToSimona}.
+   *
+   * @param extPrimaryDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param maybeNextTick option for the next tick data is sent
+   * @param log logger
+   */
+  protected void sendPrimaryDataToSimona(
+      ExtPrimaryDataConnection extPrimaryDataConnection,
+      long tick,
+      Optional<Long> maybeNextTick,
+      Logger log)
+      throws InterruptedException {
+    checkTick(tick);
+    Map<UUID, Value> inputData = queueToSimona.takeData(ExtInputContainer::extractPrimaryData);
+    sendPrimaryDataToSimona(extPrimaryDataConnection, tick, inputData, maybeNextTick, log);
+  }
 
   /**
    * Function to send primary data to SIMONA using ExtPrimaryData
