@@ -14,14 +14,27 @@ import javax.measure.quantity.Time;
 import tech.units.indriya.ComparableQuantity;
 
 /** Flex option that will be sent to SIMONA. */
-public final class FlexOptions {
+public final class FlexOptions extends EmMessageBase {
 
-  public final UUID receiver;
+  /** The sender of the request. */
   public final UUID sender;
+
+  /** Active power (might be negative, thus feed-in) that was suggested for regular usage. */
   public final ComparableQuantity<Power> pRef;
+
+  /**
+   * Minimal active power to which the sender can be reduced (might be negative, thus feed-in), that
+   * was determined by the system. Therefore equates to lower bound of possible flexibility
+   * provision.
+   */
   public final ComparableQuantity<Power> pMin;
+
+  /**
+   * Maximum active power to which the sender can be increased (might be negative, thus feed-in),
+   * that was determined by the system. Therefore equates to upper bound of possible flexibility
+   * provision.
+   */
   public final ComparableQuantity<Power> pMax;
-  public final Optional<ComparableQuantity<Time>> delay;
 
   /**
    * Flex option that will be sent to SIMONA.
@@ -38,12 +51,11 @@ public final class FlexOptions {
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax) {
-    this.receiver = receiver;
+    super(receiver);
     this.sender = sender;
     this.pRef = pRef;
     this.pMin = pMin;
     this.pMax = pMax;
-    this.delay = Optional.empty();
   }
 
   /**
@@ -54,7 +66,7 @@ public final class FlexOptions {
    * @param pRef current active power
    * @param pMin minimal active power
    * @param pMax maximal active power
-   * @param delay the delay of the message
+   * @param delay option for the delay of the message
    */
   public FlexOptions(
       UUID receiver,
@@ -63,29 +75,27 @@ public final class FlexOptions {
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax,
       Optional<ComparableQuantity<Time>> delay) {
-    this.receiver = receiver;
+    super(receiver, delay);
     this.sender = sender;
     this.pRef = pRef;
     this.pMin = pMin;
     this.pMax = pMax;
-    this.delay = delay;
   }
 
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
     FlexOptions that = (FlexOptions) o;
-    return Objects.equals(receiver, that.receiver)
-        && Objects.equals(sender, that.sender)
+    return Objects.equals(sender, that.sender)
         && Objects.equals(pRef, that.pRef)
         && Objects.equals(pMin, that.pMin)
-        && Objects.equals(pMax, that.pMax)
-        && Objects.equals(delay, that.delay);
+        && Objects.equals(pMax, that.pMax);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(receiver, sender, pRef, pMin, pMax, delay);
+    return Objects.hash(super.hashCode(), sender, pRef, pMin, pMax);
   }
 
   @Override

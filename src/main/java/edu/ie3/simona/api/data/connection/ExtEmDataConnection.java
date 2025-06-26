@@ -39,14 +39,14 @@ public final class ExtEmDataConnection
    * Sends the em flex requests to SIMONA.
    *
    * @param tick current tick
-   * @param data to be sent
+   * @param data receiver to flex request, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
   public void sendFlexRequests(
       long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
-      log.warn("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
+      log.debug("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex requests.");
       sendExtMsg(new ProvideFlexRequestData(tick, data, maybeNextTick));
@@ -57,14 +57,14 @@ public final class ExtEmDataConnection
    * Sends the em flex options to SIMONA.
    *
    * @param tick current tick
-   * @param data to be sent
+   * @param data receiver to flex options, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
   public void sendFlexOptions(
       long tick, Map<UUID, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
     if (data.isEmpty()) {
-      log.warn("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
+      log.debug("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex options.");
       sendExtMsg(new ProvideEmFlexOptionData(tick, data, maybeNextTick));
@@ -75,7 +75,7 @@ public final class ExtEmDataConnection
    * Sends the em set points to SIMONA.
    *
    * @param tick current tick
-   * @param setPoints to be sent
+   * @param setPoints receiver to set point, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
    * @param log logger
    */
@@ -103,8 +103,15 @@ public final class ExtEmDataConnection
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
 
-  public void requestCompletion(long tick) {
+  /**
+   * Method to request the completion of the em service in SIMONA for the given tick.
+   *
+   * @param tick for which the em service should stop
+   * @return an option for the next tick in SIMONA
+   */
+  public Optional<Long> requestCompletion(long tick) throws InterruptedException {
     sendExtMsg(new RequestEmCompletion(tick));
+    return receiveWithType(EmCompletion.class).maybeNextTick();
   }
 
   /** Mode of the em connection */

@@ -14,25 +14,35 @@ import java.util.Objects;
 import java.util.UUID;
 
 /** Em set point result. */
-public class EmSetPointResult extends ResultEntity {
+public final class EmSetPointResult extends ResultEntity {
 
   private final Map<UUID, PValue> receiverToSetPoints;
 
+  /**
+   * Basic constructor of an em set point result.
+   *
+   * @param time date and time when the result is produced
+   * @param sender uuid of the sending model
+   * @param receiverToSetPoints map: uuid to set point
+   */
   public EmSetPointResult(ZonedDateTime time, UUID sender, Map<UUID, PValue> receiverToSetPoints) {
     super(time, sender);
     this.receiverToSetPoints = receiverToSetPoints;
   }
 
+  /** Returns the sender of the results. */
   public UUID getSender() {
     return getInputModel();
   }
 
+  /** Returns the mapped (receiver to set point) set point. */
   public Map<UUID, PValue> getReceiverToSetPoint() {
     return receiverToSetPoints;
   }
 
   @Override
   public boolean equals(Object o) {
+    if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     EmSetPointResult that = (EmSetPointResult) o;

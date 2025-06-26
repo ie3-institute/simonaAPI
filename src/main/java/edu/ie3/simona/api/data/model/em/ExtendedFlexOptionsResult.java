@@ -8,17 +8,20 @@ package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
-public class ExtendedFlexOptionsResult extends FlexOptionsResult {
+/**
+ * Extended {@link FlexOptionsResult}, that contains the receiver of the flex options. This models
+ * may also contain a disaggregation of the total flex options.
+ */
+public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
 
+  /** The receiver of the message. */
   private final UUID receiver;
 
+  /** The disaggregated flex option results. */
   private final Map<UUID, FlexOptionsResult> disaggregated;
 
   /**
@@ -66,24 +69,43 @@ public class ExtendedFlexOptionsResult extends FlexOptionsResult {
     this.disaggregated = disaggregated;
   }
 
-  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
-    this.disaggregated.put(uuid, flexOptionsResult);
-  }
-
+  /** Returns the uuid of the sender ({@link #getInputModel()}) of the results. */
   public UUID getSender() {
     return getInputModel();
   }
 
+  /** Returns the uuid of the receiver. */
   public UUID getReceiver() {
     return receiver;
   }
 
+  /** Returns {@code true}, if disaggregated flex option are available. */
   public boolean hasDisaggregated() {
     return !disaggregated.isEmpty();
   }
 
+  /**
+   * Returns a map: uuid to disaggregated flex options.
+   *
+   * <p>Note: If no disaggregated flex options are present (see: {@link #hasDisaggregated()}), the
+   * map will be empty.
+   */
   public Map<UUID, FlexOptionsResult> getDisaggregated() {
     return Collections.unmodifiableMap(disaggregated);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ExtendedFlexOptionsResult that = (ExtendedFlexOptionsResult) o;
+    return Objects.equals(receiver, that.receiver)
+        && Objects.equals(disaggregated, that.disaggregated);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), receiver, disaggregated);
   }
 
   @Override

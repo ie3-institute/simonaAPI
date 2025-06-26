@@ -12,37 +12,80 @@ import java.util.UUID;
 import javax.measure.quantity.Time;
 import tech.units.indriya.ComparableQuantity;
 
-public final class FlexOptionRequest {
+/** Energy management flex option request that will be sent to SIMONA. */
+public final class FlexOptionRequest extends EmMessageBase {
 
-  public final UUID receiver;
+  /** The sender of the request. */
   public final Optional<UUID> sender;
-  public final Optional<ComparableQuantity<Time>> delay;
 
-  public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
-    this.receiver = receiver;
-    this.sender = sender;
-    this.delay = Optional.empty();
+  /**
+   * Constructor for {@link FlexOptionRequest}. Equals {@code new FlexOptionRequest(receiver,
+   * Optional.empty())}.
+   *
+   * @param receiver of the request
+   */
+  public FlexOptionRequest(UUID receiver) {
+    this(receiver, Optional.empty());
   }
 
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   */
+  public FlexOptionRequest(UUID receiver, UUID sender) {
+    super(receiver);
+    this.sender = Optional.ofNullable(sender);
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   */
+  public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
+    super(receiver);
+    this.sender = sender;
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   * @param delay option for the delay of this message
+   */
+  public FlexOptionRequest(UUID receiver, UUID sender, Optional<ComparableQuantity<Time>> delay) {
+    super(receiver, delay);
+    this.sender = Optional.ofNullable(sender);
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender option for the sender of the request
+   * @param delay option for the delay of this message
+   */
   public FlexOptionRequest(
       UUID receiver, Optional<UUID> sender, Optional<ComparableQuantity<Time>> delay) {
-    this.receiver = receiver;
+    super(receiver, delay);
     this.sender = sender;
-    this.delay = delay;
   }
 
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
     FlexOptionRequest that = (FlexOptionRequest) o;
-    return Objects.equals(receiver, that.receiver)
-        && Objects.equals(sender, that.sender)
-        && Objects.equals(delay, that.delay);
+    return Objects.equals(sender, that.sender);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(receiver, sender, delay);
+    return Objects.hash(super.hashCode(), delay);
   }
 
   @Override

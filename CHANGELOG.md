@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Added
+- Added support for external em communication [#304](https://github.com/ie3-institute/simonaAPI/issues/304)
+
 ### Changed
 - Removed Jenkinsfile [#290](https://github.com/ie3-institute/simonaAPI/issues/290)
 - Adapted dependabot workflow and added CODEOWNERS [#294](https://github.com/ie3-institute/simonaAPI/issues/294)
