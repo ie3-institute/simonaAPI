@@ -34,6 +34,17 @@ public final class FlexOptionRequest extends EmMessageBase {
    * @param receiver of the request
    * @param sender of the request
    */
+  public FlexOptionRequest(UUID receiver, UUID sender) {
+    super(receiver);
+    this.sender = Optional.ofNullable(sender);
+  }
+
+  /**
+   * Constructor for {@link FlexOptionRequest}.
+   *
+   * @param receiver of the request
+   * @param sender of the request
+   */
   public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
     super(receiver);
     this.sender = sender;

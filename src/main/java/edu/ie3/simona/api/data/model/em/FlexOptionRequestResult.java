@@ -23,12 +23,17 @@ public final class FlexOptionRequestResult extends ResultEntity {
    * Constructor of a {@link FlexOptionRequest}.
    *
    * @param time date and time when the result is produced
-   * @param inputModel uuid of the input model that produces the result
+   * @param sender uuid of the input model that produces the result
    * @param receivers a collection of receivers
    */
-  public FlexOptionRequestResult(ZonedDateTime time, UUID inputModel, Collection<UUID> receivers) {
-    super(time, inputModel);
+  public FlexOptionRequestResult(ZonedDateTime time, UUID sender, Collection<UUID> receivers) {
+    super(time, sender);
     this.receivers = new ArrayList<>(receivers);
+  }
+
+  /** Returns the uuid of the sender. */
+  public UUID getSender() {
+    return getInputModel();
   }
 
   /**

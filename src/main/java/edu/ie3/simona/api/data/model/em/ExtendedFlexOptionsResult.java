@@ -72,16 +72,6 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
     this.disaggregated = disaggregated;
   }
 
-  /**
-   * Method for adding partial flex options.
-   *
-   * @param uuid of the model, that provides the flex options
-   * @param flexOptionsResult the flex option of the model
-   */
-  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
-    this.disaggregated.put(uuid, flexOptionsResult);
-  }
-
   /** Returns the uuid of the sender ({@link #getInputModel()}) of the results. */
   public UUID getSender() {
     return getInputModel();
