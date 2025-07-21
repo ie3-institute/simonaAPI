@@ -12,9 +12,7 @@ import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
 import edu.ie3.simona.api.ontology.em.*;
 import java.util.*;
-import javax.measure.quantity.Time;
 import org.slf4j.Logger;
-import tech.units.indriya.ComparableQuantity;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public final class ExtEmDataConnection
@@ -25,33 +23,16 @@ public final class ExtEmDataConnection
   /** Assets that are controlled by external simulation */
   private final List<UUID> controlled;
 
-  private final Optional<ComparableQuantity<Time>> maxDelay;
-
   public ExtEmDataConnection(List<UUID> controlled, EmMode mode) {
     super();
 
     this.mode = mode;
     this.controlled = controlled;
-    this.maxDelay = Optional.empty();
-  }
-
-  public ExtEmDataConnection(
-      List<UUID> controlled, EmMode mode, Optional<ComparableQuantity<Time>> maxDelay) {
-    super();
-
-    this.mode = mode;
-    this.controlled = controlled;
-    this.maxDelay = maxDelay;
   }
 
   /** Returns a list of the uuids of the em agents that expect external set points */
   public List<UUID> getControlledEms() {
     return new ArrayList<>(controlled);
-  }
-
-  /** Returns the maximal delay, that is allowed for a message when using the em communication. */
-  public Optional<ComparableQuantity<Time>> getMaxDelay() {
-    return maxDelay;
   }
 
   /**

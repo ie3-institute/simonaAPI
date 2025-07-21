@@ -7,19 +7,18 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.value.PValue;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.measure.quantity.Power;
-import javax.measure.quantity.Time;
 import tech.units.indriya.ComparableQuantity;
 
-/** Energy management set point that will be sent to SIMONA. */
-public final class EmSetPoint extends EmMessageBase {
-
-  /** An option for the em set point. */
-  public final Optional<PValue> power;
-
+/**
+ * Energy management set point that will be sent to SIMONA
+ *
+ * @param receiver The receiver of the message.
+ * @param power An option for the em set point.
+ */
+public record EmSetPoint(UUID receiver, Optional<PValue> power) {
   /**
    * Constructor for {@link EmSetPoint}.
    *
@@ -28,8 +27,7 @@ public final class EmSetPoint extends EmMessageBase {
    * @param receiver of the set point.
    */
   public EmSetPoint(UUID receiver) {
-    super(receiver);
-    this.power = Optional.empty();
+    this(receiver, Optional.empty());
   }
 
   /**
@@ -39,8 +37,7 @@ public final class EmSetPoint extends EmMessageBase {
    * @param p power value of the set point
    */
   public EmSetPoint(UUID receiver, ComparableQuantity<Power> p) {
-    super(receiver);
-    this.power = Optional.of(new PValue(p));
+    this(receiver, Optional.of(new PValue(p)));
   }
 
   /**
@@ -50,38 +47,6 @@ public final class EmSetPoint extends EmMessageBase {
    * @param power value of the set point
    */
   public EmSetPoint(UUID receiver, PValue power) {
-    super(receiver);
-    this.power = Optional.of(power);
-  }
-
-  /**
-   * Constructor for {@link EmSetPoint}.
-   *
-   * @param receiver of the set point.
-   * @param power option for the set point
-   * @param delay option for the delay of this message
-   */
-  public EmSetPoint(
-      UUID receiver, Optional<PValue> power, Optional<ComparableQuantity<Time>> delay) {
-    super(receiver, delay);
-    this.power = power;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    EmSetPoint that = (EmSetPoint) o;
-    return Objects.equals(power, that.power);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), power);
-  }
-
-  @Override
-  public String toString() {
-    return "EmSetPoint{" + "receiver=" + receiver + ", power=" + power + ", delay=" + delay + '}';
+    this(receiver, Optional.ofNullable(power));
   }
 }

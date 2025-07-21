@@ -25,11 +25,9 @@ class EmSetPointTest extends Specification {
         then:
         setPoint.receiver == receiverUuid
         setPoint.power == Optional.empty()
-        setPoint.delay == Optional.empty()
-        !setPoint.hasDelay()
     }
 
-    def "An EmSetPoint can be constructed without delay correctly"() {
+    def "An EmSetPoint can be constructed correctly"() {
         given:
         def pValue = new PValue(power)
 
@@ -40,28 +38,9 @@ class EmSetPointTest extends Specification {
         then:
         setPoint1.receiver == receiverUuid
         setPoint1.power == Optional.of(pValue)
-        setPoint1.delay == Optional.empty()
-        !setPoint1.hasDelay()
 
         setPoint2.receiver == receiverUuid
         setPoint2.power == Optional.of(pValue)
-        setPoint2.delay == Optional.empty()
-        !setPoint2.hasDelay()
-    }
-
-    def "An EmSetPoint can be constructed with delay correctly"() {
-        given:
-        def pValue = new PValue(power)
-        def delay = Quantities.getQuantity(10, PowerSystemUnits.MILLISECOND)
-
-        when:
-        def setPoint = new EmSetPoint(receiverUuid, Optional.of(pValue), Optional.of(delay))
-
-        then:
-        setPoint.receiver == receiverUuid
-        setPoint.power == Optional.of(pValue)
-        setPoint.delay == Optional.of(delay)
-        setPoint.hasDelay()
     }
 
 }

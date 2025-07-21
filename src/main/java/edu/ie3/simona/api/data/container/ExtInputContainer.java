@@ -127,7 +127,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param setPoint given set point
    */
   public void addSetPoint(EmSetPoint setPoint) {
-    setPoints.put(setPoint.receiver, setPoint);
+    setPoints.put(setPoint.receiver(), setPoint);
   }
 
   /**

@@ -13,51 +13,31 @@ class FlexOptionRequestTest extends Specification {
     @Shared
     UUID senderUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
 
-    def "The FlexOptionRequest can be constructed without sender and delay correctly"() {
+    def "The FlexOptionRequest can be constructed without sender correctly"() {
         when:
         def request = new FlexOptionRequest(receiverUuid)
 
         then:
         request.receiver == receiverUuid
         request.sender == Optional.empty()
-        request.delay == Optional.empty()
-        !request.hasDelay()
     }
 
-    def "The FlexOptionRequest can be constructed with sender and without delay correctly"() {
+    def "The FlexOptionRequest can be constructed with sender correctly"() {
         when:
         def request = new FlexOptionRequest(receiverUuid, senderUuid)
 
         then:
         request.receiver == receiverUuid
         request.sender == Optional.of(senderUuid)
-        request.delay == Optional.empty()
-        !request.hasDelay()
     }
 
-    def "The FlexOptionRequest can be constructed with sender as optional and without delay correctly"() {
+    def "The FlexOptionRequest can be constructed with sender as optional correctly"() {
         when:
         def request = new FlexOptionRequest(receiverUuid, Optional.of(senderUuid))
 
         then:
         request.receiver == receiverUuid
         request.sender == Optional.of(senderUuid)
-        request.delay == Optional.empty()
-        !request.hasDelay()
-    }
-
-    def "The FlexOptionRequest can be constructed with sender and delay correctly"() {
-        given:
-        def delay = Quantities.getQuantity(10, PowerSystemUnits.MILLISECOND)
-
-        when:
-        def request = new FlexOptionRequest(receiverUuid, Optional.of(senderUuid), Optional.of(delay))
-
-        then:
-        request.receiver == receiverUuid
-        request.sender == Optional.of(senderUuid)
-        request.delay == Optional.of(delay)
-        request.hasDelay()
     }
 
 }
