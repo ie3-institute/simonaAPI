@@ -17,4 +17,8 @@ public record ProvideResultEntities(List<ResultEntity> results)
   public ProvideResultEntities(Map<UUID, ResultEntity> resultMap) {
     this(resultMap.values().stream().toList());
   }
+
+  public ProvideResultEntities(ResultEntity result) {
+    this(List.of(result));
+  }
 }

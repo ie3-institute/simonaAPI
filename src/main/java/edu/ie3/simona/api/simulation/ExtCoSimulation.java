@@ -6,8 +6,6 @@
 
 package edu.ie3.simona.api.simulation;
 
-import static java.util.Collections.emptyList;
-
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
@@ -19,11 +17,11 @@ import edu.ie3.simona.api.data.container.ExtResultContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
-import java.util.*;
 import org.slf4j.Logger;
-import tech.units.indriya.ComparableQuantity;
 
-import javax.measure.quantity.Time;
+import java.util.*;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -75,16 +73,13 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * Builds an {@link ExtEmDataConnection}.
    *
    * @param controlled uuids for controlled em agents.
-   * @param maxDelay the maximal delay used in em communication mode
    * @param log logger
    * @return an ext em data connection
    */
   public static ExtEmDataConnection buildEmConnection(
-          List<UUID> controlled, ExtEmDataConnection.EmMode mode, Optional<ComparableQuantity<Time>> maxDelay, Logger log) {
-    if (maxDelay.isEmpty() && mode == ExtEmDataConnection.EmMode.EM_COMMUNICATION) {
-      log.info("Using em communication without a maximum delay.");
-    }
-
+      List<UUID> controlled,
+      ExtEmDataConnection.EmMode mode,
+      Logger log) {
     if (controlled.isEmpty()) {
       log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
       throw new ExtDataConnectionException(ExtEmDataConnection.class);
@@ -94,7 +89,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
           mode,
           controlled.size());
 
-      return new ExtEmDataConnection(controlled, mode, maxDelay);
+      return new ExtEmDataConnection(controlled, mode);
     }
   }
 
