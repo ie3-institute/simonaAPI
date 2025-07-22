@@ -6,7 +6,6 @@
 
 package edu.ie3.simona.api.mapping;
 
-import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

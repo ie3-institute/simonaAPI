@@ -13,12 +13,14 @@ import edu.ie3.datamodel.io.naming.FileNamingStrategy;
 import edu.ie3.datamodel.io.source.DataSource;
 import edu.ie3.datamodel.io.source.csv.CsvDataSource;
 import edu.ie3.datamodel.models.Entity;
+import edu.ie3.simona.api.mapping.ExtEntityEntry;
 import edu.ie3.simona.api.mapping.ExtEntityMapping;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
 /** Source for external entity mapping. */
+@Deprecated
 public class ExtEntityMappingSource {
 
   protected final DataSource dataSource;

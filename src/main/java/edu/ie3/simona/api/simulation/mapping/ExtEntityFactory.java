@@ -12,11 +12,14 @@ import edu.ie3.datamodel.io.factory.EntityData;
 import edu.ie3.datamodel.io.factory.EntityFactory;
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.simona.api.mapping.DataType;
+import edu.ie3.simona.api.mapping.ExtEntityEntry;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /** Class to build a mapping entry from the external simulation to SIMONA */
+@Deprecated
 public class ExtEntityFactory extends EntityFactory<ExtEntityEntry, EntityData> {
 
   public static final String SIMONA_UUID = "uuid";
