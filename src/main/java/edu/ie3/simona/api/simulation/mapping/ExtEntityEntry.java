@@ -23,7 +23,11 @@ import java.util.UUID;
 public record ExtEntityEntry(
     UUID uuid, String id, Optional<ColumnScheme> columnScheme, DataType dataType)
     implements InputEntity {
+  public ExtEntityEntry(UUID uuid, String id, DataType dataType) {
+    this(uuid, id, Optional.empty(), dataType);
+  }
 
+  @Override
   public String toString() {
     return "ExtEntityEntry={"
         + "UUID="
