@@ -14,7 +14,7 @@ import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
  *
  * @param <T> type of response messages to ext
  */
-public sealed interface ExtOutputDataConnection<T extends DataResponseMessageToExt>
+public sealed interface ExtOutputDataConnection<T extends DataResponseMessageToExt> extends ExtDataConnection
     permits BiDirectional, ExtResultListener {
 
   /** Queues message from SIMONA that should be handled by the external simulation. */

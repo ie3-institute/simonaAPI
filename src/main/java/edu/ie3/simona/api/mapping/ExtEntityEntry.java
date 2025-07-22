@@ -26,21 +26,4 @@ public record ExtEntityEntry(
   public ExtEntityEntry(UUID uuid, String id, DataType dataType) {
     this(uuid, id, Optional.empty(), dataType);
   }
-
-  @Override
-  public String toString() {
-    return "ExtEntityEntry={"
-        + "UUID="
-        + uuid
-        + ", "
-        + "extId="
-        + id
-        + ", "
-        + "columnScheme="
-        + columnScheme
-        + ", "
-        + "dataType="
-        + dataType
-        + "}";
-  }
 }
