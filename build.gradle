@@ -62,7 +62,7 @@ dependencies{
   }
 
   //PSDM
-  implementation('com.github.ie3-institute:PowerSystemDataModel:7.0.0') {
+  implementation('com.github.ie3-institute:PowerSystemDataModel:8.0.0') {
     exclude group: 'org.apache.logging.log4j'
     exclude group: 'org.slf4j'
     /* Exclude our own nested dependencies */
