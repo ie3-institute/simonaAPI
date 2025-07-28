@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactoring data containers [#268](https://github.com/ie3-institute/simonaAPI/issues/268)
 - Refactoring messages [#269](https://github.com/ie3-institute/simonaAPI/issues/269)
 - Refactoring models [#270](https://github.com/ie3-institute/simonaAPI/issues/270)
+- Refactoring external entity mapping [#314](https://github.com/ie3-institute/simonaAPI/issues/314)
 
 ## [0.9.0] - 2025-05-09
 

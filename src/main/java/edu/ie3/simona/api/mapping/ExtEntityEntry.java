@@ -4,11 +4,10 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation.mapping;
+package edu.ie3.simona.api.mapping;
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.InputEntity;
-import edu.ie3.simona.api.mapping.DataType;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,20 +22,7 @@ import java.util.UUID;
 public record ExtEntityEntry(
     UUID uuid, String id, Optional<ColumnScheme> columnScheme, DataType dataType)
     implements InputEntity {
-
-  public String toString() {
-    return "ExtEntityEntry={"
-        + "UUID="
-        + uuid
-        + ", "
-        + "extId="
-        + id
-        + ", "
-        + "columnScheme="
-        + columnScheme
-        + ", "
-        + "dataType="
-        + dataType
-        + "}";
+  public ExtEntityEntry(UUID uuid, String id, DataType dataType) {
+    this(uuid, id, Optional.empty(), dataType);
   }
 }

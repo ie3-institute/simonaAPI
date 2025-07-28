@@ -4,9 +4,8 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation.mapping;
+package edu.ie3.simona.api.mapping;
 
-import edu.ie3.simona.api.mapping.DataType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
