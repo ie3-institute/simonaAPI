@@ -12,18 +12,22 @@ import javax.measure.quantity.Power
 class EmSetPointTest extends Specification {
 
     @Shared
-    UUID receiverUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
+    private UUID receiverUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
 
     @Shared
-    ComparableQuantity<Power> power = Quantities.getQuantity(10, PowerSystemUnits.KILOWATT)
+    private UUID sender = UUID.randomUUID()
+
+    @Shared
+    private ComparableQuantity<Power> power = Quantities.getQuantity(10, PowerSystemUnits.KILOWATT)
 
 
     def "An empty EmSetPoint can be constructed correctly"() {
         when:
-        def setPoint = new EmSetPoint(receiverUuid)
+        def setPoint = new EmSetPoint(receiverUuid, sender)
 
         then:
         setPoint.receiver == receiverUuid
+        setPoint.sender == sender
         setPoint.power == Optional.empty()
     }
 
@@ -32,14 +36,16 @@ class EmSetPointTest extends Specification {
         def pValue = new PValue(power)
 
         when:
-        def setPoint1 = new EmSetPoint(receiverUuid, power)
-        def setPoint2 = new EmSetPoint(receiverUuid, pValue)
+        def setPoint1 = new EmSetPoint(receiverUuid, sender, power)
+        def setPoint2 = new EmSetPoint(receiverUuid, sender, pValue)
 
         then:
         setPoint1.receiver == receiverUuid
+        setPoint1.sender == sender
         setPoint1.power == Optional.of(pValue)
 
         setPoint2.receiver == receiverUuid
+        setPoint2.sender == sender
         setPoint2.power == Optional.of(pValue)
     }
 

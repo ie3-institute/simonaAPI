@@ -7,13 +7,14 @@
 package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
+import edu.ie3.simona.api.data.model.em.EmData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 /** Contains all SIMONA results for a certain tick. */
-public final class ExtResultContainer implements ExtDataContainer {
+public final class ExtOutputContainer implements ExtDataContainer {
 
   /** Tick for which the results are meant for. */
   private final long tick;
@@ -22,38 +23,61 @@ public final class ExtResultContainer implements ExtDataContainer {
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Map uuid to result from SIMONA.
+   * Map receiver uuid to result from SIMONA.
    *
    * <p>ATTENTION: The time stamp of the result entities is not necessarily corresponding to the
    * tick
    */
   private final Map<UUID, ResultEntity> resultMap;
 
+  /** Map receiver uuid to {@link EmData} from SIMONA. */
+  private final Map<UUID, EmData> emDataMap;
+
   /**
    * Container class for result data from SIMONA.
    *
    * @param tick current tick
-   * @param resultMap results from SIMONA with external id as key
    * @param nextTick tick the external simulation can expect the next results
    */
-  public ExtResultContainer(long tick, Map<UUID, ResultEntity> resultMap, Optional<Long> nextTick) {
+  public ExtOutputContainer(long tick, Optional<Long> nextTick) {
     this.tick = tick;
-    this.resultMap = resultMap;
+    this.resultMap = new HashMap<>();
+    this.emDataMap = new HashMap<>();
     this.maybeNextTick = nextTick;
   }
 
-  public ExtResultContainer(long tick, Map<UUID, ResultEntity> resultMap) {
-    this(tick, resultMap, Optional.empty());
+  public ExtOutputContainer(long tick) {
+    this(tick, Optional.empty());
   }
 
   @Override
   public boolean isEmpty() {
-    return resultMap.isEmpty();
+    return resultMap.isEmpty() && emDataMap.isEmpty();
+  }
+
+  public void addResult(UUID receiver, ResultEntity result) {
+    resultMap.put(receiver, result);
+  }
+
+  public void addResults(Map<UUID, ResultEntity> result) {
+    this.resultMap.putAll(result);
+  }
+
+  public void addEmData(UUID receiver, EmData emData) {
+    emDataMap.put(receiver, emData);
+  }
+
+  public void addEmData(Map<UUID, EmData> emData) {
+    this.emDataMap.putAll(emData);
   }
 
   /** Returns a map: uuid to result. */
   public Map<UUID, ResultEntity> getResults() {
     return resultMap;
+  }
+
+  public Map<UUID, EmData> getEmData() {
+    return emDataMap;
   }
 
   /**

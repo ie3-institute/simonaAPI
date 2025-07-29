@@ -20,7 +20,10 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
     ActorTestKit testKit
 
     @Shared
-    List<UUID> controlled = [inputUuid]
+    private UUID sender = UUID.randomUUID()
+
+    @Shared
+    private List<UUID> controlled = [inputUuid]
 
     def setupSpec() {
         testKit = ActorTestKit.create()
@@ -41,13 +44,13 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid))
+        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, sender))
 
         when:
         extEmDataConnection.sendFlexRequests(0L, emData, Optional.of(900L), log)
 
         then:
-        dataService.expectMessage(new ProvideFlexRequestData(0, emData, Optional.of(900L)))
+        dataService.expectMessage(new ProvideFlexRequest(0, emData, Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -85,7 +88,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         extEmDataConnection.sendFlexOptions(0L, emData, Optional.of(900L), log)
 
         then:
-        dataService.expectMessage(new ProvideEmFlexOptionData(0, emData, Optional.of(900L)))
+        dataService.expectMessage(new ProvideEmFlexOption(0, emData, Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 

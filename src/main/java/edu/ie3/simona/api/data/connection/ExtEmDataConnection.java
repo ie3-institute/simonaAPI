@@ -49,7 +49,7 @@ public final class ExtEmDataConnection
       log.debug("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex requests.");
-      sendExtMsg(new ProvideFlexRequestData(tick, data, maybeNextTick));
+      sendExtMsg(new ProvideFlexRequest(tick, data, maybeNextTick));
     }
   }
 
@@ -67,7 +67,7 @@ public final class ExtEmDataConnection
       log.debug("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em flex options.");
-      sendExtMsg(new ProvideEmFlexOptionData(tick, data, maybeNextTick));
+      sendExtMsg(new ProvideEmFlexOption(tick, data, maybeNextTick));
     }
   }
 
@@ -85,7 +85,7 @@ public final class ExtEmDataConnection
       log.debug("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
     } else {
       log.debug("Provided SIMONA with em set points.");
-      sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
+      sendExtMsg(new ProvideEmSetPoint(tick, setPoints, maybeNextTick));
     }
   }
 

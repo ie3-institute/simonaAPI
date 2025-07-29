@@ -6,6 +6,9 @@
 
 package edu.ie3.simona.api.data.model.em;
 
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
@@ -28,4 +31,36 @@ public record FlexOptions(
     UUID sender,
     ComparableQuantity<Power> pRef,
     ComparableQuantity<Power> pMin,
-    ComparableQuantity<Power> pMax) {}
+    ComparableQuantity<Power> pMax,
+    Map<UUID, FlexOptionsResult> disaggregated)
+    implements EmData {
+
+  public FlexOptions(
+      UUID receiver,
+      UUID sender,
+      ComparableQuantity<Power> pRef,
+      ComparableQuantity<Power> pMin,
+      ComparableQuantity<Power> pMax) {
+    this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
+  }
+
+  /**
+   * Method for adding disaggregated flex option results to this object.
+   *
+   * @param uuid of the inferior model
+   * @param flexOptionsResult the flex options of the inferior model
+   */
+  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
+    this.disaggregated.put(uuid, flexOptionsResult);
+  }
+
+  @Override
+  public UUID getReceiver() {
+    return receiver;
+  }
+
+  @Override
+  public UUID getSender() {
+    return sender;
+  }
+}

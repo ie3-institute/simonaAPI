@@ -12,7 +12,7 @@ import tech.units.indriya.quantity.Quantities
 
 import java.time.ZonedDateTime
 
-class ExtResultContainerTest extends Specification implements DataServiceTestData {
+class ExtOutputContainerTest extends Specification implements DataServiceTestData {
 
     @Shared
     UUID nodeUuid = UUID.fromString("55b97041-64be-4e6b-983a-72dbde6eddf4")
@@ -32,7 +32,8 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
                 (inputUuid): loadResult
         ]
 
-        def container = new ExtResultContainer(0L, expected)
+        def container = new ExtOutputContainer(0L)
+        container.addResults(expected)
 
         expect:
         container.getResults() == expected
@@ -45,7 +46,8 @@ class ExtResultContainerTest extends Specification implements DataServiceTestDat
                 (inputUuid): loadResult
         ]
 
-        def container = new ExtResultContainer(0L, expected)
+        def container = new ExtOutputContainer(0L)
+        container.addResults(expected)
 
         when:
         def nodeResults = container.getResults(NodeResult)
