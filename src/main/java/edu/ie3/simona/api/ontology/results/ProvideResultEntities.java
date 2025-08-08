@@ -21,4 +21,6 @@ public record ProvideResultEntities(List<ResultEntity> results)
   public ProvideResultEntities(ResultEntity result) {
     this(List.of(result));
   }
+
+  public static ProvideResultEntities empty() { return new ProvideResultEntities(List.of()); }
 }
