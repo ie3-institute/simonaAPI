@@ -11,8 +11,8 @@ import java.util.UUID;
 /**
  * Energy management flex option request that will be sent to SIMONA.
  *
- * @param receiver of the message
- * @param sender of the request
+ * @param receiver The receiver of the request.
+ * @param sender The sender of the request.
  */
 public record FlexOptionRequest(UUID receiver, UUID sender) implements EmData {
 

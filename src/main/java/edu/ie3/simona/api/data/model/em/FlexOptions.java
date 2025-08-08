@@ -16,8 +16,8 @@ import tech.units.indriya.ComparableQuantity;
 /**
  * Flex option that will be sent to SIMONA.
  *
- * @param receiver The receiver of the message.
- * @param sender The sender of the request.
+ * @param receiver The receiver of the flex options.
+ * @param sender The sender of the flex options.
  * @param pRef Active power (might be negative, thus feed-in) that was suggested for regular usage.
  * @param pMin Minimal active power to which the sender can be reduced (might be negative, thus
  *     feed-in), that was determined by the system. Therefore, equates to lower bound of possible

@@ -23,14 +23,14 @@ public final class ExtOutputContainer implements ExtDataContainer {
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Map receiver uuid to result from SIMONA.
+   * Map: receiver uuid to result from SIMONA.
    *
    * <p>ATTENTION: The time stamp of the result entities is not necessarily corresponding to the
    * tick
    */
   private final Map<UUID, ResultEntity> resultMap;
 
-  /** Map receiver uuid to {@link EmData} from SIMONA. */
+  /** Map: receiver uuid to {@link EmData} from SIMONA. */
   private final Map<UUID, EmData> emDataMap;
 
   /**

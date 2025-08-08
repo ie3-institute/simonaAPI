@@ -86,7 +86,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * Method for adding flex option requests.
    *
    * @param receiver the uuid of the agent, that will receive the request
-   * @param sender uuid of the sender
+   * @param sender option for the uuid of the sender
    */
   public void addRequest(UUID receiver, UUID sender) {
     flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
