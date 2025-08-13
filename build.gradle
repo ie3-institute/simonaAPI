@@ -13,7 +13,7 @@ plugins {
 }
 
 ext {
-  javaVersion = JavaVersion.VERSION_17
+  javaVersion = JavaVersion.VERSION_21
   scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
   // required for pekko
@@ -84,7 +84,7 @@ dependencies{
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 }
 
-task printVersion {
+tasks.register('printVersion') {
   doLast {
     println project.version
   }
