@@ -10,17 +10,13 @@ import edu.ie3.datamodel.models.result.ResultEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /** Provides a list of results from SIMONA to an external simulation. */
-public record ProvideResultEntities(List<ResultEntity> results)
+public record ProvideResultEntities(Map<UUID, List<ResultEntity>> results)
     implements ResultDataResponseMessageToExt {
-  public ProvideResultEntities(Map<UUID, ResultEntity> resultMap) {
-    this(resultMap.values().stream().toList());
-  }
 
-  public ProvideResultEntities(ResultEntity result) {
-    this(List.of(result));
+  public ProvideResultEntities(List<ResultEntity> resultEntities) {
+    this(resultEntities.stream().collect(Collectors.groupingBy(ResultEntity::getInputModel)));
   }
-
-  public static ProvideResultEntities empty() { return new ProvideResultEntities(List.of()); }
 }

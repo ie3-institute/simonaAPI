@@ -282,7 +282,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
-    Map<UUID, ResultEntity> resultsToBeSend = connection.requestResults(tick);
+    Map<UUID, List<ResultEntity>> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
     queueToExt.queueData(new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
     log.debug("Sent results to {}", extSimulatorName);
@@ -290,7 +290,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
 
   private void sendSingleResultType(
       String type,
-      Map<UUID, ResultEntity> resultsToBeSend,
+      Map<UUID, List<ResultEntity>> resultsToBeSend,
       long tick,
       Optional<Long> nextTick,
       Logger log)
