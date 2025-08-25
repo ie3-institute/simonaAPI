@@ -95,6 +95,6 @@ public final class ExtResultContainer implements ExtDataContainer {
 
   /** Returns the result for a certain asset. */
   public List<ResultEntity> getResult(UUID assetId) {
-    return resultMap.get(assetId);
+    return resultMap.getOrDefault(assetId, Collections.emptyList());
   }
 }
