@@ -19,9 +19,9 @@ import org.slf4j.Logger;
 public final class ExtPrimaryDataConnection
     extends ExtInputDataConnection<PrimaryDataMessageFromExt> {
 
-  private final Map<UUID, Class<Value>> valueClasses;
+  private final Map<UUID, Class<? extends Value>> valueClasses;
 
-  public ExtPrimaryDataConnection(Map<UUID, Class<Value>> valueClasses) {
+  public ExtPrimaryDataConnection(Map<UUID, Class<? extends Value>> valueClasses) {
     this.valueClasses = valueClasses;
   }
 
@@ -34,7 +34,7 @@ public final class ExtPrimaryDataConnection
    * @param uuid of the model
    * @return an option for the value class associated with the model.
    */
-  public Optional<Class<Value>> getValueClass(UUID uuid) {
+  public Optional<Class<? extends Value>> getValueClass(UUID uuid) {
     return Optional.ofNullable(valueClasses.get(uuid));
   }
 

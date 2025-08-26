@@ -11,6 +11,7 @@ import edu.ie3.datamodel.exceptions.ParsingException;
 public enum DataType {
   EXT_PRIMARY_INPUT("primary_input"),
   EXT_EM_INPUT("em_input"),
+  EXT_EM_COMMUNICATION("em_communication"),
   EXT_GRID_RESULT("grid_result"),
   EXT_PARTICIPANT_RESULT("participant_result"),
   EXT_FLEX_OPTIONS_RESULT("flex_options_result");
@@ -25,6 +26,7 @@ public enum DataType {
     return switch (type) {
       case "primary_input" -> EXT_PRIMARY_INPUT;
       case "em_input" -> EXT_EM_INPUT;
+      case "em_communication" -> EXT_EM_COMMUNICATION;
       case "grid_result" -> EXT_GRID_RESULT;
       case "participant_result" -> EXT_PARTICIPANT_RESULT;
       case "flex_options_result" -> EXT_FLEX_OPTIONS_RESULT;

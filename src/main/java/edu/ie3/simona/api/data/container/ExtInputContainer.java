@@ -88,8 +88,12 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param receiver the uuid of the agent, that will receive the request
    * @param sender option for the uuid of the sender
    */
-  public void addRequest(UUID receiver, Optional<UUID> sender) {
+  public void addRequest(UUID receiver, UUID sender) {
     flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
+  }
+
+  public void addRequest(UUID receiver, FlexOptionRequest request) {
+    flexRequests.put(receiver, request);
   }
 
   /**
@@ -113,8 +117,8 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param asset that will receive the set point
    * @param power of the set point
    */
-  public void addSetPoint(UUID asset, PValue power) {
-    setPoints.put(asset, new EmSetPoint(asset, power));
+  public void addSetPoint(UUID asset, UUID sender, PValue power) {
+    setPoints.put(asset, new EmSetPoint(asset, sender, power));
   }
 
   /**
@@ -123,7 +127,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param setPoint given set point
    */
   public void addSetPoint(EmSetPoint setPoint) {
-    setPoints.put(setPoint.receiver, setPoint);
+    setPoints.put(setPoint.receiver(), setPoint);
   }
 
   /**

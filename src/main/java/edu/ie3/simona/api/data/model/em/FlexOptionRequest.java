@@ -6,13 +6,23 @@
 
 package edu.ie3.simona.api.data.model.em;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Flex option request that will be sent to SIMONA.
+ * Energy management flex option request that will be sent to SIMONA.
  *
- * @param receiver uuid of the agent, that will receive the request
- * @param sender option for the uuid of the agent, that sent the request
+ * @param receiver The receiver of the request.
+ * @param sender The sender of the request.
  */
-public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {}
+public record FlexOptionRequest(UUID receiver, UUID sender) implements EmData {
+
+  @Override
+  public UUID getReceiver() {
+    return receiver;
+  }
+
+  @Override
+  public UUID getSender() {
+    return sender;
+  }
+}
