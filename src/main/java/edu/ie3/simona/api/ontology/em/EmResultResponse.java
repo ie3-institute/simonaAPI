@@ -6,4 +6,4 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public record EmResults(Map<UUID, List<ResultEntity>> emResults) implements EmDataResponseMessageToExt {}
+public record EmResultResponse(Map<UUID, List<ResultEntity>> emResults) implements EmDataResponseMessageToExt {}

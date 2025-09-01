@@ -16,16 +16,23 @@ public final class FlexOptionRequestResult extends ResultEntity {
   /** The uuids of the receivers. */
   private final List<UUID> receivers;
 
+    /**
+     * True, if disaggregated flex option should be returned.
+     */
+  private final boolean disaggregated;
+
   /**
    * Constructor of a {@link FlexOptionRequest}.
    *
    * @param time date and time when the result is produced
    * @param sender uuid of the input model that produces the result
    * @param receivers a collection of receivers
+   * @param disaggregated if true, disaggregated flex option are requested
    */
-  public FlexOptionRequestResult(ZonedDateTime time, UUID sender, Collection<UUID> receivers) {
+  public FlexOptionRequestResult(ZonedDateTime time, UUID sender, Collection<UUID> receivers, boolean disaggregated) {
     super(time, sender);
     this.receivers = new ArrayList<>(receivers);
+    this.disaggregated = disaggregated;
   }
 
   /** Returns the uuid of the sender. */
@@ -41,12 +48,20 @@ public final class FlexOptionRequestResult extends ResultEntity {
     return receivers;
   }
 
+    /**
+     *
+     * Returns true, if disaggregated flex options should be returned.
+     */
+  public boolean isDisaggregated() {
+      return disaggregated;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     FlexOptionRequestResult that = (FlexOptionRequestResult) o;
-    return Objects.equals(receivers, that.receivers);
+    return Objects.equals(receivers, that.receivers) && Objects.equals(disaggregated, that.disaggregated);
   }
 
   @Override
@@ -63,6 +78,8 @@ public final class FlexOptionRequestResult extends ResultEntity {
         + getInputModel()
         + ", receivers="
         + receivers
+            + ", disaggregated="
+            + disaggregated
         + '}';
   }
 }

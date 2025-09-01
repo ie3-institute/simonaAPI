@@ -14,8 +14,9 @@ import java.util.UUID;
  *
  * @param receiver The receiver of the message.
  * @param sender The sender of the request.
+ * @param disaggregated True, if disaggregated flex options should be returned.
  */
-public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
+public record FlexOptionRequest(UUID receiver, Optional<UUID> sender, boolean disaggregated) {
   /**
    * Constructor for {@link FlexOptionRequest}. Equals {@code new FlexOptionRequest(receiver,
    * Optional.empty())}.
@@ -23,7 +24,7 @@ public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
    * @param receiver of the request
    */
   public FlexOptionRequest(UUID receiver) {
-    this(receiver, Optional.empty());
+    this(receiver, Optional.empty(), false);
   }
 
   /**
@@ -33,6 +34,6 @@ public record FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
    * @param sender of the request
    */
   public FlexOptionRequest(UUID receiver, UUID sender) {
-    this(receiver, Optional.ofNullable(sender));
+    this(receiver, Optional.ofNullable(sender), false);
   }
 }

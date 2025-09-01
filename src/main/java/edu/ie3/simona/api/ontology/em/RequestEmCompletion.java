@@ -9,7 +9,7 @@ package edu.ie3.simona.api.ontology.em;
 import java.util.Optional;
 
 /**
- * Request send to SIMONA to finish the em service.
+ * Request send to SIMONA to finish the em service for the given tick.
  *
  * @param tick for which the em service should be finished
  * @param maybeNextTick option for the next tick

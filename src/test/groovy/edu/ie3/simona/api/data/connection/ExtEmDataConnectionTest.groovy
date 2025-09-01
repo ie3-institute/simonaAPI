@@ -44,10 +44,10 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid))
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, emData, Optional.of(900L), log)
+        extEmDataConnection.sendEmData(0L, emData, [:], [:], Optional.of(900L), log)
 
         then:
-        dataService.expectMessage(new ProvideFlexRequestData(0, emData, Optional.of(900L)))
+        dataService.expectMessage(new ProvideEmData(0, emData, [:], [:], Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -60,10 +60,9 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 dataService.ref(),
                 extSimAdapter.ref()
         )
-        def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, inputDataMap, Optional.of(900L), log)
+        extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L), log)
 
         then:
         dataService.expectNoMessage()
@@ -82,10 +81,10 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def emData = Map.of(inputUuid, [new FlexOptions(inputUuid, UUID.randomUUID(), power, power, power)])
 
         when:
-        extEmDataConnection.sendFlexOptions(0L, emData, Optional.of(900L), log)
+        extEmDataConnection.sendEmData(0L, [:], emData, [:], Optional.of(900L), log)
 
         then:
-        dataService.expectMessage(new ProvideEmFlexOptionData(0, emData, Optional.of(900L)))
+        dataService.expectMessage(new ProvideEmData(0, [:], emData, [:], Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -98,10 +97,9 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 dataService.ref(),
                 extSimAdapter.ref()
         )
-        def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, inputDataMap, Optional.of(900L), log)
+        extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L), log)
 
         then:
         dataService.expectNoMessage()
