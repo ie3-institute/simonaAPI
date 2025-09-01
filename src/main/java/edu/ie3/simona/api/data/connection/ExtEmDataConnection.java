@@ -110,8 +110,8 @@ public final class ExtEmDataConnection
    * @param tick for which the em service should stop
    * @return an option for the next tick in SIMONA
    */
-  public Optional<Long> requestCompletion(long tick) throws InterruptedException {
-    sendExtMsg(new RequestEmCompletion(tick));
+  public Optional<Long> requestCompletion(long tick, long nextTick) throws InterruptedException {
+    sendExtMsg(new RequestEmCompletion(tick, Optional.of(nextTick)));
     return receiveWithType(EmCompletion.class).maybeNextTick();
   }
 
