@@ -36,4 +36,14 @@ public record FlexOptionRequest(UUID receiver, Optional<UUID> sender, boolean di
   public FlexOptionRequest(UUID receiver, UUID sender) {
     this(receiver, Optional.ofNullable(sender), false);
   }
+
+    /**
+     * Constructor for {@link FlexOptionRequest}.
+     *
+     * @param receiver of the request
+     * @param sender option for the sender of the request
+     */
+    public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
+        this(receiver, sender, false);
+    }
 }
