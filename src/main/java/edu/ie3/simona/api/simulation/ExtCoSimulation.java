@@ -13,7 +13,7 @@ import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
 import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
 import edu.ie3.simona.api.data.container.ExtInputContainer;
-import edu.ie3.simona.api.data.container.ExtResultContainer;
+import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
@@ -35,7 +35,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   protected final ExtDataContainerQueue<ExtInputContainer> queueToSimona;
 
   /** Queue for the data connection from SimonaAPI to the external co-simulation */
-  protected final ExtDataContainerQueue<ExtResultContainer> queueToExt;
+  protected final ExtDataContainerQueue<ExtOutputContainer> queueToExt;
 
   /** Name of the external co-simulation */
   protected final String extSimulatorName;
@@ -230,7 +230,10 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em set points from {}", extSimulatorName);
-    extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
+    boolean wasSent = extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick);
+    if (!wasSent) {
+      log.debug("No set point data was sent to SIMONA!");
+    }
     log.debug("Provided em set points to SIMONA!");
   }
 
@@ -284,7 +287,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Request results from SIMONA!");
     Map<UUID, List<ResultEntity>> resultsToBeSend = connection.requestResults(tick);
     log.debug("Received results from SIMONA!");
-    queueToExt.queueData(new ExtResultContainer(tick, resultsToBeSend, maybeNextTick));
+    ExtOutputContainer container = new ExtOutputContainer(tick, maybeNextTick);
+    container.addResults(resultsToBeSend);
+    queueToExt.queueData(container);
     log.debug("Sent results to {}", extSimulatorName);
   }
 

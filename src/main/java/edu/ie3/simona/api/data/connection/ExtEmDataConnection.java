@@ -11,8 +11,6 @@ import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
 import edu.ie3.simona.api.ontology.em.*;
-import org.slf4j.Logger;
-
 import java.util.*;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
@@ -36,46 +34,45 @@ public final class ExtEmDataConnection
     return new ArrayList<>(controlled);
   }
 
-    /**
-     * Tries to send em data to SIMONA. A message is sent, if at least one map is not empty.
-     * @param tick current tick
-     * @param flexRequests receiver to flex option request
-     * @param flexOptions  receiver to flex options
-     * @param setPoints  receiver to set point
-     * @param maybeNextTick option for the next tick in the simulation
-     * @return true, if a message was sent
-     */
+  /**
+   * Tries to send em data to SIMONA. A message is sent, if at least one map is not empty.
+   *
+   * @param tick current tick
+   * @param flexRequests receiver to flex option request
+   * @param flexOptions receiver to flex options
+   * @param setPoints receiver to set point
+   * @param maybeNextTick option for the next tick in the simulation
+   * @return true, if data was sent
+   */
   public boolean sendEmData(
-          long tick,
-          Map<UUID, FlexOptionRequest> flexRequests,
-          Map<UUID, List<FlexOptions>> flexOptions,
-          Map<UUID, EmSetPoint> setPoints,
-          Optional<Long> maybeNextTick
-  ) {
-      // send message only if at least one value is present
-      if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
-          sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints, maybeNextTick));
-          return true;
-      }
-      return false;
+      long tick,
+      Map<UUID, FlexOptionRequest> flexRequests,
+      Map<UUID, List<FlexOptions>> flexOptions,
+      Map<UUID, EmSetPoint> setPoints,
+      Optional<Long> maybeNextTick) {
+    // send message only if at least one value is present
+    if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
+      sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints, maybeNextTick));
+      return true;
+    }
+    return false;
   }
 
   /**
-   * Sends the em set points to SIMONA.
+   * Tries to send the em set points to SIMONA.
    *
    * @param tick current tick
    * @param setPoints receiver to set point, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
-   * @param log logger
+   * @return true, if data was sent
    */
-  public void sendSetPoints(
-      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick, Logger log) {
-    if (setPoints.isEmpty()) {
-      log.debug("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
-    } else {
-      log.debug("Provided SIMONA with em set points.");
+  public boolean sendSetPoints(
+      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick) {
+    if (!setPoints.isEmpty()) {
       sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
+      return true;
     }
+    return false;
   }
 
   /**

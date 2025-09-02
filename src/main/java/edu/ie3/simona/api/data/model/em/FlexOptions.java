@@ -6,6 +6,9 @@
 
 package edu.ie3.simona.api.data.model.em;
 
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
@@ -13,8 +16,8 @@ import tech.units.indriya.ComparableQuantity;
 /**
  * Flex option that will be sent to SIMONA.
  *
- * @param receiver The receiver of the message.
- * @param sender The sender of the request.
+ * @param receiver The receiver of the flex options.
+ * @param sender The sender of the flex options.
  * @param pRef Active power (might be negative, thus feed-in) that was suggested for regular usage.
  * @param pMin Minimal active power to which the sender can be reduced (might be negative, thus
  *     feed-in), that was determined by the system. Therefore, equates to lower bound of possible
@@ -28,4 +31,26 @@ public record FlexOptions(
     UUID sender,
     ComparableQuantity<Power> pRef,
     ComparableQuantity<Power> pMin,
-    ComparableQuantity<Power> pMax) {}
+    ComparableQuantity<Power> pMax,
+    Map<UUID, FlexOptionsResult> disaggregated)
+    implements EmData {
+
+  public FlexOptions(
+      UUID receiver,
+      UUID sender,
+      ComparableQuantity<Power> pRef,
+      ComparableQuantity<Power> pMin,
+      ComparableQuantity<Power> pMax) {
+    this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
+  }
+
+  @Override
+  public UUID getReceiver() {
+    return receiver;
+  }
+
+  @Override
+  public UUID getSender() {
+    return sender;
+  }
+}

@@ -35,25 +35,6 @@ class FlexOptionsTest extends Specification {
         flexOptions.pRef == pRef
         flexOptions.pMin == pMin
         flexOptions.pMax == pMax
-        flexOptions.delay == Optional.empty()
-        !flexOptions.hasDelay()
-    }
-
-    def "FlexOptions can be constructed with delay correctly"() {
-        given:
-        def delay = Quantities.getQuantity(10, PowerSystemUnits.MILLISECOND)
-
-        when:
-        def flexOptions = new FlexOptions(receiverUuid, senderUuid, pRef, pMin, pMax, Optional.of(delay))
-
-        then:
-        flexOptions.receiver == receiverUuid
-        flexOptions.sender == senderUuid
-        flexOptions.pRef == pRef
-        flexOptions.pMin == pMin
-        flexOptions.pMax == pMax
-        flexOptions.delay == Optional.of(delay)
-        flexOptions.hasDelay()
     }
 
 }

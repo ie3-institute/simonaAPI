@@ -19,4 +19,8 @@ public record ProvideResultEntities(Map<UUID, List<ResultEntity>> results)
   public ProvideResultEntities(List<ResultEntity> resultEntities) {
     this(resultEntities.stream().collect(Collectors.groupingBy(ResultEntity::getInputModel)));
   }
+
+  public ProvideResultEntities(ResultEntity result) {
+    this(List.of(result));
+  }
 }

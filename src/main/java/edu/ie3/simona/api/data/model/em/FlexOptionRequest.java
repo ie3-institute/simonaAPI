@@ -6,44 +6,25 @@
 
 package edu.ie3.simona.api.data.model.em;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Energy management flex option request that will be sent to SIMONA
+ * Energy management flex option request that will be sent to SIMONA.
  *
- * @param receiver The receiver of the message.
+ * @param receiver The receiver of the request.
  * @param sender The sender of the request.
- * @param disaggregated True, if disaggregated flex options should be returned.
+ * @param disaggregated True, if disaggregated flex option should be returned.
  */
-public record FlexOptionRequest(UUID receiver, Optional<UUID> sender, boolean disaggregated) {
-  /**
-   * Constructor for {@link FlexOptionRequest}. Equals {@code new FlexOptionRequest(receiver,
-   * Optional.empty())}.
-   *
-   * @param receiver of the request
-   */
-  public FlexOptionRequest(UUID receiver) {
-    this(receiver, Optional.empty(), false);
+public record FlexOptionRequest(UUID receiver, UUID sender, boolean disaggregated)
+    implements EmData {
+
+  @Override
+  public UUID getReceiver() {
+    return receiver;
   }
 
-  /**
-   * Constructor for {@link FlexOptionRequest}.
-   *
-   * @param receiver of the request
-   * @param sender of the request
-   */
-  public FlexOptionRequest(UUID receiver, UUID sender) {
-    this(receiver, Optional.ofNullable(sender), false);
+  @Override
+  public UUID getSender() {
+    return sender;
   }
-
-    /**
-     * Constructor for {@link FlexOptionRequest}.
-     *
-     * @param receiver of the request
-     * @param sender option for the sender of the request
-     */
-    public FlexOptionRequest(UUID receiver, Optional<UUID> sender) {
-        this(receiver, sender, false);
-    }
 }

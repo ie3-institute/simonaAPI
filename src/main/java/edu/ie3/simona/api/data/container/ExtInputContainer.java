@@ -83,13 +83,14 @@ public final class ExtInputContainer implements ExtDataContainer {
   }
 
   /**
-   * Method for adding flex option requests.
+   * Method for adding flex option requests. No disaggregated flex option will be requested using
+   * this method.
    *
    * @param receiver the uuid of the agent, that will receive the request
    * @param sender option for the uuid of the sender
    */
-  public void addRequest(UUID receiver, Optional<UUID> sender) {
-    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender));
+  public void addRequest(UUID receiver, UUID sender) {
+    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender, false));
   }
 
   public void addRequest(UUID receiver, FlexOptionRequest request) {
@@ -117,8 +118,8 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param asset that will receive the set point
    * @param power of the set point
    */
-  public void addSetPoint(UUID asset, PValue power) {
-    setPoints.put(asset, new EmSetPoint(asset, power));
+  public void addSetPoint(UUID asset, UUID sender, PValue power) {
+    setPoints.put(asset, new EmSetPoint(asset, sender, power));
   }
 
   /**

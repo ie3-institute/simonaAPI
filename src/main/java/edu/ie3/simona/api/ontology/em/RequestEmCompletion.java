@@ -14,4 +14,9 @@ import java.util.Optional;
  * @param tick for which the em service should be finished
  * @param maybeNextTick option for the next tick
  */
-public record RequestEmCompletion(long tick, Optional<Long> maybeNextTick) implements EmDataMessageFromExt {}
+public record RequestEmCompletion(long tick, Optional<Long> maybeNextTick)
+    implements EmDataMessageFromExt {
+  public RequestEmCompletion(long tick) {
+    this(tick, Optional.empty());
+  }
+}
