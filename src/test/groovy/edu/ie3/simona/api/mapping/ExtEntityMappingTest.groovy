@@ -1,10 +1,6 @@
 package edu.ie3.simona.api.mapping
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
-import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry
-import edu.ie3.simona.api.mapping.DataType
-import edu.ie3.simona.api.mapping.ExtEntityEntry
-import edu.ie3.simona.api.mapping.ExtEntityMapping
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -16,6 +12,9 @@ class ExtEntityMappingTest extends Specification {
     UUID pvUuid = UUID.fromString("12f5e864-2464-4e43-9a38-5753a439d45f")
 
     @Shared
+    UUID prUuid = UUID.fromString("12f5e864-2464-4e43-9a38-5753a439d46f")
+
+    @Shared
     UUID emUuid = UUID.fromString("60dbc7e4-9718-4bbd-913a-dd26925e68a3")
 
     @Shared
@@ -23,7 +22,7 @@ class ExtEntityMappingTest extends Specification {
             loadUuid,
             "Load",
             Optional.empty(),
-            DataType.EXT_PARTICIPANT_RESULT
+            DataType.RESULT
     )
 
     @Shared
@@ -31,7 +30,15 @@ class ExtEntityMappingTest extends Specification {
             pvUuid,
             "PV",
             ColumnScheme.parse("p"),
-            DataType.EXT_PRIMARY_INPUT
+            DataType.PRIMARY
+    )
+
+    @Shared
+    ExtEntityEntry extPrimaryResultEntry = new ExtEntityEntry(
+            prUuid,
+            "PR",
+            ColumnScheme.parse("p"),
+            DataType.PRIMARY_RESULT
     )
 
     @Shared
@@ -39,7 +46,7 @@ class ExtEntityMappingTest extends Specification {
             emUuid,
             "Em",
             Optional.empty(),
-            DataType.EXT_EM_INPUT
+            DataType.EM
     )
 
     def "ExtEntityMapping should return the data types correctly"() {
@@ -52,12 +59,13 @@ class ExtEntityMappingTest extends Specification {
 
         where:
         assets | expectedTypes
-        [extResultEntry] | [DataType.EXT_PARTICIPANT_RESULT]
-        [extInputEntry] | [DataType.EXT_PRIMARY_INPUT]
-        [extEmInputEntry] | [DataType.EXT_EM_INPUT]
-        [extResultEntry, extInputEntry] | [DataType.EXT_PARTICIPANT_RESULT, DataType.EXT_PRIMARY_INPUT]
-        [extInputEntry, extEmInputEntry] | [DataType.EXT_PRIMARY_INPUT, DataType.EXT_EM_INPUT]
-        [extResultEntry, extInputEntry, extEmInputEntry] | [DataType.EXT_PARTICIPANT_RESULT, DataType.EXT_PRIMARY_INPUT, DataType.EXT_EM_INPUT]
+        [extResultEntry] | [DataType.RESULT]
+        [extInputEntry] | [DataType.PRIMARY]
+        [extPrimaryResultEntry] | [DataType.PRIMARY_RESULT]
+        [extEmInputEntry] | [DataType.EM]
+        [extResultEntry, extInputEntry] | [DataType.RESULT, DataType.PRIMARY]
+        [extInputEntry, extEmInputEntry] | [DataType.PRIMARY, DataType.EM]
+        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | [DataType.RESULT, DataType.PRIMARY, DataType.PRIMARY_RESULT, DataType.EM]
     }
 
     def "ExtEntityMapping should return the entries correctly"() {
@@ -70,33 +78,35 @@ class ExtEntityMappingTest extends Specification {
 
         where:
         assets | dataType | expectedEntries
-        [extResultEntry, extInputEntry, extEmInputEntry] | DataType.EXT_PARTICIPANT_RESULT | [extResultEntry]
-        [extResultEntry, extInputEntry, extEmInputEntry] | DataType.EXT_PRIMARY_INPUT | [extInputEntry]
-        [extResultEntry, extInputEntry, extEmInputEntry] | DataType.EXT_EM_INPUT | [extEmInputEntry]
+        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.RESULT | [extResultEntry]
+        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY | [extInputEntry]
+        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY_RESULT | [extPrimaryResultEntry]
+        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.EM | [extEmInputEntry]
     }
 
     def "ExtEntityMapping should return all SIMONA uuid mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
         def inputMap = extEntryMapping.getExtId2UuidMapping()
 
         then:
-        inputMap.size() == 3
+        inputMap.size() == 4
         inputMap.get("Load") == loadUuid
         inputMap.get("PV") == pvUuid
+        inputMap.get("PR") == prUuid
         inputMap.get("Em") == emUuid
     }
 
     def "ExtEntityMapping should return SIMONA uuid mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT)
+        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY)
 
         then:
         inputMap.size() == 1
@@ -105,11 +115,11 @@ class ExtEntityMappingTest extends Specification {
 
     def "ExtEntityMapping should return multiple SIMONA uuid mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.EXT_PRIMARY_INPUT, DataType.EXT_EM_INPUT)
+        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY, DataType.EM)
 
         then:
         inputMap.size() == 2
@@ -119,26 +129,27 @@ class ExtEntityMappingTest extends Specification {
 
     def "ExtEntityMapping should return all external id mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
         def inputMap = extEntryMapping.getExtUuid2IdMapping()
 
         then:
-        inputMap.size() == 3
+        inputMap.size() == 4
         inputMap.get(loadUuid) == "Load"
         inputMap.get(pvUuid) == "PV"
+        inputMap.get(prUuid) == "PR"
         inputMap.get(emUuid) == "Em"
     }
 
     def "ExtEntityMapping should return external id mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.EXT_PRIMARY_INPUT)
+        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY)
 
         then:
         inputMap.size() == 1
@@ -147,11 +158,11 @@ class ExtEntityMappingTest extends Specification {
 
     def "ExtEntityMapping should return multiple external id mapping correctly"() {
         given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extEmInputEntry)
+        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.EXT_PRIMARY_INPUT, DataType.EXT_EM_INPUT)
+        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY, DataType.EM)
 
         then:
         inputMap.size() == 2

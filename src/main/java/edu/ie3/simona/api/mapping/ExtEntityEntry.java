@@ -16,8 +16,8 @@ import java.util.UUID;
  *
  * @param uuid SIMONA uuid
  * @param id external id
- * @param columnScheme data types the external asset expects
- * @param dataType data types the external asset expects
+ * @param columnScheme option for column scheme of primary data
+ * @param dataType data type the external asset expects
  */
 public record ExtEntityEntry(
     UUID uuid, String id, Optional<ColumnScheme> columnScheme, DataType dataType)
