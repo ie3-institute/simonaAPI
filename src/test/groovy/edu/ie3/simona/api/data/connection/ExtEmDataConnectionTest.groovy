@@ -20,10 +20,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
     ActorTestKit testKit
 
     @Shared
-    private UUID sender = UUID.randomUUID()
-
-    @Shared
-    private List<UUID> controlled = [inputUuid]
+    List<UUID> controlled = [inputUuid]
 
     def setupSpec() {
         testKit = ActorTestKit.create()
@@ -44,13 +41,14 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, sender))
+        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, null, false))
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, emData, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendEmData(0L, emData, [:], [:], Optional.of(900L))
 
         then:
-        dataService.expectMessage(new ProvideFlexRequest(0, emData, Optional.of(900L)))
+        wasSent
+        dataService.expectMessage(new ProvideEmData(0, emData, [:], [:], Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -63,12 +61,12 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 dataService.ref(),
                 extSimAdapter.ref()
         )
-        def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, inputDataMap, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L))
 
         then:
+        !wasSent
         dataService.expectNoMessage()
     }
 
@@ -85,10 +83,11 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def emData = Map.of(inputUuid, [new FlexOptions(inputUuid, UUID.randomUUID(), power, power, power)])
 
         when:
-        extEmDataConnection.sendFlexOptions(0L, emData, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], emData, [:], Optional.of(900L))
 
         then:
-        dataService.expectMessage(new ProvideEmFlexOption(0, emData, Optional.of(900L)))
+        wasSent
+        dataService.expectMessage(new ProvideEmData(0, [:], emData, [:], Optional.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -101,12 +100,12 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 dataService.ref(),
                 extSimAdapter.ref()
         )
-        def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendFlexRequests(0L, inputDataMap, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L))
 
         then:
+        !wasSent
         dataService.expectNoMessage()
     }
 
@@ -122,9 +121,10 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L))
 
         then:
+        !wasSent
         dataService.expectNoMessage()
     }
 
@@ -140,9 +140,10 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def inputDataMap = [:] as Map
 
         when:
-        extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L), log)
+        def wasSent = extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L))
 
         then:
+        !wasSent
         dataService.expectNoMessage()
     }
 
@@ -186,11 +187,15 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         // we need to queue the msg beforehand because the receive method is blocking
         extEmDataConnection.queueExtResponseMsg(sendMsg)
 
-        def response = extEmDataConnection.requestCompletion(0L)
+        // we request tick 1000 as next tick
+        def response = extEmDataConnection.requestCompletion(0L, 1000L)
 
         then:
-        dataService.expectMessage(new RequestEmCompletion(0L))
+        dataService.expectMessage(new RequestEmCompletion(0L, Optional.of(1000L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
+
+        // we received tick 900 as next, because we need an activation for this tick
+        response == Optional.of(900L)
         response == sendMsg.maybeNextTick()
     }
 

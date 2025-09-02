@@ -12,7 +12,6 @@ import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
 import edu.ie3.simona.api.ontology.em.*;
 import java.util.*;
-import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public final class ExtEmDataConnection
@@ -36,57 +35,44 @@ public final class ExtEmDataConnection
   }
 
   /**
-   * Sends the em flex requests to SIMONA.
+   * Tries to send em data to SIMONA. A message is sent, if at least one map is not empty.
    *
    * @param tick current tick
-   * @param data receiver to flex request, that should be sent to SIMONA
+   * @param flexRequests receiver to flex option request
+   * @param flexOptions receiver to flex options
+   * @param setPoints receiver to set point
    * @param maybeNextTick option for the next tick in the simulation
-   * @param log logger
+   * @return true, if data was sent
    */
-  public void sendFlexRequests(
-      long tick, Map<UUID, FlexOptionRequest> data, Optional<Long> maybeNextTick, Logger log) {
-    if (data.isEmpty()) {
-      log.debug("No em flex requests found! Sending no em data to SIMONA for tick {}.", tick);
-    } else {
-      log.debug("Provided SIMONA with em flex requests.");
-      sendExtMsg(new ProvideFlexRequest(tick, data, maybeNextTick));
+  public boolean sendEmData(
+      long tick,
+      Map<UUID, FlexOptionRequest> flexRequests,
+      Map<UUID, List<FlexOptions>> flexOptions,
+      Map<UUID, EmSetPoint> setPoints,
+      Optional<Long> maybeNextTick) {
+    // send message only if at least one value is present
+    if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
+      sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints, maybeNextTick));
+      return true;
     }
+    return false;
   }
 
   /**
-   * Sends the em flex options to SIMONA.
-   *
-   * @param tick current tick
-   * @param data receiver to flex options, that should be sent to SIMONA
-   * @param maybeNextTick option for the next tick in the simulation
-   * @param log logger
-   */
-  public void sendFlexOptions(
-      long tick, Map<UUID, List<FlexOptions>> data, Optional<Long> maybeNextTick, Logger log) {
-    if (data.isEmpty()) {
-      log.debug("No em flex options found! Sending no em data to SIMONA for tick {}.", tick);
-    } else {
-      log.debug("Provided SIMONA with em flex options.");
-      sendExtMsg(new ProvideEmFlexOption(tick, data, maybeNextTick));
-    }
-  }
-
-  /**
-   * Sends the em set points to SIMONA.
+   * Tries to send the em set points to SIMONA.
    *
    * @param tick current tick
    * @param setPoints receiver to set point, that should be sent to SIMONA
    * @param maybeNextTick option for the next tick in the simulation
-   * @param log logger
+   * @return true, if data was sent
    */
-  public void sendSetPoints(
-      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick, Logger log) {
-    if (setPoints.isEmpty()) {
-      log.debug("No em set points found! Sending no em data to SIMONA for tick {}.", tick);
-    } else {
-      log.debug("Provided SIMONA with em set points.");
-      sendExtMsg(new ProvideEmSetPoint(tick, setPoints, maybeNextTick));
+  public boolean sendSetPoints(
+      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick) {
+    if (!setPoints.isEmpty()) {
+      sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
+      return true;
     }
+    return false;
   }
 
   /**
@@ -109,8 +95,8 @@ public final class ExtEmDataConnection
    * @param tick for which the em service should stop
    * @return an option for the next tick in SIMONA
    */
-  public Optional<Long> requestCompletion(long tick) throws InterruptedException {
-    sendExtMsg(new RequestEmCompletion(tick));
+  public Optional<Long> requestCompletion(long tick, long nextTick) throws InterruptedException {
+    sendExtMsg(new RequestEmCompletion(tick, Optional.of(nextTick)));
     return receiveWithType(EmCompletion.class).maybeNextTick();
   }
 

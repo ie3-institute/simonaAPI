@@ -8,10 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.simona.api.data.model.em.EmData;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /** Contains all SIMONA results for a certain tick. */
 public final class ExtOutputContainer implements ExtDataContainer {
@@ -31,7 +28,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   private final Map<UUID, ResultEntity> resultMap;
 
   /** Map: receiver uuid to {@link EmData} from SIMONA. */
-  private final Map<UUID, EmData> emDataMap;
+  private final Map<UUID, List<EmData>> emDataMap;
 
   /**
    * Container class for result data from SIMONA.
@@ -64,10 +61,16 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   public void addEmData(UUID receiver, EmData emData) {
-    emDataMap.put(receiver, emData);
+    if (emDataMap.containsKey(receiver)) {
+      emDataMap.get(receiver).add(emData);
+    } else {
+      List<EmData> emDataList = new ArrayList<>();
+      emDataList.add(emData);
+      emDataMap.put(receiver, emDataList);
+    }
   }
 
-  public void addEmData(Map<UUID, EmData> emData) {
+  public void addEmData(Map<UUID, List<EmData>> emData) {
     this.emDataMap.putAll(emData);
   }
 
@@ -76,7 +79,8 @@ public final class ExtOutputContainer implements ExtDataContainer {
     return resultMap;
   }
 
-  public Map<UUID, EmData> getEmData() {
+  /** Returns a map: receiver to list of {@link EmData}. */
+  public Map<UUID, List<EmData>> getEmData() {
     return emDataMap;
   }
 
@@ -117,5 +121,10 @@ public final class ExtOutputContainer implements ExtDataContainer {
   /** Returns the result for a certain asset. */
   public ResultEntity getResult(UUID assetId) {
     return resultMap.get(assetId);
+  }
+
+  /** Returns the em data for a certain asset. */
+  public List<EmData> getEmData(UUID assetId) {
+    return emDataMap.get(assetId);
   }
 }

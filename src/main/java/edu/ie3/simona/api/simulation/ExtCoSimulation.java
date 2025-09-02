@@ -159,7 +159,10 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em set points from {}", extSimulatorName);
-    extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick, log);
+    boolean wasSent = extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick);
+    if (!wasSent) {
+      log.debug("No set point data was sent to SIMONA!");
+    }
     log.debug("Provided em set points to SIMONA!");
   }
 
