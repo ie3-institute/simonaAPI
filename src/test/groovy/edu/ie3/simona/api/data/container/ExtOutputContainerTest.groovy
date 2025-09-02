@@ -4,6 +4,9 @@ import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult
 import edu.ie3.datamodel.models.result.system.LoadResult
+import edu.ie3.simona.api.data.model.em.EmSetPoint
+import edu.ie3.simona.api.data.model.em.FlexOptionRequest
+import edu.ie3.simona.api.data.model.em.FlexOptions
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -24,6 +27,31 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
             Quantities.getQuantity(0.95, PowerSystemUnits.PU),
             Quantities.getQuantity(45, StandardUnits.VOLTAGE_ANGLE)
     )
+
+    def "ExtResultContainer should add em data correctly"() {
+        given:
+        def container = new ExtOutputContainer(900L)
+
+        UUID receiver1 = UUID.randomUUID()
+        def setPoint = new EmSetPoint(receiver1, UUID.randomUUID())
+
+        UUID receiver2 = UUID.randomUUID()
+        def options = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options2 = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+
+        when:
+        container.addEmData(receiver1, setPoint)
+        container.addEmData([(receiver2): [options]])
+        container.addEmData(receiver2, options2)
+
+        then:
+        container.results.isEmpty()
+
+        def allEmData = container.emData
+        allEmData.size() == 2
+        allEmData.get(receiver1) == [setPoint]
+        allEmData.get(receiver2) == [options, options2]
+    }
 
     def "ExtResultContainer should return all results correctly"() {
         given:
@@ -58,5 +86,28 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         nodeResults == [(nodeUuid): nodeResult]
         loadResults == [(inputUuid): loadResult]
         flexOptionsResults == [:]
+    }
+
+    def "ExtResultContainer should return specific em data correctly"() {
+        given:
+        def container = new ExtOutputContainer(900L)
+
+        UUID receiver1 = UUID.randomUUID()
+        def setPoint = new EmSetPoint(receiver1, UUID.randomUUID())
+
+        UUID receiver2 = UUID.randomUUID()
+        def options = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options2 = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+
+        def allEmData = [
+                (receiver1): [setPoint],
+                (receiver2): [options, options2]
+        ]
+
+        container.addEmData(allEmData)
+
+        expect:
+        container.getEmData(receiver1) == [setPoint]
+        container.getEmData(receiver2) == [options, options2]
     }
 }

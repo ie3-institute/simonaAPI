@@ -3,18 +3,57 @@ package edu.ie3.simona.api.simulation
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.SValue
 import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.connection.ExtDataConnection
+import edu.ie3.simona.api.data.connection.ExtEmDataConnection
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
+import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
+import edu.ie3.simona.api.ontology.DataMessageFromExt
+import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.ontology.em.ProvideEmData
+import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 
 class ExtCoSimulationTest extends Specification {
 
     @Shared
     private static final Logger log = LoggerFactory.getLogger(ExtCoSimulationTest)
+
+    @Shared
+    private ExtCoSimulation sim
+
+    @Shared
+    private ActorTestKit testKit
+
+    def setupSpec() {
+        testKit = ActorTestKit.create()
+        sim = new ExtCoSimulation("dummy", "dummy") {
+            @Override
+            protected Long initialize() {
+                return 0L
+            }
+
+            @Override
+            protected Optional<Long> doActivity(long tick) {
+                return Optional.empty()
+            }
+
+            @Override
+            Set<ExtDataConnection> getDataConnections() {
+                return []
+            }
+        }
+    }
+
+    def cleanupSpec() {
+        testKit.shutdownTestKit()
+        testKit = null
+    }
 
     def "An ExtCoSimulation can build a primary data connection correctly"() {
         given:
@@ -93,4 +132,46 @@ class ExtCoSimulationTest extends Specification {
         ExtDataConnectionException ex = thrown(ExtDataConnectionException)
         ex.message == "The external data connection 'ExtResultDataConnection' could not be build!"
     }
+
+    def "An ExtCoSimulation should sent em set point data correctly"() {
+        given:
+        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID(), UUID.randomUUID())]
+
+        when:
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+
+        then:
+        dataService.expectMessage(new ProvideEmSetPointData(0L, data, Optional.empty()))
+    }
+
+    def "An ExtCoSimulation should not sent empty em set point data"() {
+        given:
+        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        def data = [:]
+
+        when:
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+
+        then:
+        dataService.expectNoMessage()
+        extSimAdapter.expectNoMessage()
+    }
+
 }

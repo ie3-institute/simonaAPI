@@ -17,10 +17,10 @@ import java.time.ZonedDateTime
 class ExtEmDataConnectionTest extends Specification implements DataServiceTestData {
 
     @Shared
-    ActorTestKit testKit
+    private ActorTestKit testKit
 
     @Shared
-    List<UUID> controlled = [inputUuid]
+    private List<UUID> controlled = [inputUuid]
 
     def setupSpec() {
         testKit = ActorTestKit.create()
