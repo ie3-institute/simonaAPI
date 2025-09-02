@@ -6,11 +6,10 @@
 
 package edu.ie3.simona.api.mapping;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
@@ -22,11 +21,46 @@ public class ExtEntityMapping {
         extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
   }
 
+  /** Returns the data types of this mapping. */
+  public Set<DataType> getDataTypes() {
+    return extEntities.keySet();
+  }
+
   /**
-   * Mapping external id to SIMONA uuid
+   * Method for getting the external entity entries for a specific data type.
+   *
+   * @param dataType for which entries should be returned
+   * @return a list containing all entries or an empty list
+   */
+  public List<ExtEntityEntry> getEntries(DataType dataType) {
+    return extEntities.getOrDefault(dataType, Collections.emptyList());
+  }
+
+  /**
+   * Returns the full mapping external id to SIMONA uuid. Equals {@code
+   * getExtId2UuidMapping(DataType.values())}.
+   */
+  public Map<String, UUID> getExtId2UuidMapping() {
+    return extEntities.values().stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+  }
+
+  /**
+   * Returns the full mapping SIMONA uuid to external id. Equals {@code
+   * getExtUuid2IdMapping(DataType.values())}.
+   */
+  public Map<UUID, String> getExtUuid2IdMapping() {
+    return extEntities.values().stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+  }
+
+  /**
+   * Mapping external id to SIMONA uuid.
    *
    * @param dataType data type the external asset expects
-   * @return Mapping external id to SIMONA uuid
+   * @return mapping external id to SIMONA uuid
    */
   public Map<String, UUID> getExtId2UuidMapping(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
@@ -34,13 +68,37 @@ public class ExtEntityMapping {
   }
 
   /**
-   * Mapping SIMONA uuid to external id
+   * Mapping external id to SIMONA uuid.
+   *
+   * @param dataTypes the external asset expects
+   * @return mapping external id to SIMONA uuid
+   */
+  public Map<String, UUID> getExtId2UuidMapping(DataType... dataTypes) {
+    return Stream.of(dataTypes)
+        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
+        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+  }
+
+  /**
+   * Mapping SIMONA uuid to external id.
    *
    * @param dataType data type the external asset expects
-   * @return Mapping SIMONA uuid to external id
+   * @return mapping SIMONA uuid to external id
    */
   public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
     return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
+        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+  }
+
+  /**
+   * Mapping SIMONA uuid to external id.
+   *
+   * @param dataTypes data types the external asset expects
+   * @return mapping SIMONA uuid to external id
+   */
+  public Map<UUID, String> getExtUuid2IdMapping(DataType... dataTypes) {
+    return Stream.of(dataTypes)
+        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
         .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
   }
 }

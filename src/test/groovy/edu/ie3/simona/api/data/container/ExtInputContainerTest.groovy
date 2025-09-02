@@ -4,12 +4,16 @@ import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
 import edu.ie3.simona.api.data.model.em.FlexOptions
+import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
 import static edu.ie3.util.quantities.PowerSystemUnits.KILOWATT
 
 class ExtInputContainerTest extends Specification {
+
+    @Shared
+    private UUID sender = UUID.randomUUID()
 
     def "An ExtInputContainer should add primary data correctly"() {
         given:
@@ -32,10 +36,10 @@ class ExtInputContainerTest extends Specification {
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addRequest(requester, Optional.empty())
+        container.addRequest(requester, sender)
 
         then:
-        container.flexRequests == [(requester): new FlexOptionRequest(requester, Optional.empty())]
+        container.flexRequests == [(requester): new FlexOptionRequest(requester, sender)]
     }
 
     def "An ExtInputContainer should add flex option data correctly"() {
@@ -61,10 +65,10 @@ class ExtInputContainerTest extends Specification {
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addSetPoint(uuid, power)
+        container.addSetPoint(uuid, sender, power)
 
         then:
-        container.setPoints == [(uuid): new EmSetPoint(uuid, power)]
+        container.setPoints == [(uuid): new EmSetPoint(uuid, sender, power)]
     }
 
     def "An ExtInputContainer should extract primary data correctly"() {
@@ -76,7 +80,7 @@ class ExtInputContainerTest extends Specification {
         container.addPrimaryValue(primaryUuid, primaryValue)
 
         UUID requestReceiver = UUID.randomUUID()
-        container.addRequest(requestReceiver, Optional.empty())
+        container.addRequest(requestReceiver, sender)
 
         UUID receiver = UUID.randomUUID()
         def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
@@ -84,7 +88,7 @@ class ExtInputContainerTest extends Specification {
 
         UUID emAsset = UUID.randomUUID()
         def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
-        container.addSetPoint(emAsset, setPoint)
+        container.addSetPoint(emAsset, sender, setPoint)
 
         when:
         def extracted = container.extractPrimaryData()
@@ -108,7 +112,7 @@ class ExtInputContainerTest extends Specification {
         container.addPrimaryValue(primaryUuid, primaryValue)
 
         UUID requestReceiver = UUID.randomUUID()
-        container.addRequest(requestReceiver, Optional.empty())
+        container.addRequest(requestReceiver, sender)
 
         UUID receiver = UUID.randomUUID()
         def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
@@ -116,14 +120,14 @@ class ExtInputContainerTest extends Specification {
 
         UUID emAsset = UUID.randomUUID()
         def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
-        container.addSetPoint(emAsset, setPoint)
+        container.addSetPoint(emAsset, sender, setPoint)
 
         when:
         def extracted = container.extractFlexRequests()
 
         then:
         extracted.size() == 1
-        extracted == [(requestReceiver): new FlexOptionRequest(requestReceiver, Optional.empty())]
+        extracted == [(requestReceiver): new FlexOptionRequest(requestReceiver, sender)]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 0
@@ -140,7 +144,7 @@ class ExtInputContainerTest extends Specification {
         container.addPrimaryValue(primaryUuid, primaryValue)
 
         UUID requestReceiver = UUID.randomUUID()
-        container.addRequest(requestReceiver, Optional.empty())
+        container.addRequest(requestReceiver, sender)
 
         UUID receiver = UUID.randomUUID()
         def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
@@ -148,7 +152,7 @@ class ExtInputContainerTest extends Specification {
 
         UUID emAsset = UUID.randomUUID()
         def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
-        container.addSetPoint(emAsset, setPoint)
+        container.addSetPoint(emAsset, sender, setPoint)
 
         when:
         def extracted = container.extractFlexOptions()
@@ -172,7 +176,7 @@ class ExtInputContainerTest extends Specification {
         container.addPrimaryValue(primaryUuid, primaryValue)
 
         UUID requestReceiver = UUID.randomUUID()
-        container.addRequest(requestReceiver, Optional.empty())
+        container.addRequest(requestReceiver, sender)
 
         UUID receiver = UUID.randomUUID()
         def flexOptions = new FlexOptions(receiver, UUID.randomUUID(), Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
@@ -180,14 +184,14 @@ class ExtInputContainerTest extends Specification {
 
         UUID emAsset = UUID.randomUUID()
         def power = new PValue(Quantities.getQuantity(5d, KILOWATT))
-        container.addSetPoint(emAsset, power)
+        container.addSetPoint(emAsset, sender, power)
 
         when:
         def extracted = container.extractSetPoints()
 
         then:
         extracted.size() == 1
-        extracted == [(emAsset): new EmSetPoint(emAsset, power)]
+        extracted == [(emAsset): new EmSetPoint(emAsset, sender, power)]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 1

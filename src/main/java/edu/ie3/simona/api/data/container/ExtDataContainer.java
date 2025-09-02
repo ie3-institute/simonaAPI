@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Interface for data that are exchanged between an external simulation and SimonaAPI */
-public sealed interface ExtDataContainer permits ExtInputContainer, ExtResultContainer {
+public sealed interface ExtDataContainer permits ExtInputContainer, ExtOutputContainer {
 
   /** Returns true, if the container is empty. */
   boolean isEmpty();

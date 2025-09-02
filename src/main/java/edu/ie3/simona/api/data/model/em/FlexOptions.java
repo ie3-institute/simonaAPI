@@ -6,6 +6,9 @@
 
 package edu.ie3.simona.api.data.model.em;
 
+import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
@@ -13,15 +16,51 @@ import tech.units.indriya.ComparableQuantity;
 /**
  * Flex option that will be sent to SIMONA.
  *
- * @param receiver uuid of the flex options
- * @param sender uuid of the flex options
- * @param pMin minimal active power
- * @param pRef current active power
- * @param pMax maximal active power
+ * @param receiver The receiver of the flex options.
+ * @param sender The sender of the flex options.
+ * @param pRef Active power (might be negative, thus feed-in) that was suggested for regular usage.
+ * @param pMin Minimal active power to which the sender can be reduced (might be negative, thus
+ *     feed-in), that was determined by the system. Therefore, equates to lower bound of possible
+ *     flexibility provision.
+ * @param pMax Maximum active power to which the sender can be increased (might be negative, thus
+ *     feed-in), that was determined by the system. Therefore, equates to upper bound of possible
+ *     flexibility provision.
  */
 public record FlexOptions(
     UUID receiver,
     UUID sender,
-    ComparableQuantity<Power> pMin,
     ComparableQuantity<Power> pRef,
-    ComparableQuantity<Power> pMax) {}
+    ComparableQuantity<Power> pMin,
+    ComparableQuantity<Power> pMax,
+    Map<UUID, FlexOptionsResult> disaggregated)
+    implements EmData {
+
+  public FlexOptions(
+      UUID receiver,
+      UUID sender,
+      ComparableQuantity<Power> pRef,
+      ComparableQuantity<Power> pMin,
+      ComparableQuantity<Power> pMax) {
+    this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
+  }
+
+  /**
+   * Method for adding disaggregated flex option results to this object.
+   *
+   * @param uuid of the inferior model
+   * @param flexOptionsResult the flex options of the inferior model
+   */
+  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
+    this.disaggregated.put(uuid, flexOptionsResult);
+  }
+
+  @Override
+  public UUID getReceiver() {
+    return receiver;
+  }
+
+  @Override
+  public UUID getSender() {
+    return sender;
+  }
+}
