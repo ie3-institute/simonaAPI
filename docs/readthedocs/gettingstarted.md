@@ -4,7 +4,7 @@ If you feel, something is missing, please contact us!
 
 ## Requirements
 
-Java >= v 21
+SimonaAPI requires Java to be at least Version 21.
 
 ## Where to get
 
