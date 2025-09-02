@@ -49,7 +49,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         then:
         dataService.expectMessage(new RequestResultEntities(0L, [inputUuid]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
-        receivedResults.get(inputUuid) == loadResult
+        receivedResults.get(inputUuid) == [loadResult]
     }
 
     def "ExtResultsData should fail if wrong response is sent"() {

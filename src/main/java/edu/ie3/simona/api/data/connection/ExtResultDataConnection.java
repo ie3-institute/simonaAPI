@@ -33,27 +33,28 @@ public final class ExtResultDataConnection
   }
 
   /** Method for requesting SIMONA results as list from an external simulation. */
-  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
-    sendExtMsg(new RequestResultEntities(tick, resultUuids));
-    return receiveWithType(ProvideResultEntities.class).results();
+  public List<ResultEntity> requestResultList(long tick) throws InterruptedException {
+    return createResultList(requestResults(tick));
   }
 
-  private List<ResultEntity> requestResultList(long tick, List<UUID> entities)
+  public List<ResultEntity> requestResultList(long tick, List<UUID> entities) throws InterruptedException {
+      return createResultList(requestResults(tick, entities));
+  }
+
+
+  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
+  public Map<UUID, List<ResultEntity>> requestResults(long tick) throws InterruptedException {
+    return requestResults(tick, resultUuids);
+  }
+
+  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
+  public Map<UUID, List<ResultEntity>> requestResults(long tick, List<UUID> entities)
       throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, entities));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
-  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
-  public Map<UUID, ResultEntity> requestResults(long tick) throws InterruptedException {
-    return createResultMap(requestResultList(tick));
-  }
-
-    public Map<UUID, ResultEntity> requestResults(long tick, List<UUID> entities) throws InterruptedException {
-        return createResultMap(requestResultList(tick, entities));
-    }
-
-  private Map<UUID, ResultEntity> createResultMap(List<ResultEntity> results) {
-    return results.stream().collect(Collectors.toMap(ResultEntity::getInputModel, i -> i));
+  private List<ResultEntity> createResultList(Map<UUID, List<ResultEntity>> results) {
+    return results.values().stream().flatMap(List::stream).toList();
   }
 }
