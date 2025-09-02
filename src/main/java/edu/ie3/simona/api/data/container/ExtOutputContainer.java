@@ -8,10 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.simona.api.data.model.em.EmData;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /** Contains all SIMONA results for a certain tick. */
 public final class ExtOutputContainer implements ExtDataContainer {
@@ -23,12 +20,12 @@ public final class ExtOutputContainer implements ExtDataContainer {
   private final Optional<Long> maybeNextTick;
 
   /**
-   * Map: receiver uuid to result from SIMONA.
+   * Map: receiver uuid to list of results from SIMONA.
    *
    * <p>ATTENTION: The time stamp of the result entities is not necessarily corresponding to the
    * tick
    */
-  private final Map<UUID, ResultEntity> resultMap;
+  private final Map<UUID, List<ResultEntity>> resultMap;
 
   /** Map: receiver uuid to {@link EmData} from SIMONA. */
   private final Map<UUID, EmData> emDataMap;
@@ -56,10 +53,16 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   public void addResult(UUID receiver, ResultEntity result) {
-    resultMap.put(receiver, result);
+    if (resultMap.containsKey(receiver)) {
+      resultMap.get(receiver).add(result);
+    } else {
+      List<ResultEntity> resultList = new ArrayList<>();
+      resultList.add(result);
+      resultMap.put(receiver, resultList);
+    }
   }
 
-  public void addResults(Map<UUID, ResultEntity> result) {
+  public void addResults(Map<UUID, List<ResultEntity>> result) {
     this.resultMap.putAll(result);
   }
 
@@ -72,7 +75,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   /** Returns a map: uuid to result. */
-  public Map<UUID, ResultEntity> getResults() {
+  public Map<UUID, List<ResultEntity>> getResults() {
     return resultMap;
   }
 
@@ -92,12 +95,14 @@ public final class ExtOutputContainer implements ExtDataContainer {
   public <R extends ResultEntity> Map<UUID, R> getResults(Class<R> clazz) {
     Map<UUID, R> result = new HashMap<>();
 
-    for (Map.Entry<UUID, ResultEntity> entry : resultMap.entrySet()) {
-      ResultEntity resultEntity = entry.getValue();
+    for (Map.Entry<UUID, List<ResultEntity>> entry : resultMap.entrySet()) {
+      List<ResultEntity> resultEntities = entry.getValue();
 
-      if (entry.getValue().getClass().equals(clazz)) {
-        // add the result, if the found result is of the requested type
-        result.put(entry.getKey(), (R) resultEntity);
+      for (ResultEntity resultEntity : resultEntities) {
+        if (resultEntity.getClass().equals(clazz)) {
+          // add the result, if the found result is of the requested type
+          result.put(entry.getKey(), (R) resultEntity);
+        }
       }
     }
 
@@ -115,7 +120,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   /** Returns the result for a certain asset. */
-  public ResultEntity getResult(UUID assetId) {
-    return resultMap.get(assetId);
+  public List<ResultEntity> getResult(UUID assetId) {
+    return resultMap.getOrDefault(assetId, Collections.emptyList());
   }
 }

@@ -55,7 +55,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         then:
         dataService.expectMessage(new RequestResultEntities(0L, [inputUuid]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
-        receivedResults.get(inputUuid) == loadResult
+        receivedResults.get(inputUuid) == [loadResult]
     }
 
     def "ExtResultsData should fail if wrong response is sent"() {
@@ -79,17 +79,5 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         dataService.expectMessage(new RequestResultEntities(0L, [inputUuid]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
         thrown RuntimeException
-    }
-
-    def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
-        given:
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssets, gridResultAssets, flexResultAssets)
-
-        when:
-        def mapOfResults = extResultDataConnection.createResultMap([loadResult])
-
-        then:
-        mapOfResults.size() == 1
-        mapOfResults.get(inputUuid) == loadResult
     }
 }

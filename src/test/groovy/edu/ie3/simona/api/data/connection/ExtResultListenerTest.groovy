@@ -18,7 +18,7 @@ class ExtResultListenerTest extends Specification implements DataServiceTestData
         then:
         ProvideResultEntities message = listener.receiveAny()
 
-        message.results() == [loadResult]
+        message.results() == [(inputUuid): [loadResult]]
     }
 
     def "An ExtResultListener should receive a specific result correctly"() {
@@ -31,7 +31,7 @@ class ExtResultListenerTest extends Specification implements DataServiceTestData
         then:
         def message = listener.receiveWithType(ProvideResultEntities)
 
-        message.results() == [loadResult]
+        message.results() == [(inputUuid): [loadResult]]
     }
 
     def "An ExtResultListener should thrown an exception if the wrong type is received"() {
