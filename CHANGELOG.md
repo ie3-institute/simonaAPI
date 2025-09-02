@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactoring messages [#269](https://github.com/ie3-institute/simonaAPI/issues/269)
 - Refactoring models [#270](https://github.com/ie3-institute/simonaAPI/issues/270)
 
+### Updates
+- Updated java to version 21 [#326](https://github.com/ie3-institute/simonaAPI/issues/326)
+
 ## [0.9.0] - 2025-05-09
 
 ### Changed
