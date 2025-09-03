@@ -72,17 +72,16 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid3 = UUID.randomUUID()
 
         def mapping = [
-                (DataType.EXT_GRID_RESULT)       : [uuid1],
-                (DataType.EXT_PARTICIPANT_RESULT): [uuid2],
-                (DataType.EXT_FLEX_OPTIONS_RESULT): [uuid3]
+                (DataType.RESULT)       : [uuid1],
+                (DataType.EM)            : [uuid2],
+                (DataType.PRIMARY_RESULT): [uuid3]
         ]
 
         when:
         def actual = ExtCoSimulation.buildResultConnection(mapping, log)
 
         then:
-        actual.getGridResultDataAssets() == [uuid1]
-        actual.getParticipantResultDataAssets() == [uuid2]
+        actual.resultUuids == [uuid1, uuid3]
     }
 
     def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty result data connection"() {

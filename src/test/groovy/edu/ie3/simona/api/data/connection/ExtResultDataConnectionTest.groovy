@@ -16,13 +16,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
     ActorTestKit testKit
 
     @Shared
-    List<UUID> participantResultAssets = [inputUuid]
-
-    @Shared
-    List<UUID> gridResultAssets = []
-
-    @Shared
-    List<UUID> flexResultAssets = []
+    List<UUID> resultEntities = [inputUuid]
 
     class WrongResultDataResponseMessageToExt implements ResultDataResponseMessageToExt {}
 
@@ -39,7 +33,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssets, gridResultAssets, flexResultAssets)
+        def extResultDataConnection = new ExtResultDataConnection(resultEntities)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
@@ -62,7 +56,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssets, gridResultAssets, flexResultAssets)
+        def extResultDataConnection = new ExtResultDataConnection(resultEntities)
         extResultDataConnection.setActorRefs(
                 dataService.ref(),
                 extSimAdapter.ref()
@@ -83,7 +77,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
 
     def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
         given:
-        def extResultDataConnection = new ExtResultDataConnection(participantResultAssets, gridResultAssets, flexResultAssets)
+        def extResultDataConnection = new ExtResultDataConnection(resultEntities)
 
         when:
         def mapOfResults = extResultDataConnection.createResultMap([loadResult])
