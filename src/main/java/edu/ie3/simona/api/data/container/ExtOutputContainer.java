@@ -125,6 +125,6 @@ public final class ExtOutputContainer implements ExtDataContainer {
 
   /** Returns the em data for a certain asset. */
   public List<EmData> getEmData(UUID assetId) {
-    return emDataMap.get(assetId);
+    return emDataMap.getOrDefault(assetId, Collections.emptyList());
   }
 }
