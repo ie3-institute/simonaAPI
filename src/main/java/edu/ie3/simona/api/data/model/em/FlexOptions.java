@@ -44,6 +44,18 @@ public record FlexOptions(
     this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
   }
 
+  public ExtendedFlexOptionsResult asResult() {
+      return new ExtendedFlexOptionsResult(
+              null,
+              sender,
+              receiver,
+              pRef,
+              pMin,
+              pMax,
+              disaggregated
+      );
+  }
+
   @Override
   public UUID getReceiver() {
     return receiver;

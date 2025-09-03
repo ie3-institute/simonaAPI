@@ -176,13 +176,11 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       throws InterruptedException {
     log.debug("Request results from SIMONA!");
 
-    Map<UUID, ResultEntity> results =
-        new HashMap<>(
-            extEmDataConnection.requestEmFlexResults(
-                tick, extEmDataConnection.getControlledEms(), disaggregated));
+    ExtOutputContainer container = new ExtOutputContainer(tick);
+    extEmDataConnection.requestEmFlexResults(tick, extEmDataConnection.getControlledEms(), disaggregated).forEach(container::addResult);
 
     log.debug("Received results from SIMONA!");
-    queueToExt.queueData(new ExtResultContainer(tick, results));
+    queueToExt.queueData(container);
     log.debug("Sent results to {}", extSimulatorName);
   }
 
@@ -235,38 +233,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   // result data methods
 
   /**
-   * Function to send only participant result data from SIMONA to the external simulation using the
-   * given {@link ExtResultDataConnection}
-   */
-  protected void sendParticipantResultsToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
-      throws InterruptedException {
-    sendSingleResultType(
-        "participant", connection.requestParticipantResults(tick), tick, nextTick, log);
-  }
-
-  /**
-   * Function to send only grid result data from SIMONA to the external simulation using the given
-   * {@link ExtResultDataConnection}
-   */
-  protected void sendGridResultsToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
-      throws InterruptedException {
-    sendSingleResultType("grid", connection.requestGridResults(tick), tick, nextTick, log);
-  }
-
-  /**
-   * Function to send only flex option result data from SIMONA to the external simulation using the
-   * given {@link ExtResultDataConnection}
-   */
-  protected void sendFlexOptionResultsToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> nextTick, Logger log)
-      throws InterruptedException {
-    sendSingleResultType(
-        "flex option", connection.requestFlexOptionResults(tick), tick, nextTick, log);
-  }
-
-  /**
    * Function to send all result data from SIMONA to the external simulation using the given {@link
    * ExtResultDataConnection}
    *
@@ -288,16 +254,4 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Sent results to {}", extSimulatorName);
   }
 
-  private void sendSingleResultType(
-      String type,
-      Map<UUID, List<ResultEntity>> resultsToBeSend,
-      long tick,
-      Optional<Long> nextTick,
-      Logger log)
-      throws InterruptedException {
-    log.info("Request results from SIMONA for {} for tick {}!", type, tick);
-
-    queueToExt.queueData(new ExtResultContainer(tick, resultsToBeSend, nextTick));
-    log.info("Sent {} results for tick {} to {}", type, tick, extSimulatorName);
-  }
 }
