@@ -99,21 +99,16 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    */
   public static ExtResultDataConnection buildResultConnection(
       Map<DataType, List<UUID>> mapping, Logger log) {
-    List<UUID> participantResults =
-        mapping.getOrDefault(DataType.EXT_PARTICIPANT_RESULT, emptyList());
-    List<UUID> gridResults = mapping.getOrDefault(DataType.EXT_GRID_RESULT, emptyList());
-    List<UUID> flexResults = mapping.getOrDefault(DataType.EXT_FLEX_OPTIONS_RESULT, emptyList());
+    List<UUID> results = new ArrayList<>();
+    Arrays.stream(DataType.resultTypes())
+        .forEach(dataType -> results.addAll(mapping.getOrDefault(dataType, emptyList())));
 
-    if (participantResults.isEmpty() && gridResults.isEmpty() && flexResults.isEmpty()) {
+    if (results.isEmpty()) {
       log.warn("No result connection was created.");
       throw new ExtDataConnectionException(ExtResultDataConnection.class);
     } else {
-      log.info(
-          "Result connection with {} participants, {} grid assets and {} flex option mappings created.",
-          participantResults.size(),
-          gridResults.size(),
-          flexResults.size());
-      return new ExtResultDataConnection(participantResults, gridResults, flexResults);
+      log.info("Result connection with {} result entities created.", results.size());
+      return new ExtResultDataConnection(results);
     }
   }
 
