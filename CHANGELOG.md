@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactoring external entity mapping [#314](https://github.com/ie3-institute/simonaAPI/issues/314)
 - Refactoring result handling [#325](https://github.com/ie3-institute/simonaAPI/issues/325)
 
+### Updates
+- Updated java to version 21 [#326](https://github.com/ie3-institute/simonaAPI/issues/326)
+
 ## [0.9.0] - 2025-05-09
 
 ### Changed
