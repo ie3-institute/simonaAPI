@@ -85,7 +85,7 @@ public final class ExtResultDataConnection
   }
 
   /**
-   * Converts a result map into a list. .
+   * Converts a result map into a list.
    *
    * @param results Map: uuid to results.
    * @return A list of all results.
