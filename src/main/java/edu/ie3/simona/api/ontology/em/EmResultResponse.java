@@ -6,14 +6,11 @@
 
 package edu.ie3.simona.api.ontology.em;
 
-import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
+import edu.ie3.simona.api.data.model.em.EmData;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Message that provides em data (flexibility requests) to an external simulation.
- *
- * @param flexRequests map: receiver to {@link FlexOptionRequest}
- */
-public record FlexRequestResponse(Map<UUID, FlexOptionRequest> flexRequests)
+/** Message that provides em results to an external simulation. */
+public record EmResultResponse(Map<UUID, List<EmData>> emResults)
     implements EmDataResponseMessageToExt {}

@@ -39,7 +39,7 @@ class ExtInputContainerTest extends Specification {
         container.addRequest(requester, sender)
 
         then:
-        container.flexRequests == [(requester): new FlexOptionRequest(requester, sender)]
+        container.flexRequests == [(requester): new FlexOptionRequest(requester, sender, false)]
     }
 
     def "An ExtInputContainer should add flex option data correctly"() {
@@ -127,7 +127,7 @@ class ExtInputContainerTest extends Specification {
 
         then:
         extracted.size() == 1
-        extracted == [(requestReceiver): new FlexOptionRequest(requestReceiver, sender)]
+        extracted == [(requestReceiver): new FlexOptionRequest(requestReceiver, sender, false)]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 0

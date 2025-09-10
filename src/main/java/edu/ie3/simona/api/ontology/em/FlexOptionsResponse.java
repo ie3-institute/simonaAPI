@@ -10,10 +10,6 @@ import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Message that provides em data (flexibility options) to an external simulation.
- *
- * @param receiverToFlexOptions map: receiver to {@link ExtendedFlexOptionsResult}
- */
+/** Message that provides em data (flexibility options) to an external simulation. */
 public record FlexOptionsResponse(Map<UUID, ExtendedFlexOptionsResult> receiverToFlexOptions)
     implements EmDataResponseMessageToExt {}
