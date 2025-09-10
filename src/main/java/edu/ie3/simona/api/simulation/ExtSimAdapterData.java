@@ -6,8 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.simulation.ontology.ControlMessageToExt;
-import edu.ie3.simona.api.simulation.ontology.ControlResponseMessageFromExt;
+import edu.ie3.simona.api.ontology.simulation.ControlMessageToExt;
+import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.pekko.actor.typed.ActorRef;
 

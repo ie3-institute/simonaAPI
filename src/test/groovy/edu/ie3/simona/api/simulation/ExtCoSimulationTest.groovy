@@ -1,55 +1,107 @@
 package edu.ie3.simona.api.simulation
 
-import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
-import edu.ie3.simona.api.simulation.mapping.DataType
-import edu.ie3.simona.api.simulation.mapping.ExtEntityEntry
-import edu.ie3.simona.api.simulation.mapping.ExtEntityMapping
+import edu.ie3.datamodel.models.value.PValue
+import edu.ie3.datamodel.models.value.SValue
+import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.connection.ExtDataConnection
+import edu.ie3.simona.api.data.connection.ExtEmDataConnection
+import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
+import edu.ie3.simona.api.data.model.em.EmSetPoint
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException
+import edu.ie3.simona.api.mapping.DataType
+import edu.ie3.simona.api.ontology.DataMessageFromExt
+import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
+import edu.ie3.simona.api.ontology.em.ProvideEmData
+import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 
 class ExtCoSimulationTest extends Specification {
 
     @Shared
     private static final Logger log = LoggerFactory.getLogger(ExtCoSimulationTest)
 
+    @Shared
+    private ExtCoSimulation sim
+
+    @Shared
+    private ActorTestKit testKit
+
+    def setupSpec() {
+        testKit = ActorTestKit.create()
+        sim = new ExtCoSimulation("dummy", "dummy") {
+            @Override
+            protected Long initialize() {
+                return 0L
+            }
+
+            @Override
+            protected Optional<Long> doActivity(long tick) {
+                return Optional.empty()
+            }
+
+            @Override
+            Set<ExtDataConnection> getDataConnections() {
+                return []
+            }
+        }
+    }
+
+    def cleanupSpec() {
+        testKit.shutdownTestKit()
+        testKit = null
+    }
+
     def "An ExtCoSimulation can build a primary data connection correctly"() {
         given:
         UUID uuid1 = UUID.randomUUID()
         UUID uuid2 = UUID.randomUUID()
-        UUID uuid3 = UUID.randomUUID()
 
-        ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
-                new ExtEntityEntry(uuid2, "em1", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid3, "primary2", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
-        ])
+        Map<UUID, Class<Value>> assetsToClasses = [
+                (uuid1): PValue,
+                (uuid2): SValue
+        ] as Map
 
         when:
-        def actual = ExtCoSimulation.buildPrimaryConnection(mapping, log)
+        def actual = ExtCoSimulation.buildPrimaryConnection(assetsToClasses, log)
 
         then:
-        actual.getPrimaryDataAssets() == [uuid3, uuid1]
+        actual.getPrimaryDataAssets() == [uuid1, uuid2]
+    }
+
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty primary data connection"() {
+        when:
+        ExtCoSimulation.buildPrimaryConnection([:], log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtPrimaryDataConnection' could not be build!"
     }
 
     def "An ExtCoSimulation can build an em data connection correctly"() {
         given:
         UUID uuid1 = UUID.randomUUID()
         UUID uuid2 = UUID.randomUUID()
-        UUID uuid3 = UUID.randomUUID()
 
-        ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "em1", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid2, "em2", ColumnScheme.ACTIVE_POWER, DataType.EXT_EM_INPUT),
-                new ExtEntityEntry(uuid3, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
-        ])
+        def controlled = [uuid1, uuid2]
 
         when:
-        def actual = ExtCoSimulation.buildEmConnection(mapping, log)
+        def actual = ExtCoSimulation.buildEmConnection(controlled, EmMode.BASE, log)
 
         then:
         actual.getControlledEms() == [uuid1, uuid2]
+    }
+
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty em data connection"() {
+        when:
+        ExtCoSimulation.buildEmConnection([], EmMode.BASE, log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtEmDataConnection' could not be build!"
     }
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
@@ -58,17 +110,67 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid2 = UUID.randomUUID()
         UUID uuid3 = UUID.randomUUID()
 
-        ExtEntityMapping mapping = new ExtEntityMapping([
-                new ExtEntityEntry(uuid1, "grid_result", ColumnScheme.ACTIVE_POWER, DataType.EXT_GRID_RESULT),
-                new ExtEntityEntry(uuid2, "participant_result", ColumnScheme.ACTIVE_POWER, DataType.EXT_PARTICIPANT_RESULT),
-                new ExtEntityEntry(uuid3, "primary1", ColumnScheme.ACTIVE_POWER, DataType.EXT_PRIMARY_INPUT),
-        ])
+        def mapping = [
+                (DataType.RESULT)       : [uuid1],
+                (DataType.EM)            : [uuid2],
+                (DataType.PRIMARY_RESULT): [uuid3]
+        ]
 
         when:
         def actual = ExtCoSimulation.buildResultConnection(mapping, log)
 
         then:
-        actual.getGridResultDataAssets() == [uuid1]
-        actual.getParticipantResultDataAssets() == [uuid2]
+        actual.resultUuids == [uuid1, uuid3]
     }
+
+    def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty result data connection"() {
+        when:
+        ExtCoSimulation.buildResultConnection([:], log)
+
+        then:
+        ExtDataConnectionException ex = thrown(ExtDataConnectionException)
+        ex.message == "The external data connection 'ExtResultDataConnection' could not be build!"
+    }
+
+    def "An ExtCoSimulation should sent em set point data correctly"() {
+        given:
+        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID(), UUID.randomUUID())]
+
+        when:
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+
+        then:
+        dataService.expectMessage(new ProvideEmSetPointData(0L, data, Optional.empty()))
+    }
+
+    def "An ExtCoSimulation should not sent empty em set point data"() {
+        given:
+        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        def data = [:]
+
+        when:
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+
+        then:
+        dataService.expectNoMessage()
+        extSimAdapter.expectNoMessage()
+    }
+
 }

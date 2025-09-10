@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+## [0.10.0] - 2025-09-10
+
+### Added
+- Added support for external em communication [#304](https://github.com/ie3-institute/simonaAPI/issues/304)
+
+### Changed
+- Removed Jenkinsfile [#290](https://github.com/ie3-institute/simonaAPI/issues/290)
+- Adapted dependabot workflow and added CODEOWNERS [#294](https://github.com/ie3-institute/simonaAPI/issues/294)
+- Refactoring external data connection [#267](https://github.com/ie3-institute/simonaAPI/issues/267)
+- Refactoring data containers [#268](https://github.com/ie3-institute/simonaAPI/issues/268)
+- Refactoring messages [#269](https://github.com/ie3-institute/simonaAPI/issues/269)
+- Refactoring models [#270](https://github.com/ie3-institute/simonaAPI/issues/270)
+- Refactoring external entity mapping [#314](https://github.com/ie3-institute/simonaAPI/issues/314)
+- Refactoring and simplifying ext em communication [#323](https://github.com/ie3-institute/simonaAPI/issues/323)
+- Refactoring result handling [#325](https://github.com/ie3-institute/simonaAPI/issues/325)
+
+### Updates
+- Updated java to version 21 [#326](https://github.com/ie3-institute/simonaAPI/issues/326)
+
 ## [0.9.0] - 2025-05-09
 
 ### Changed
@@ -74,7 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.9.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.6.0...0.7.0

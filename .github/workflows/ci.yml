@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -79,7 +79,7 @@ jobs:
           ./gradlew sonar \
           -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} \
           -Dsonar.host.url=${{ vars.SONAR_HOST_URL }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.token="${{ secrets.SONAR_TOKEN }}" \
           -Dsonar.qualitygate.wait=true
 
       #Deployment

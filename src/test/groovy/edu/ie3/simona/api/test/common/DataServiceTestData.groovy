@@ -5,20 +5,25 @@ import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.datamodel.models.value.PValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tech.units.indriya.ComparableQuantity
 import tech.units.indriya.quantity.Quantities
 
+import javax.measure.quantity.Power
 import java.time.ZonedDateTime
 
 trait DataServiceTestData {
     Logger log = LoggerFactory.getLogger(DataServiceTestData)
 
     UUID inputUuid = UUID.fromString("22bea5fc-2cb2-4c61-beb9-b476e0107f52")
-    PValue pValue = new PValue(Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN))
+
+    ComparableQuantity<Power> power = Quantities.getQuantity(500.0, StandardUnits.ACTIVE_POWER_IN)
+
+    PValue pValue = new PValue(power)
 
     LoadResult loadResult = new LoadResult(
             ZonedDateTime.parse("2020-01-30T17:26:44Z[UTC]"),
             inputUuid,
-            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_IN),
-            Quantities.getQuantity(5, StandardUnits.REACTIVE_POWER_IN)
+            Quantities.getQuantity(10, StandardUnits.ACTIVE_POWER_RESULT),
+            Quantities.getQuantity(5, StandardUnits.REACTIVE_POWER_RESULT)
     )
 }
