@@ -44,14 +44,9 @@ public record FlexOptions(
     this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
   }
 
-  /**
-   * Method for adding disaggregated flex option results to this object.
-   *
-   * @param uuid of the inferior model
-   * @param flexOptionsResult the flex options of the inferior model
-   */
-  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
-    this.disaggregated.put(uuid, flexOptionsResult);
+  /** Converts and returns this object as a {@link ExtendedFlexOptionsResult}. */
+  public ExtendedFlexOptionsResult asResult() {
+    return new ExtendedFlexOptionsResult(null, sender, receiver, pRef, pMin, pMax, disaggregated);
   }
 
   @Override

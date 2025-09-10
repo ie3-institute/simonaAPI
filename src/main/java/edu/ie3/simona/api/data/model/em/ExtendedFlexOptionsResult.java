@@ -17,7 +17,7 @@ import tech.units.indriya.ComparableQuantity;
  * Extended {@link FlexOptionsResult}, that contains the receiver of the flex options. This models
  * may also contain a disaggregation of the total flex options.
  */
-public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
+public final class ExtendedFlexOptionsResult extends FlexOptionsResult implements EmData {
 
   /** The receiver of the message. */
   private final UUID receiver;
@@ -83,12 +83,13 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
     this.disaggregated.put(uuid, flexOptionsResult);
   }
 
-  /** Returns the uuid of the sender ({@link #getInputModel()}) of the results. */
+  /** Returns the uuid of the sender ({@link #getInputModel()}). */
+  @Override
   public UUID getSender() {
     return getInputModel();
   }
 
-  /** Returns the uuid of the receiver. */
+  @Override
   public UUID getReceiver() {
     return receiver;
   }
