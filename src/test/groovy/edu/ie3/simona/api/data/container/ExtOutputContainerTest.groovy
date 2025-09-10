@@ -70,8 +70,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
     def "ExtResultContainer should return specific results correctly"() {
         given:
         def expected = [
-                (nodeUuid): nodeResult,
-                (inputUuid): loadResult
+                (nodeUuid): [nodeResult],
+                (inputUuid): [loadResult]
         ]
 
         def container = new ExtOutputContainer(0L)
@@ -109,5 +109,20 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         expect:
         container.getEmData(receiver1) == [setPoint]
         container.getEmData(receiver2) == [options, options2]
+    }
+
+    def "ExtResultContainer should return the tick correctly"() {
+        given:
+        def container = new ExtOutputContainer(900L)
+
+        expect:
+        container.tick == 900L
+    }
+
+    def "ExtResultContainer should return the next tick option correctly"() {
+        expect:
+        new ExtOutputContainer(900L).maybeNextTick == Optional.empty()
+        new ExtOutputContainer(900L, Optional.empty()).maybeNextTick == Optional.empty()
+        new ExtOutputContainer(900L, Optional.of(1800L)).maybeNextTick == Optional.of(1800L)
     }
 }
