@@ -44,16 +44,9 @@ public record FlexOptions(
     this(receiver, sender, pRef, pMin, pMax, Collections.emptyMap());
   }
 
+  /** Converts and returns this object as a {@link ExtendedFlexOptionsResult}. */
   public ExtendedFlexOptionsResult asResult() {
-      return new ExtendedFlexOptionsResult(
-              null,
-              sender,
-              receiver,
-              pRef,
-              pMin,
-              pMax,
-              disaggregated
-      );
+    return new ExtendedFlexOptionsResult(null, sender, receiver, pRef, pMin, pMax, disaggregated);
   }
 
   @Override

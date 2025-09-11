@@ -74,16 +74,4 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
         thrown RuntimeException
     }
-
-    def "ExtResultData should convert a list of result entities correctly to a map of resultAssetMappingId to result entity"() {
-        given:
-        def extResultDataConnection = new ExtResultDataConnection(resultEntities)
-
-        when:
-        def mapOfResults = extResultDataConnection.createResultMap([loadResult])
-
-        then:
-        mapOfResults.size() == 1
-        mapOfResults.get(inputUuid) == loadResult
-    }
 }

@@ -15,9 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-/** Enables data connection of results between SIMONA and SimonaAPI. */
+/** Enables data transfer of results between SIMONA and simonaAPI. */
 public final class ExtResultDataConnection
     extends BiDirectional<ResultDataMessageFromExt, ResultDataResponseMessageToExt> {
 
@@ -28,32 +27,69 @@ public final class ExtResultDataConnection
     this.resultUuids = results;
   }
 
+  /**
+   * Returns the uuids that are used by {@link #requestResults(long)} and {@link
+   * #requestResultList(long)}.
+   */
   public List<UUID> getResultUuids() {
     return Collections.unmodifiableList(resultUuids);
   }
 
-  /** Method for requesting SIMONA results as list from an external simulation. */
-  public List<ResultEntity> requestResultList(long tick) throws InterruptedException {
+  /**
+   * Method for requesting SIMONA results as list from an external simulation.
+   *
+   * @param tick For which results should be returned.
+   * @return A list of results.
+   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
+   */
+  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
     return createResultList(requestResults(tick));
   }
 
-  public List<ResultEntity> requestResultList(long tick, List<UUID> entities) throws InterruptedException {
-      return createResultList(requestResults(tick, entities));
+  /**
+   * Method for requesting SIMONA results as list from an external simulation.
+   *
+   * @param tick for which results should be returned.
+   * @param entities For with results should be returned.
+   * @return A list of results
+   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
+   */
+  private List<ResultEntity> requestResultList(long tick, List<UUID> entities)
+      throws InterruptedException {
+    return createResultList(requestResults(tick, entities));
   }
 
-
-  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
+  /**
+   * Method for requesting SIMONA results as a map uuid to object from an external simulation.
+   *
+   * @param tick For which results should be returned.
+   * @return A map: uuid to results.
+   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
+   */
   public Map<UUID, List<ResultEntity>> requestResults(long tick) throws InterruptedException {
     return requestResults(tick, resultUuids);
   }
 
-  /** Method for requesting SIMONA results as a map uuid to object from an external simulation. */
+  /**
+   * Method for requesting SIMONA results as a map uuid to object from an external simulation.
+   *
+   * @param tick For which results should be returned.
+   * @param entities For with results should be returned.
+   * @return A map: uuid to results.
+   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
+   */
   public Map<UUID, List<ResultEntity>> requestResults(long tick, List<UUID> entities)
       throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, entities));
     return receiveWithType(ProvideResultEntities.class).results();
   }
 
+  /**
+   * Converts a result map into a list.
+   *
+   * @param results Map: uuid to results.
+   * @return A list of all results.
+   */
   private List<ResultEntity> createResultList(Map<UUID, List<ResultEntity>> results) {
     return results.values().stream().flatMap(List::stream).toList();
   }
