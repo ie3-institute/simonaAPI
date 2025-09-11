@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.simulation;
 
+import com.typesafe.config.Config;
 import edu.ie3.datamodel.models.input.container.JointGridContainer;
 import edu.ie3.simona.api.ontology.simulation.ControlMessageToExt;
 import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt;
@@ -24,17 +25,19 @@ public class ExtSimAdapterData {
   /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
-  /**
-   * The electrical grid.
-   */
+  /** The parsed simona config. */
+  private final Config simonaConfig;
+
+  /** The electrical grid. */
   private final JointGridContainer grid;
 
   // important trigger queue must be the same as held in actor
   // to make it safer one might consider asking the actor for a reference on its trigger queue?!
   public ExtSimAdapterData(
-          ActorRef<ControlResponseMessageFromExt> extSimAdapter, String[] mainArgs, JointGridContainer grid) {
+          ActorRef<ControlResponseMessageFromExt> extSimAdapter, String[] mainArgs, Config simonaConfig, JointGridContainer grid) {
     this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
+    this.simonaConfig = simonaConfig;
     this.grid = grid;
   }
 
@@ -67,7 +70,11 @@ public class ExtSimAdapterData {
     return mainArgs;
   }
 
+  public Config getSimonaConfig() {
+        return simonaConfig;
+    }
+
   public JointGridContainer getGrid() {
-    return grid;
+      return grid;
   }
 }
