@@ -34,7 +34,10 @@ public class ExtSimAdapterData {
   // important trigger queue must be the same as held in actor
   // to make it safer one might consider asking the actor for a reference on its trigger queue?!
   public ExtSimAdapterData(
-          ActorRef<ControlResponseMessageFromExt> extSimAdapter, String[] mainArgs, Config simonaConfig, JointGridContainer grid) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter,
+      String[] mainArgs,
+      Config simonaConfig,
+      JointGridContainer grid) {
     this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
     this.simonaConfig = simonaConfig;
@@ -71,10 +74,10 @@ public class ExtSimAdapterData {
   }
 
   public Config getSimonaConfig() {
-        return simonaConfig;
-    }
+    return simonaConfig;
+  }
 
   public JointGridContainer getGrid() {
-      return grid;
+    return grid;
   }
 }

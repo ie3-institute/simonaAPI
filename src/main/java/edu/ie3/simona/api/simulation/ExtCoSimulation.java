@@ -6,6 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
+import static java.util.Collections.emptyList;
+
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
@@ -17,11 +19,8 @@ import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.mapping.DataType;
-import org.slf4j.Logger;
-
 import java.util.*;
-
-import static java.util.Collections.emptyList;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -77,9 +76,7 @@ public abstract class ExtCoSimulation extends ExtSimulation {
    * @return an ext em data connection
    */
   public static ExtEmDataConnection buildEmConnection(
-      List<UUID> controlled,
-      ExtEmDataConnection.EmMode mode,
-      Logger log) {
+      List<UUID> controlled, ExtEmDataConnection.EmMode mode, Logger log) {
     if (controlled.isEmpty()) {
       log.warn("Em data connection with 0 controlled entities created. This might lead to errors!");
       throw new ExtDataConnectionException(ExtEmDataConnection.class);
@@ -177,7 +174,9 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Request results from SIMONA!");
 
     ExtOutputContainer container = new ExtOutputContainer(tick);
-    extEmDataConnection.requestEmFlexResults(tick, extEmDataConnection.getControlledEms(), disaggregated).forEach(container::addResult);
+    extEmDataConnection
+        .requestEmFlexResults(tick, extEmDataConnection.getControlledEms(), disaggregated)
+        .forEach(container::addResult);
 
     log.debug("Received results from SIMONA!");
     queueToExt.queueData(container);
@@ -253,5 +252,4 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     queueToExt.queueData(container);
     log.debug("Sent results to {}", extSimulatorName);
   }
-
 }

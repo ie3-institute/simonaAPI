@@ -21,6 +21,6 @@ public record ProvideResultEntities(Map<UUID, List<ResultEntity>> results)
   }
 
   public ProvideResultEntities(ResultEntity result) {
-      this(Map.of(result.getInputModel(), List.of(result)));
+    this(Map.of(result.getInputModel(), List.of(result)));
   }
 }
