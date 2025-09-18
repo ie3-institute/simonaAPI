@@ -81,7 +81,7 @@ dependencies{
   testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
 
   // TESTING
-  testImplementation 'org.apache.groovy:groovy:4.0.28'
+  testImplementation 'org.apache.groovy:groovy:5.0.1'
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 }
 
