@@ -4,8 +4,10 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation;
+package edu.ie3.simona.api.data;
 
+import com.typesafe.config.Config;
+import edu.ie3.datamodel.models.input.container.JointGridContainer;
 import edu.ie3.simona.api.ontology.simulation.ControlMessageToExt;
 import edu.ie3.simona.api.ontology.simulation.ControlResponseMessageFromExt;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,12 +25,23 @@ public class ExtSimAdapterData {
   /** CLI arguments with which SIMONA is initiated */
   private final String[] mainArgs;
 
+  /** The parsed simona config. */
+  private final Config simonaConfig;
+
+  /** The electrical grid. */
+  private final JointGridContainer grid;
+
   // important trigger queue must be the same as held in actor
   // to make it safer one might consider asking the actor for a reference on its trigger queue?!
   public ExtSimAdapterData(
-      ActorRef<ControlResponseMessageFromExt> extSimAdapter, String[] mainArgs) {
+      ActorRef<ControlResponseMessageFromExt> extSimAdapter,
+      String[] mainArgs,
+      Config simonaConfig,
+      JointGridContainer grid) {
     this.extSimAdapter = extSimAdapter;
     this.mainArgs = mainArgs;
+    this.simonaConfig = simonaConfig;
+    this.grid = grid;
   }
 
   public ActorRef<ControlResponseMessageFromExt> getAdapter() {
@@ -58,5 +71,13 @@ public class ExtSimAdapterData {
 
   public String[] getMainArgs() {
     return mainArgs;
+  }
+
+  public Config getSimonaConfig() {
+    return simonaConfig;
+  }
+
+  public JointGridContainer getGrid() {
+    return grid;
   }
 }
