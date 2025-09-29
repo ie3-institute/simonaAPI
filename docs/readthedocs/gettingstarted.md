@@ -19,7 +19,7 @@ On [Maven central](https://search.maven.org/artifact/com.github.ie3-institute/si
 <dependency>
   <groupId>com.github.ie3-institute</groupId>
   <artifactId>simonaAPI</artifactId>
-  <version>0.9.0</version>
+  <version>0.10.0</version>
 </dependency>
 ```
 
@@ -40,7 +40,7 @@ and add the dependency:
 <dependency>
   <groupId>com.github.ie3-institute</groupId>
   <artifactId>simonaAPI</artifactId>
-  <version>0.10-SNAPSHOT</version>
+  <version>0.11-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -50,3 +50,5 @@ With the release of version `0.6.0` there were major changes in the way external
 set up. Therefore, older simulations no longer work with the version `0.6.0`.
 
 With the release of version `0.10.0` there was a lot of refactoring, which breaks compatibility with older simulations.
+
+Additional breaking changes in version `0.11.0`
