@@ -4,7 +4,7 @@
  * Research group Distribution grid planning and operation
  */
 
-package edu.ie3.simona.api.simulation;
+package edu.ie3.simona.api.data;
 
 import com.typesafe.config.Config;
 import edu.ie3.datamodel.models.input.container.JointGridContainer;
