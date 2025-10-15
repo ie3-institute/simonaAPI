@@ -15,9 +15,51 @@ public class ExtEntityMapping {
 
   private final Map<DataType, List<ExtEntityEntry>> extEntities;
 
+  private final Map<DataType, List<UUID>> assets = new HashMap<>();
+  private final Map<UUID, String> uuidToId = new HashMap<>();
+  private final Map<String, UUID> idToUUID = new HashMap<>();
+
   public ExtEntityMapping(List<ExtEntityEntry> extEntityEntryList) {
-    this.extEntities =
-        extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
+    this.extEntities = extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
+
+    // handling of general mapping (from grid container)
+    List<UUID> simonaUUIDs = new ArrayList<>();
+    assets.put(DataType.GENERAL, simonaUUIDs);
+
+    extEntities.getOrDefault(DataType.GENERAL, Collections.emptyList()).forEach(entry -> {
+        UUID uuid = entry.uuid();
+        String id = entry.id();
+
+        idToUUID.put(id, uuid);
+        uuidToId.put(uuid, id);
+        simonaUUIDs.add(uuid);
+    });
+
+    // handling of mapping from external simulation
+    for (DataType dataType : DataType.getExceptGeneral()) {
+        if (extEntities.containsKey(dataType)) {
+            List<ExtEntityEntry> entries = extEntities.get(dataType);
+
+            List<UUID> uuids = new ArrayList<>();
+
+            entries.forEach(entry -> {
+                UUID uuid = entry.uuid();
+                String id = entry.id();
+
+                idToUUID.put(id, uuid);
+                uuidToId.put(uuid, id);
+                uuids.add(uuid);
+            });
+
+            assets.put(dataType, uuids);
+        }
+    }
+  }
+
+  public ExtEntityMapping updateWith(List<ExtEntityEntry> additional) {
+      List<ExtEntityEntry> entries = allEntries();
+      entries.addAll(additional);
+      return new ExtEntityMapping(entries);
   }
 
   /** Returns the data types of this mapping. */
@@ -35,14 +77,18 @@ public class ExtEntityMapping {
     return extEntities.getOrDefault(dataType, Collections.emptyList());
   }
 
+  public List<ExtEntityEntry> allEntries() {
+      List<ExtEntityEntry> entries = new ArrayList<>();
+      extEntities.values().forEach(entries::addAll);
+    return entries;
+  }
+
   /**
    * Returns the full mapping external id to SIMONA uuid. Equals {@code
    * getExtId2UuidMapping(DataType.values())}.
    */
   public Map<String, UUID> getExtId2UuidMapping() {
-    return extEntities.values().stream()
-        .flatMap(Collection::stream)
-        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+    return Collections.unmodifiableMap(idToUUID);
   }
 
   /**
@@ -50,9 +96,7 @@ public class ExtEntityMapping {
    * getExtUuid2IdMapping(DataType.values())}.
    */
   public Map<UUID, String> getExtUuid2IdMapping() {
-    return extEntities.values().stream()
-        .flatMap(Collection::stream)
-        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+    return Collections.unmodifiableMap(uuidToId);
   }
 
   /**
@@ -62,8 +106,8 @@ public class ExtEntityMapping {
    * @return mapping external id to SIMONA uuid
    */
   public Map<String, UUID> getExtId2UuidMapping(DataType dataType) {
-    return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
-        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+      List<UUID> uuids = assets.getOrDefault(dataType, Collections.emptyList());
+      return getExtId2UuidMapping(uuids);
   }
 
   /**
@@ -73,9 +117,8 @@ public class ExtEntityMapping {
    * @return mapping external id to SIMONA uuid
    */
   public Map<String, UUID> getExtId2UuidMapping(DataType... dataTypes) {
-    return Stream.of(dataTypes)
-        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
-        .collect(Collectors.toMap(ExtEntityEntry::id, ExtEntityEntry::uuid));
+      List<UUID> uuids = Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
+      return getExtId2UuidMapping(uuids);
   }
 
   /**
@@ -85,8 +128,8 @@ public class ExtEntityMapping {
    * @return mapping SIMONA uuid to external id
    */
   public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
-    return extEntities.getOrDefault(dataType, Collections.emptyList()).stream()
-        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+      List<UUID> uuids = assets.getOrDefault(dataType, Collections.emptyList());
+    return getExtUuid2IdMapping(uuids);
   }
 
   /**
@@ -96,8 +139,23 @@ public class ExtEntityMapping {
    * @return mapping SIMONA uuid to external id
    */
   public Map<UUID, String> getExtUuid2IdMapping(DataType... dataTypes) {
-    return Stream.of(dataTypes)
-        .flatMap(type -> extEntities.getOrDefault(type, Collections.emptyList()).stream())
-        .collect(Collectors.toMap(ExtEntityEntry::uuid, ExtEntityEntry::id));
+      List<UUID> uuids = Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
+      return getExtUuid2IdMapping(uuids);
   }
+
+  private Map<String, UUID> getExtId2UuidMapping(List<UUID> uuids) {
+      if (uuids.isEmpty()) {
+          return Collections.emptyMap();
+      } else {
+          return idToUUID.entrySet().stream().filter(entry -> uuids.contains(entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      }
+  }
+
+    private Map<UUID, String> getExtUuid2IdMapping(List<UUID> uuids) {
+        if (uuids.isEmpty()) {
+            return Collections.emptyMap();
+        } else {
+            return uuidToId.entrySet().stream().filter(entry -> uuids.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+    }
 }
