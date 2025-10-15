@@ -56,6 +56,7 @@ public class ExtEntityMapping {
     }
   }
 
+  // can override previous mappings
   public ExtEntityMapping updateWith(List<ExtEntityEntry> additional) {
       List<ExtEntityEntry> entries = allEntries();
       entries.addAll(additional);
@@ -64,7 +65,19 @@ public class ExtEntityMapping {
 
   /** Returns the data types of this mapping. */
   public Set<DataType> getDataTypes() {
-    return extEntities.keySet();
+    return assets.keySet();
+  }
+
+  public List<UUID> getAssets() {
+      return assets.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+  }
+
+  public List<UUID> getAssets(DataType dataType) {
+      return assets.getOrDefault(dataType, Collections.emptyList());
+  }
+
+  public List<UUID> getAssets(DataType... dataTypes) {
+    return Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
   }
 
   /**
@@ -117,7 +130,7 @@ public class ExtEntityMapping {
    * @return mapping external id to SIMONA uuid
    */
   public Map<String, UUID> getExtId2UuidMapping(DataType... dataTypes) {
-      List<UUID> uuids = Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
+      List<UUID> uuids = getAssets(dataTypes);
       return getExtId2UuidMapping(uuids);
   }
 
@@ -139,7 +152,7 @@ public class ExtEntityMapping {
    * @return mapping SIMONA uuid to external id
    */
   public Map<UUID, String> getExtUuid2IdMapping(DataType... dataTypes) {
-      List<UUID> uuids = Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
+      List<UUID> uuids = getAssets(dataTypes);
       return getExtUuid2IdMapping(uuids);
   }
 
