@@ -6,7 +6,9 @@
 
 package edu.ie3.simona.api.data.container;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Interface for data that are exchanged between an external simulation and SimonaAPI */
@@ -28,4 +30,17 @@ public sealed interface ExtDataContainer permits ExtInputContainer, ExtOutputCon
     map.clear();
     return result;
   }
+
+    /**
+     * Method to copy a given list and clear the original.
+     *
+     * @param list to be copied and cleared
+     * @return the copy
+     * @param <V> type of value
+     */
+    default <V> List<V> copyAndClear(List<V> list) {
+        List<V> result = new ArrayList<>(list);
+        list.clear();
+        return result;
+    }
 }

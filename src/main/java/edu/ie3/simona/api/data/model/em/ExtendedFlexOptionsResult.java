@@ -7,20 +7,18 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
-import java.time.ZonedDateTime;
-import java.util.*;
-import javax.measure.quantity.Power;
 import org.slf4j.Logger;
 import tech.units.indriya.ComparableQuantity;
+
+import javax.measure.quantity.Power;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 /**
  * Extended {@link FlexOptionsResult}, that contains the receiver of the flex options. This models
  * may also contain a disaggregation of the total flex options.
  */
 public final class ExtendedFlexOptionsResult extends FlexOptionsResult implements EmData {
-
-  /** The receiver of the message. */
-  private final UUID receiver;
 
   /** The disaggregated flex option results. */
   private final Map<UUID, FlexOptionsResult> disaggregated;
@@ -30,7 +28,6 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    *
    * @param time date and time when the result is produced
    * @param sender uuid of the input model that produces the result
-   * @param receiver uuid of the receiver that will receive this result
    * @param pRef active power that was suggested for regular usage by the system participant
    * @param pMin active minimal power that was determined by the system participant
    * @param pMax active maximum power that was determined by the system participant
@@ -38,12 +35,10 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
   public ExtendedFlexOptionsResult(
       ZonedDateTime time,
       UUID sender,
-      UUID receiver,
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax) {
     super(time, sender, pRef, pMin, pMax);
-    this.receiver = receiver;
     this.disaggregated = new HashMap<>();
   }
 
@@ -52,7 +47,6 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    *
    * @param time date and time when the result is produced
    * @param sender uuid of the input model that produces the result
-   * @param receiver uuid of the receiver that will receive this result
    * @param pRef active power that was suggested for regular usage by the system participant
    * @param pMin active minimal power that was determined by the system participant
    * @param pMax active maximum power that was determined by the system participant
@@ -60,13 +54,11 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
   public ExtendedFlexOptionsResult(
       ZonedDateTime time,
       UUID sender,
-      UUID receiver,
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax,
       Map<UUID, FlexOptionsResult> disaggregated) {
     super(time, sender, pRef, pMin, pMax);
-    this.receiver = receiver;
     this.disaggregated = disaggregated;
   }
 
@@ -84,14 +76,8 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
   }
 
   /** Returns the uuid of the sender ({@link #getInputModel()}). */
-  @Override
   public UUID getSender() {
     return getInputModel();
-  }
-
-  @Override
-  public UUID getReceiver() {
-    return receiver;
   }
 
   /** Returns {@code true}, if disaggregated flex option are available. */
@@ -177,13 +163,12 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ExtendedFlexOptionsResult that = (ExtendedFlexOptionsResult) o;
-    return Objects.equals(receiver, that.receiver)
-        && Objects.equals(disaggregated, that.disaggregated);
+    return Objects.equals(disaggregated, that.disaggregated);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), receiver, disaggregated);
+    return Objects.hash(super.hashCode(), disaggregated);
   }
 
   @Override
@@ -193,8 +178,6 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
         + getTime()
         + ", sender="
         + getSender()
-        + ", receiver="
-        + receiver
         + ", pRef="
         + getpRef()
         + ", pMin="

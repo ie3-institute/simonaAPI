@@ -142,31 +142,4 @@ class ExtEntityMappingTest extends Specification {
         inputMap.get(prUuid) == "PR"
         inputMap.get(emUuid) == "Em"
     }
-
-    def "ExtEntityMapping should return external id mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY)
-
-        then:
-        inputMap.size() == 1
-        inputMap.get(pvUuid) == "PV"
-    }
-
-    def "ExtEntityMapping should return multiple external id mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY, DataType.EM)
-
-        then:
-        inputMap.size() == 2
-        inputMap.get(pvUuid) == "PV"
-        inputMap.get(emUuid) == "Em"
-    }
 }

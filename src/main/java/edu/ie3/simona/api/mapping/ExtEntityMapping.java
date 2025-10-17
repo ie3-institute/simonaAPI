@@ -6,94 +6,158 @@
 
 package edu.ie3.simona.api.mapping;
 
+import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
+import edu.ie3.datamodel.models.input.container.GridContainer;
+import edu.ie3.datamodel.models.value.Value;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
 
-  private final Map<DataType, List<ExtEntityEntry>> extEntities;
+  private final Map<DataType, List<UUID>> extAssets = new HashMap<>();
+  private final Map<UUID, Class<? extends Value>> primaryMapping = new HashMap<>();
 
-  private final Map<DataType, List<UUID>> assets = new HashMap<>();
+  // asset lists
+  private final Set<UUID> gridAssets = new HashSet<>();
+  private final Set<UUID> participants = new HashSet<>();
+  private final Set<UUID> ems = new HashSet<>();
+
   private final Map<UUID, String> uuidToId = new HashMap<>();
-  private final Map<String, UUID> idToUUID = new HashMap<>();
+  private final Map<String, UUID> idToUuid = new HashMap<>();
 
-  public ExtEntityMapping(List<ExtEntityEntry> extEntityEntryList) {
-    this.extEntities = extEntityEntryList.stream().collect(Collectors.groupingBy(ExtEntityEntry::dataType));
+  public ExtEntityMapping(GridContainer grid) {
+      // handling of grid assets
+      grid.getRawGrid().allEntitiesAsList().forEach(asset -> {
+          UUID uuid = asset.getUuid();
+          String id = asset.getId();
 
-    // handling of general mapping (from grid container)
-    List<UUID> simonaUUIDs = new ArrayList<>();
-    assets.put(DataType.GENERAL, simonaUUIDs);
+          // add to mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
 
-    extEntities.getOrDefault(DataType.GENERAL, Collections.emptyList()).forEach(entry -> {
-        UUID uuid = entry.uuid();
-        String id = entry.id();
+          // add to asset list
+          gridAssets.add(asset.getUuid());
+      });
 
-        idToUUID.put(id, uuid);
-        uuidToId.put(uuid, id);
-        simonaUUIDs.add(uuid);
-    });
+      // handling of participants and ems
+      grid.getSystemParticipants().allEntitiesAsList().forEach(participant -> {
+          UUID uuid = participant.getUuid();
+          String id = participant.getId();
 
-    // handling of mapping from external simulation
-    for (DataType dataType : DataType.getExceptGeneral()) {
-        if (extEntities.containsKey(dataType)) {
-            List<ExtEntityEntry> entries = extEntities.get(dataType);
+          // add to mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
 
-            List<UUID> uuids = new ArrayList<>();
+          // add to asset list
+          participants.add(participant.getUuid());
 
-            entries.forEach(entry -> {
-                UUID uuid = entry.uuid();
-                String id = entry.id();
+          // add ems
+          participant.getControllingEm().ifPresent(em -> {
+              UUID emUuid = em.getUuid();
+              String emId = em.getId();
 
-                idToUUID.put(id, uuid);
-                uuidToId.put(uuid, id);
-                uuids.add(uuid);
-            });
+              // add to mappings
+              uuidToId.put(emUuid, emId);
+              idToUuid.put(emId, emUuid);
 
-            assets.put(dataType, uuids);
-        }
-    }
+              // add to asset list
+              ems.add(emUuid);
+          });
+      });
+  }
+
+  private ExtEntityMapping(
+          Map<DataType, List<UUID>> assets,
+          Map<UUID, Class<? extends Value>> primaryMapping,
+           Set<UUID> gridAssets,
+    Set<UUID> participants,
+    Set<UUID> ems,
+          Map<UUID, String> uuidToId,
+          Map<String, UUID> idToUUID
+  ) {
+      this.extAssets.putAll(assets);
+      this.primaryMapping.putAll(primaryMapping);
+      this.gridAssets.addAll(gridAssets);
+      this.participants.addAll(participants);
+      this.ems.addAll(ems);
+      this.uuidToId.putAll(uuidToId);
+      this.idToUuid.putAll(idToUUID);
   }
 
   // can override previous mappings
-  public ExtEntityMapping updateWith(List<ExtEntityEntry> additional) {
-      List<ExtEntityEntry> entries = allEntries();
-      entries.addAll(additional);
-      return new ExtEntityMapping(entries);
+  public ExtEntityMapping include(List<ExtEntityEntry> included) {
+      ExtEntityMapping copy = new ExtEntityMapping(extAssets, primaryMapping, gridAssets, participants, ems, uuidToId, idToUuid);
+      copy.includeEntries(included);
+      return copy;
   }
+
+  public ExtEntityMapping include(DataType dataType, List<String> included, Optional<ColumnScheme> schemeOption) {
+      ExtEntityMapping copy = new ExtEntityMapping(extAssets, primaryMapping, gridAssets, participants, ems, uuidToId, idToUuid);
+      includeIds(dataType, included.stream().map(this::from).toList(), schemeOption);
+      return copy;
+  }
+
+  private void includeIds(DataType dataType, List<UUID> included, Optional<ColumnScheme> schemeOption) {
+      schemeOption.ifPresent(scheme -> included.forEach(uuid -> primaryMapping.put(uuid, scheme.getValueClass())));
+      included.forEach(uuid -> extAssets.computeIfAbsent(dataType, d -> new ArrayList<>()).add(uuid));
+  }
+
+    // overrides previous mappings
+  private void includeEntries(List<ExtEntityEntry> included) {
+      included.forEach(entry -> {
+          DataType dataType = entry.dataType();
+          UUID uuid = entry.uuid();
+          String id = entry.id();
+
+          entry.columnScheme().ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
+
+          // override mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
+
+          extAssets.computeIfAbsent(dataType, d -> new ArrayList<>()).add(uuid);
+      });
+  }
+
 
   /** Returns the data types of this mapping. */
   public Set<DataType> getDataTypes() {
-    return assets.keySet();
+    return extAssets.keySet();
   }
 
-  public List<UUID> getAssets() {
-      return assets.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+    public Map<UUID, Class<? extends Value>> getPrimaryMapping() {
+        return Collections.unmodifiableMap(primaryMapping);
+    }
+
+    public List<UUID> getExtAssets() {
+      return extAssets.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   public List<UUID> getAssets(DataType dataType) {
-      return assets.getOrDefault(dataType, Collections.emptyList());
+      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
+
+      return switch (dataType) {
+          case PRIMARY, PRIMARY_RESULT -> new ArrayList<>(participants);
+          case RESULT -> {
+              List<UUID> res = new ArrayList<>();
+              res.addAll(gridAssets);
+              res.addAll(participants);
+              res.addAll(ems);
+              yield res;
+          }
+          case EM -> new ArrayList<>(ems);
+          default -> uuids;
+      };
   }
 
-  public List<UUID> getAssets(DataType... dataTypes) {
-    return Stream.of(dataTypes).flatMap(type -> assets.getOrDefault(type, Collections.emptyList()).stream()).toList();
+  public UUID from(String id) {
+      return idToUuid.get(id);
   }
 
-  /**
-   * Method for getting the external entity entries for a specific data type.
-   *
-   * @param dataType for which entries should be returned
-   * @return a list containing all entries or an empty list
-   */
-  public List<ExtEntityEntry> getEntries(DataType dataType) {
-    return extEntities.getOrDefault(dataType, Collections.emptyList());
-  }
-
-  public List<ExtEntityEntry> allEntries() {
-      List<ExtEntityEntry> entries = new ArrayList<>();
-      extEntities.values().forEach(entries::addAll);
-    return entries;
+  public String from(UUID uuid) {
+      return uuidToId.get(uuid);
   }
 
   /**
@@ -101,7 +165,7 @@ public class ExtEntityMapping {
    * getExtId2UuidMapping(DataType.values())}.
    */
   public Map<String, UUID> getExtId2UuidMapping() {
-    return Collections.unmodifiableMap(idToUUID);
+    return Collections.unmodifiableMap(idToUuid);
   }
 
   /**
@@ -118,8 +182,9 @@ public class ExtEntityMapping {
    * @param dataType data type the external asset expects
    * @return mapping external id to SIMONA uuid
    */
+  @Deprecated
   public Map<String, UUID> getExtId2UuidMapping(DataType dataType) {
-      List<UUID> uuids = assets.getOrDefault(dataType, Collections.emptyList());
+      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
       return getExtId2UuidMapping(uuids);
   }
 
@@ -129,8 +194,9 @@ public class ExtEntityMapping {
    * @param dataTypes the external asset expects
    * @return mapping external id to SIMONA uuid
    */
+  @Deprecated
   public Map<String, UUID> getExtId2UuidMapping(DataType... dataTypes) {
-      List<UUID> uuids = getAssets(dataTypes);
+      List<UUID> uuids = getExtAssets();
       return getExtId2UuidMapping(uuids);
   }
 
@@ -140,8 +206,9 @@ public class ExtEntityMapping {
    * @param dataType data type the external asset expects
    * @return mapping SIMONA uuid to external id
    */
+  @Deprecated
   public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
-      List<UUID> uuids = assets.getOrDefault(dataType, Collections.emptyList());
+      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
     return getExtUuid2IdMapping(uuids);
   }
 
@@ -151,8 +218,9 @@ public class ExtEntityMapping {
    * @param dataTypes data types the external asset expects
    * @return mapping SIMONA uuid to external id
    */
+  @Deprecated
   public Map<UUID, String> getExtUuid2IdMapping(DataType... dataTypes) {
-      List<UUID> uuids = getAssets(dataTypes);
+      List<UUID> uuids = getExtAssets();
       return getExtUuid2IdMapping(uuids);
   }
 
@@ -160,7 +228,7 @@ public class ExtEntityMapping {
       if (uuids.isEmpty()) {
           return Collections.emptyMap();
       } else {
-          return idToUUID.entrySet().stream().filter(entry -> uuids.contains(entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+          return idToUuid.entrySet().stream().filter(entry -> uuids.contains(entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       }
   }
 

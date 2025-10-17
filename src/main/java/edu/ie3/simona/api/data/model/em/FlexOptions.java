@@ -46,16 +46,6 @@ public record FlexOptions(
 
   /** Converts and returns this object as a {@link ExtendedFlexOptionsResult}. */
   public ExtendedFlexOptionsResult asResult() {
-    return new ExtendedFlexOptionsResult(null, sender, receiver, pRef, pMin, pMax, disaggregated);
-  }
-
-  @Override
-  public UUID getReceiver() {
-    return receiver;
-  }
-
-  @Override
-  public UUID getSender() {
-    return sender;
+    return new ExtendedFlexOptionsResult(null, sender, pRef, pMin, pMax, disaggregated);
   }
 }
