@@ -27,6 +27,22 @@ public class ExtEntityMapping {
   private final Map<UUID, String> uuidToId = new HashMap<>();
   private final Map<String, UUID> idToUuid = new HashMap<>();
 
+  public ExtEntityMapping(List<ExtEntityEntry> entries) {
+      entries.forEach(entry -> {
+          DataType dataType = entry.dataType();
+          UUID uuid = entry.uuid();
+          String id = entry.id();
+
+          entry.columnScheme().ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
+
+          // override mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
+
+          extAssets.computeIfAbsent(dataType, k -> new ArrayList<>()).add(uuid);
+      });
+  }
+
   public ExtEntityMapping(GridContainer grid) {
       // handling of grid assets
       grid.getRawGrid().allEntitiesAsList().forEach(asset -> {
@@ -68,40 +84,32 @@ public class ExtEntityMapping {
       });
   }
 
-  private ExtEntityMapping(
-          Map<DataType, List<UUID>> assets,
-          Map<UUID, Class<? extends Value>> primaryMapping,
-           Set<UUID> gridAssets,
-    Set<UUID> participants,
-    Set<UUID> ems,
-          Map<UUID, String> uuidToId,
-          Map<String, UUID> idToUUID
-  ) {
-      this.extAssets.putAll(assets);
-      this.primaryMapping.putAll(primaryMapping);
-      this.gridAssets.addAll(gridAssets);
-      this.participants.addAll(participants);
-      this.ems.addAll(ems);
-      this.uuidToId.putAll(uuidToId);
-      this.idToUuid.putAll(idToUUID);
+  private ExtEntityMapping(ExtEntityMapping mapping) {
+      this.extAssets.putAll(mapping.extAssets);
+      this.primaryMapping.putAll(mapping.primaryMapping);
+      this.gridAssets.addAll(mapping.gridAssets);
+      this.participants.addAll(mapping.participants);
+      this.ems.addAll(mapping.ems);
+      this.uuidToId.putAll(mapping.uuidToId);
+      this.idToUuid.putAll(mapping.idToUuid);
   }
 
   // can override previous mappings
   public ExtEntityMapping include(List<ExtEntityEntry> included) {
-      ExtEntityMapping copy = new ExtEntityMapping(extAssets, primaryMapping, gridAssets, participants, ems, uuidToId, idToUuid);
+      ExtEntityMapping copy = new ExtEntityMapping(this);
       copy.includeEntries(included);
       return copy;
   }
 
   public ExtEntityMapping include(DataType dataType, List<String> included, Optional<ColumnScheme> schemeOption) {
-      ExtEntityMapping copy = new ExtEntityMapping(extAssets, primaryMapping, gridAssets, participants, ems, uuidToId, idToUuid);
-      includeIds(dataType, included.stream().map(this::from).toList(), schemeOption);
+      ExtEntityMapping copy = new ExtEntityMapping(this);
+      includeIds(dataType, included.stream().map(this::get).filter(Optional::isPresent).map(Optional::get).toList(), schemeOption);
       return copy;
   }
 
   private void includeIds(DataType dataType, List<UUID> included, Optional<ColumnScheme> schemeOption) {
       schemeOption.ifPresent(scheme -> included.forEach(uuid -> primaryMapping.put(uuid, scheme.getValueClass())));
-      included.forEach(uuid -> extAssets.computeIfAbsent(dataType, d -> new ArrayList<>()).add(uuid));
+      addExtEntities(dataType, included);
   }
 
     // overrides previous mappings
@@ -117,10 +125,18 @@ public class ExtEntityMapping {
           uuidToId.put(uuid, id);
           idToUuid.put(id, uuid);
 
-          extAssets.computeIfAbsent(dataType, d -> new ArrayList<>()).add(uuid);
+          addExtEntities(dataType, included.stream().map(ExtEntityEntry::uuid).toList());
       });
   }
 
+  private void addExtEntities(DataType dataType, List<UUID> included) {
+      if (dataType == DataType.PRIMARY_RESULT) {
+          extAssets.computeIfAbsent(DataType.PRIMARY, d -> new ArrayList<>()).addAll(included);
+          extAssets.computeIfAbsent(DataType.RESULT, d -> new ArrayList<>()).addAll(included);
+      } else {
+          extAssets.computeIfAbsent(dataType, k -> new ArrayList<>()).addAll(included);
+      }
+  }
 
   /** Returns the data types of this mapping. */
   public Set<DataType> getDataTypes() {
@@ -131,14 +147,12 @@ public class ExtEntityMapping {
         return Collections.unmodifiableMap(primaryMapping);
     }
 
-    public List<UUID> getExtAssets() {
+    public List<UUID> getAllAssets() {
       return extAssets.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   public List<UUID> getAssets(DataType dataType) {
-      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
-
-      return switch (dataType) {
+      List<UUID> uuids = switch (dataType) {
           case PRIMARY, PRIMARY_RESULT -> new ArrayList<>(participants);
           case RESULT -> {
               List<UUID> res = new ArrayList<>();
@@ -148,8 +162,38 @@ public class ExtEntityMapping {
               yield res;
           }
           case EM -> new ArrayList<>(ems);
-          default -> uuids;
+          default -> Collections.emptyList();
       };
+
+      if (uuids.isEmpty()) {
+          if (dataType == DataType.PRIMARY_RESULT) {
+              List<UUID> res = new ArrayList<>();
+              res.addAll(extAssets.getOrDefault(DataType.PRIMARY, Collections.emptyList()));
+              res.addAll(extAssets.getOrDefault(DataType.RESULT, Collections.emptyList()));
+
+              return res;
+          } else {
+              return extAssets.getOrDefault(dataType, Collections.emptyList());
+          }
+
+      } else {
+          List<UUID> ext = new  ArrayList<>();
+          extAssets.values().forEach(ext::addAll);
+
+          if (extAssets.isEmpty()) {
+              return uuids;
+          } else {
+              return uuids.stream().filter(ext::contains).toList();
+          }
+      }
+  }
+
+  public boolean contains(String id) {
+      return idToUuid.containsKey(id);
+  }
+
+  public boolean contains(UUID uuid) {
+      return uuidToId.containsKey(uuid);
   }
 
   public UUID from(String id) {
@@ -158,6 +202,14 @@ public class ExtEntityMapping {
 
   public String from(UUID uuid) {
       return uuidToId.get(uuid);
+  }
+
+  public Optional<UUID> get(String id) {
+      return Optional.ofNullable(idToUuid.get(id));
+  }
+
+  public Optional<String> get(UUID uuid) {
+      return Optional.ofNullable(uuidToId.get(uuid));
   }
 
   /**
@@ -173,70 +225,6 @@ public class ExtEntityMapping {
    * getExtUuid2IdMapping(DataType.values())}.
    */
   public Map<UUID, String> getExtUuid2IdMapping() {
-    return Collections.unmodifiableMap(uuidToId);
+      return Collections.unmodifiableMap(uuidToId);
   }
-
-  /**
-   * Mapping external id to SIMONA uuid.
-   *
-   * @param dataType data type the external asset expects
-   * @return mapping external id to SIMONA uuid
-   */
-  @Deprecated
-  public Map<String, UUID> getExtId2UuidMapping(DataType dataType) {
-      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
-      return getExtId2UuidMapping(uuids);
-  }
-
-  /**
-   * Mapping external id to SIMONA uuid.
-   *
-   * @param dataTypes the external asset expects
-   * @return mapping external id to SIMONA uuid
-   */
-  @Deprecated
-  public Map<String, UUID> getExtId2UuidMapping(DataType... dataTypes) {
-      List<UUID> uuids = getExtAssets();
-      return getExtId2UuidMapping(uuids);
-  }
-
-  /**
-   * Mapping SIMONA uuid to external id.
-   *
-   * @param dataType data type the external asset expects
-   * @return mapping SIMONA uuid to external id
-   */
-  @Deprecated
-  public Map<UUID, String> getExtUuid2IdMapping(DataType dataType) {
-      List<UUID> uuids = extAssets.getOrDefault(dataType, Collections.emptyList());
-    return getExtUuid2IdMapping(uuids);
-  }
-
-  /**
-   * Mapping SIMONA uuid to external id.
-   *
-   * @param dataTypes data types the external asset expects
-   * @return mapping SIMONA uuid to external id
-   */
-  @Deprecated
-  public Map<UUID, String> getExtUuid2IdMapping(DataType... dataTypes) {
-      List<UUID> uuids = getExtAssets();
-      return getExtUuid2IdMapping(uuids);
-  }
-
-  private Map<String, UUID> getExtId2UuidMapping(List<UUID> uuids) {
-      if (uuids.isEmpty()) {
-          return Collections.emptyMap();
-      } else {
-          return idToUuid.entrySet().stream().filter(entry -> uuids.contains(entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      }
-  }
-
-    private Map<UUID, String> getExtUuid2IdMapping(List<UUID> uuids) {
-        if (uuids.isEmpty()) {
-            return Collections.emptyMap();
-        } else {
-            return uuidToId.entrySet().stream().filter(entry -> uuids.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
-    }
 }

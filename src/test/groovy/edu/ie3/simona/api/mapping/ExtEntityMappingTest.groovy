@@ -68,22 +68,6 @@ class ExtEntityMappingTest extends Specification {
         [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | [DataType.RESULT, DataType.PRIMARY, DataType.PRIMARY_RESULT, DataType.EM]
     }
 
-    def "ExtEntityMapping should return the entries correctly"() {
-        when:
-        def extEntryMapping = new ExtEntityMapping(assets)
-        def types = extEntryMapping.getEntries(dataType)
-
-        then:
-        types == expectedEntries
-
-        where:
-        assets | dataType | expectedEntries
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.RESULT | [extResultEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY | [extInputEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY_RESULT | [extPrimaryResultEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.EM | [extEmInputEntry]
-    }
-
     def "ExtEntityMapping should return all SIMONA uuid mapping correctly"() {
         given:
         def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
@@ -106,25 +90,11 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY)
+        def actual = extEntryMapping.getAssets(DataType.PRIMARY)
 
         then:
-        inputMap.size() == 1
-        inputMap.get("PV") == pvUuid
-    }
-
-    def "ExtEntityMapping should return multiple SIMONA uuid mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY, DataType.EM)
-
-        then:
-        inputMap.size() == 2
-        inputMap.get("PV") == pvUuid
-        inputMap.get("Em") == emUuid
+        actual.size() == 1
+        actual.getFirst() == pvUuid
     }
 
     def "ExtEntityMapping should return all external id mapping correctly"() {
