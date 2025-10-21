@@ -1,4 +1,5 @@
 /* Maven publish - start */
+
 tasks.register("sourcesJar", Jar) {
   archiveClassifier.set("sources")
   from sourceSets.main.allJava
@@ -10,12 +11,10 @@ tasks.register("javadocJar", Jar) {
   from { tasks.named("javadoc", Javadoc).get().destinationDir }
 }
 
-
-if (project.hasProperty('user') && project.hasProperty('password') && project.hasProperty('deployVersion')) {
+if (project.hasProperty('mavenCentralUser') && project.hasProperty('mavenCentralPassword') && project.hasProperty('deployVersion')) {
 
   // snapshot version differs from normal version
   String versionString = project.getProperty('deployVersion')
-
 
   publishing {
     publications {
@@ -31,8 +30,8 @@ if (project.hasProperty('user') && project.hasProperty('password') && project.ha
           }
         }
         pom {
-          description = 'API of the simona power system simulation model'
-          name = 'Simona API'
+          description = 'API to create modules and add-ons for simona'
+          name = 'simonaAPI'
           url = 'https:github.com/ie3-institute/simonaAPI'
           organization {
             name = 'Institute of Energy Systems, Energy Efficiency and Energy Economics (ie3)/TU Dortmund University'
@@ -67,18 +66,17 @@ if (project.hasProperty('user') && project.hasProperty('password') && project.ha
         version = versionString
 
         from components.java
-        artifact tasks.named("sourcesJar")
-        artifact tasks.named("javadocJar")
+        artifact sourcesJar
+        artifact javadocJar
       }
     }
     repositories {
       maven {
-        def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-        def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-        url = versionString.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        name = "MavenCentral"
+        url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
         credentials {
-          username project.getProperty('user')
-          password project.getProperty('password')
+          username = project.findProperty('mavenCentralUser')
+          password = project.findProperty('mavenCentralPassword')
         }
       }
     }
@@ -97,7 +95,6 @@ if (project.hasProperty('user') && project.hasProperty('password') && project.ha
 }
 
 def removeTestDependenciesFromPom(pom) {
-
   pom.withXml {
     def root = asNode()
     // eliminate test-scoped dependencies (no need in maven central POMs)
