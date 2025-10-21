@@ -14,11 +14,10 @@ class FlexOptionRequestTest extends Specification {
 
     def "The FlexOptionRequest can be constructed with sender correctly"() {
         when:
-        def request = new FlexOptionRequest(receiverUuid, senderUuid, false)
+        def request = new FlexOptionRequest(receiverUuid, false)
 
         then:
         request.receiver == receiverUuid
-        request.sender == senderUuid
         !request.disaggregated
     }
 

@@ -144,7 +144,7 @@ class ExtCoSimulationTest extends Specification {
                 extSimAdapter.ref()
         )
 
-        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID(), UUID.randomUUID())]
+        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID())]
 
         when:
         sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
