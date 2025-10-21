@@ -3,7 +3,7 @@ package edu.ie3.simona.api.data.connection
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
 import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
-import edu.ie3.simona.api.data.model.em.FlexOptions
+import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.ontology.em.*
@@ -41,7 +41,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, null, false))
+        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, false))
 
         when:
         def wasSent = extEmDataConnection.sendEmData(0L, emData, [:], [:], Optional.of(900L))
@@ -80,7 +80,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, [new FlexOptions(inputUuid, UUID.randomUUID(), power, power, power)])
+        def emData = Map.of(inputUuid, [new PowerLimitFlexOptions(inputUuid, power, power, power)])
 
         when:
         def wasSent = extEmDataConnection.sendEmData(0L, [:], emData, [:], Optional.of(900L))
@@ -157,7 +157,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def sendMsg = new FlexOptionsResponse([(inputUuid): new ExtendedFlexOptionsResult(ZonedDateTime.now(), inputUuid, UUID.randomUUID(), power, power, power)])
+        def sendMsg = new FlexOptionsResponse([(inputUuid): new ExtendedFlexOptionsResult(ZonedDateTime.now(), inputUuid, power, power, power)])
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking

@@ -5,8 +5,7 @@ import edu.ie3.datamodel.models.result.NodeResult
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult
 import edu.ie3.datamodel.models.result.system.LoadResult
 import edu.ie3.simona.api.data.model.em.EmSetPoint
-import edu.ie3.simona.api.data.model.em.FlexOptionRequest
-import edu.ie3.simona.api.data.model.em.FlexOptions
+import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -33,11 +32,11 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def container = new ExtOutputContainer(900L)
 
         UUID receiver1 = UUID.randomUUID()
-        def setPoint = new EmSetPoint(receiver1, UUID.randomUUID())
+        def setPoint = new EmSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
-        def options = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
-        def options2 = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options = new PowerLimitFlexOptions(receiver2, null, null, null)
+        def options2 = new PowerLimitFlexOptions(receiver2, null, null, null)
 
         when:
         container.addEmData(receiver1, setPoint)
@@ -93,11 +92,11 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def container = new ExtOutputContainer(900L)
 
         UUID receiver1 = UUID.randomUUID()
-        def setPoint = new EmSetPoint(receiver1, UUID.randomUUID())
+        def setPoint = new EmSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
-        def options = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
-        def options2 = new FlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options = new PowerLimitFlexOptions(receiver2, null, null, null)
+        def options2 = new PowerLimitFlexOptions(receiver2, null, null, null)
 
         def allEmData = [
                 (receiver1): [setPoint],

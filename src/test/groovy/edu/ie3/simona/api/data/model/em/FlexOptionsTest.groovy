@@ -11,9 +11,6 @@ import javax.measure.quantity.Power
 class FlexOptionsTest extends Specification {
 
     @Shared
-    UUID receiverUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
-
-    @Shared
     UUID senderUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
 
     @Shared
@@ -25,16 +22,16 @@ class FlexOptionsTest extends Specification {
     @Shared
     ComparableQuantity<Power> pMax = Quantities.getQuantity(10, PowerSystemUnits.KILOWATT)
 
-    def "FlexOptions can be constructed without delay correctly"() {
+    def "PowerLimitFlexOptions can be constructed without delay correctly"() {
         when:
-        def flexOptions = new FlexOptions(receiverUuid, senderUuid, pRef, pMin, pMax)
+        def flexOptions = new PowerLimitFlexOptions(senderUuid, pRef, pMin, pMax)
 
         then:
-        flexOptions.receiver == receiverUuid
-        flexOptions.sender == senderUuid
+        flexOptions.model == senderUuid
         flexOptions.pRef == pRef
         flexOptions.pMin == pMin
         flexOptions.pMax == pMax
+        flexOptions.disaggregated == [:]
     }
 
 }
