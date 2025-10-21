@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Added
+- General flex options [#348](https://github.com/ie3-institute/simonaAPI/issues/348)
+- Enhanced em set points [#357](https://github.com/ie3-institute/simonaAPI/issues/348)
+- Added dedicated flex communication classes [#358](https://github.com/ie3-institute/simonaAPI/issues/348)
+
 ### Changed
 - Updated the maven central publishing scripts [#339](https://github.com/ie3-institute/simonaAPI/issues/339)
 - Refactoring `ExtSimAdapterData` [#347](https://github.com/ie3-institute/simonaAPI/issues/347)
