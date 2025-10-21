@@ -97,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.9.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.6.0...0.7.0

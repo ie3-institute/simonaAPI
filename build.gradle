@@ -36,7 +36,8 @@ apply from: scriptsLocation + 'spotbugs.gradle'
 apply from: scriptsLocation + 'sonarqube.gradle'
 apply from: scriptsLocation + 'checkJavaVersion.gradle'
 apply from: scriptsLocation + 'semVer.gradle'
-apply from: scriptsLocation + 'mavenCentralPublish.gradle'
+apply from: scriptsLocation + 'uploadToMavenCentralPortal.gradle' // upload for deploy
+apply from: scriptsLocation + 'stagingAtMavenCentralPortal.gradle' // stage for deploy
 apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
 apply from: scriptsLocation + 'test.gradle'
@@ -81,6 +82,7 @@ dependencies{
   testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
 
   // TESTING
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   testImplementation 'org.apache.groovy:groovy:4.0.28'
   testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 }
