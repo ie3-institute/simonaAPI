@@ -9,15 +9,15 @@ import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
 import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
+import edu.ie3.simona.api.mapping.ExtEntityMapping
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.em.ProvideEmData
 import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
-import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 
 class ExtCoSimulationTest extends Specification {
 
@@ -110,14 +110,15 @@ class ExtCoSimulationTest extends Specification {
         UUID uuid2 = UUID.randomUUID()
         UUID uuid3 = UUID.randomUUID()
 
-        def mapping = [
-                (DataType.RESULT)       : [uuid1],
-                (DataType.EM)            : [uuid2],
-                (DataType.PRIMARY_RESULT): [uuid3]
-        ]
+        def mapping = new ExtEntityMapping([])
+        mapping.includeIds(DataType.RESULT, [uuid1], Optional.empty())
+        mapping.includeIds(DataType.EM, [uuid2], Optional.empty())
+        mapping.includeIds(DataType.PRIMARY_RESULT, [uuid3], Optional.empty())
 
         when:
-        def actual = ExtCoSimulation.buildResultConnection(mapping, log)
+        def resultUuids = mapping.getAssets(DataType.RESULT)
+
+        def actual = ExtCoSimulation.buildResultConnection(resultUuids, log)
 
         then:
         actual.resultUuids == [uuid1, uuid3]
@@ -125,7 +126,7 @@ class ExtCoSimulationTest extends Specification {
 
     def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty result data connection"() {
         when:
-        ExtCoSimulation.buildResultConnection([:], log)
+        ExtCoSimulation.buildResultConnection([], log)
 
         then:
         ExtDataConnectionException ex = thrown(ExtDataConnectionException)

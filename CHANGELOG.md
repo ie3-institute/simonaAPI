@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated the maven central publishing scripts [#339](https://github.com/ie3-institute/simonaAPI/issues/339)
+- Enhanced external em mapping [#355](https://github.com/ie3-institute/simonaAPI/issues/355)
 
 ## [0.10.0] - 2025-09-10
 
