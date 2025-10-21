@@ -10,12 +10,11 @@ import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.container.GridContainer;
 import edu.ie3.datamodel.models.value.Value;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
 
-  private final Map<DataType, List<UUID>> extAssets = new HashMap<>();
+  private final EnumMap<DataType, List<UUID>> extAssets = new EnumMap<>(DataType.class);
   private final Map<UUID, Class<? extends Value>> primaryMapping = new HashMap<>();
 
   // asset lists
@@ -149,7 +148,7 @@ public class ExtEntityMapping {
     return copy;
   }
 
-  private void includeIds(
+  protected void includeIds(
       DataType dataType, List<UUID> included, Optional<ColumnScheme> schemeOption) {
     schemeOption.ifPresent(
         scheme -> included.forEach(uuid -> primaryMapping.put(uuid, scheme.getValueClass())));
@@ -209,7 +208,7 @@ public class ExtEntityMapping {
 
   /** Returns a list of all external assets. */
   public List<UUID> getAllAssets() {
-    return extAssets.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+    return extAssets.values().stream().flatMap(Collection::stream).toList();
   }
 
   /**
