@@ -8,6 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
+import edu.ie3.simona.api.data.model.em.EmCommunicationMessage;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
 import edu.ie3.simona.api.data.model.em.FlexOptions;
@@ -35,6 +36,9 @@ public final class ExtInputContainer implements ExtDataContainer {
 
   /** Map uuid to em set points. */
   private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
+
+  /** List of em communication messages. */
+  private final List<EmCommunicationMessage<?>> emMessages = new ArrayList<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -82,15 +86,18 @@ public final class ExtInputContainer implements ExtDataContainer {
     primaryData.put(asset, value);
   }
 
+  public void addFlexComMessage(EmCommunicationMessage<?> message) {
+    emMessages.add(message);
+  }
+
   /**
    * Method for adding flex option requests. No disaggregated flex option will be requested using
    * this method.
    *
    * @param receiver the uuid of the agent, that will receive the request
-   * @param sender option for the uuid of the sender
    */
-  public void addRequest(UUID receiver, UUID sender) {
-    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender, false));
+  public void addRequest(UUID receiver) {
+    flexRequests.put(receiver, new FlexOptionRequest(receiver, false));
   }
 
   public void addRequest(UUID receiver, FlexOptionRequest request) {
@@ -104,12 +111,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param flexOption that will be added
    */
   public void addFlexOptions(UUID receiver, List<FlexOptions> flexOption) {
-    if (!flexOptions.containsKey(receiver)) {
-      List<FlexOptions> flexOptionValues = new ArrayList<>(flexOption);
-      flexOptions.put(receiver, flexOptionValues);
-    } else {
-      flexOptions.get(receiver).addAll(flexOption);
-    }
+    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).addAll(flexOption);
   }
 
   /**
@@ -118,8 +120,8 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param asset that will receive the set point
    * @param power of the set point
    */
-  public void addSetPoint(UUID asset, UUID sender, PValue power) {
-    setPoints.put(asset, new EmSetPoint(asset, sender, power));
+  public void addSetPoint(UUID asset, PValue power) {
+    setPoints.put(asset, new EmSetPoint(asset, power));
   }
 
   /**
@@ -158,6 +160,13 @@ public final class ExtInputContainer implements ExtDataContainer {
    */
   public Map<UUID, EmSetPoint> extractSetPoints() {
     return copyAndClear(setPoints);
+  }
+
+  /**
+   * Extracts the em message input data from this container. All other input data remains the same.
+   */
+  public List<EmCommunicationMessage<?>> extractEmMessages() {
+    return copyAndClear(emMessages);
   }
 
   /**

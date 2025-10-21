@@ -21,9 +21,6 @@ class ExtendedFlexOptionsResultTest extends Specification {
     ZonedDateTime time = ZonedDateTime.now()
 
     @Shared
-    UUID receiverUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
-
-    @Shared
     UUID senderUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
 
     @Shared
@@ -38,13 +35,11 @@ class ExtendedFlexOptionsResultTest extends Specification {
 
     def "The ExtendedFlexOptionsResult can be constructed without disaggregated flex options"() {
         when:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, receiverUuid, pRef, pMin, pMax, [:])
+        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax, [:])
 
         then:
         result.time == time
         result.inputModel == senderUuid
-        result.sender == senderUuid
-        result.receiver == receiverUuid
         result.pRef == pRef
         result.pMin == pMin
         result.pMax == pMax
@@ -62,13 +57,11 @@ class ExtendedFlexOptionsResultTest extends Specification {
         ]
 
         when:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, receiverUuid, pRef, pMin, pMax, disaggregated)
+        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax, disaggregated)
 
         then:
         result.time == time
         result.inputModel == senderUuid
-        result.sender == senderUuid
-        result.receiver == receiverUuid
         result.pRef == pRef
         result.pMin == pMin
         result.pMax == pMax
@@ -77,7 +70,7 @@ class ExtendedFlexOptionsResultTest extends Specification {
 
     def "The ExtendedFlexOptionsResult should specify if there are disaggregated flex options correctly"() {
         when:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, receiverUuid, pRef, pMin, pMax, diagregatedMap)
+        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax, diagregatedMap)
 
         then:
         result.hasDisaggregated() == expectedResult
@@ -93,7 +86,7 @@ class ExtendedFlexOptionsResultTest extends Specification {
 
     def "The ExtendedFlexOptionsResult should add disaggregated flex options correctly"() {
         given:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, receiverUuid, pRef, pMin, pMax)
+        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax)
         def inferiorUuid1 = UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")
         def inferiorUuid2 = UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")
 
@@ -113,7 +106,7 @@ class ExtendedFlexOptionsResultTest extends Specification {
 
     def "The ExtendedFlexOptionsResult should check if disaggregated flex options match total flex options correctly"() {
         given:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, receiverUuid, pRef, pMin, pMax)
+        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax)
         def inferiorUuid1 = UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")
         def inferiorUuid2 = UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")
         def inferiorUuid3 = UUID.randomUUID()

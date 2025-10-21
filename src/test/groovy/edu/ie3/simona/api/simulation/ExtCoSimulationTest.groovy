@@ -11,7 +11,6 @@ import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.em.ProvideEmData
 import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -143,7 +142,7 @@ class ExtCoSimulationTest extends Specification {
                 extSimAdapter.ref()
         )
 
-        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID(), UUID.randomUUID())]
+        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID())]
 
         when:
         sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
