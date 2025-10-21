@@ -7,6 +7,7 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.util.interval.ClosedInterval;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Dimensionless;
@@ -35,4 +36,24 @@ public record GeneralFlexOptions(
     ComparableQuantity<Dimensionless> etaDischarge,
     Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits,
     Map<UUID, FlexOptions> disaggregatedFlexOptions)
-    implements FlexOptions {}
+    implements FlexOptions {
+
+  public GeneralFlexOptions(
+      UUID model,
+      String flexType,
+      ComparableQuantity<Power> pMin,
+      ComparableQuantity<Power> pMax,
+      ComparableQuantity<Dimensionless> etaCharge,
+      ComparableQuantity<Dimensionless> etaDischarge,
+      Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits) {
+    this(
+        model,
+        flexType,
+        pMin,
+        pMax,
+        etaCharge,
+        etaDischarge,
+        tickToEnergyLimits,
+        Collections.emptyMap());
+  }
+}

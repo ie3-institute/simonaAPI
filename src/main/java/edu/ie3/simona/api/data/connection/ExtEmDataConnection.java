@@ -55,6 +55,15 @@ public final class ExtEmDataConnection
     return false;
   }
 
+  /**
+   * Tries to send flex option requests to SIMONA. A message is sent, if at least one entity is
+   * given.
+   *
+   * @param tick current tick
+   * @param entities for which flex options should be requested
+   * @param disaggregated if disaggregated flex option should be returned
+   * @return true, if data was sent
+   */
   public boolean sendFlexRequest(long tick, Collection<UUID> entities, boolean disaggregated) {
     // send message only if at least one value is present
     if (!entities.isEmpty()) {
@@ -64,11 +73,22 @@ public final class ExtEmDataConnection
     return false;
   }
 
-  public boolean sendEmData(
-      long tick, List<EmCommunicationMessage<?>> emData, Optional<Long> maybeNextTick) {
+  /**
+   * Tries to send communication messages to SIMONA. A message is sent, if at least one message is
+   * given.
+   *
+   * @param tick current tick
+   * @param emCommunicationMessages that should be sent
+   * @param maybeNextTick an option for the next tick
+   * @return true, if data was sent
+   */
+  public boolean sendCommunicationMessage(
+      long tick,
+      List<EmCommunicationMessage<?>> emCommunicationMessages,
+      Optional<Long> maybeNextTick) {
     // send message only if at least one value is present
-    if (!emData.isEmpty()) {
-      sendExtMsg(new EmCommunicationMessages(tick, emData, maybeNextTick));
+    if (!emCommunicationMessages.isEmpty()) {
+      sendExtMsg(new EmCommunicationMessages(tick, emCommunicationMessages, maybeNextTick));
       return true;
     }
     return false;
