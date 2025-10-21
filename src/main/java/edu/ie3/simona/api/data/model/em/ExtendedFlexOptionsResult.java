@@ -27,18 +27,18 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    * Standard constructor for {@link ExtendedFlexOptionsResult}.
    *
    * @param time date and time when the result is produced
-   * @param sender uuid of the input model that produces the result
+   * @param model uuid of the input model that produces the result
    * @param pRef active power that was suggested for regular usage by the system participant
    * @param pMin active minimal power that was determined by the system participant
    * @param pMax active maximum power that was determined by the system participant
    */
   public ExtendedFlexOptionsResult(
       ZonedDateTime time,
-      UUID sender,
+      UUID model,
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax) {
-    super(time, sender, pRef, pMin, pMax);
+    super(time, model, pRef, pMin, pMax);
     this.disaggregated = new HashMap<>();
   }
 
@@ -46,19 +46,19 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    * Constructor for {@link ExtendedFlexOptionsResult} with disaggregated flex options.
    *
    * @param time date and time when the result is produced
-   * @param sender uuid of the input model that produces the result
+   * @param model uuid of the input model that produces the result
    * @param pRef active power that was suggested for regular usage by the system participant
    * @param pMin active minimal power that was determined by the system participant
    * @param pMax active maximum power that was determined by the system participant
    */
   public ExtendedFlexOptionsResult(
       ZonedDateTime time,
-      UUID sender,
+      UUID model,
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax,
       Map<UUID, FlexOptionsResult> disaggregated) {
-    super(time, sender, pRef, pMin, pMax);
+    super(time, model, pRef, pMin, pMax);
     this.disaggregated = disaggregated;
   }
 
@@ -73,11 +73,6 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    */
   public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
     this.disaggregated.put(uuid, flexOptionsResult);
-  }
-
-  /** Returns the uuid of the sender ({@link #getInputModel()}). */
-  public UUID getSender() {
-    return getInputModel();
   }
 
   /** Returns {@code true}, if disaggregated flex option are available. */
@@ -176,8 +171,8 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
     return "ExtendedFlexOptionsResult{"
         + "time="
         + getTime()
-        + ", sender="
-        + getSender()
+        + ", inputModel="
+        + getInputModel()
         + ", pRef="
         + getpRef()
         + ", pMin="

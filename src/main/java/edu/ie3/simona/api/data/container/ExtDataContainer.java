@@ -31,16 +31,16 @@ public sealed interface ExtDataContainer permits ExtInputContainer, ExtOutputCon
     return result;
   }
 
-    /**
-     * Method to copy a given list and clear the original.
-     *
-     * @param list to be copied and cleared
-     * @return the copy
-     * @param <V> type of value
-     */
-    default <V> List<V> copyAndClear(List<V> list) {
-        List<V> result = new ArrayList<>(list);
-        list.clear();
-        return result;
-    }
+  /**
+   * Method to copy a given list and clear the original.
+   *
+   * @param list to be copied and cleared
+   * @return the copy
+   * @param <V> type of value
+   */
+  default <V> List<V> copyAndClear(List<V> list) {
+    List<V> result = new ArrayList<>(list);
+    list.clear();
+    return result;
+  }
 }

@@ -37,7 +37,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** Map uuid to em set points. */
   private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
 
-    /** List of em communication messages. */
+  /** List of em communication messages. */
   private final List<EmCommunicationMessage<?>> emMessages = new ArrayList<>();
 
   /**
@@ -87,7 +87,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   }
 
   public void addFlexComMessage(EmCommunicationMessage<?> message) {
-      emMessages.add(message);
+    emMessages.add(message);
   }
 
   /**
@@ -111,7 +111,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param flexOption that will be added
    */
   public void addFlexOptions(UUID receiver, List<FlexOptions> flexOption) {
-      flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).addAll(flexOption);
+    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).addAll(flexOption);
   }
 
   /**
@@ -120,7 +120,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param asset that will receive the set point
    * @param power of the set point
    */
-  public void addSetPoint(UUID asset, UUID sender, PValue power) {
+  public void addSetPoint(UUID asset, PValue power) {
     setPoints.put(asset, new EmSetPoint(asset, power));
   }
 
@@ -162,11 +162,11 @@ public final class ExtInputContainer implements ExtDataContainer {
     return copyAndClear(setPoints);
   }
 
-    /**
-     * Extracts the em message input data from this container. All other input data remains the same.
-     */
+  /**
+   * Extracts the em message input data from this container. All other input data remains the same.
+   */
   public List<EmCommunicationMessage<?>> extractEmMessages() {
-      return copyAndClear(emMessages);
+    return copyAndClear(emMessages);
   }
 
   /**
