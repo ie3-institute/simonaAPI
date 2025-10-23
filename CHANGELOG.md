@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+## [0.11.0] - 2025-10-23
+
 ### Added
 - General flex options [#348](https://github.com/ie3-institute/simonaAPI/issues/348)
 - Enhanced em set points [#357](https://github.com/ie3-institute/simonaAPI/issues/348)
@@ -103,7 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.7.0...0.8.0
