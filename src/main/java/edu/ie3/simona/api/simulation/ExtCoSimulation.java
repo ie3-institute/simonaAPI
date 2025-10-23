@@ -6,8 +6,6 @@
 
 package edu.ie3.simona.api.simulation;
 
-import static java.util.Collections.emptyList;
-
 import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
@@ -18,8 +16,10 @@ import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
-import edu.ie3.simona.api.mapping.DataType;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 
 /**
@@ -93,22 +93,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   /**
    * Builds an {@link ExtResultDataConnection}.
    *
-   * @param mapping between the external simulation and SIMONA.
+   * @param resultEntities of assets that should send their results
    * @param log logger
    * @return an ext result data connection
    */
   public static ExtResultDataConnection buildResultConnection(
-      Map<DataType, List<UUID>> mapping, Logger log) {
-    List<UUID> results = new ArrayList<>();
-    Arrays.stream(DataType.resultTypes())
-        .forEach(dataType -> results.addAll(mapping.getOrDefault(dataType, emptyList())));
-
-    if (results.isEmpty()) {
+      List<UUID> resultEntities, Logger log) {
+    if (resultEntities.isEmpty()) {
       log.warn("No result connection was created.");
       throw new ExtDataConnectionException(ExtResultDataConnection.class);
     } else {
-      log.info("Result connection with {} result entities created.", results.size());
-      return new ExtResultDataConnection(results);
+      log.info("Result connection with {} result entities created.", resultEntities.size());
+      return new ExtResultDataConnection(resultEntities);
     }
   }
 

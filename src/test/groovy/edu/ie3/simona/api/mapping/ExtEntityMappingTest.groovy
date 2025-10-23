@@ -1,8 +1,23 @@
 package edu.ie3.simona.api.mapping
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
+import edu.ie3.datamodel.models.input.AssetInput
+import edu.ie3.datamodel.models.input.EmInput
+import edu.ie3.datamodel.models.input.NodeInput
+import edu.ie3.datamodel.models.input.container.GraphicElements
+import edu.ie3.datamodel.models.input.container.JointGridContainer
+import edu.ie3.datamodel.models.input.container.RawGridElements
+import edu.ie3.datamodel.models.input.container.SubGridContainer
+import edu.ie3.datamodel.models.input.container.SystemParticipants
+import edu.ie3.datamodel.models.input.system.FixedFeedInInput
+import edu.ie3.datamodel.models.input.system.LoadInput
+import edu.ie3.datamodel.models.input.system.SystemParticipantInput
+import edu.ie3.datamodel.models.voltagelevels.GermanVoltageLevelUtils
+import edu.ie3.datamodel.models.voltagelevels.VoltageLevel
+import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
 import spock.lang.Specification
+import tech.units.indriya.quantity.Quantities
 
 class ExtEntityMappingTest extends Specification {
     @Shared
@@ -49,6 +64,44 @@ class ExtEntityMappingTest extends Specification {
             DataType.EM
     )
 
+    def "ExtEntityMapping can be created from a grid container correctly"() {
+        given:
+        def node = new NodeInput(UUID.randomUUID(), "node", Quantities.getQuantity(1d, PowerSystemUnits.PU), false, NodeInput.DEFAULT_GEO_POSITION, GermanVoltageLevelUtils.LV, 1)
+        def em = new EmInput(UUID.randomUUID(), "em", "", null)
+        def participant = new FixedFeedInInput(UUID.randomUUID(), "ffi", node, null, em, Quantities.getQuantity(10, PowerSystemUnits.KILOVOLTAMPERE), 0.9)
+
+        List<AssetInput> gridAssets = [node]
+        List<SystemParticipantInput> participantInputs = [participant]
+
+        def grid = new SubGridContainer(
+                "test grid",
+                1,
+                new RawGridElements(gridAssets),
+                new SystemParticipants(participantInputs),
+                new GraphicElements([])
+        )
+
+        when:
+        def mapping = new ExtEntityMapping(grid)
+
+        then:
+        mapping.extId2UuidMapping == [
+                "node": node.uuid,
+                "em": em.uuid,
+                "ffi": participant.uuid
+        ]
+
+        mapping.extUuid2IdMapping == [
+                (node.uuid): "node",
+                (em.uuid): "em",
+                (participant.uuid): "ffi"
+        ]
+
+        mapping.gridAssets == [node.uuid] as Set
+        mapping.participants == [participant.uuid] as Set
+        mapping.ems == [em.uuid] as Set
+    }
+
     def "ExtEntityMapping should return the data types correctly"() {
         when:
         def extEntryMapping = new ExtEntityMapping(assets)
@@ -66,22 +119,6 @@ class ExtEntityMappingTest extends Specification {
         [extResultEntry, extInputEntry] | [DataType.RESULT, DataType.PRIMARY]
         [extInputEntry, extEmInputEntry] | [DataType.PRIMARY, DataType.EM]
         [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | [DataType.RESULT, DataType.PRIMARY, DataType.PRIMARY_RESULT, DataType.EM]
-    }
-
-    def "ExtEntityMapping should return the entries correctly"() {
-        when:
-        def extEntryMapping = new ExtEntityMapping(assets)
-        def types = extEntryMapping.getEntries(dataType)
-
-        then:
-        types == expectedEntries
-
-        where:
-        assets | dataType | expectedEntries
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.RESULT | [extResultEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY | [extInputEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.PRIMARY_RESULT | [extPrimaryResultEntry]
-        [extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry] | DataType.EM | [extEmInputEntry]
     }
 
     def "ExtEntityMapping should return all SIMONA uuid mapping correctly"() {
@@ -106,25 +143,11 @@ class ExtEntityMappingTest extends Specification {
         def extEntryMapping = new ExtEntityMapping(extAssetList)
 
         when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY)
+        def actual = extEntryMapping.getAssets(DataType.PRIMARY)
 
         then:
-        inputMap.size() == 1
-        inputMap.get("PV") == pvUuid
-    }
-
-    def "ExtEntityMapping should return multiple SIMONA uuid mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtId2UuidMapping(DataType.PRIMARY, DataType.EM)
-
-        then:
-        inputMap.size() == 2
-        inputMap.get("PV") == pvUuid
-        inputMap.get("Em") == emUuid
+        actual.size() == 1
+        actual.getFirst() == pvUuid
     }
 
     def "ExtEntityMapping should return all external id mapping correctly"() {
@@ -140,33 +163,6 @@ class ExtEntityMappingTest extends Specification {
         inputMap.get(loadUuid) == "Load"
         inputMap.get(pvUuid) == "PV"
         inputMap.get(prUuid) == "PR"
-        inputMap.get(emUuid) == "Em"
-    }
-
-    def "ExtEntityMapping should return external id mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY)
-
-        then:
-        inputMap.size() == 1
-        inputMap.get(pvUuid) == "PV"
-    }
-
-    def "ExtEntityMapping should return multiple external id mapping correctly"() {
-        given:
-        def extAssetList = List.of(extResultEntry, extInputEntry, extPrimaryResultEntry, extEmInputEntry)
-        def extEntryMapping = new ExtEntityMapping(extAssetList)
-
-        when:
-        def inputMap = extEntryMapping.getExtUuid2IdMapping(DataType.PRIMARY, DataType.EM)
-
-        then:
-        inputMap.size() == 2
-        inputMap.get(pvUuid) == "PV"
         inputMap.get(emUuid) == "Em"
     }
 }

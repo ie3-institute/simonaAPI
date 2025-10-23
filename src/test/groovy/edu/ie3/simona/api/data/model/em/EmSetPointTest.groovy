@@ -23,11 +23,10 @@ class EmSetPointTest extends Specification {
 
     def "An empty EmSetPoint can be constructed correctly"() {
         when:
-        def setPoint = new EmSetPoint(receiverUuid, sender)
+        def setPoint = new EmSetPoint(receiverUuid)
 
         then:
         setPoint.receiver == receiverUuid
-        setPoint.sender == sender
         setPoint.power == Optional.empty()
     }
 
@@ -36,16 +35,14 @@ class EmSetPointTest extends Specification {
         def pValue = new PValue(power)
 
         when:
-        def setPoint1 = new EmSetPoint(receiverUuid, sender, power)
-        def setPoint2 = new EmSetPoint(receiverUuid, sender, pValue)
+        def setPoint1 = new EmSetPoint(receiverUuid, power)
+        def setPoint2 = new EmSetPoint(receiverUuid, pValue)
 
         then:
         setPoint1.receiver == receiverUuid
-        setPoint1.sender == sender
         setPoint1.power == Optional.of(pValue)
 
         setPoint2.receiver == receiverUuid
-        setPoint2.sender == sender
         setPoint2.power == Optional.of(pValue)
     }
 
