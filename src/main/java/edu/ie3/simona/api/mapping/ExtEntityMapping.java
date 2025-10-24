@@ -7,14 +7,16 @@
 package edu.ie3.simona.api.mapping;
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
+import edu.ie3.datamodel.models.input.EmInput;
 import edu.ie3.datamodel.models.input.container.GridContainer;
 import edu.ie3.datamodel.models.value.Value;
+
 import java.util.*;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */
 public class ExtEntityMapping {
 
-  private final EnumMap<DataType, List<UUID>> extAssets = new EnumMap<>(DataType.class);
+  private final EnumMap<DataType, Set<UUID>> extAssets = new EnumMap<>(DataType.class);
   private final Map<UUID, Class<? extends Value>> primaryMapping = new HashMap<>();
 
   // asset lists
@@ -40,7 +42,7 @@ public class ExtEntityMapping {
           uuidToId.put(uuid, id);
           idToUuid.put(id, uuid);
 
-          extAssets.computeIfAbsent(dataType, k -> new ArrayList<>()).add(uuid);
+          extAssets.computeIfAbsent(dataType, k -> new HashSet<>()).add(uuid);
         });
   }
 
@@ -65,6 +67,8 @@ public class ExtEntityMapping {
               // add to asset list
               gridAssets.add(asset.getUuid());
             });
+
+    Set<EmInput> emInputs = new HashSet<>();
 
     // handling of participants and ems
     grid.getSystemParticipants()
@@ -95,8 +99,34 @@ public class ExtEntityMapping {
 
                         // add to asset list
                         ems.add(emUuid);
+                        emInputs.add(em);
                       });
             });
+
+
+      handleEMs(emInputs).forEach(em -> {
+          UUID uuid = em.getUuid();
+          String id = em.getId();
+
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
+
+          ems.add(uuid);
+      });
+  }
+
+  private Set<EmInput> handleEMs(Set<EmInput> givenSet) {
+      Set<EmInput> next = new HashSet<>();
+
+      givenSet.forEach(em -> em.getControllingEm().ifPresent(next::add));
+
+      Set<EmInput> result = new HashSet<>(givenSet);
+
+      if (!next.isEmpty()) {
+          result.addAll(handleEMs(next));
+      }
+
+      return result;
   }
 
   /**
@@ -189,10 +219,10 @@ public class ExtEntityMapping {
    */
   private void addExtEntities(DataType dataType, List<UUID> included) {
     if (dataType == DataType.PRIMARY_RESULT) {
-      extAssets.computeIfAbsent(DataType.PRIMARY, d -> new ArrayList<>()).addAll(included);
-      extAssets.computeIfAbsent(DataType.RESULT, d -> new ArrayList<>()).addAll(included);
+      extAssets.computeIfAbsent(DataType.PRIMARY, d -> new HashSet<>()).addAll(included);
+      extAssets.computeIfAbsent(DataType.RESULT, d -> new HashSet<>()).addAll(included);
     } else {
-      extAssets.computeIfAbsent(dataType, k -> new ArrayList<>()).addAll(included);
+      extAssets.computeIfAbsent(dataType, k -> new HashSet<>()).addAll(included);
     }
   }
 
@@ -237,17 +267,19 @@ public class ExtEntityMapping {
     if (uuids.isEmpty()) {
       if (dataType == DataType.PRIMARY_RESULT) {
         List<UUID> res = new ArrayList<>();
-        res.addAll(extAssets.getOrDefault(DataType.PRIMARY, Collections.emptyList()));
-        res.addAll(extAssets.getOrDefault(DataType.RESULT, Collections.emptyList()));
+        res.addAll(extAssets.getOrDefault(DataType.PRIMARY, Collections.emptySet()));
+        res.addAll(extAssets.getOrDefault(DataType.RESULT, Collections.emptySet()));
 
         return res;
       } else {
-        return extAssets.getOrDefault(dataType, Collections.emptyList());
+        return new ArrayList<>(extAssets.getOrDefault(dataType, Collections.emptySet()));
       }
 
     } else {
       List<UUID> ext = new ArrayList<>();
       extAssets.values().forEach(ext::addAll);
+
+      System.out.println("Ems: "+ems);
 
       if (extAssets.isEmpty()) {
         return uuids;

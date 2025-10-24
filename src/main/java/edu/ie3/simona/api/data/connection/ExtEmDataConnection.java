@@ -55,15 +55,6 @@ public final class ExtEmDataConnection
     return false;
   }
 
-  public boolean sendFlexRequest(long tick, Collection<UUID> entities, boolean disaggregated) {
-      // send message only if at least one value is present
-      if (!entities.isEmpty() ) {
-          sendExtMsg(new RequestEmFlexResults(tick, new ArrayList<>(entities), disaggregated));
-          return true;
-      }
-      return false;
-  }
-
     public boolean sendEmData(long tick, List<EmCommunicationMessage<?>> emData, Optional<Long> maybeNextTick) {
         // send message only if at least one value is present
         if (!emData.isEmpty() ) {

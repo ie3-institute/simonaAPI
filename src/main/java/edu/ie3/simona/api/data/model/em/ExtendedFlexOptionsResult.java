@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
-import org.slf4j.Logger;
 import tech.units.indriya.ComparableQuantity;
 
 import javax.measure.quantity.Power;
@@ -18,10 +17,10 @@ import java.util.*;
  * Extended {@link FlexOptionsResult}, that contains the receiver of the flex options. This models
  * may also contain a disaggregation of the total flex options.
  */
-public final class ExtendedFlexOptionsResult extends FlexOptionsResult implements EmData {
+public final class ExtendedFlexOptionsResult extends FlexOptionsResult implements FlexOptions {
 
   /** The disaggregated flex option results. */
-  private final Map<UUID, FlexOptionsResult> disaggregated;
+  private final Map<UUID, FlexOptions> disaggregated;
 
   /**
    * Standard constructor for {@link ExtendedFlexOptionsResult}.
@@ -57,7 +56,7 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax,
-      Map<UUID, FlexOptionsResult> disaggregated) {
+      Map<UUID, FlexOptions> disaggregated) {
     super(time, model, pRef, pMin, pMax);
     this.disaggregated = disaggregated;
   }
@@ -65,13 +64,10 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
   /**
    * Method for adding disaggregated flex option results to this object.
    *
-   * <p>Note: This method does not check, if the disaggregated flex options match the total flex
-   * options. To do this, please use the method {@link #checkFlexOptions(Logger)}.
-   *
    * @param uuid of the inferior model
    * @param flexOptionsResult the flex options of the inferior model
    */
-  public void addDisaggregated(UUID uuid, FlexOptionsResult flexOptionsResult) {
+  public void addDisaggregated(UUID uuid, FlexOptions flexOptionsResult) {
     this.disaggregated.put(uuid, flexOptionsResult);
   }
 
@@ -86,71 +82,8 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult implement
    * <p>Note: If no disaggregated flex options are present (see: {@link #hasDisaggregated()}), the
    * map will be empty.
    */
-  public Map<UUID, FlexOptionsResult> getDisaggregated() {
+  public Map<UUID, FlexOptions> getDisaggregated() {
     return Collections.unmodifiableMap(disaggregated);
-  }
-
-  /**
-   * Method for checking if the disaggregated flex options match the total flex options.
-   *
-   * @param log used for logging
-   * @return {@code true} if the flex options match, else {@code false}
-   */
-  public boolean checkFlexOptions(Logger log) {
-    List<ComparableQuantity<Power>> refs = new ArrayList<>();
-    List<ComparableQuantity<Power>> mins = new ArrayList<>();
-    List<ComparableQuantity<Power>> maxs = new ArrayList<>();
-
-    disaggregated.forEach(
-        (uuid, flexOptionsResult) -> {
-          refs.add(flexOptionsResult.getpRef());
-          mins.add(flexOptionsResult.getpMin());
-          maxs.add(flexOptionsResult.getpMax());
-        });
-
-    ComparableQuantity<Power> ref = getpRef();
-    ComparableQuantity<Power> min = getpMin();
-    ComparableQuantity<Power> max = getpMax();
-
-    Optional<ComparableQuantity<Power>> refSum = refs.stream().reduce(ComparableQuantity::add);
-    Optional<ComparableQuantity<Power>> minSum = mins.stream().reduce(ComparableQuantity::add);
-    Optional<ComparableQuantity<Power>> maxSum = maxs.stream().reduce(ComparableQuantity::add);
-
-    boolean isRefValid = false;
-    boolean isMinValid = false;
-    boolean isMaxValid = false;
-
-    if (refSum.isPresent()) {
-      isRefValid = refSum.get().isEquivalentTo(ref);
-
-      if (!isRefValid) {
-        log.warn("Disaggregated reference power does not match total reference power.");
-      }
-    } else {
-      log.warn("Cannot check disaggregated reference power.");
-    }
-
-    if (minSum.isPresent()) {
-      isMinValid = minSum.get().isEquivalentTo(min);
-
-      if (!isMinValid) {
-        log.warn("Disaggregated minimum power does not match total minimum power.");
-      }
-    } else {
-      log.warn("Cannot check disaggregated minimum power.");
-    }
-
-    if (maxSum.isPresent()) {
-      isMaxValid = maxSum.get().isEquivalentTo(max);
-
-      if (!isMaxValid) {
-        log.warn("Disaggregated maximum power does not match total maximum power.");
-      }
-    } else {
-      log.warn("Cannot check disaggregated maximum power.");
-    }
-
-    return isRefValid && isMinValid && isMaxValid;
   }
 
   @Override
