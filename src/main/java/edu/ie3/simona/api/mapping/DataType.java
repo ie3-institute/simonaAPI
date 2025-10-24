@@ -6,11 +6,8 @@
 
 package edu.ie3.simona.api.mapping;
 
-import java.util.List;
-
 /** Data types. */
 public enum DataType {
-  GENERAL,
   PRIMARY,
   RESULT,
   PRIMARY_RESULT,
@@ -18,16 +15,11 @@ public enum DataType {
 
   /** Returns all primary types. */
   public static DataType[] primaryTypes() {
-    return new DataType[] {PRIMARY, PRIMARY_RESULT, GENERAL};
+    return new DataType[] {PRIMARY, PRIMARY_RESULT};
   }
 
   /** Returns all result types. */
   public static DataType[] resultTypes() {
-    return new DataType[] {RESULT, PRIMARY_RESULT, GENERAL};
+    return new DataType[] {RESULT, PRIMARY_RESULT};
   }
-
-  public static List<DataType> getExceptGeneral() {
-      return List.of(PRIMARY, PRIMARY_RESULT, RESULT, EM);
-  }
-
 }
