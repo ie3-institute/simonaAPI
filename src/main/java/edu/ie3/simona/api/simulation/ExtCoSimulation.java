@@ -16,12 +16,11 @@ import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
-import org.slf4j.Logger;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -94,18 +93,18 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   /**
    * Builds an {@link ExtResultDataConnection}.
    *
-   * @param uuids of assets that should send their results
+   * @param resultEntities of assets that should send their results
    * @param log logger
    * @return an ext result data connection
    */
   public static ExtResultDataConnection buildResultConnection(
-      List<UUID> uuids, Logger log) {
-    if (uuids.isEmpty()) {
+      List<UUID> resultEntities, Logger log) {
+    if (resultEntities.isEmpty()) {
       log.warn("No result connection was created.");
       throw new ExtDataConnectionException(ExtResultDataConnection.class);
     } else {
-      log.info("Result connection with {} result entities created.", uuids.size());
-      return new ExtResultDataConnection(uuids);
+      log.info("Result connection with {} result entities created.", resultEntities.size());
+      return new ExtResultDataConnection(resultEntities);
     }
   }
 
