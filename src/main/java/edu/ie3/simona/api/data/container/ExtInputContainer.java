@@ -201,4 +201,17 @@ public final class ExtInputContainer implements ExtDataContainer {
   public String setPointsString() {
     return setPoints.toString();
   }
+
+    @Override
+    public String toString() {
+        return "ExtInputContainer{" +
+                "tick=" + tick +
+                ", maybeNextTick=" + maybeNextTick +
+                ", primaryData=" + primaryData +
+                ", flexRequests=" + flexRequests +
+                ", flexOptions=" + flexOptions +
+                ", setPoints=" + setPoints +
+                ", emMessages=" + emMessages +
+                '}';
+    }
 }

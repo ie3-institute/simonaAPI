@@ -135,4 +135,14 @@ public final class ExtOutputContainer implements ExtDataContainer {
   public List<EmData> getEmData(UUID assetId) {
     return emDataMap.getOrDefault(assetId, Collections.emptyList());
   }
+
+    @Override
+    public String toString() {
+        return "ExtOutputContainer{" +
+                "tick=" + tick +
+                ", maybeNextTick=" + maybeNextTick +
+                ", resultMap=" + resultMap +
+                ", emDataMap=" + emDataMap +
+                '}';
+    }
 }
