@@ -20,5 +20,5 @@ public interface FlexOptions extends EmData {
    * @param model of the flex options
    * @param flexOptions to include
    */
-  void addDisaggregates(UUID model, FlexOptions flexOptions);
+  void addDisaggregated(UUID model, FlexOptions flexOptions);
 }

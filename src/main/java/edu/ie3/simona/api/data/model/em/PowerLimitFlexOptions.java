@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.model.em;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Power;
@@ -41,7 +41,7 @@ public record PowerLimitFlexOptions(
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax) {
-    this(receiver, model, pRef, pMin, pMax, Collections.emptyMap());
+    this(receiver, model, pRef, pMin, pMax, new HashMap<>());
   }
 
   @Override
@@ -50,7 +50,7 @@ public record PowerLimitFlexOptions(
   }
 
   @Override
-  public void addDisaggregates(UUID model, FlexOptions flexOptions) {
+  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
     disaggregated.put(model, flexOptions);
   }
 }
