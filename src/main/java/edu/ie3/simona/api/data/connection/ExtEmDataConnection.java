@@ -9,6 +9,7 @@ package edu.ie3.simona.api.data.connection;
 import edu.ie3.simona.api.data.model.em.*;
 import edu.ie3.simona.api.ontology.em.*;
 import java.util.*;
+import org.slf4j.Logger;
 
 /** Enables data connection of em data between SIMONA and SimonaAPI */
 public final class ExtEmDataConnection
@@ -32,30 +33,6 @@ public final class ExtEmDataConnection
   }
 
   /**
-   * Tries to send em data to SIMONA. A message is sent, if at least one map is not empty.
-   *
-   * @param tick current tick
-   * @param flexRequests receiver to flex option request
-   * @param flexOptions receiver to flex options
-   * @param setPoints receiver to set point
-   * @param maybeNextTick option for the next tick in the simulation
-   * @return true, if data was sent
-   */
-  public boolean sendEmData(
-      long tick,
-      Map<UUID, FlexOptionRequest> flexRequests,
-      Map<UUID, List<FlexOptions>> flexOptions,
-      Map<UUID, EmSetPoint> setPoints,
-      Optional<Long> maybeNextTick) {
-    // send message only if at least one value is present
-    if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
-      sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints, maybeNextTick));
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Tries to send flex option requests to SIMONA. A message is sent, if at least one entity is
    * given.
    *
@@ -65,9 +42,53 @@ public final class ExtEmDataConnection
    * @return true, if data was sent
    */
   public boolean sendFlexRequest(long tick, Collection<UUID> entities, boolean disaggregated) {
+    // create requests
+    Map<UUID, FlexOptionRequest> requests = new HashMap<>();
+    entities.forEach(
+        emEntity -> requests.put(emEntity, new FlexOptionRequest(emEntity, disaggregated)));
+
     // send message only if at least one value is present
     if (!entities.isEmpty()) {
-      sendExtMsg(new RequestEmFlexResults(tick, new ArrayList<>(entities), disaggregated));
+      sendExtMsg(new ProvideEmData(tick, requests, Collections.emptyMap(), Collections.emptyMap()));
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Tries to send em data to SIMONA. A message is sent, if the map is not empty.
+   *
+   * @param tick current tick
+   * @param emData a map: receiver to em data
+   * @param log logger for logging warnings
+   * @return true, if data was sent
+   */
+  public boolean sendEmData(long tick, Map<UUID, ? extends EmData> emData, Logger log) {
+    // send message only if at least one value is present
+    if (!emData.isEmpty()) {
+      sendExtMsg(ProvideEmData.create(tick, emData, log));
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Tries to send em data to SIMONA. A message is sent, if at least one map is not empty.
+   *
+   * @param tick current tick
+   * @param flexRequests receiver to flex option request
+   * @param flexOptions receiver to flex options
+   * @param setPoints receiver to set point that should be sent to SIMONA
+   * @return true, if data was sent
+   */
+  public boolean sendEmData(
+      long tick,
+      Map<UUID, FlexOptionRequest> flexRequests,
+      Map<UUID, List<FlexOptions>> flexOptions,
+      Map<UUID, EmSetPoint> setPoints) {
+    // send message only if at least one value is present
+    if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
+      sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints));
       return true;
     }
     return false;
@@ -79,33 +100,13 @@ public final class ExtEmDataConnection
    *
    * @param tick current tick
    * @param emCommunicationMessages that should be sent
-   * @param maybeNextTick an option for the next tick
    * @return true, if data was sent
    */
   public boolean sendCommunicationMessage(
-      long tick,
-      List<EmCommunicationMessage<?>> emCommunicationMessages,
-      Optional<Long> maybeNextTick) {
+      long tick, List<EmCommunicationMessage<?>> emCommunicationMessages) {
     // send message only if at least one value is present
     if (!emCommunicationMessages.isEmpty()) {
-      sendExtMsg(new EmCommunicationMessages(tick, emCommunicationMessages, maybeNextTick));
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Tries to send the em set points to SIMONA.
-   *
-   * @param tick current tick
-   * @param setPoints receiver to set point, that should be sent to SIMONA
-   * @param maybeNextTick option for the next tick in the simulation
-   * @return true, if data was sent
-   */
-  public boolean sendSetPoints(
-      long tick, Map<UUID, EmSetPoint> setPoints, Optional<Long> maybeNextTick) {
-    if (!setPoints.isEmpty()) {
-      sendExtMsg(new ProvideEmSetPointData(tick, setPoints, maybeNextTick));
+      sendExtMsg(new EmCommunicationMessages(tick, emCommunicationMessages));
       return true;
     }
     return false;
@@ -116,12 +117,12 @@ public final class ExtEmDataConnection
    *
    * @param tick for which set points are requested
    * @param emEntities for which set points are requested
-   * @return an {@link FlexOptionsResponse} message
+   * @return a map: uuid to list of flex options
    * @throws InterruptedException - on interruptions
    */
-  public Map<UUID, ExtendedFlexOptionsResult> requestEmFlexResults(
+  public Map<UUID, List<FlexOptions>> requestEmFlexResults(
       long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
-    sendExtMsg(new RequestEmFlexResults(tick, emEntities, disaggregated));
+    sendFlexRequest(tick, emEntities, disaggregated);
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
 

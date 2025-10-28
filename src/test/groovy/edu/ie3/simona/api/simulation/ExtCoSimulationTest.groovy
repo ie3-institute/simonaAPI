@@ -12,7 +12,7 @@ import edu.ie3.simona.api.mapping.DataType
 import edu.ie3.simona.api.mapping.ExtEntityMapping
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
+import edu.ie3.simona.api.ontology.em.ProvideEmData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -106,9 +106,9 @@ class ExtCoSimulationTest extends Specification {
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
         given:
-        UUID uuid1 = UUID.randomUUID()
-        UUID uuid2 = UUID.randomUUID()
-        UUID uuid3 = UUID.randomUUID()
+        UUID uuid1 = UUID.fromString("e7209ff5-788a-4b1d-bb26-89b3e326ce74")
+        UUID uuid2 = UUID.fromString("7ab84c3d-6c43-4c56-9257-21ef72e15b80")
+        UUID uuid3 = UUID.fromString("806b0cba-23a6-43d0-821e-e023b6a90cc4")
 
         def mapping = new ExtEntityMapping([])
         mapping.includeIds(DataType.RESULT, [uuid1], Optional.empty())
@@ -147,10 +147,10 @@ class ExtCoSimulationTest extends Specification {
         def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID())]
 
         when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, log)
 
         then:
-        dataService.expectMessage(new ProvideEmSetPointData(0L, data, Optional.empty()))
+        dataService.expectMessage(new ProvideEmData(0L, [:], [:], data))
     }
 
     def "An ExtCoSimulation should not sent empty em set point data"() {
@@ -167,7 +167,7 @@ class ExtCoSimulationTest extends Specification {
         def data = [:]
 
         when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
+        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, log)
 
         then:
         dataService.expectNoMessage()
