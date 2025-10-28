@@ -2,8 +2,6 @@ package edu.ie3.simona.api.data.model.em
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult
 import edu.ie3.util.quantities.PowerSystemUnits
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 import tech.units.indriya.ComparableQuantity
@@ -13,9 +11,6 @@ import javax.measure.quantity.Power
 import java.time.ZonedDateTime
 
 class ExtendedFlexOptionsResultTest extends Specification {
-
-    @Shared
-    Logger logger = LoggerFactory.getLogger(ExtendedFlexOptionsResultTest)
 
     @Shared
     ZonedDateTime time = ZonedDateTime.now()
@@ -102,32 +97,5 @@ class ExtendedFlexOptionsResultTest extends Specification {
         result.disaggregated.size() == 2
         result.disaggregated.get(inferiorUuid1) == inferiorOptions1
         result.disaggregated.get(inferiorUuid2) == inferiorOptions2
-    }
-
-    def "The ExtendedFlexOptionsResult should check if disaggregated flex options match total flex options correctly"() {
-        given:
-        def result = new ExtendedFlexOptionsResult(time, senderUuid, pRef, pMin, pMax)
-        def inferiorUuid1 = UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")
-        def inferiorUuid2 = UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")
-        def inferiorUuid3 = UUID.randomUUID()
-
-        def inferiorOptions1 = new FlexOptionsResult(time, inferiorUuid1, pRef, pMin, pMin)
-        def inferiorOptions2 = new FlexOptionsResult(time, inferiorUuid2, pMin, pMin, pMax)
-        def inferiorOptions3 = new FlexOptionsResult(time, inferiorUuid3, pRef, pRef, pMax)
-
-        when:
-        result.addDisaggregated(inferiorUuid1, inferiorOptions1)
-        boolean withOnly1 = result.checkFlexOptions(logger)
-
-        result.addDisaggregated(inferiorUuid2, inferiorOptions2)
-        boolean with1And2 = result.checkFlexOptions(logger)
-
-        result.addDisaggregated(inferiorUuid3, inferiorOptions3)
-        boolean with1And2And3 = result.checkFlexOptions(logger)
-
-        then:
-        !withOnly1
-        with1And2
-        !with1And2And3
     }
 }

@@ -202,23 +202,40 @@ public abstract class ExtCoSimulation extends ExtSimulation {
   }
 
   /**
+   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
+   * method will take a value from the {@link #queueToSimona}.
+   *
+   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
+   * when the next set point arrives.
+   *
+   * @param extEmDataConnection the connection to SIMONA
+   * @param tick for which data is sent
+   * @param log logger
+   * @throws InterruptedException if the fetching of data is interrupted
+   */
+  protected void sendEmSetPointsToSimona(
+      ExtEmDataConnection extEmDataConnection, long tick, Logger log) throws InterruptedException {
+    Map<UUID, EmSetPoint> inputData = queueToSimona.takeData(ExtInputContainer::extractSetPoints);
+
+    sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, log);
+  }
+
+  /**
    * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
    * agents have an own scheduler that should know, when the next set point arrives.
    *
    * @param extEmDataConnection the connection to SIMONA
    * @param tick for which data is sent
    * @param setPoints map: id to set point
-   * @param maybeNextTick option for the next tick data is sent
    * @param log logger
    */
   protected void sendEmSetPointsToSimona(
       ExtEmDataConnection extEmDataConnection,
       long tick,
       Map<UUID, EmSetPoint> setPoints,
-      Optional<Long> maybeNextTick,
       Logger log) {
     log.debug("Received em set points from {}", extSimulatorName);
-    boolean wasSent = extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick);
+    boolean wasSent = extEmDataConnection.sendEmData(tick, setPoints, log);
     if (!wasSent) {
       log.debug("No set point data was sent to SIMONA!");
     }

@@ -10,7 +10,6 @@ import edu.ie3.simona.api.data.model.em.EmCommunicationMessage;
 import edu.ie3.simona.api.data.model.em.EmData;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * This message contains {@link EmCommunicationMessage}s that can be sent either to SIMONA or to the
@@ -18,10 +17,7 @@ import java.util.Optional;
  *
  * @param tick of the message
  * @param messages the communication messages that should be sent
- * @param maybeNextTick option for the next tick
  */
 public record EmCommunicationMessages(
-    long tick,
-    Collection<EmCommunicationMessage<? extends EmData>> messages,
-    Optional<Long> maybeNextTick)
+    long tick, Collection<EmCommunicationMessage<? extends EmData>> messages)
     implements EmDataMessageFromExt, EmDataResponseMessageToExt {}

@@ -103,30 +103,31 @@ public class ExtEntityMapping {
                       });
             });
 
+    handleEMs(emInputs)
+        .forEach(
+            em -> {
+              UUID uuid = em.getUuid();
+              String id = em.getId();
 
-      handleEMs(emInputs).forEach(em -> {
-          UUID uuid = em.getUuid();
-          String id = em.getId();
+              uuidToId.put(uuid, id);
+              idToUuid.put(id, uuid);
 
-          uuidToId.put(uuid, id);
-          idToUuid.put(id, uuid);
-
-          ems.add(uuid);
-      });
+              ems.add(uuid);
+            });
   }
 
   private Set<EmInput> handleEMs(Set<EmInput> givenSet) {
-      Set<EmInput> next = new HashSet<>();
+    Set<EmInput> next = new HashSet<>();
 
-      givenSet.forEach(em -> em.getControllingEm().ifPresent(next::add));
+    givenSet.forEach(em -> em.getControllingEm().ifPresent(next::add));
 
-      Set<EmInput> result = new HashSet<>(givenSet);
+    Set<EmInput> result = new HashSet<>(givenSet);
 
-      if (!next.isEmpty()) {
-          result.addAll(handleEMs(next));
-      }
+    if (!next.isEmpty()) {
+      result.addAll(handleEMs(next));
+    }
 
-      return result;
+    return result;
   }
 
   /**
