@@ -172,33 +172,11 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     ExtOutputContainer container = new ExtOutputContainer(tick);
     extEmDataConnection
         .requestEmFlexResults(tick, extEmDataConnection.getControlledEms(), disaggregated)
-        .forEach(container::addResult);
+        .forEach((r, d) -> d.forEach(option -> container.addEmData(r, option)));
 
     log.debug("Received results from SIMONA!");
     queueToExt.queueData(container);
     log.debug("Sent results to {}", extSimulatorName);
-  }
-
-  /**
-   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
-   * method will take a value from the {@link #queueToSimona}.
-   *
-   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
-   * when the next set point arrives.
-   *
-   * @param extEmDataConnection the connection to SIMONA
-   * @param tick for which data is sent
-   * @param maybeNextTick option for the next tick data is sent
-   * @param log logger
-   * @throws InterruptedException if the fetching of data is interrupted
-   */
-  protected void sendEmSetPointsToSimona(
-      ExtEmDataConnection extEmDataConnection, long tick, Optional<Long> maybeNextTick, Logger log)
-      throws InterruptedException {
-    checkTick(tick);
-    Map<UUID, EmSetPoint> inputData = queueToSimona.takeData(ExtInputContainer::extractSetPoints);
-
-    sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, maybeNextTick, log);
   }
 
   /**

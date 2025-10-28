@@ -7,7 +7,7 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.util.interval.ClosedInterval;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Dimensionless;
@@ -57,7 +57,7 @@ public record GeneralFlexOptions(
         etaCharge,
         etaDischarge,
         tickToEnergyLimits,
-        Collections.emptyMap());
+        new HashMap<>());
   }
 
   @Override
@@ -66,7 +66,7 @@ public record GeneralFlexOptions(
   }
 
   @Override
-  public void addDisaggregates(UUID model, FlexOptions flexOptions) {
+  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
     disaggregated.put(model, flexOptions);
   }
 }

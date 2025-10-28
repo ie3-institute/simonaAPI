@@ -56,7 +56,7 @@ public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
       ComparableQuantity<Power> pRef,
       ComparableQuantity<Power> pMin,
       ComparableQuantity<Power> pMax,
-      Map<UUID, FlexOptions> disaggregated) {
+      Map<UUID, FlexOptionsResult> disaggregated) {
     super(time, model, pRef, pMin, pMax);
     this.disaggregated = disaggregated;
   }
