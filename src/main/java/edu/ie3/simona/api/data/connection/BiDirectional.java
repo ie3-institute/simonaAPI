@@ -42,7 +42,7 @@ public abstract non-sealed class BiDirectional<
 
   /** Returns all received responses. */
   public final List<R> receiveAll() {
-    List<R> result = new ArrayList<>();
+    List<R> result = new ArrayList<>(receiveTriggerQueue.size());
     receiveTriggerQueue.drainTo(result);
     return result;
   }
