@@ -14,7 +14,6 @@ import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
 import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
-import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import java.util.List;
 import java.util.Map;
@@ -129,49 +128,6 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Received Primary Data from {}", extSimulatorName);
     extPrimaryDataConnection.sendPrimaryData(tick, dataMap, maybeNextTick, log);
     log.debug("Provided Primary Data to SIMONA!");
-  }
-
-  // energy management data methods
-
-  /**
-   * Function to send em set point data to SIMONA using the given {@link ExtEmDataConnection}. This
-   * method will take a value from the {@link #queueToSimona}.
-   *
-   * <p>{@code nextTick} is necessary, because the em agents have an own scheduler that should know,
-   * when the next set point arrives.
-   *
-   * @param extEmDataConnection the connection to SIMONA
-   * @param tick for which data is sent
-   * @param log logger
-   * @throws InterruptedException if the fetching of data is interrupted
-   */
-  protected void sendEmSetPointsToSimona(
-      ExtEmDataConnection extEmDataConnection, long tick, Logger log) throws InterruptedException {
-    Map<UUID, EmSetPoint> inputData = queueToSimona.takeData(ExtInputContainer::extractSetPoints);
-
-    sendEmSetPointsToSimona(extEmDataConnection, tick, inputData, log);
-  }
-
-  /**
-   * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
-   * agents have an own scheduler that should know, when the next set point arrives.
-   *
-   * @param extEmDataConnection the connection to SIMONA
-   * @param tick for which data is sent
-   * @param setPoints map: id to set point
-   * @param log logger
-   */
-  protected void sendEmSetPointsToSimona(
-      ExtEmDataConnection extEmDataConnection,
-      long tick,
-      Map<UUID, EmSetPoint> setPoints,
-      Logger log) {
-    log.debug("Received em set points from {}", extSimulatorName);
-    boolean wasSent = extEmDataConnection.sendEmData(tick, setPoints, log);
-    if (!wasSent) {
-      log.debug("No set point data was sent to SIMONA!");
-    }
-    log.debug("Provided em set points to SIMONA!");
   }
 
   // result data methods

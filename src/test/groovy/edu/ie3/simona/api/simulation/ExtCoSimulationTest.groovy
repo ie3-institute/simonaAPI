@@ -133,45 +133,4 @@ class ExtCoSimulationTest extends Specification {
         ex.message == "The external data connection 'ExtResultDataConnection' could not be build!"
     }
 
-    def "An ExtCoSimulation should sent em set point data correctly"() {
-        given:
-        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID())]
-
-        when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, log)
-
-        then:
-        dataService.expectMessage(new ProvideEmData(0L, [:], [:], data))
-    }
-
-    def "An ExtCoSimulation should not sent empty em set point data"() {
-        given:
-        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        def data = [:]
-
-        when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, log)
-
-        then:
-        dataService.expectNoMessage()
-        extSimAdapter.expectNoMessage()
-    }
-
 }

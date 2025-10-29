@@ -61,11 +61,6 @@ public record GeneralFlexOptions(
   }
 
   @Override
-  public UUID receiver() {
-    return receiver;
-  }
-
-  @Override
   public void addDisaggregated(UUID model, FlexOptions flexOptions) {
     disaggregated.put(model, flexOptions);
   }
