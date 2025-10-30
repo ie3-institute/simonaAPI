@@ -7,7 +7,7 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.util.interval.ClosedInterval;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.measure.quantity.Dimensionless;
@@ -25,9 +25,10 @@ import tech.units.indriya.ComparableQuantity;
  * @param etaCharge The charging losses in percent.
  * @param etaDischarge The discharging losses in percent.
  * @param tickToEnergyLimits A map: tick to energy limits.
- * @param disaggregatedFlexOptions A map: uuid to disaggregated flex options.
+ * @param disaggregated A map: uuid to disaggregated flex options.
  */
 public record GeneralFlexOptions(
+    UUID receiver,
     UUID model,
     String flexType,
     ComparableQuantity<Power> pMin,
@@ -35,10 +36,11 @@ public record GeneralFlexOptions(
     ComparableQuantity<Dimensionless> etaCharge,
     ComparableQuantity<Dimensionless> etaDischarge,
     Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits,
-    Map<UUID, FlexOptions> disaggregatedFlexOptions)
+    Map<UUID, FlexOptions> disaggregated)
     implements FlexOptions {
 
   public GeneralFlexOptions(
+      UUID receiver,
       UUID model,
       String flexType,
       ComparableQuantity<Power> pMin,
@@ -47,6 +49,7 @@ public record GeneralFlexOptions(
       ComparableQuantity<Dimensionless> etaDischarge,
       Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits) {
     this(
+        receiver,
         model,
         flexType,
         pMin,
@@ -54,6 +57,11 @@ public record GeneralFlexOptions(
         etaCharge,
         etaDischarge,
         tickToEnergyLimits,
-        Collections.emptyMap());
+        new HashMap<>());
+  }
+
+  @Override
+  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
+    disaggregated.put(model, flexOptions);
   }
 }

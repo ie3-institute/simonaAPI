@@ -14,7 +14,6 @@ import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
 import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
-import edu.ie3.simona.api.data.model.em.EmSetPoint;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import java.util.List;
 import java.util.Map;
@@ -131,36 +130,11 @@ public abstract class ExtCoSimulation extends ExtSimulation {
     log.debug("Provided Primary Data to SIMONA!");
   }
 
-  // energy management data methods
-
-  /**
-   * Function to send em data to SIMONA using ExtPrimaryData nextTick is necessary, because the em
-   * agents have an own scheduler that should know, when the next set point arrives.
-   *
-   * @param extEmDataConnection the connection to SIMONA
-   * @param tick for which data is sent
-   * @param setPoints map: id to set point
-   * @param maybeNextTick option for the next tick data is sent
-   * @param log logger
-   */
-  protected void sendEmSetPointsToSimona(
-      ExtEmDataConnection extEmDataConnection,
-      long tick,
-      Map<UUID, EmSetPoint> setPoints,
-      Optional<Long> maybeNextTick,
-      Logger log) {
-    log.debug("Received em set points from {}", extSimulatorName);
-    boolean wasSent = extEmDataConnection.sendSetPoints(tick, setPoints, maybeNextTick);
-    if (!wasSent) {
-      log.debug("No set point data was sent to SIMONA!");
-    }
-    log.debug("Provided em set points to SIMONA!");
-  }
-
   // result data methods
 
   /**
-   * Function to get result data from SIMONA using the available {@link ExtResultDataConnection}
+   * Function to send all result data from SIMONA to the external simulation using the given {@link
+   * ExtResultDataConnection}
    *
    * @param connection the connection to SIMONA
    * @param tick for which data is received
