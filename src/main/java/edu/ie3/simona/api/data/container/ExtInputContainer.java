@@ -8,10 +8,8 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.model.em.EmCommunicationMessage;
-import edu.ie3.simona.api.data.model.em.EmSetPoint;
-import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
-import edu.ie3.simona.api.data.model.em.FlexOptions;
+import edu.ie3.simona.api.data.model.em.*;
+
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
@@ -27,7 +25,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** Map uuid to primary input value for SIMONA. */
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
-  // mapping for em data
+  // mappings for em data
   /** Map uuid to flex option requests. */
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
 
@@ -61,7 +59,8 @@ public final class ExtInputContainer implements ExtDataContainer {
     return primaryData.isEmpty()
         && flexRequests.isEmpty()
         && flexOptions.isEmpty()
-        && setPoints.isEmpty();
+        && setPoints.isEmpty()
+        && emMessages.isEmpty();
   }
 
   /** Returns the tick the data is provided for. */
@@ -103,6 +102,25 @@ public final class ExtInputContainer implements ExtDataContainer {
   public void addRequest(UUID receiver, FlexOptionRequest request) {
     flexRequests.put(receiver, request);
   }
+
+    /**
+     * Method for adding flex options to a given receiver.
+     *
+     * @param multiFlexOptions that will be added to this container
+     */
+    public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
+        addFlexOptions(multiFlexOptions.receiver(), multiFlexOptions.flexOptions());
+    }
+
+    /**
+     * Method for adding flex options to a given receiver.
+     *
+     * @param receiver that will receive the flex options
+     * @param flexOption that will be added
+     */
+    public void addFlexOptions(UUID receiver, FlexOptions flexOption) {
+        flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).add(flexOption);
+    }
 
   /**
    * Method for adding flex options to a given receiver.
