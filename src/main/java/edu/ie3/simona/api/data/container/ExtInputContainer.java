@@ -24,7 +24,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** Map uuid to primary input value for SIMONA. */
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
-  // mapping for em data
+  // mappings for em data
   /** Map uuid to flex option requests. */
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
 
