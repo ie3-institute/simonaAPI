@@ -21,11 +21,9 @@ public final class ExtDataContainerQueue<V extends ExtDataContainer> {
     return receiverTriggerDeque.size();
   }
 
-    /**
-     * Method for clearing this queue.
-     */
+  /** Method for clearing this queue. */
   public void clear() {
-      receiverTriggerDeque.clear();
+    receiverTriggerDeque.clear();
   }
 
   /**

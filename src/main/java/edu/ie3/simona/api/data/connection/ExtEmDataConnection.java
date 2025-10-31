@@ -33,29 +33,6 @@ public final class ExtEmDataConnection
   }
 
   /**
-   * Tries to send flex option requests to SIMONA. A message is sent, if at least one entity is
-   * given.
-   *
-   * @param tick current tick
-   * @param entities for which flex options should be requested
-   * @param disaggregated if disaggregated flex option should be returned
-   * @return true, if data was sent
-   */
-  public boolean sendFlexRequest(long tick, Collection<UUID> entities, boolean disaggregated) {
-    // create requests
-    Map<UUID, FlexOptionRequest> requests = new HashMap<>();
-    entities.forEach(
-        emEntity -> requests.put(emEntity, new FlexOptionRequest(emEntity, disaggregated)));
-
-    // send message only if at least one value is present
-    if (!entities.isEmpty()) {
-      sendExtMsg(new ProvideEmData(tick, requests, Collections.emptyMap(), Collections.emptyMap()));
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Tries to send em data to SIMONA. A message is sent, if the map is not empty.
    *
    * @param tick current tick
@@ -116,13 +93,18 @@ public final class ExtEmDataConnection
    * Method to request em flexibility options from SIMONA.
    *
    * @param tick for which set points are requested
-   * @param emEntities for which set points are requested
+   * @param entities for which set points are requested
    * @return a map: uuid to list of flex options
    * @throws InterruptedException - on interruptions
    */
   public Map<UUID, List<FlexOptions>> requestEmFlexResults(
-      long tick, List<UUID> emEntities, boolean disaggregated) throws InterruptedException {
-    sendFlexRequest(tick, emEntities, disaggregated);
+      long tick, List<UUID> entities, boolean disaggregated) throws InterruptedException {
+    // create requests
+    Map<UUID, FlexOptionRequest> requests = new HashMap<>();
+    entities.forEach(
+        emEntity -> requests.put(emEntity, new FlexOptionRequest(emEntity, disaggregated)));
+
+    sendExtMsg(new ProvideEmData(tick, requests, Collections.emptyMap(), Collections.emptyMap()));
     return receiveWithType(FlexOptionsResponse.class).receiverToFlexOptions();
   }
 

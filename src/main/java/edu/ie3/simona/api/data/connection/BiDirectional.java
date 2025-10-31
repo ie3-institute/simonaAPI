@@ -9,7 +9,6 @@ package edu.ie3.simona.api.data.connection;
 import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
 import edu.ie3.simona.api.ontology.DataMessageFromExt;
 import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,10 +40,11 @@ public abstract non-sealed class BiDirectional<
     return receiveTriggerQueue.take();
   }
 
+  /** Returns all received responses. */
   public final List<R> receiveAll() {
-      List<R> result = new ArrayList<>();
-      receiveTriggerQueue.drainTo(result);
-      return result;
+    List<R> result = new ArrayList<>(receiveTriggerQueue.size());
+    receiveTriggerQueue.drainTo(result);
+    return result;
   }
 
   @Override
