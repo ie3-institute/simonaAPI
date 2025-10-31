@@ -9,7 +9,6 @@ package edu.ie3.simona.api.data.container;
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.model.em.*;
-
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
@@ -99,28 +98,33 @@ public final class ExtInputContainer implements ExtDataContainer {
     flexRequests.put(receiver, new FlexOptionRequest(receiver, false));
   }
 
-  public void addRequest(UUID receiver, FlexOptionRequest request) {
-    flexRequests.put(receiver, request);
+  /**
+   * Method for adding a flex option request.
+   *
+   * @param request to be added
+   */
+  public void addRequest(FlexOptionRequest request) {
+    flexRequests.put(request.receiver(), request);
   }
 
-    /**
-     * Method for adding flex options to a given receiver.
-     *
-     * @param multiFlexOptions that will be added to this container
-     */
-    public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
-        addFlexOptions(multiFlexOptions.receiver(), multiFlexOptions.flexOptions());
-    }
+  /**
+   * Method for adding flex options to a given receiver.
+   *
+   * @param multiFlexOptions that will be added to this container
+   */
+  public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
+    addFlexOptions(multiFlexOptions.receiver(), multiFlexOptions.flexOptions());
+  }
 
-    /**
-     * Method for adding flex options to a given receiver.
-     *
-     * @param receiver that will receive the flex options
-     * @param flexOption that will be added
-     */
-    public void addFlexOptions(UUID receiver, FlexOptions flexOption) {
-        flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).add(flexOption);
-    }
+  /**
+   * Method for adding flex options to a given receiver.
+   *
+   * @param receiver that will receive the flex options
+   * @param flexOption that will be added
+   */
+  public void addFlexOptions(UUID receiver, FlexOptions flexOption) {
+    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).add(flexOption);
+  }
 
   /**
    * Method for adding flex options to a given receiver.
