@@ -46,7 +46,7 @@ class FlexOptionsTest extends Specification {
         UUID receiver = UUID.randomUUID()
 
         when:
-        def flexOptions = new GeneralFlexOptions(
+        def flexOptions = new EnergyBoundariesFlexOptions(
                 receiver,
                 senderUuid,
                 "general flex type",

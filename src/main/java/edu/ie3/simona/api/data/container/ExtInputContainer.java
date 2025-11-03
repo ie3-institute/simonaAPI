@@ -113,7 +113,9 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param multiFlexOptions that will be added to this container
    */
   public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
-    addFlexOptions(multiFlexOptions.receiver(), multiFlexOptions.flexOptions());
+    flexOptions
+        .computeIfAbsent(multiFlexOptions.receiver(), k -> new ArrayList<>())
+        .addAll(multiFlexOptions.disaggregated().values());
   }
 
   /**

@@ -93,7 +93,7 @@ class ExtInputContainerTest extends Specification {
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addFlexOptions(new MultiFlexOptions(receiver, [flexOptions]))
+        container.addFlexOptions(new MultiFlexOptions(receiver, [(sender): flexOptions]))
 
         then:
         container.flexOptions == [(receiver): [flexOptions]]

@@ -6,18 +6,22 @@
 
 package edu.ie3.simona.api.data.model.em;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Container class for grouping multiple flex options to a single receiver.
+ * Container class for grouping disaggregated flex options to a single receiver.
  *
  * @param receiver that should receive the flex options
- * @param flexOptions that should be received
+ * @param disaggregated flex options
  */
-public record MultiFlexOptions(UUID receiver, List<FlexOptions> flexOptions) implements EmData {
+public record MultiFlexOptions(UUID receiver, Map<UUID, FlexOptions> disaggregated)
+    implements FlexOptions {
   public MultiFlexOptions(UUID receiver) {
-    this(receiver, new ArrayList<>());
+    this(receiver, new HashMap<>());
+  }
+
+  @Override
+  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
+    disaggregated.put(model, flexOptions);
   }
 }

@@ -16,7 +16,7 @@ import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
 /**
- * General flex options that can represent various flex option types.
+ * Energy boundaries flex options that can represent various flex option types.
  *
  * @param model That is providing this flex options.
  * @param flexType The type of the flex options.
@@ -27,7 +27,7 @@ import tech.units.indriya.ComparableQuantity;
  * @param tickToEnergyLimits A map: tick to energy limits.
  * @param disaggregated A map: uuid to disaggregated flex options.
  */
-public record GeneralFlexOptions(
+public record EnergyBoundariesFlexOptions(
     UUID receiver,
     UUID model,
     String flexType,
@@ -39,7 +39,7 @@ public record GeneralFlexOptions(
     Map<UUID, FlexOptions> disaggregated)
     implements FlexOptions {
 
-  public GeneralFlexOptions(
+  public EnergyBoundariesFlexOptions(
       UUID receiver,
       UUID model,
       String flexType,
