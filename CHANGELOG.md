@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Adding some utility methods [#368](https://github.com/ie3-institute/simonaAPI/issues/368)
+- Extending flex option handling in `ExtInputContainer` [#371](https://github.com/ie3-institute/simonaAPI/issues/371)
 
 ### Changed
 - Changes to sent and received em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
