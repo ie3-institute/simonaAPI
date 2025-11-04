@@ -171,10 +171,7 @@ public class ExtEntityMapping {
     List<UUID> includedUuids =
         included.stream().map(this::get).filter(Optional::isPresent).map(Optional::get).toList();
 
-    schemeOption.ifPresent(
-        scheme -> includedUuids.forEach(uuid -> primaryMapping.put(uuid, scheme.getValueClass())));
-    addExtEntities(dataType, includedUuids);
-
+    copy.includeIds(dataType, includedUuids, schemeOption);
     return copy;
   }
 
