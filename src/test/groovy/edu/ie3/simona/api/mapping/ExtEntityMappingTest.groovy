@@ -5,15 +5,12 @@ import edu.ie3.datamodel.models.input.AssetInput
 import edu.ie3.datamodel.models.input.EmInput
 import edu.ie3.datamodel.models.input.NodeInput
 import edu.ie3.datamodel.models.input.container.GraphicElements
-import edu.ie3.datamodel.models.input.container.JointGridContainer
 import edu.ie3.datamodel.models.input.container.RawGridElements
 import edu.ie3.datamodel.models.input.container.SubGridContainer
 import edu.ie3.datamodel.models.input.container.SystemParticipants
 import edu.ie3.datamodel.models.input.system.FixedFeedInInput
-import edu.ie3.datamodel.models.input.system.LoadInput
 import edu.ie3.datamodel.models.input.system.SystemParticipantInput
 import edu.ie3.datamodel.models.voltagelevels.GermanVoltageLevelUtils
-import edu.ie3.datamodel.models.voltagelevels.VoltageLevel
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
 import spock.lang.Specification
@@ -101,6 +98,34 @@ class ExtEntityMappingTest extends Specification {
         mapping.participants == [participant.uuid] as Set
         mapping.ems == [em.uuid] as Set
     }
+
+    def "ExtEntityMapping can include specific external ids correctly"() {
+        given:
+        def node = new NodeInput(UUID.randomUUID(), "node", Quantities.getQuantity(1d, PowerSystemUnits.PU), false, NodeInput.DEFAULT_GEO_POSITION, GermanVoltageLevelUtils.LV, 1)
+        def em = new EmInput(UUID.randomUUID(), "em", "", null)
+        def participant = new FixedFeedInInput(UUID.randomUUID(), "ffi", node, null, em, Quantities.getQuantity(10, PowerSystemUnits.KILOVOLTAMPERE), 0.9)
+
+        List<AssetInput> gridAssets = [node]
+        List<SystemParticipantInput> participantInputs = [participant]
+
+        def grid = new SubGridContainer(
+                "test grid",
+                1,
+                new RawGridElements(gridAssets),
+                new SystemParticipants(participantInputs),
+                new GraphicElements([])
+        )
+        def mapping = new ExtEntityMapping(grid)
+
+        when:
+        def updated = mapping.include(DataType.RESULT, ["ffi"], Optional.empty())
+
+        then:
+        // only the included ids will be returned, other grid ids will be ignored
+        mapping.getAssets(DataType.RESULT) == [node.uuid, participant.uuid, em.uuid]
+        updated.getAssets(DataType.RESULT) == [participant.uuid]
+    }
+
 
     def "ExtEntityMapping should return the data types correctly"() {
         when:
