@@ -10,7 +10,6 @@ import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.EmInput;
 import edu.ie3.datamodel.models.input.container.GridContainer;
 import edu.ie3.datamodel.models.value.Value;
-
 import java.util.*;
 
 /** Contains the mapping between SIMONA uuid, the external id and the data type the assets hold */

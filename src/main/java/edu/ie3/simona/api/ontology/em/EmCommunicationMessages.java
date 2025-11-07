@@ -8,7 +8,6 @@ package edu.ie3.simona.api.ontology.em;
 
 import edu.ie3.simona.api.data.model.em.EmCommunicationMessage;
 import edu.ie3.simona.api.data.model.em.EmData;
-
 import java.util.Collection;
 
 /**
