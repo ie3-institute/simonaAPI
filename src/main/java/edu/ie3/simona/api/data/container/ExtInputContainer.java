@@ -72,6 +72,16 @@ public final class ExtInputContainer implements ExtDataContainer {
     return maybeNextTick;
   }
 
+
+  public boolean hasPrimaryData() {
+      return !primaryData.isEmpty();
+  }
+
+  public boolean hasEmData() {
+      return !flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty() || !emMessages.isEmpty();
+  }
+
+
   // add data
 
   /**

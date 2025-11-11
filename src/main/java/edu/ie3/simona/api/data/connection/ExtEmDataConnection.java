@@ -32,6 +32,11 @@ public final class ExtEmDataConnection
     return new ArrayList<>(controlled);
   }
 
+  
+  public void simulateUntil(long tick) {
+      sendExtMsg(new EmSimulationUntil(tick));
+  }
+
   /**
    * Tries to send em data to SIMONA. A message is sent, if the map is not empty.
    *
