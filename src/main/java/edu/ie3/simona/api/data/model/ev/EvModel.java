@@ -32,11 +32,11 @@ public interface EvModel {
    */
   ComparableQuantity<Power> getPRatedDC();
 
- /**
-  * @return the power factor of this ev
-  */
+  /**
+   * @return the power factor of this ev
+   */
   Double getCosPhiRated();
-  
+
   /**
    * @return the storage capacity of this ev's battery
    */
