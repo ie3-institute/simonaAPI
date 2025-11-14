@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Changes to sent and received em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Changed the PRated in the EvModel to SRated and added cosphi to the model [#259](https://github.com/ie3-institute/simonaAPI/issues/259)
 
 ### Fixed
 - Issues related to em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
