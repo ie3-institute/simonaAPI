@@ -33,6 +33,15 @@ public final class ExtEmDataConnection
   }
 
   /**
+   * Creates and sends an {@link EmSimulationUntil} to the service.
+   *
+   * @param tick until the em messages should be handled internally
+   */
+  public void simulateUntil(long tick) {
+    sendExtMsg(new EmSimulationUntil(tick));
+  }
+
+  /**
    * Tries to send em data to SIMONA. A message is sent, if the map is not empty.
    *
    * @param tick current tick
