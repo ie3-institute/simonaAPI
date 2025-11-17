@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Adding some utility methods [#368](https://github.com/ie3-institute/simonaAPI/issues/368)
 - Extending flex option handling in `ExtInputContainer` [#371](https://github.com/ie3-institute/simonaAPI/issues/371)
-- Add method to enable `ExtEmConnection` to use fixed step sizes [#386](https://github.com/ie3-institute/simonaAPI/issues/386)
+- Enhancing `ExtInputContainer` with `hasData` methods [#382](https://github.com/ie3-institute/simonaAPI/issues/382)
+- Add method to enable `ExtEmDataConnection` to use fixed step sizes [#386](https://github.com/ie3-institute/simonaAPI/issues/386)
 
 ### Changed
 - Changes to sent and received em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
