@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed the PRated in the EvModel to SRated and added cosphi to the model [#259](https://github.com/ie3-institute/simonaAPI/issues/259)
 
 ### Fixed
-- Fixed changelog entry #366 [#378](https://github.com/ie3-institute/simonaAPI/issues/366)
 - Issues related to em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
 - `Fixed bugs in `ExtEntityMapping` [#373](https://github.com/ie3-institute/simonaAPI/issues/373)
+- Fixed changelog entry #366 [#378](https://github.com/ie3-institute/simonaAPI/issues/366)
 
 ## [0.11.0] - 2025-10-23
 
