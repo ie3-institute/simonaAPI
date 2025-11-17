@@ -28,18 +28,30 @@ class ExtInputContainerTest extends Specification {
         expect:
         def container1 = new ExtInputContainer(0L)
         container1.empty
+        !container1.hasPrimaryData()
+        !container1.hasEmData()
         container1.addPrimaryValue(UUID.randomUUID(), null)
         !container1.empty
+        container1.hasPrimaryData()
+        !container1.hasEmData()
 
         def container2 = new ExtInputContainer(0L)
         container2.empty
+        !container2.hasPrimaryData()
+        !container2.hasEmData()
         container2.addFlexComMessage(null)
         !container2.empty
+        !container2.hasPrimaryData()
+        container2.hasEmData()
 
         def container3 = new ExtInputContainer(0L)
         container3.empty
+        !container3.hasPrimaryData()
+        !container3.hasEmData()
         container3.addRequest(UUID.randomUUID())
         !container3.empty
+        !container3.hasPrimaryData()
+        container3.hasEmData()
     }
 
     def "An ExtInputContainer should add primary data correctly"() {
