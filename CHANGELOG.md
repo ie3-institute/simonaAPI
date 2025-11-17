@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issues related to em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
 - `Fixed bugs in `ExtEntityMapping` [#373](https://github.com/ie3-institute/simonaAPI/issues/373)
 - Fixed changelog entry #366 [#378](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Fix considered data in `ExtEntityMapping.getAssets()` [#384](https://github.com/ie3-institute/simonaAPI/issues/384)
 
 ## [0.11.0] - 2025-10-23
 
