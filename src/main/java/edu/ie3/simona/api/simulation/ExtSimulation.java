@@ -6,6 +6,8 @@
 
 package edu.ie3.simona.api.simulation;
 
+import com.typesafe.config.Config;
+import edu.ie3.datamodel.models.input.container.JointGridContainer;
 import edu.ie3.simona.api.data.ExtSimAdapterData;
 import edu.ie3.simona.api.data.connection.ExtDataConnection;
 import edu.ie3.simona.api.ontology.simulation.*;
@@ -119,6 +121,16 @@ public abstract class ExtSimulation implements Runnable {
    */
   protected String[] getMainArgs() {
     return data.getMainArgs();
+  }
+
+  /** Returns the config that was provided to the simulation. */
+  protected Config getConfig() {
+    return data.getSimonaConfig();
+  }
+
+  /** Returns the grid that was given to SIMONA. */
+  protected JointGridContainer getGrid() {
+    return data.getGrid();
   }
 
   /** Returns the name of this external simulation. */
