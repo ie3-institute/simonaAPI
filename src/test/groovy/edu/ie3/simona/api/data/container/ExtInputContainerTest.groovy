@@ -3,6 +3,7 @@ package edu.ie3.simona.api.data.container
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
+import edu.ie3.simona.api.data.model.em.MultiFlexOptions
 import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
 import spock.lang.Shared
 import spock.lang.Specification
@@ -12,8 +13,46 @@ import static edu.ie3.util.quantities.PowerSystemUnits.KILOWATT
 
 class ExtInputContainerTest extends Specification {
 
-    @Shared
-    private UUID sender = UUID.randomUUID()
+    def "An ExtInputContainer should return the tick correctly"() {
+        expect:
+        container.tick == expectedTick
+        container.maybeNextTick == expectedMaybeNextTick
+
+        where:
+        container                       | expectedTick | expectedMaybeNextTick
+        new ExtInputContainer(0L)       | 0L           | Optional.empty()
+        new ExtInputContainer(0L, 900L) | 0L           | Optional.of(900L)
+    }
+
+    def "An ExtInputContainer should check if it is empty correctly"() {
+        expect:
+        def container1 = new ExtInputContainer(0L)
+        container1.empty
+        !container1.hasPrimaryData()
+        !container1.hasEmData()
+        container1.addPrimaryValue(UUID.randomUUID(), null)
+        !container1.empty
+        container1.hasPrimaryData()
+        !container1.hasEmData()
+
+        def container2 = new ExtInputContainer(0L)
+        container2.empty
+        !container2.hasPrimaryData()
+        !container2.hasEmData()
+        container2.addFlexComMessage(null)
+        !container2.empty
+        !container2.hasPrimaryData()
+        container2.hasEmData()
+
+        def container3 = new ExtInputContainer(0L)
+        container3.empty
+        !container3.hasPrimaryData()
+        !container3.hasEmData()
+        container3.addRequest(UUID.randomUUID())
+        !container3.empty
+        !container3.hasPrimaryData()
+        container3.hasEmData()
+    }
 
     def "An ExtInputContainer should add primary data correctly"() {
         given:
@@ -44,16 +83,32 @@ class ExtInputContainerTest extends Specification {
 
     def "An ExtInputContainer should add flex option data correctly"() {
         given:
+        UUID receiver = UUID.randomUUID()
         UUID sender = UUID.randomUUID()
-        def flexOptions = new PowerLimitFlexOptions(sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        def flexOptions = new PowerLimitFlexOptions(receiver, sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
 
         def container = new ExtInputContainer(0L)
 
         when:
-        container.addFlexOptions(sender, [flexOptions])
+        container.addFlexOptions(receiver, [flexOptions])
 
         then:
-        container.flexOptions == [(sender): [flexOptions]]
+        container.flexOptions == [(receiver): [flexOptions]]
+    }
+
+    def "An ExtInputContainer should add multi flex option data correctly"() {
+        given:
+        UUID receiver = UUID.randomUUID()
+        UUID sender = UUID.randomUUID()
+        def flexOptions = new PowerLimitFlexOptions(receiver, sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+
+        def container = new ExtInputContainer(0L)
+
+        when:
+        container.addFlexOptions(new MultiFlexOptions(receiver, [(sender): flexOptions]))
+
+        then:
+        container.flexOptions == [(receiver): [flexOptions]]
     }
 
     def "An ExtInputContainer should add set point data correctly"() {
@@ -81,9 +136,10 @@ class ExtInputContainerTest extends Specification {
         UUID requestReceiver = UUID.randomUUID()
         container.addRequest(requestReceiver)
 
+        UUID receiver = UUID.randomUUID()
         UUID sender = UUID.randomUUID()
-        def flexOptions = new PowerLimitFlexOptions(sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
-        container.addFlexOptions(sender, [flexOptions])
+        def flexOptions = new PowerLimitFlexOptions(receiver, sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
         def setPoint = new PValue(Quantities.getQuantity(5d, KILOWATT))
@@ -114,7 +170,8 @@ class ExtInputContainerTest extends Specification {
         container.addRequest(requestReceiver)
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new PowerLimitFlexOptions(receiver, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        UUID model = UUID.randomUUID()
+        def flexOptions = new PowerLimitFlexOptions(receiver, model, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
@@ -146,7 +203,8 @@ class ExtInputContainerTest extends Specification {
         container.addRequest(requestReceiver)
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new PowerLimitFlexOptions(receiver, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        UUID model = UUID.randomUUID()
+        def flexOptions = new PowerLimitFlexOptions(receiver, model, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()
@@ -178,7 +236,8 @@ class ExtInputContainerTest extends Specification {
         container.addRequest(requestReceiver)
 
         UUID receiver = UUID.randomUUID()
-        def flexOptions = new PowerLimitFlexOptions(receiver, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
+        UUID model = UUID.randomUUID()
+        def flexOptions = new PowerLimitFlexOptions(receiver, model, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
         container.addFlexOptions(receiver, [flexOptions])
 
         UUID emAsset = UUID.randomUUID()

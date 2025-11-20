@@ -2,7 +2,7 @@ package edu.ie3.simona.api.data.connection
 
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
 import edu.ie3.simona.api.data.model.em.EmCommunicationMessage
-import edu.ie3.simona.api.data.model.em.ExtendedFlexOptionsResult
+import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
 import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
 import edu.ie3.simona.api.ontology.DataMessageFromExt
@@ -12,8 +12,6 @@ import edu.ie3.simona.api.test.common.DataServiceTestData
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.time.ZonedDateTime
 
 class ExtEmDataConnectionTest extends Specification implements DataServiceTestData {
 
@@ -32,6 +30,28 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         testKit = null
     }
 
+    def "ExtEmDataConnection should provide em data correctly"() {
+        given:
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, false))
+
+        when:
+        def wasSent = extEmDataConnection.sendEmData(0L, emData, log)
+
+        then:
+        wasSent
+        dataService.expectMessage(new ProvideEmData(0, emData, [:], [:]))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
+
+    }
+
     def "ExtEmDataConnection should provide em flex requests correctly"() {
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)
@@ -45,30 +65,12 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def emData = Map.of(inputUuid, new FlexOptionRequest(inputUuid, false))
 
         when:
-        def wasSent = extEmDataConnection.sendEmData(0L, emData, [:], [:], Optional.of(900L))
+        def wasSent = extEmDataConnection.sendEmData(0L, emData, [:], [:])
 
         then:
         wasSent
-        dataService.expectMessage(new ProvideEmData(0, emData, [:], [:], Optional.of(900L)))
+        dataService.expectMessage(new ProvideEmData(0, emData, [:], [:]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
-    }
-
-    def "ExtEmDataConnection should send no message, if no flex requests are given"() {
-        given:
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        when:
-        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L))
-
-        then:
-        !wasSent
-        dataService.expectNoMessage()
     }
 
     def "ExtEmDataConnection should provide em flex options correctly"() {
@@ -81,18 +83,18 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, [new PowerLimitFlexOptions(inputUuid, power, power, power)])
+        def emData = Map.of(inputUuid, [new PowerLimitFlexOptions(inputUuid, inputUuid, power, power, power)])
 
         when:
-        def wasSent = extEmDataConnection.sendEmData(0L, [:], emData, [:], Optional.of(900L))
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], emData, [:])
 
         then:
         wasSent
-        dataService.expectMessage(new ProvideEmData(0, [:], emData, [:], Optional.of(900L)))
+        dataService.expectMessage(new ProvideEmData(0, [:], emData, [:]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
-    def "ExtEmDataConnection should send no message, if no flex options are given"() {
+    def "ExtEmDataConnection should provide em set points correctly"() {
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
@@ -102,34 +104,18 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        when:
-        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], [:], Optional.of(900L))
-
-        then:
-        !wasSent
-        dataService.expectNoMessage()
-    }
-
-    def "ExtEmDataConnection should provide flex option requests correctly"() {
-        given:
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
+        def emData = Map.of(inputUuid, new EmSetPoint(inputUuid, power))
 
         when:
-        def wasSent = extEmDataConnection.sendFlexRequest(0L, [inputUuid], true)
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], emData)
 
         then:
         wasSent
-        dataService.expectMessage(new RequestEmFlexResults(0, [inputUuid], true))
+        dataService.expectMessage(new ProvideEmData(0, [:], [:], emData))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
-    def "ExtEmDataConnection should send no message, if no flex requests are given"() {
+    def "ExtEmDataConnection should send no message, if no em data is given"() {
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)
         def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
@@ -140,7 +126,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         )
 
         when:
-        def wasSent = extEmDataConnection.sendFlexRequest(0L, [], true)
+        def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], [:])
 
         then:
         !wasSent
@@ -160,68 +146,12 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def message = new EmCommunicationMessage(UUID.randomUUID(), UUID.randomUUID(), null)
 
         when:
-        def wasSent = extEmDataConnection.sendCommunicationMessage(0L, [message], Optional.of(900L))
+        def wasSent = extEmDataConnection.sendCommunicationMessage(0L, [message])
 
         then:
         wasSent
-        dataService.expectMessage(new EmCommunicationMessages(0, [message], Optional.of(900L)))
+        dataService.expectMessage(new EmCommunicationMessages(0, [message]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
-    }
-
-    def "ExtEmDataConnection should send no message, if no flex requests are given"() {
-        given:
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        when:
-        def wasSent = extEmDataConnection.sendCommunicationMessage(0L, [], Optional.of(900L))
-
-        then:
-        !wasSent
-        dataService.expectNoMessage()
-    }
-
-    def "ExtEmDataConnection should send no message, if input data is empty"() {
-        given:
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-        def inputDataMap = [:] as Map
-
-        when:
-        def wasSent = extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L))
-
-        then:
-        !wasSent
-        dataService.expectNoMessage()
-    }
-
-    def "ExtEmDataConnection should send no message, if no em set points are given"() {
-        given:
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-        def inputDataMap = [:] as Map
-
-        when:
-        def wasSent = extEmDataConnection.sendSetPoints(0L, inputDataMap, Optional.of(900L))
-
-        then:
-        !wasSent
-        dataService.expectNoMessage()
     }
 
     def "ExtEmDataConnection should request and receive flex options correctly"() {
@@ -234,7 +164,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def sendMsg = new FlexOptionsResponse([(inputUuid): new ExtendedFlexOptionsResult(ZonedDateTime.now(), inputUuid, power, power, power)])
+        def sendMsg = new FlexOptionsResponse([(inputUuid): new PowerLimitFlexOptions(inputUuid, inputUuid, power, power, power)])
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
@@ -243,7 +173,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def response = extEmDataConnection.requestEmFlexResults(0L, [inputUuid], false)
 
         then:
-        dataService.expectMessage(new RequestEmFlexResults(0L, [inputUuid], false))
+        dataService.expectMessage(new ProvideEmData(0L, [(inputUuid): new FlexOptionRequest(inputUuid, false)], [:], [:]))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
         response == sendMsg.receiverToFlexOptions()
     }
