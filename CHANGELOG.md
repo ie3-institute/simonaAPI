@@ -6,6 +6,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Added
+
+### Changed
+
+### Fixed
+
+## [0.12.0] - 2025-11-20
+
+### Added
+- Adding some utility methods [#368](https://github.com/ie3-institute/simonaAPI/issues/368)
+- Extending flex option handling in `ExtInputContainer` [#371](https://github.com/ie3-institute/simonaAPI/issues/371)
+- Enhancing `ExtInputContainer` with `hasData` methods [#382](https://github.com/ie3-institute/simonaAPI/issues/382)
+
+### Changed
+- Changes to sent and received em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Changed the PRated in the EvModel to SRated and added cosphi to the model [#259](https://github.com/ie3-institute/simonaAPI/issues/259)
+- Update `Gradle` to 9.2.0 [#381](https://github.com/ie3-institute/simonaAPI/issues/381)
+- Update `Gradle` to 9.2.1 [#389](https://github.com/ie3-institute/simonaAPI/issues/389)
+
+### Fixed
+- Issues related to em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- `Fixed bugs in `ExtEntityMapping` [#373](https://github.com/ie3-institute/simonaAPI/issues/373)
+- Fixed changelog entry #366 [#378](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Fix considered data in `ExtEntityMapping.getAssets()` [#384](https://github.com/ie3-institute/simonaAPI/issues/384)
+
 ## [0.11.0] - 2025-10-23
 
 ### Added
