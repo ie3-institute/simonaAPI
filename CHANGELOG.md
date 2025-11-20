@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased/Snapshot]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [0.12.0] - 2025-11-20
+
+### Added
 - Adding some utility methods [#368](https://github.com/ie3-institute/simonaAPI/issues/368)
 - Extending flex option handling in `ExtInputContainer` [#371](https://github.com/ie3-institute/simonaAPI/issues/371)
 - Enhancing `ExtInputContainer` with `hasData` methods [#382](https://github.com/ie3-institute/simonaAPI/issues/382)
@@ -122,7 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.12.0...HEAD
+[0.12.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
