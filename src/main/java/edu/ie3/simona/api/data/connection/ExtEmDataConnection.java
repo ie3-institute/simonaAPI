@@ -33,8 +33,8 @@ public final class ExtEmDataConnection
   }
 
   
-  public void simulateUntil(long tick) {
-      sendExtMsg(new EmSimulationUntil(tick));
+  public void simulateInternal(long tick) {
+      sendExtMsg(new EmSimulationInternal(tick));
   }
 
   /**
