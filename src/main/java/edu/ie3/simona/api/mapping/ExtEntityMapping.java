@@ -276,10 +276,10 @@ public class ExtEntityMapping {
       List<UUID> ext = new ArrayList<>();
 
       if (dataType == DataType.PRIMARY_RESULT) {
-          ext.addAll(extAssets.getOrDefault(DataType.PRIMARY, Collections.emptySet()));
-          ext.addAll(extAssets.getOrDefault(DataType.RESULT, Collections.emptySet()));
+        ext.addAll(extAssets.getOrDefault(DataType.PRIMARY, Collections.emptySet()));
+        ext.addAll(extAssets.getOrDefault(DataType.RESULT, Collections.emptySet()));
       } else {
-          ext.addAll(extAssets.getOrDefault(dataType, Collections.emptySet()));
+        ext.addAll(extAssets.getOrDefault(dataType, Collections.emptySet()));
       }
       if (ext.isEmpty()) {
         return uuids;

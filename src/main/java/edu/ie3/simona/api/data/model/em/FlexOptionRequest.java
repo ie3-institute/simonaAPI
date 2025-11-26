@@ -14,12 +14,4 @@ import java.util.UUID;
  * @param receiver The receiver of the request.
  * @param disaggregated True, if disaggregated flex option should be returned.
  */
-public record FlexOptionRequest(UUID receiver, boolean disaggregated, boolean releaseControl) implements EmData {
-    public FlexOptionRequest(UUID receiver, boolean disaggregated) {
-        this(receiver, disaggregated, false);
-    }
-    
-    public static FlexOptionRequest releaseControl(UUID receiver) {
-        return new FlexOptionRequest(receiver, false, true);
-    }
-}
+public record FlexOptionRequest(UUID receiver, boolean disaggregated) implements EmData {}
