@@ -30,6 +30,24 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         testKit = null
     }
 
+    def "ExtEmDataConnection should sent request to simulate internally correctly"() {
+        given:
+        def dataService = testKit.createTestProbe(DataMessageFromExt)
+        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
+        def extEmDataConnection = new ExtEmDataConnection(controlled, EmMode.BASE)
+        extEmDataConnection.setActorRefs(
+                dataService.ref(),
+                extSimAdapter.ref()
+        )
+
+        when:
+        extEmDataConnection.simulateInternal(800L)
+
+        then:
+        dataService.expectMessage(new EmSimulationInternal(800L))
+        extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
+    }
+
     def "ExtEmDataConnection should provide em data correctly"() {
         given:
         def dataService = testKit.createTestProbe(DataMessageFromExt)

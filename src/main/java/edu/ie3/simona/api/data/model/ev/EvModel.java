@@ -35,7 +35,7 @@ public interface EvModel {
   /**
    * @return the power factor of this ev
    */
-  Double getCosPhiRated();
+  double getCosPhiRated();
 
   /**
    * @return the storage capacity of this ev's battery
