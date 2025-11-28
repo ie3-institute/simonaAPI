@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
 
 ### Fixed
 
