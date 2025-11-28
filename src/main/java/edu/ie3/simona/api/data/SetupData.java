@@ -8,10 +8,9 @@ package edu.ie3.simona.api.data;
 
 import com.typesafe.config.Config;
 import edu.ie3.datamodel.models.input.container.GridContainer;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 /**
  * Container class that holds all data needed for setting up an external simulation.
