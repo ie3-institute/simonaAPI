@@ -67,18 +67,30 @@ class ExtSimulationSpec extends Specification {
         testKit = null
     }
 
+    def "An ExtSimulation should set setup data correctly"() {
+        given:
+        def setupData = new SetupData(new String[0], null, null)
+        def extSim = new TestSimulation(0L, Optional.of(-2L))
+
+        when:
+        extSim.setSetupData(setupData)
+
+        then:
+        extSim.setupData == setupData
+    }
+
     def "An ExtSimulation should handle initialization"() {
         given:
         def tick = -1L
         def newTick = 0L
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimData = new ExtSimDataConnection(extSimAdapter.ref())
+        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(newTick, Optional.of(-2L))
-        extSim.setDataConnection(extSimData)
+        extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null))
 
         when:
-        extSimData.queueExtMsg(new ActivationMessage(tick))
+        extSimDataConnection.queueExtMsg(new ActivationMessage(tick))
         def finishedActual = handleMessage.invoke(extSim)
 
         then:
@@ -89,15 +101,15 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimData = new ExtSimDataConnection(extSimAdapter.ref())
+        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def newTickOpt = newTick.isEmpty() ?
                     Optional.<Long>empty() : Optional.of(newTick.first())
         def extSim = new TestSimulation(-2L, newTickOpt)
-        extSim.setDataConnection(extSimData)
+        extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null))
 
         when:
-        extSimData.queueExtMsg(new ActivationMessage(tick))
+        extSimDataConnection.queueExtMsg(new ActivationMessage(tick))
         def finishedActual = handleMessage.invoke(extSim)
 
         then:
@@ -115,13 +127,13 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle termination properly"() {
         given:
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimData = new ExtSimDataConnection(extSimAdapter.ref())
+        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(-1L, Optional.empty())
-        extSim.setDataConnection(extSimData)
+        extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null))
 
         when:
-        extSimData.queueExtMsg(new TerminationMessage(simlulationSuccessful))
+        extSimDataConnection.queueExtMsg(new TerminationMessage(simlulationSuccessful))
         def finishedActual = handleMessage.invoke(extSim)
 
         then:
@@ -139,13 +151,13 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should handle unknown messages by throwing an exception"() {
         given:
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimData = new ExtSimDataConnection(extSimAdapter.ref())
+        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(-1L, Optional.empty())
-        extSim.setDataConnection(extSimData)
+        extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null))
 
         when:
-        extSimData.queueExtMsg(new UnknownMessage())
+        extSimDataConnection.queueExtMsg(new UnknownMessage())
         handleMessage.invoke(extSim)
 
         then:

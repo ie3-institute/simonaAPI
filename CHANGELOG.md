@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhancing `ExtInputContainer` with `hasData` methods [#382](https://github.com/ie3-institute/simonaAPI/issues/382)
 
 ### Changed
-- Changes to sent and received em data [#2366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Changes to sent and received em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
 - Changed the PRated in the EvModel to SRated and added cosPhi to the model [#259](https://github.com/ie3-institute/simonaAPI/issues/259)
 - Update `Gradle` to 9.2.0 [#381](https://github.com/ie3-institute/simonaAPI/issues/381)
 - Update `Gradle` to 9.2.1 [#389](https://github.com/ie3-institute/simonaAPI/issues/389)
