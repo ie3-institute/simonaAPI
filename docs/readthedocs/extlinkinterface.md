@@ -12,15 +12,11 @@ Both method will be called by SIMONA to initialize and retrieve the external sim
 
 ## Setting up the external simulation
 
-This method receives an [external simulation adapter data](/simulations/extsimadapterdata) that contains the following
-information:
-- CLI arguments SIMONA is initiated with
-- Reference to the actor that handles scheduler control flow in SIMONA
-- Queue with triggers the external simulation needs to handle
+Before calling the `getExtSimulation` method, SIMONA will first call the `setup` method. This method receives a
+[setup data](/data/setupdata) that contains all needed information for setting up the external simulation. The method
+can use these data, if necessary, to set up the external simulation.
 
-The method can use these data, if necessary, to set up the external simulation. In all cases, this method needs to
-forward the adapter data to the external simulation.
-
+If no setup is needed, there is no need to implement this method.
 
 ## Getting the external simulation
 
