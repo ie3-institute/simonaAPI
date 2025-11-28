@@ -35,8 +35,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def setPoint = new EmSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
-        def options = new PowerLimitFlexOptions(receiver2, null, null, null)
-        def options2 = new PowerLimitFlexOptions(receiver2, null, null, null)
+        def options = new PowerLimitFlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options2 = new PowerLimitFlexOptions(receiver2,UUID.randomUUID(), null, null, null)
 
         when:
         container.addEmData(receiver1, setPoint)
@@ -95,8 +95,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def setPoint = new EmSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
-        def options = new PowerLimitFlexOptions(receiver2, null, null, null)
-        def options2 = new PowerLimitFlexOptions(receiver2, null, null, null)
+        def options = new PowerLimitFlexOptions(receiver2, UUID.randomUUID(), null, null, null)
+        def options2 = new PowerLimitFlexOptions(receiver2, UUID.randomUUID(), null, null, null)
 
         def allEmData = [
                 (receiver1): [setPoint],

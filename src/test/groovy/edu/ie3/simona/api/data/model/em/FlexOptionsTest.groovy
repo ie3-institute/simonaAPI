@@ -26,10 +26,14 @@ class FlexOptionsTest extends Specification {
     ComparableQuantity<Power> pMax = Quantities.getQuantity(10, KILOWATT)
 
     def "PowerLimitFlexOptions can be constructed correctly"() {
+        given:
+        UUID receiver = UUID.randomUUID()
+
         when:
-        def flexOptions = new PowerLimitFlexOptions(senderUuid, pRef, pMin, pMax)
+        def flexOptions = new PowerLimitFlexOptions(receiver, senderUuid, pRef, pMin, pMax)
 
         then:
+        flexOptions.receiver == receiver
         flexOptions.model == senderUuid
         flexOptions.pRef == pRef
         flexOptions.pMin == pMin
@@ -38,8 +42,12 @@ class FlexOptionsTest extends Specification {
     }
 
     def "GeneralFlexOptions can be constructed correctly"() {
+        given:
+        UUID receiver = UUID.randomUUID()
+
         when:
-        def flexOptions = new GeneralFlexOptions(
+        def flexOptions = new EnergyBoundariesFlexOptions(
+                receiver,
                 senderUuid,
                 "general flex type",
                 Quantities.getQuantity(0, KILOWATT),
@@ -50,6 +58,7 @@ class FlexOptionsTest extends Specification {
         )
 
         then:
+        flexOptions.receiver == receiver
         flexOptions.model == senderUuid
         flexOptions.flexType == "general flex type"
         flexOptions.pMin == Quantities.getQuantity(0, KILOWATT)
@@ -57,7 +66,7 @@ class FlexOptionsTest extends Specification {
         flexOptions.etaCharge == Quantities.getQuantity(95, PERCENT)
         flexOptions.etaDischarge == Quantities.getQuantity(95, PERCENT)
         flexOptions.tickToEnergyLimits == [:]
-        flexOptions.disaggregatedFlexOptions == [:]
+        flexOptions.disaggregated == [:]
     }
 
 }
