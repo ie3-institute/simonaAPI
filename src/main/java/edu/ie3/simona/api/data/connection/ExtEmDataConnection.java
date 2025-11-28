@@ -32,11 +32,6 @@ public final class ExtEmDataConnection
     return new ArrayList<>(controlled);
   }
 
-  
-  public void simulateInternal(long tick) {
-      sendExtMsg(new EmSimulationInternal(tick));
-  }
-
   /**
    * Tells the em service in SIMONA to simulate the given tick internally. This should be used, when
    * the external simulation will not provide data for the tick.
