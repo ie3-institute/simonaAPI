@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
+- Added API structure to the docs [#405](https://github.com/ie3-institute/simonaAPI/issues/405)
 
 ### Changed
 
