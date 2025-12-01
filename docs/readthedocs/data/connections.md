@@ -5,6 +5,7 @@ This API defines some data connections in order to exchange data between SIMONA 
 1. Input data connections
 2. Output data connections
 3. Bidirectional data connections
+4. External simulation data connection
 
 ## Input data connections
 
@@ -38,3 +39,14 @@ Currently, the following input data connections are provided:
 - ExtEmDataConnection
 - ExtEvDataConnection
 - ExtResultDataConnection
+
+
+## External simulation data connection
+
+The external simulation data connection is a special connection, since it is only used send control messages between the
+external simulation and SIMONA.
+
+This class contains three method to exchange messages with SIMONA.
+1. `queueExtMsg`: This method is called by SIMONA to provide the external simulation with a control message
+2. `receive`: The method is used to retrieve a control message that was sent by SIMONA. 
+3. `send`: This method is used to send a response message to SIMONA as an answer to a control message

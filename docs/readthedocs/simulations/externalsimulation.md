@@ -30,7 +30,7 @@ method should provide a new tick as long as there are future activities.
 
 ## Returning the data connections
 
-The method `getDataConnections` returns all [data connections](/connections/connections) that are used to connect the
+The method `getDataConnections` returns all [data connections](/data/connections) that are used to connect the
 external simulation to SIMONA.
 
 
