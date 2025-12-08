@@ -63,6 +63,12 @@ htmlhelp_basename = 'simonaAPI-doc'
 html_use_index = True
 html_show_sourcelink = False
 
+
+# Intersphinx for references to external ReadTheDocs
+intersphinx_mapping = {
+    'psdm': ('https://powersystemdatamodel.readthedocs.io/en/latest/', None),
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".

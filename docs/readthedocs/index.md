@@ -16,9 +16,8 @@ extlinkinterface
 
 simulations/externalsimulation
 
-simulations/extsimadapterdata
-
-connections/connections
+data/connections
+data/setupdata
 ```
 
 ## Contact the (Main) Maintainers
