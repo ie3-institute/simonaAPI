@@ -35,4 +35,4 @@ With the release of version `0.10.0` there was a lot of refactoring, which break
 
 Additional breaking changes in version `0.11.0`.
 
-Breaking changes to due to refactoring of external simulation setup in version `0.13.0`.
+Breaking changes due to refactoring of external simulation setup in version `0.13.0`.
