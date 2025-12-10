@@ -18,7 +18,7 @@ On [Maven central](https://search.maven.org/artifact/com.github.ie3-institute/si
 <dependency>
   <groupId>com.github.ie3-institute</groupId>
   <artifactId>simonaAPI</artifactId>
-  <version>0.11.0</version>
+  <version>0.12.0</version>
 </dependency>
 ```
 
@@ -33,4 +33,6 @@ set up. Therefore, older simulations no longer work with the version `0.6.0`.
 
 With the release of version `0.10.0` there was a lot of refactoring, which breaks compatibility with older simulations.
 
-Additional breaking changes in version `0.11.0`
+Additional breaking changes in version `0.11.0`.
+
+Breaking changes due to refactoring of external simulation setup in version `0.13.0`.
