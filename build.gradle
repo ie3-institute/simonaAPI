@@ -84,7 +84,7 @@ dependencies{
   // TESTING
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   testImplementation 'org.apache.groovy:groovy:4.0.28'
-  testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+  testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
 }
 
 tasks.register('printVersion') {
