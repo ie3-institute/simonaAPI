@@ -10,7 +10,7 @@ import com.typesafe.config.Config;
 import edu.ie3.datamodel.models.input.container.GridContainer;
 import java.util.Arrays;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Container class that holds all data needed for setting up an external simulation.
@@ -36,7 +36,7 @@ public record SetupData(String[] mainArgs, Config config, GridContainer gridCont
   }
 
   @Override
-  @Nonnull
+  @NonNull
   public String toString() {
     return "SetupData{"
         + "mainArgs="
