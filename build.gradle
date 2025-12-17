@@ -51,7 +51,7 @@ dependencies{
 
   implementation 'tech.units:indriya:2.2.3' // quantities
 
-  implementation 'com.github.spotbugs:spotbugs-annotations:4.8.6' // java annotations
+  implementation 'com.github.spotbugs:spotbugs-annotations:4.9.8' // java annotations
 
   // scala (needed for pekko)
   implementation "org.scala-lang:scala3-library_${scalaVersion}:${scalaBinaryVersion}"
