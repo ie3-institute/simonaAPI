@@ -50,7 +50,7 @@ repositories {
 dependencies{
 
   implementation 'tech.units:indriya:2.2.3' // quantities
-
+  implementation 'com.google.code.findbugs:jsr305:3.0.2' // java annotations
   // scala (needed for pekko)
   implementation "org.scala-lang:scala3-library_${scalaVersion}:${scalaBinaryVersion}"
 
