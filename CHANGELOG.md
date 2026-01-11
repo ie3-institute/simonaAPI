@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
-- created public interface EvcsModel based on EvModel as reference [#421](https://github.com/ie3-institute/simonaAPI/issues/421)
+- created public interface EvcsModel [#421](https://github.com/ie3-institute/simonaAPI/issues/421)
 
 ### Changed
 - Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
