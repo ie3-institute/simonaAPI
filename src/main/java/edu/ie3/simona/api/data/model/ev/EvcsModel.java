@@ -25,12 +25,7 @@ public interface EvcsModel {
   /**
    * @return the maximum AC apparent power rating of this evcs
    */
-  ComparableQuantity<Power> getSRatedAC();
-
-  /**
-   * @return the maximum DC apparent or active power rating of this evcs
-   */
-  ComparableQuantity<Power> getPRatedDC();
+  ComparableQuantity<Power> getSRated();
 
   /**
    * @return the rated power factor (cos φ) of this evcs
