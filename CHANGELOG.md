@@ -119,6 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updating to gradle 8.4 [#133](https://github.com/ie3-institute/simonaAPI/issues/133)
 - Adapted to changed SIMONA scheduler protocol [#131](https://github.com/ie3-institute/simonaAPI/issues/131)
+- Use spotbugs instead google findbugs for nonNull javax annotations [#419](https://github.com/ie3-institute/simonaAPI/issues/419) 
 
 ## [0.2.0] - 2023-08-01
 
