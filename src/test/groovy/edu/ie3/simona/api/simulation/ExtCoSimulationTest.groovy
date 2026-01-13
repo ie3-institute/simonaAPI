@@ -9,15 +9,15 @@ import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
 import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
+import edu.ie3.simona.api.mapping.ExtEntityMapping
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.ontology.em.ProvideEmData
-import edu.ie3.simona.api.ontology.em.ProvideEmSetPointData
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
-import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 
 class ExtCoSimulationTest extends Specification {
 
@@ -106,18 +106,19 @@ class ExtCoSimulationTest extends Specification {
 
     def "An ExtCoSimulation can build a result data connection correctly"() {
         given:
-        UUID uuid1 = UUID.randomUUID()
-        UUID uuid2 = UUID.randomUUID()
-        UUID uuid3 = UUID.randomUUID()
+        UUID uuid1 = UUID.fromString("e7209ff5-788a-4b1d-bb26-89b3e326ce74")
+        UUID uuid2 = UUID.fromString("7ab84c3d-6c43-4c56-9257-21ef72e15b80")
+        UUID uuid3 = UUID.fromString("806b0cba-23a6-43d0-821e-e023b6a90cc4")
 
-        def mapping = [
-                (DataType.RESULT)       : [uuid1],
-                (DataType.EM)            : [uuid2],
-                (DataType.PRIMARY_RESULT): [uuid3]
-        ]
+        def mapping = new ExtEntityMapping([])
+        mapping.includeIds(DataType.RESULT, [uuid1], Optional.empty())
+        mapping.includeIds(DataType.EM, [uuid2], Optional.empty())
+        mapping.includeIds(DataType.PRIMARY_RESULT, [uuid3], Optional.empty())
 
         when:
-        def actual = ExtCoSimulation.buildResultConnection(mapping, log)
+        def resultUuids = mapping.getAssets(DataType.RESULT)
+
+        def actual = ExtCoSimulation.buildResultConnection(resultUuids, log)
 
         then:
         actual.resultUuids == [uuid1, uuid3]
@@ -125,52 +126,11 @@ class ExtCoSimulationTest extends Specification {
 
     def "An ExtCoSimulation throws an ExtDataConnectionException while trying to build an empty result data connection"() {
         when:
-        ExtCoSimulation.buildResultConnection([:], log)
+        ExtCoSimulation.buildResultConnection([], log)
 
         then:
         ExtDataConnectionException ex = thrown(ExtDataConnectionException)
         ex.message == "The external data connection 'ExtResultDataConnection' could not be build!"
-    }
-
-    def "An ExtCoSimulation should sent em set point data correctly"() {
-        given:
-        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        def data = [(UUID.randomUUID()): new EmSetPoint(UUID.randomUUID(), UUID.randomUUID())]
-
-        when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
-
-        then:
-        dataService.expectMessage(new ProvideEmSetPointData(0L, data, Optional.empty()))
-    }
-
-    def "An ExtCoSimulation should not sent empty em set point data"() {
-        given:
-        def extEmDataConnection = new ExtEmDataConnection([], EmMode.BASE)
-        def dataService = testKit.createTestProbe(DataMessageFromExt)
-
-        def extSimAdapter = testKit.createTestProbe(ScheduleDataServiceMessage)
-        extEmDataConnection.setActorRefs(
-                dataService.ref(),
-                extSimAdapter.ref()
-        )
-
-        def data = [:]
-
-        when:
-        sim.sendEmSetPointsToSimona(extEmDataConnection, 0L, data, Optional.empty(), log)
-
-        then:
-        dataService.expectNoMessage()
-        extSimAdapter.expectNoMessage()
     }
 
 }

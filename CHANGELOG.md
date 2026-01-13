@@ -6,9 +6,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased/Snapshot]
 
+### Added
+- Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
+
+### Changed
+- Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
+
+### Fixed
+
+## [0.12.0] - 2025-11-20
+
+### Added
+- Adding some utility methods [#368](https://github.com/ie3-institute/simonaAPI/issues/368)
+- Extending flex option handling in `ExtInputContainer` [#371](https://github.com/ie3-institute/simonaAPI/issues/371)
+- Enhancing `ExtInputContainer` with `hasData` methods [#382](https://github.com/ie3-institute/simonaAPI/issues/382)
+
+### Changed
+- Changes to sent and received em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Changed the PRated in the EvModel to SRated and added cosPhi to the model [#259](https://github.com/ie3-institute/simonaAPI/issues/259)
+- Update `Gradle` to 9.2.0 [#381](https://github.com/ie3-institute/simonaAPI/issues/381)
+- Update `Gradle` to 9.2.1 [#389](https://github.com/ie3-institute/simonaAPI/issues/389)
+
+### Fixed
+- Issues related to em data [#366](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Fixed bugs in `ExtEntityMapping` [#373](https://github.com/ie3-institute/simonaAPI/issues/373)
+- Fixed changelog entry #366 [#378](https://github.com/ie3-institute/simonaAPI/issues/366)
+- Fix considered data in `ExtEntityMapping.getAssets()` [#384](https://github.com/ie3-institute/simonaAPI/issues/384)
+
+## [0.11.0] - 2025-10-23
+
+### Added
+- General flex options [#348](https://github.com/ie3-institute/simonaAPI/issues/348)
+- Enhanced em set points [#357](https://github.com/ie3-institute/simonaAPI/issues/348)
+- Added dedicated flex communication classes [#358](https://github.com/ie3-institute/simonaAPI/issues/348)
+
 ### Changed
 - Updated the maven central publishing scripts [#339](https://github.com/ie3-institute/simonaAPI/issues/339)
 - Refactoring `ExtSimAdapterData` [#347](https://github.com/ie3-institute/simonaAPI/issues/347)
+- Enhanced `ExtEntityMapping` [#355](https://github.com/ie3-institute/simonaAPI/issues/355)
 
 ## [0.10.0] - 2025-09-10
 
@@ -83,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updating to gradle 8.4 [#133](https://github.com/ie3-institute/simonaAPI/issues/133)
 - Adapted to changed SIMONA scheduler protocol [#131](https://github.com/ie3-institute/simonaAPI/issues/131)
+- Use spotbugs instead google findbugs for nonNull javax annotations [#419](https://github.com/ie3-institute/simonaAPI/issues/419) 
 
 ## [0.2.0] - 2023-08-01
 
@@ -97,7 +133,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.9.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.10.0...0.11.0
+[0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.6.0...0.7.0

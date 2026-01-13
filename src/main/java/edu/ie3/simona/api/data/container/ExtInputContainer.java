@@ -8,9 +8,7 @@ package edu.ie3.simona.api.data.container;
 
 import edu.ie3.datamodel.models.value.PValue;
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.model.em.EmSetPoint;
-import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
-import edu.ie3.simona.api.data.model.em.FlexOptions;
+import edu.ie3.simona.api.data.model.em.*;
 import java.util.*;
 
 /** Contains all inputs for SIMONA for a certain tick */
@@ -26,7 +24,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** Map uuid to primary input value for SIMONA. */
   private final Map<UUID, Value> primaryData = new HashMap<>();
 
-  // mapping for em data
+  // mappings for em data
   /** Map uuid to flex option requests. */
   private final Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
 
@@ -35,6 +33,9 @@ public final class ExtInputContainer implements ExtDataContainer {
 
   /** Map uuid to em set points. */
   private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
+
+  /** List of em communication messages. */
+  private final List<EmCommunicationMessage<?>> emMessages = new ArrayList<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -57,7 +58,8 @@ public final class ExtInputContainer implements ExtDataContainer {
     return primaryData.isEmpty()
         && flexRequests.isEmpty()
         && flexOptions.isEmpty()
-        && setPoints.isEmpty();
+        && setPoints.isEmpty()
+        && emMessages.isEmpty();
   }
 
   /** Returns the tick the data is provided for. */
@@ -68,6 +70,19 @@ public final class ExtInputContainer implements ExtDataContainer {
   /** Returns an option for the next tick, when data will be provided. */
   public Optional<Long> getMaybeNextTick() {
     return maybeNextTick;
+  }
+
+  /** Returns {@code true} if this container holds primary data. */
+  public boolean hasPrimaryData() {
+    return !primaryData.isEmpty();
+  }
+
+  /** Returns {@code true} if this container holds em data. */
+  public boolean hasEmData() {
+    return !flexRequests.isEmpty()
+        || !flexOptions.isEmpty()
+        || !setPoints.isEmpty()
+        || !emMessages.isEmpty();
   }
 
   // add data
@@ -82,19 +97,48 @@ public final class ExtInputContainer implements ExtDataContainer {
     primaryData.put(asset, value);
   }
 
+  public void addFlexComMessage(EmCommunicationMessage<?> message) {
+    emMessages.add(message);
+  }
+
   /**
    * Method for adding flex option requests. No disaggregated flex option will be requested using
    * this method.
    *
    * @param receiver the uuid of the agent, that will receive the request
-   * @param sender option for the uuid of the sender
    */
-  public void addRequest(UUID receiver, UUID sender) {
-    flexRequests.put(receiver, new FlexOptionRequest(receiver, sender, false));
+  public void addRequest(UUID receiver) {
+    flexRequests.put(receiver, new FlexOptionRequest(receiver, false));
   }
 
-  public void addRequest(UUID receiver, FlexOptionRequest request) {
-    flexRequests.put(receiver, request);
+  /**
+   * Method for adding a flex option request.
+   *
+   * @param request to be added
+   */
+  public void addRequest(FlexOptionRequest request) {
+    flexRequests.put(request.receiver(), request);
+  }
+
+  /**
+   * Method for adding flex options to a given receiver.
+   *
+   * @param multiFlexOptions that will be added to this container
+   */
+  public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
+    flexOptions
+        .computeIfAbsent(multiFlexOptions.receiver(), k -> new ArrayList<>())
+        .addAll(multiFlexOptions.disaggregated().values());
+  }
+
+  /**
+   * Method for adding flex options to a given receiver.
+   *
+   * @param receiver that will receive the flex options
+   * @param flexOption that will be added
+   */
+  public void addFlexOptions(UUID receiver, FlexOptions flexOption) {
+    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).add(flexOption);
   }
 
   /**
@@ -104,12 +148,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param flexOption that will be added
    */
   public void addFlexOptions(UUID receiver, List<FlexOptions> flexOption) {
-    if (!flexOptions.containsKey(receiver)) {
-      List<FlexOptions> flexOptionValues = new ArrayList<>(flexOption);
-      flexOptions.put(receiver, flexOptionValues);
-    } else {
-      flexOptions.get(receiver).addAll(flexOption);
-    }
+    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).addAll(flexOption);
   }
 
   /**
@@ -118,8 +157,8 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param asset that will receive the set point
    * @param power of the set point
    */
-  public void addSetPoint(UUID asset, UUID sender, PValue power) {
-    setPoints.put(asset, new EmSetPoint(asset, sender, power));
+  public void addSetPoint(UUID asset, PValue power) {
+    setPoints.put(asset, new EmSetPoint(asset, power));
   }
 
   /**
@@ -161,6 +200,13 @@ public final class ExtInputContainer implements ExtDataContainer {
   }
 
   /**
+   * Extracts the em message input data from this container. All other input data remains the same.
+   */
+  public List<EmCommunicationMessage<?>> extractEmMessages() {
+    return copyAndClear(emMessages);
+  }
+
+  /**
    * Returns a string representation of the primary input data without changing the data. To extract
    * (remove) the primary input data, use {@link #extractPrimaryData()} instead.
    */
@@ -191,5 +237,25 @@ public final class ExtInputContainer implements ExtDataContainer {
    */
   public String setPointsString() {
     return setPoints.toString();
+  }
+
+  @Override
+  public String toString() {
+    return "ExtInputContainer{"
+        + "tick="
+        + tick
+        + ", maybeNextTick="
+        + maybeNextTick
+        + ", primaryData="
+        + primaryData
+        + ", flexRequests="
+        + flexRequests
+        + ", flexOptions="
+        + flexOptions
+        + ", setPoints="
+        + setPoints
+        + ", emMessages="
+        + emMessages
+        + '}';
   }
 }

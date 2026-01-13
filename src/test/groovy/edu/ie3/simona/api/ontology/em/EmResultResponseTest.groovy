@@ -7,7 +7,7 @@ class EmResultResponseTest extends Specification {
 
     def "An EmResultResponse can be build correctly"() {
         given:
-        def data = [(UUID.randomUUID()): [new FlexOptionRequest(UUID.randomUUID(), UUID.randomUUID(), false)]]
+        def data = [(UUID.randomUUID()): [new FlexOptionRequest(UUID.randomUUID(), false)]]
 
         when:
         def response = new EmResultResponse(data)
