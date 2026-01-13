@@ -8,11 +8,11 @@ The API is split into the following parts:
 3. [Mapping](#mapping)
 4. [Ontology](#ontology)
 5. [Simulation](#simulation)
-6. [Uncategorized](#uncategorized)
+6. [External link interface](#external-link-interface)
 
 ## Data
 
-The data package and its sub-packages contains all data-related classes. These are among other things [data connections](/connections/connections),
+The data package and its sub-packages contains all data-related classes. These are among other things [data connections](/data/connections),
 data containers and models.
 
 
@@ -34,12 +34,12 @@ package.
 
 ## Simulation
 
-The simulation package contains the available simulations. Currently, only base classes that needs to be implemented are
-provided. The most important class is the [ExtSimulation](/simulations/externalsimulation) as it is the base class for
-all external simulations.
+The simulation package contains the class [ExtSimulation](/simulations/externalsimulation), which is the base class for all external simulations. Besides
+that class it also contains extensions of [ExtSimulation](/simulations/externalsimulation). These other simulations provide additional methods. The
+external simulation class will be provided to SIMONA via the [ExtLinkInterface](/extlinkinterface).
 
 
-## Uncategorized
+## External link interface
 
-There is currently only one interface that is not part of a category. This is the [ExtLinkInterface](/extlinkinterface)
-that is used for loading external simulations.
+The [ExtLinkInterface](/extlinkinterface) that is used for providing external simulations is not part of any category, due to its special
+function.
