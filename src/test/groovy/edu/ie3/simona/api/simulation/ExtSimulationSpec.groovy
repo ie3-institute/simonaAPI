@@ -69,7 +69,7 @@ class ExtSimulationSpec extends Specification {
 
     def "An ExtSimulation should set setup data correctly"() {
         given:
-        def setupData = new SetupData(new String[0], null, null)
+        def setupData = new SetupData(new String[0], null, null, null)
         def extSim = new TestSimulation(0L, Optional.of(-2L))
 
         when:
@@ -87,7 +87,7 @@ class ExtSimulationSpec extends Specification {
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(newTick, Optional.of(-2L))
         extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null))
+        extSim.setSetupData(new SetupData(new String[0], null, null, null))
 
         when:
         extSimDataConnection.queueExtMsg(new ActivationMessage(tick))
@@ -106,7 +106,7 @@ class ExtSimulationSpec extends Specification {
                     Optional.<Long>empty() : Optional.of(newTick.first())
         def extSim = new TestSimulation(-2L, newTickOpt)
         extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null))
+        extSim.setSetupData(new SetupData(new String[0], null, null, null))
 
         when:
         extSimDataConnection.queueExtMsg(new ActivationMessage(tick))
@@ -130,7 +130,7 @@ class ExtSimulationSpec extends Specification {
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(-1L, Optional.empty())
         extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null))
+        extSim.setSetupData(new SetupData(new String[0], null, null, null))
 
         when:
         extSimDataConnection.queueExtMsg(new TerminationMessage(simlulationSuccessful))
@@ -154,7 +154,7 @@ class ExtSimulationSpec extends Specification {
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
         def extSim = new TestSimulation(-1L, Optional.empty())
         extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null))
+        extSim.setSetupData(new SetupData(new String[0], null, null, null))
 
         when:
         extSimDataConnection.queueExtMsg(new UnknownMessage())

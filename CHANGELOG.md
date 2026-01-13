@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
+- Added base output directory to `SetupData` [#426](https://github.com/ie3-institute/simonaAPI/issues/426)
 
 ### Changed
 - Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
