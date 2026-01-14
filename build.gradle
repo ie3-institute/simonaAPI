@@ -4,7 +4,7 @@ plugins {
   id 'com.diffplug.spotless' version '8.1.0'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '6.4.8' // code check, working on byte code
-  id "org.sonarqube" version "7.2.1.6560" // sonarqube
+  id "org.sonarqube" version "7.2.2.6593" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -51,6 +51,8 @@ dependencies{
 
   implementation 'tech.units:indriya:2.2.3' // quantities
 
+  implementation 'com.github.spotbugs:spotbugs-annotations:4.9.8' // java annotations
+
   // scala (needed for pekko)
   implementation "org.scala-lang:scala3-library_${scalaVersion}:${scalaBinaryVersion}"
 
@@ -71,7 +73,7 @@ dependencies{
   }
 
   // logging
-  implementation platform('org.apache.logging.log4j:log4j-bom:2.25.2')
+  implementation platform('org.apache.logging.log4j:log4j-bom:2.25.3')
   implementation 'org.apache.logging.log4j:log4j-api' // log4j
   implementation 'org.apache.logging.log4j:log4j-core' // log4j
   implementation 'org.apache.logging.log4j:log4j-slf4j-impl' // log4j -> slf4j

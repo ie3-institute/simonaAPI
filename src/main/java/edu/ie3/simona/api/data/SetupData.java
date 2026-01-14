@@ -8,9 +8,10 @@ package edu.ie3.simona.api.data;
 
 import com.typesafe.config.Config;
 import edu.ie3.datamodel.models.input.container.GridContainer;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 
 /**
  * Container class that holds all data needed for setting up an external simulation.
@@ -18,8 +19,10 @@ import javax.annotation.Nonnull;
  * @param mainArgs CLI arguments with which SIMONA is initiated.
  * @param config The parsed simona config.
  * @param gridContainer The electrical grid.
+ * @param baseOutputDirectory The base output directory.
  */
-public record SetupData(String[] mainArgs, Config config, GridContainer gridContainer) {
+public record SetupData(
+    String[] mainArgs, Config config, GridContainer gridContainer, Path baseOutputDirectory) {
 
   @Override
   public boolean equals(Object o) {
@@ -27,16 +30,17 @@ public record SetupData(String[] mainArgs, Config config, GridContainer gridCont
     SetupData setupData = (SetupData) o;
     return Arrays.equals(mainArgs, setupData.mainArgs)
         && Objects.equals(config, setupData.config)
-        && Objects.equals(gridContainer, setupData.gridContainer);
+        && Objects.equals(gridContainer, setupData.gridContainer)
+        && Objects.equals(baseOutputDirectory, setupData.baseOutputDirectory);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(Arrays.hashCode(mainArgs), config, gridContainer);
+    return Objects.hash(Arrays.hashCode(mainArgs), config, gridContainer, baseOutputDirectory);
   }
 
   @Override
-  @Nonnull
+  @NonNull
   public String toString() {
     return "SetupData{"
         + "mainArgs="
@@ -45,6 +49,8 @@ public record SetupData(String[] mainArgs, Config config, GridContainer gridCont
         + config
         + ", gridContainer="
         + gridContainer
+        + ", baseOutputDirectory="
+        + baseOutputDirectory
         + '}';
   }
 }

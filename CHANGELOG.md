@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
+- Added base output directory to `SetupData` [#426](https://github.com/ie3-institute/simonaAPI/issues/426)
 
 ### Changed
 - Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
@@ -118,6 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updating to gradle 8.4 [#133](https://github.com/ie3-institute/simonaAPI/issues/133)
 - Adapted to changed SIMONA scheduler protocol [#131](https://github.com/ie3-institute/simonaAPI/issues/131)
+- Use spotbugs instead google findbugs for nonNull javax annotations [#419](https://github.com/ie3-institute/simonaAPI/issues/419) 
 
 ## [0.2.0] - 2023-08-01
 
