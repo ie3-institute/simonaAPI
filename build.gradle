@@ -4,7 +4,7 @@ plugins {
   id 'com.diffplug.spotless' version '8.1.0'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '6.4.8' // code check, working on byte code
-  id "org.sonarqube" version "7.2.1.6560" // sonarqube
+  id "org.sonarqube" version "7.2.2.6593" // sonarqube
   id 'signing'
   id 'maven-publish' // publish to a maven repo (local or mvn central, has to be defined)
   id 'jacoco' // java code coverage plugin
@@ -18,7 +18,7 @@ ext {
 
   // required for pekko
   scalaVersion = '3'
-  scalaBinaryVersion = '3.7.4'
+  scalaBinaryVersion = '3.8.0'
   pekkoVersion = "1.4.0"
 }
 
