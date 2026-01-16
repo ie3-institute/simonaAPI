@@ -6,7 +6,7 @@ import spock.lang.Specification
 class SetupDataSpec extends Specification {
 
     @Shared
-    private SetupData setupData = new SetupData(["abc", "123"] as String[], null, null)
+    private SetupData setupData = new SetupData(["abc", "123"] as String[], null, null, null)
 
     def "SetupData.equals() should work correctly"() {
         when:
@@ -17,8 +17,8 @@ class SetupDataSpec extends Specification {
 
         where:
         data | expectedResults
-        new SetupData(["abc", "123"] as String[], null, null) | true
-        new SetupData(["abcd", "123"] as String[], null, null) | false
+        new SetupData(["abc", "123"] as String[], null, null, null) | true
+        new SetupData(["abcd", "123"] as String[], null, null, null) | false
     }
 
     def "SetupData.toString() should work correctly"() {
@@ -26,7 +26,7 @@ class SetupDataSpec extends Specification {
         def str = setupData.toString()
 
         then:
-        str == "SetupData{mainArgs=[abc, 123], config=null, gridContainer=null}"
+        str == "SetupData{mainArgs=[abc, 123], config=null, gridContainer=null, baseOutputDirectory=null}"
     }
 
 }
