@@ -1,7 +1,7 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
-  id 'com.diffplug.spotless' version '8.1.0'//code format
+  id 'com.diffplug.spotless' version '8.2.0'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '6.4.8' // code check, working on byte code
   id "org.sonarqube" version "7.2.2.6593" // sonarqube
