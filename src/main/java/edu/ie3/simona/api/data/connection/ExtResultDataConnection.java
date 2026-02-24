@@ -36,6 +36,8 @@ public final class ExtResultDataConnection
    * Method for requesting SIMONA results as a map uuid to object from an external simulation.
    *
    * @param tick For which results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
@@ -49,6 +51,8 @@ public final class ExtResultDataConnection
    *
    * @param tick For which results should be returned.
    * @param entities For with results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
