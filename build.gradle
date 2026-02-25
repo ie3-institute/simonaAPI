@@ -18,7 +18,7 @@ ext {
 
   // required for pekko
   scalaVersion = '3'
-  scalaBinaryVersion = '3.8.1'
+  scalaBinaryVersion = '3.8.2'
   pekkoVersion = "1.4.0"
 }
 

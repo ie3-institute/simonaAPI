@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
+- Enhance `ExtResultDataConnection` to request unchanged results from SIMONA [#437](https://github.com/ie3-institute/simonaAPI/issues/437)
+- Removed unused methods from `ExtCoSimulation` [#438](https://github.com/ie3-institute/simonaAPI/issues/438)
 
 ### Fixed
 

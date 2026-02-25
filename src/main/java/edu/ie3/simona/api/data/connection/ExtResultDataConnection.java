@@ -27,22 +27,22 @@ public final class ExtResultDataConnection
     this.resultUuids = results;
   }
 
-  /**
-   * Returns the uuids that are used by {@link #requestResults(long, boolean)}.
-   */
+  /** Returns the uuids that are used by {@link #requestResults(long, boolean)}. */
   public List<UUID> getResultUuids() {
     return Collections.unmodifiableList(resultUuids);
   }
-  
 
   /**
    * Method for requesting SIMONA results as a map uuid to object from an external simulation.
    *
    * @param tick For which results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
-  public Map<UUID, List<ResultEntity>> requestResults(long tick, boolean sendUnchangedResults) throws InterruptedException {
+  public Map<UUID, List<ResultEntity>> requestResults(long tick, boolean sendUnchangedResults)
+      throws InterruptedException {
     return requestResults(tick, resultUuids, sendUnchangedResults);
   }
 
@@ -51,11 +51,13 @@ public final class ExtResultDataConnection
    *
    * @param tick For which results should be returned.
    * @param entities For with results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
-  public Map<UUID, List<ResultEntity>> requestResults(long tick, List<UUID> entities, boolean sendUnchangedResults)
-      throws InterruptedException {
+  public Map<UUID, List<ResultEntity>> requestResults(
+      long tick, List<UUID> entities, boolean sendUnchangedResults) throws InterruptedException {
     sendExtMsg(new RequestResultEntities(tick, entities, sendUnchangedResults));
     return receiveWithType(ProvideResultEntities.class).results();
   }

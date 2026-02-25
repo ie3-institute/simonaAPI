@@ -105,5 +105,4 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       return new ExtResultDataConnection(resultEntities);
     }
   }
-
 }

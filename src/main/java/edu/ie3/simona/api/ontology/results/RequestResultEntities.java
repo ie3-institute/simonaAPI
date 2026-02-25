@@ -10,5 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 /** Request calculated results from SIMONA in the current tick */
-public record RequestResultEntities(long tick, List<UUID> requestedResults, boolean sendUnchangedResults)
+public record RequestResultEntities(
+    long tick, List<UUID> requestedResults, boolean sendUnchangedResults)
     implements ResultDataMessageFromExt {}
