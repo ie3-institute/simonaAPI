@@ -33,6 +33,16 @@ public final class ExtEmDataConnection
   }
 
   /**
+   * Tells the em service in SIMONA to simulate the given tick internally. This should be used, when
+   * the external simulation will not provide data for the tick.
+   *
+   * @param tick that should be simulated internally
+   */
+  public void simulateInternal(long tick) {
+    sendExtMsg(new EmSimulationInternal(tick));
+  }
+
+  /**
    * Tries to send em data to SIMONA. A message is sent, if the map is not empty.
    *
    * @param tick current tick

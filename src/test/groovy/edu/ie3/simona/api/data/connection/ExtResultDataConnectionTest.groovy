@@ -44,10 +44,10 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         when:
         // we need to queue the msg beforehand because the receive method is blocking
         extResultDataConnection.queueExtResponseMsg(sentMsg)
-        def receivedResults = extResultDataConnection.requestResults(0L)
+        def receivedResults = extResultDataConnection.requestResults(0L, false)
 
         then:
-        dataService.expectMessage(new RequestResultEntities(0L, [inputUuid]))
+        dataService.expectMessage(new RequestResultEntities(0L, [inputUuid], false))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
         receivedResults.get(inputUuid) == [loadResult]
     }
@@ -67,10 +67,10 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
         when:
         // we need to queue the msg beforehand because the receive method is blocking
         extResultDataConnection.queueExtResponseMsg(unexpectedMsg)
-        extResultDataConnection.requestResults(0L)
+        extResultDataConnection.requestResults(0L, false)
 
         then:
-        dataService.expectMessage(new RequestResultEntities(0L, [inputUuid]))
+        dataService.expectMessage(new RequestResultEntities(0L, [inputUuid], false))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
         thrown RuntimeException
     }

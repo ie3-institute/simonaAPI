@@ -10,14 +10,14 @@ One example are external simulations, that can be used in co-simulations with SI
 :maxdepth: 2
 
 gettingstarted
+structure
 createextsims
 extlinkinterface
 
 simulations/externalsimulation
 
-simulations/extsimadapterdata
-
-connections/connections
+data/connections
+data/setupdata
 ```
 
 ## Contact the (Main) Maintainers

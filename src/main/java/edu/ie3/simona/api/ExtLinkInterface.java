@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api;
 
-import edu.ie3.simona.api.data.ExtSimAdapterData;
+import edu.ie3.simona.api.data.SetupData;
 import edu.ie3.simona.api.exceptions.NoExtSimulationException;
 import edu.ie3.simona.api.simulation.ExtSimulation;
 
@@ -26,5 +26,5 @@ public interface ExtLinkInterface {
    *
    * @param data used for setting up the external simulation
    */
-  void setup(ExtSimAdapterData data);
+  void setup(SetupData data);
 }

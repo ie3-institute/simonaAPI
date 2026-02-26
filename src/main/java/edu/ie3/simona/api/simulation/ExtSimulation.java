@@ -6,8 +6,9 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.simona.api.data.ExtSimAdapterData;
+import edu.ie3.simona.api.data.SetupData;
 import edu.ie3.simona.api.data.connection.ExtDataConnection;
+import edu.ie3.simona.api.data.connection.ExtSimDataConnection;
 import edu.ie3.simona.api.ontology.simulation.*;
 import java.util.Optional;
 import java.util.Set;
@@ -20,7 +21,9 @@ public abstract class ExtSimulation implements Runnable {
 
   protected String simulationName;
 
-  private ExtSimAdapterData data;
+  private ExtSimDataConnection dataConnection;
+
+  private SetupData setupData;
 
   protected ExtSimulation(String simulationName) {
     this.simulationName = simulationName;
@@ -49,7 +52,7 @@ public abstract class ExtSimulation implements Runnable {
    */
   private boolean takeAndHandleMessage() throws InterruptedException {
     // take() will block until an object is ready for us
-    final ControlMessageToExt msg = data.receiveMessageQueue.take();
+    final ControlMessageToExt msg = dataConnection.receive();
 
     if (msg.getClass().equals(ActivationMessage.class)) {
       final ActivationMessage activationMessage = (ActivationMessage) msg;
@@ -62,13 +65,13 @@ public abstract class ExtSimulation implements Runnable {
         // this is blocking until processing of this tick has finished
         newTrigger = doActivity(activationMessage.tick());
       }
-      data.send(new CompletionMessage(newTrigger));
+      dataConnection.send(new CompletionMessage(newTrigger));
 
       return newTrigger.isEmpty();
     } else if (msg.getClass().equals(TerminationMessage.class)) {
       final TerminationMessage terminationMsg = (TerminationMessage) msg;
       terminate(terminationMsg.simulationSuccessful());
-      data.send(new TerminationCompleted());
+      dataConnection.send(new TerminationCompleted());
 
       return true;
     } else {
@@ -103,22 +106,26 @@ public abstract class ExtSimulation implements Runnable {
   }
 
   /**
-   * Method to set the external simulation adapter data. This method should be called during {@link
-   * edu.ie3.simona.api.ExtLinkInterface#setup(ExtSimAdapterData)}.
+   * Method to set the external simulation data connection.
    *
-   * @param data to set up
+   * @param dataConnection to set up
    */
-  public final void setAdapterData(ExtSimAdapterData data) {
-    this.data = data;
+  public final void setDataConnection(ExtSimDataConnection dataConnection) {
+    this.dataConnection = dataConnection;
   }
 
   /**
-   * Provides the program arguments that the main simulation was started with
+   * Method to provide the external simulation with setup data.
    *
-   * @return the main args
+   * @param setupData that is provided
    */
-  protected String[] getMainArgs() {
-    return data.getMainArgs();
+  public final void setSetupData(SetupData setupData) {
+    this.setupData = setupData;
+  }
+
+  /** Returns the {@link SetupData} of this external simulation. */
+  public final SetupData getSetupData() {
+    return setupData;
   }
 
   /** Returns the name of this external simulation. */
