@@ -6,7 +6,6 @@
 
 package edu.ie3.simona.api.simulation;
 
-import edu.ie3.datamodel.models.result.ResultEntity;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.data.ExtDataContainerQueue;
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
@@ -17,7 +16,6 @@ import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 
@@ -105,52 +103,5 @@ public abstract class ExtCoSimulation extends ExtSimulation {
       log.info("Result connection with {} result entities created.", resultEntities.size());
       return new ExtResultDataConnection(resultEntities);
     }
-  }
-
-  // primary data methods
-
-  /**
-   * Function to send primary data to SIMONA using ExtPrimaryData
-   *
-   * @param extPrimaryDataConnection the connection to SIMONA
-   * @param tick for which data is sent
-   * @param dataMap map: id to value
-   * @param maybeNextTick option for the next tick data is sent
-   * @param log logger
-   */
-  protected void sendPrimaryDataToSimona(
-      ExtPrimaryDataConnection extPrimaryDataConnection,
-      long tick,
-      Map<UUID, Value> dataMap,
-      Optional<Long> maybeNextTick,
-      Logger log) {
-    log.debug("Wait for Primary Data from {}", extSimulatorName);
-    log.debug("Received Primary Data from {}", extSimulatorName);
-    extPrimaryDataConnection.sendPrimaryData(tick, dataMap, maybeNextTick, log);
-    log.debug("Provided Primary Data to SIMONA!");
-  }
-
-  // result data methods
-
-  /**
-   * Function to send all result data from SIMONA to the external simulation using the given {@link
-   * ExtResultDataConnection}
-   *
-   * @param connection the connection to SIMONA
-   * @param tick for which data is received
-   * @param maybeNextTick option for the next tick data is received
-   * @param log logger
-   * @throws InterruptedException if the fetching of data is interrupted
-   */
-  protected void sendResultToExt(
-      ExtResultDataConnection connection, long tick, Optional<Long> maybeNextTick, Logger log)
-      throws InterruptedException {
-    log.debug("Request results from SIMONA!");
-    Map<UUID, List<ResultEntity>> resultsToBeSend = connection.requestResults(tick);
-    log.debug("Received results from SIMONA!");
-    ExtOutputContainer container = new ExtOutputContainer(tick, maybeNextTick);
-    container.addResults(resultsToBeSend);
-    queueToExt.queueData(container);
-    log.debug("Sent results to {}", extSimulatorName);
   }
 }

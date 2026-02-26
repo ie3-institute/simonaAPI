@@ -27,47 +27,23 @@ public final class ExtResultDataConnection
     this.resultUuids = results;
   }
 
-  /**
-   * Returns the uuids that are used by {@link #requestResults(long)} and {@link
-   * #requestResultList(long)}.
-   */
+  /** Returns the uuids that are used by {@link #requestResults(long, boolean)}. */
   public List<UUID> getResultUuids() {
     return Collections.unmodifiableList(resultUuids);
   }
 
   /**
-   * Method for requesting SIMONA results as list from an external simulation.
-   *
-   * @param tick For which results should be returned.
-   * @return A list of results.
-   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
-   */
-  private List<ResultEntity> requestResultList(long tick) throws InterruptedException {
-    return createResultList(requestResults(tick));
-  }
-
-  /**
-   * Method for requesting SIMONA results as list from an external simulation.
-   *
-   * @param tick for which results should be returned.
-   * @param entities For with results should be returned.
-   * @return A list of results
-   * @throws InterruptedException - If the thread is interrupted while waiting for the results.
-   */
-  private List<ResultEntity> requestResultList(long tick, List<UUID> entities)
-      throws InterruptedException {
-    return createResultList(requestResults(tick, entities));
-  }
-
-  /**
    * Method for requesting SIMONA results as a map uuid to object from an external simulation.
    *
    * @param tick For which results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
-  public Map<UUID, List<ResultEntity>> requestResults(long tick) throws InterruptedException {
-    return requestResults(tick, resultUuids);
+  public Map<UUID, List<ResultEntity>> requestResults(long tick, boolean sendUnchangedResults)
+      throws InterruptedException {
+    return requestResults(tick, resultUuids, sendUnchangedResults);
   }
 
   /**
@@ -75,22 +51,14 @@ public final class ExtResultDataConnection
    *
    * @param tick For which results should be returned.
    * @param entities For with results should be returned.
+   * @param sendUnchangedResults If false only results that have changed since the last request are
+   *     returned, else all results will be returned.
    * @return A map: uuid to results.
    * @throws InterruptedException - If the thread is interrupted while waiting for the results.
    */
-  public Map<UUID, List<ResultEntity>> requestResults(long tick, List<UUID> entities)
-      throws InterruptedException {
-    sendExtMsg(new RequestResultEntities(tick, entities));
+  public Map<UUID, List<ResultEntity>> requestResults(
+      long tick, List<UUID> entities, boolean sendUnchangedResults) throws InterruptedException {
+    sendExtMsg(new RequestResultEntities(tick, entities, sendUnchangedResults));
     return receiveWithType(ProvideResultEntities.class).results();
-  }
-
-  /**
-   * Converts a result map into a list.
-   *
-   * @param results Map: uuid to results.
-   * @return A list of all results.
-   */
-  private List<ResultEntity> createResultList(Map<UUID, List<ResultEntity>> results) {
-    return results.values().stream().flatMap(List::stream).toList();
   }
 }
