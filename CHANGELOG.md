@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
 - Added API structure to the docs [#405](https://github.com/ie3-institute/simonaAPI/issues/405)
 - Added base output directory to `SetupData` [#426](https://github.com/ie3-institute/simonaAPI/issues/426)
+- Created public interface for `EvcsModel` [#421](https://github.com/ie3-institute/simonaAPI/issues/421)
 
 ### Changed
 - Splitting up `ExtSimAdapterData` into `SetupData` and a data connection [#400](https://github.com/ie3-institute/simonaAPI/issues/400)
