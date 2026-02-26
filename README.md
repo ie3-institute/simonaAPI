@@ -8,4 +8,4 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.ie3-institute/simonaAPI.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.ie3-institute%22%20AND%20a:%22simonaAPI%22)
 
 
-API to create modules and add-ons for simona
+API to create modules and add-ons for SIMONA

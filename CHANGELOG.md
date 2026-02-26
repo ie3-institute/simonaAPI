@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased/Snapshot]
+## Unreleased
+
+## [0.13.0] - 2026-02-26
 
 ### Added
 - Enhanced `ExtEmDataConnection` with `simulateInternal` method [#398](https://github.com/ie3-institute/simonaAPI/issues/398)
@@ -138,14 +140,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...HEAD
-[0.11.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.10.0...0.11.0
-[0.10.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.9.0...0.10.0
-[0.9.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.8.0...0.9.0
-[0.8.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.7.0...0.8.0
-[0.7.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.6.0...0.7.0
-[0.6.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.5.0...0.6.0
-[0.5.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.4.0...0.5.0
-[0.4.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.3.0...0.4.0
-[0.3.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/0.2.0...0.3.0
-[0.2.0]: https://github.com/ie3-institute/powersystemdatamodel/compare/e3f0c247d9d2a92840f49412aa729c5f033cb4de...0.2.0
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...HEAD
+[0.13.0]: https://github.com/ie3-institute/simonaapi/compare/0.12.0...0.13.0
+[0.12.0]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...0.12.0
+[0.11.0]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...0.11.0
+[0.10.0]: https://github.com/ie3-institute/simonaapi/compare/0.9.0...0.10.0
+[0.9.0]: https://github.com/ie3-institute/simonaapi/compare/0.8.0...0.9.0
+[0.8.0]: https://github.com/ie3-institute/simonaapi/compare/0.7.0...0.8.0
+[0.7.0]: https://github.com/ie3-institute/simonaapi/compare/0.6.0...0.7.0
+[0.6.0]: https://github.com/ie3-institute/simonaapi/compare/0.5.0...0.6.0
+[0.5.0]: https://github.com/ie3-institute/simonaapi/compare/0.4.0...0.5.0
+[0.4.0]: https://github.com/ie3-institute/simonaapi/compare/0.3.0...0.4.0
+[0.3.0]: https://github.com/ie3-institute/simonaapi/compare/0.2.0...0.3.0
+[0.2.0]: https://github.com/ie3-institute/simonaapi/compare/e3f0c247d9d2a92840f49412aa729c5f033cb4de...0.2.0
