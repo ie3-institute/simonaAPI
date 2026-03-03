@@ -19,10 +19,15 @@ import java.util.Objects;
  * @param mainArgs CLI arguments with which SIMONA is initiated.
  * @param config The parsed simona config.
  * @param gridContainer The electrical grid.
+ * @param baseInputDirectory The base input directory.
  * @param baseOutputDirectory The base output directory.
  */
 public record SetupData(
-    String[] mainArgs, Config config, GridContainer gridContainer, Path baseOutputDirectory) {
+    String[] mainArgs,
+    Config config,
+    GridContainer gridContainer,
+    Path baseInputDirectory,
+    Path baseOutputDirectory) {
 
   @Override
   public boolean equals(Object o) {
@@ -31,12 +36,14 @@ public record SetupData(
     return Arrays.equals(mainArgs, setupData.mainArgs)
         && Objects.equals(config, setupData.config)
         && Objects.equals(gridContainer, setupData.gridContainer)
+        && Objects.equals(baseInputDirectory, setupData.baseInputDirectory)
         && Objects.equals(baseOutputDirectory, setupData.baseOutputDirectory);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(Arrays.hashCode(mainArgs), config, gridContainer, baseOutputDirectory);
+    return Objects.hash(
+        Arrays.hashCode(mainArgs), config, gridContainer, baseInputDirectory, baseOutputDirectory);
   }
 
   @Override
@@ -49,6 +56,8 @@ public record SetupData(
         + config
         + ", gridContainer="
         + gridContainer
+        + ", baseInputDirectory="
+        + baseInputDirectory
         + ", baseOutputDirectory="
         + baseOutputDirectory
         + '}';
