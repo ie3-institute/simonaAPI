@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Introduced base input directory to `SetupData` [#445](https://github.com/ie3-institute/simonaAPI/issues/445)
+
+### Changed
+
+### Fixed
+
+
 ## [0.13.0] - 2026-02-26
 
 ### Added
