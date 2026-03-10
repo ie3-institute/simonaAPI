@@ -22,8 +22,8 @@ copyright = u'2023. TU Dortmund University, Institute of Energy Systems, Energy 
 author = 'Institute of Energy Systems, Energy Efficiency and Energy Economics'
 
 # The full version, including alpha/beta/rc tags
-version = '0.12.0'
-release = '0.12.0'
+version = '0.13.0'
+release = '0.13.0'
 
 pygments_style = 'tango'
 add_function_parentheses = True

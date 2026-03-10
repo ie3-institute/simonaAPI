@@ -18,7 +18,7 @@ On [Maven central](https://search.maven.org/artifact/com.github.ie3-institute/si
 <dependency>
   <groupId>com.github.ie3-institute</groupId>
   <artifactId>simonaAPI</artifactId>
-  <version>0.12.0</version>
+  <version>0.13.0</version>
 </dependency>
 ```
 
