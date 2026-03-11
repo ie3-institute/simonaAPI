@@ -55,17 +55,17 @@ class ExtCoSimulationTest extends Specification {
         }
 
         @Override
-        ExtOutputContainer handleExternalData(ExtInputContainer inputData) throws Exception {
+        ExtOutputContainer handleExternalData(ExtInputContainer inputData) throws InterruptedException {
             return new ExtOutputContainer(inputData.getTick(), inputData.getMaybeNextTick())
         }
 
         @Override
-        ExtOutputContainer handleNoExternalData(long tick) throws Exception {
+        ExtOutputContainer handleNoExternalData(long tick) throws InterruptedException {
             return new ExtOutputContainer(tick, OptionalLong.of(tick + 900))
         }
 
         @Override
-        void finishSimulation(long tick) throws Exception {
+        void finishSimulation(long tick) throws InterruptedException {
 
         }
 
