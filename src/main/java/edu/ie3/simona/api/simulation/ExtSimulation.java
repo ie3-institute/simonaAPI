@@ -85,7 +85,7 @@ public abstract class ExtSimulation implements Runnable {
    * @return The first regular tick at which this external simulation wants to be triggered, if
    *     applicable.
    */
-  protected abstract Long initialize();
+  protected abstract long initialize();
 
   /**
    * This method is called for every tick of the external simulation that is triggered.
@@ -101,7 +101,7 @@ public abstract class ExtSimulation implements Runnable {
    * @param simulationSuccessful Whether the simulation was run successfully or has ended with an
    *     error
    */
-  protected void terminate(Boolean simulationSuccessful) {
+  protected void terminate(boolean simulationSuccessful) {
     // to be overwritten in subclass
   }
 
