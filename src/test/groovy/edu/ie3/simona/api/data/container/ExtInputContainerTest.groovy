@@ -20,8 +20,8 @@ class ExtInputContainerTest extends Specification {
 
         where:
         container                       | expectedTick | expectedMaybeNextTick
-        new ExtInputContainer(0L)       | 0L           | Optional.empty()
-        new ExtInputContainer(0L, 900L) | 0L           | Optional.of(900L)
+        new ExtInputContainer(0L)       | 0L           | OptionalLong.empty()
+        new ExtInputContainer(0L, 900L) | 0L           | OptionalLong.of(900L)
     }
 
     def "An ExtInputContainer should check if it is empty correctly"() {

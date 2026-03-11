@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduced base input directory to `SetupData` [#445](https://github.com/ie3-institute/simonaAPI/issues/445)
 
 ### Changed
+- Enhancing and refactoring of `ExtCoSimulation` [#237](https://github.com/ie3-institute/simonaAPI/issues/237)
 
 ### Fixed
 

@@ -120,8 +120,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
 
     def "ExtResultContainer should return the next tick option correctly"() {
         expect:
-        new ExtOutputContainer(900L).maybeNextTick == Optional.empty()
-        new ExtOutputContainer(900L, Optional.empty()).maybeNextTick == Optional.empty()
-        new ExtOutputContainer(900L, Optional.of(1800L)).maybeNextTick == Optional.of(1800L)
+        new ExtOutputContainer(900L).maybeNextTick == OptionalLong.empty()
+        new ExtOutputContainer(900L, OptionalLong.empty()).maybeNextTick == OptionalLong.empty()
+        new ExtOutputContainer(900L, OptionalLong.of(1800L)).maybeNextTick == OptionalLong.of(1800L)
     }
 }

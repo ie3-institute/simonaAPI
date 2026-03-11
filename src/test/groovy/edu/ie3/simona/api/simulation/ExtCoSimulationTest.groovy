@@ -3,17 +3,10 @@ package edu.ie3.simona.api.simulation
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.SValue
 import edu.ie3.datamodel.models.value.Value
-import edu.ie3.simona.api.data.connection.ExtDataConnection
-import edu.ie3.simona.api.data.connection.ExtEmDataConnection
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
-import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
 import edu.ie3.simona.api.mapping.ExtEntityMapping
-import edu.ie3.simona.api.ontology.DataMessageFromExt
-import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
-import edu.ie3.simona.api.ontology.em.ProvideEmData
-import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
@@ -23,37 +16,6 @@ class ExtCoSimulationTest extends Specification {
 
     @Shared
     private static final Logger log = LoggerFactory.getLogger(ExtCoSimulationTest)
-
-    @Shared
-    private ExtCoSimulation sim
-
-    @Shared
-    private ActorTestKit testKit
-
-    def setupSpec() {
-        testKit = ActorTestKit.create()
-        sim = new ExtCoSimulation("dummy", "dummy") {
-            @Override
-            protected Long initialize() {
-                return 0L
-            }
-
-            @Override
-            protected Optional<Long> doActivity(long tick) {
-                return Optional.empty()
-            }
-
-            @Override
-            Set<ExtDataConnection> getDataConnections() {
-                return []
-            }
-        }
-    }
-
-    def cleanupSpec() {
-        testKit.shutdownTestKit()
-        testKit = null
-    }
 
     def "An ExtCoSimulation can build a primary data connection correctly"() {
         given:

@@ -17,7 +17,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   private final long tick;
 
   /** Tick when the external simulation can expect the next results from SIMONA. */
-  private final Optional<Long> maybeNextTick;
+  private final OptionalLong maybeNextTick;
 
   /**
    * Map: receiver uuid to list of results from SIMONA.
@@ -36,7 +36,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
    * @param tick current tick
    * @param nextTick tick the external simulation can expect the next results
    */
-  public ExtOutputContainer(long tick, Optional<Long> nextTick) {
+  public ExtOutputContainer(long tick, OptionalLong nextTick) {
     this.tick = tick;
     this.resultMap = new HashMap<>();
     this.emDataMap = new HashMap<>();
@@ -44,7 +44,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   public ExtOutputContainer(long tick) {
-    this(tick, Optional.empty());
+    this(tick, OptionalLong.empty());
   }
 
   @Override
@@ -122,7 +122,7 @@ public final class ExtOutputContainer implements ExtDataContainer {
   }
 
   /** Returns an option for the next tick, when data will be provided. */
-  public Optional<Long> getMaybeNextTick() {
+  public OptionalLong getMaybeNextTick() {
     return maybeNextTick;
   }
 
