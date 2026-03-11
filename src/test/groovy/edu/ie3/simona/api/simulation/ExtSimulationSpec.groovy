@@ -39,7 +39,7 @@ class ExtSimulationSpec extends Specification {
         }
 
         @Override
-        protected Long initialize() {
+        protected long initialize() {
             return this.initReturnTick
         }
 

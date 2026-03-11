@@ -1,49 +1,108 @@
+/*
+ * © 2026. TU Dortmund University,
+ * Institute of Energy Systems, Energy Efficiency and Energy Economics,
+ * Research group Distribution grid planning and operation
+ */
+
 package edu.ie3.simona.api.simulation;
 
 import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
-
 import java.util.Queue;
 
-public interface ExtCoSimFramework {
+/**
+ * Interface that should be implemented by the simulator or a similar class of the external
+ * co-simulation framework. This class needs to be provided to the {@link ExtCoSimulation} to
+ * connect the external co-simulation framework to SIMONA.
+ *
+ * @param <I> Type of the initialization data.
+ */
+public interface ExtCoSimFramework<I extends ExtCoSimFramework.InitData> {
 
-    // general methods
-    String getName();
+  /** Returns the name of the external simulator. */
+  String getName();
 
-    // methods called for initialization
+  /**
+   * Provides access to the internal initialization queue of the {@link ExtCoSimulation}.
+   *
+   * @param initDataQueue The queue.
+   */
+  void setInitDataQueue(Queue<I> initDataQueue);
 
-    void setInitDataQueue(Queue<InitData> initDataQueue);
+  /**
+   * Method to retrieve the current status of the external co-simulation framework.
+   *
+   * @param simonaTick The current tick of SIMONA.
+   * @return The current status of the external framework.
+   * @throws Exception If a problem occurs.
+   */
+  Status getStatus(long simonaTick) throws Exception;
 
-    // methods called during the co-simulation
+  /**
+   * Method to provide new output data from SIMONA to the external co-simulation framework.
+   *
+   * @param outputData That should be provided.
+   */
+  void provideOutputData(ExtOutputContainer outputData);
 
-    Status getStatus(long simonaTick) throws Exception;
+  /**
+   * Method to signal the {@link ExtCoSimFramework} to go to the next tick. Called in response to
+   * {@link SimonaIsAhead}.
+   *
+   * @param simonaTick The next tick for which SIMONA can handle data.
+   */
+  void goToNextTick(long simonaTick);
 
-    void provideOutputData(ExtOutputContainer outputData);
+  /** Interface defining different states the {@link ExtCoSimFramework} can return. */
+  sealed interface Status permits Finished, HasData, SimonaIsAhead, SimonaIsBehind {}
 
-    void goToNextTick(long simonaTick);
+  /**
+   * Status declaring that new input data is available.
+   *
+   * @param container The new input data.
+   */
+  record HasData(ExtInputContainer container) implements Status {}
 
-    sealed interface Status permits Finished, HasData, SimonaIsAhead, SimonaIsBehind {}
+  /**
+   * Status declaring that SIMONA is behind of the {@link ExtCoSimFramework}.
+   *
+   * @param extTick The current tick of the external co-simulation.
+   */
+  record SimonaIsBehind(long extTick) implements Status {}
 
-    record HasData(ExtInputContainer container) implements Status {}
+  /** Status declaring that SIMONA is ahead of the {@link ExtCoSimFramework}. */
+  record SimonaIsAhead() implements Status {}
 
-    record SimonaIsBehind(long extTick) implements Status {}
+  /** Status declaring that the {@link ExtCoSimFramework} has finished. */
+  record Finished() implements Status {}
 
-    record SimonaIsAhead() implements Status {}
+  /** Interface for the initialization data. */
+  interface InitData {}
 
-    record Finished() implements Status {}
-
-
-    interface InitData {}
-
-    record TickConverter(double scalingFactor) {
-        public long toSimonaTick(long extTick) {
-           return (long) (extTick * scalingFactor);
-        }
-
-        public long toExtTick(long simonaTick) {
-            return (long) (simonaTick / scalingFactor);
-        }
-
+  /**
+   * Converter that can be used if the {@link ExtCoSimFramework} uses a different timescale than 1s.
+   *
+   * @param scalingFactor That will be used for conversion.
+   */
+  record TickConverter(double scalingFactor) {
+    /**
+     * Method to convert the external tick to SIMONA's timescale.
+     *
+     * @param extTick The external tick that should be converted.
+     * @return The converted tick.
+     */
+    public long toSimonaTick(long extTick) {
+      return (long) (extTick * scalingFactor);
     }
 
+    /**
+     * Method to convert the SIMONA tick to the external timescale.
+     *
+     * @param simonaTick That should be converted.
+     * @return The converted tick.
+     */
+    public long toExtTick(long simonaTick) {
+      return (long) (simonaTick / scalingFactor);
+    }
+  }
 }
