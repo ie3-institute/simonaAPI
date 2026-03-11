@@ -51,7 +51,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
       OptionalLong maybeNextTick = OptionalLong.empty();
       boolean run = true;
 
-      while (run && continueActivity(tick)) {
+      do {
         OptionalLong newTickOption =
             switch (externalCoSimFramework.getStatus(tick)) {
               case ExtCoSimFramework.HasData(ExtInputContainer container) -> {
@@ -85,7 +85,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
 
         maybeNextTick = getNextTickOption(maybeNextTick, newTickOption);
         log.debug("Updated next tick option: {}", maybeNextTick);
-      }
+      } while (run && continueActivity(tick));
 
       log.info(
           "++++++++++++++++++++++ Activities in External simulation finished for tick {}. Next tick option: {} ++++++++++++++++++++++",
@@ -93,7 +93,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
           maybeNextTick);
 
       return maybeNextTick;
-    } catch (Exception e) {
+    } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -104,7 +104,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    * @param clazz Class used to specify which object to look for.
    * @return The object.
    * @param <R> Type of the object that should be returned.
-   * @throws InterruptedException If interrupted while waiting.
+   * @throws InterruptedException If the thread is interrupted.
    */
   protected final <R extends I> R getInitData(Class<R> clazz) throws InterruptedException {
     InitData initialisationData = initDataQueue.take();
@@ -122,10 +122,10 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    * @param inputData Container containing the input data as well as the current tick.
    * @return An output container that contains the result that should be provided to the external
    *     co-simulation.
-   * @throws Exception If a problem occurs during the handling of data.
+   * @throws InterruptedException If the thread is interrupted.
    */
   public abstract ExtOutputContainer handleExternalData(ExtInputContainer inputData)
-      throws Exception;
+      throws InterruptedException;
 
   /**
    * Method that is called if the {@link ExtCoSimFramework} is providing no input data for the tick.
@@ -133,17 +133,17 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    * @param tick For which no data was provided.
    * @return An output container that contains the result that should be provided to the external
    *     co-simulation.
-   * @throws Exception If a problem occurs during the handling of data.
+   * @throws InterruptedException If the thread is interrupted.
    */
-  public abstract ExtOutputContainer handleNoExternalData(long tick) throws Exception;
+  public abstract ExtOutputContainer handleNoExternalData(long tick) throws InterruptedException;
 
   /**
    * Method that is called if the {@link ExtCoSimFramework} sends a finishing message.
    *
    * @param tick For which operations needs to be performed.
-   * @throws Exception If a problem occurs during the handling of data.
+   * @throws InterruptedException If the thread is interrupted.
    */
-  public abstract void finishSimulation(long tick) throws Exception;
+  public abstract void finishSimulation(long tick) throws InterruptedException;
 
   /**
    * Method to determine the next tick for SIMONA.
