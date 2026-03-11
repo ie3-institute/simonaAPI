@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.simulation;
 
 import edu.ie3.datamodel.models.value.Value;
-import edu.ie3.simona.api.data.ExtDataContainerQueue;
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection;
 import edu.ie3.simona.api.data.connection.ExtPrimaryDataConnection;
 import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
@@ -15,10 +14,10 @@ import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -28,20 +27,118 @@ import java.util.UUID;
  */
 public abstract class ExtCoSimulation extends ExtSimulation {
 
-  /** Queue for the data connection from the external co-simulation to SimonaAPI */
-  protected final ExtDataContainerQueue<ExtInputContainer> queueToSimona;
+  protected final Logger log;
 
-  /** Queue for the data connection from SimonaAPI to the external co-simulation */
-  protected final ExtDataContainerQueue<ExtOutputContainer> queueToExt;
+  /**
+   * The external co-simulation framework.
+   */
+  protected final ExtCoSimFramework externalCoSimFramework;
+  private final LinkedBlockingQueue<ExtCoSimFramework.InitData> initDataQueue = new LinkedBlockingQueue<>();
 
-  /** Name of the external co-simulation */
-  protected final String extSimulatorName;
-
-  protected ExtCoSimulation(String simulationName, String extSimulatorName) {
+  protected ExtCoSimulation(String simulationName, ExtCoSimFramework extCoSimFramework) {
     super(simulationName);
-    this.extSimulatorName = extSimulatorName;
-    this.queueToSimona = new ExtDataContainerQueue<>();
-    this.queueToExt = new ExtDataContainerQueue<>();
+    log = LoggerFactory.getLogger(simulationName);
+    this.externalCoSimFramework = extCoSimFramework;
+    externalCoSimFramework.setInitDataQueue(initDataQueue);
+  }
+
+  @Override
+  protected final Optional<Long> doActivity(long tick) {
+    try {
+      log.info(
+              "+++++++++++++++++++++++++++ Activities in External simulation: Tick {} has been triggered. +++++++++++++++++++++++++++",
+              tick);
+
+      Optional<Long> maybeNextTick = Optional.of(Long.MAX_VALUE);
+      boolean run = true;
+
+      while (run && continueActivity(tick)) {
+        Optional<Long> newTickOption = switch(externalCoSimFramework.getStatus(tick)) {
+          case ExtCoSimFramework.HasData(ExtInputContainer container) -> {
+            ExtOutputContainer result;
+
+            if (container.isEmpty()) {
+              // handle no data provided
+              result = handleNoExternalData(container.getTick());
+            } else {
+              // handle external data
+              result = handleExternalData(container);
+            }
+
+            externalCoSimFramework.provideOutputData(result);
+            yield result.getMaybeNextTick();
+          }
+          case ExtCoSimFramework.SimonaIsBehind(long extTick) -> {
+            run = false;
+            yield Optional.of(extTick);
+          }
+          case ExtCoSimFramework.SimonaIsAhead() -> {
+            externalCoSimFramework.goToNextTick(tick);
+
+            yield maybeNextTick;
+          }
+          case ExtCoSimFramework.Finished() -> {
+            finishSimulation(tick);
+            yield Optional.empty();
+          }
+        };
+
+
+
+        maybeNextTick = getNextTickOption(maybeNextTick, newTickOption);
+        log.info("Updated next tick option: {}", maybeNextTick);
+      }
+
+      log.info(
+              "++++++++++++++++++++++ Activities in External simulation finished for tick {}. Next tick option: {} ++++++++++++++++++++++",
+              tick,
+              maybeNextTick);
+
+      return maybeNextTick;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  protected final <R extends ExtCoSimFramework.InitData> R getInitData(Class<R> clazz) throws InterruptedException {
+    ExtCoSimFramework.InitData initialisationData = initDataQueue.take();
+    if (clazz.isAssignableFrom(initialisationData.getClass())) {
+      return clazz.cast(initialisationData);
+    } else {
+      throw new IllegalStateException(
+              "Received unexpected initialisation data: " + initialisationData);
+    }
+  }
+
+  public abstract ExtOutputContainer handleExternalData(ExtInputContainer inputData) throws Exception;
+
+  public abstract ExtOutputContainer handleNoExternalData(long tick) throws Exception;
+
+
+  public abstract void finishSimulation(long tick) throws Exception;
+
+  public abstract long determineNextTick(long tick);
+
+  public abstract boolean continueActivity(long tick);
+
+  protected final Optional<Long> getNextTickOption(Optional<Long> maybeNextTick, Optional<Long> otherOption) {
+    if (maybeNextTick.isEmpty()) {
+      return otherOption;
+    }
+
+    if (otherOption.isEmpty()) {
+      return maybeNextTick;
+    }
+
+    long nextTick = maybeNextTick.get();
+    long other = otherOption.get();
+
+    if (other < nextTick && other > 0) {
+      return otherOption;
+    } else {
+      return maybeNextTick;
+    }
+
   }
 
   // connection helper methods
