@@ -12,4 +12,4 @@ package edu.ie3.simona.api.ontology.simulation;
  *
  * @param simulationSuccessful Whether SIMONA terminated successfully
  */
-public record TerminationMessage(Boolean simulationSuccessful) implements ControlMessageToExt {}
+public record TerminationMessage(boolean simulationSuccessful) implements ControlMessageToExt {}

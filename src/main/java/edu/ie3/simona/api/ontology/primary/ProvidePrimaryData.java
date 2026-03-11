@@ -8,10 +8,10 @@ package edu.ie3.simona.api.ontology.primary;
 
 import edu.ie3.datamodel.models.value.Value;
 import java.util.Map;
-import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.UUID;
 
 /** Message that provides primary data from an external primary data simulation */
 public record ProvidePrimaryData(
-    long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick)
+    long tick, Map<UUID, Value> primaryData, OptionalLong maybeNextTick)
     implements PrimaryDataMessageFromExt {}

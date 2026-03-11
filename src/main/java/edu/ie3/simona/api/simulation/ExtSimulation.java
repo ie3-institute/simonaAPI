@@ -10,7 +10,7 @@ import edu.ie3.simona.api.data.SetupData;
 import edu.ie3.simona.api.data.connection.ExtDataConnection;
 import edu.ie3.simona.api.data.connection.ExtSimDataConnection;
 import edu.ie3.simona.api.ontology.simulation.*;
-import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Set;
 
 /**
@@ -56,11 +56,11 @@ public abstract class ExtSimulation implements Runnable {
 
     if (msg.getClass().equals(ActivationMessage.class)) {
       final ActivationMessage activationMessage = (ActivationMessage) msg;
-      Optional<Long> newTrigger;
+      OptionalLong newTrigger;
 
       if (activationMessage.tick() == -1L) {
         // this is blocking until initialization has finished
-        newTrigger = Optional.of(initialize());
+        newTrigger = OptionalLong.of(initialize());
       } else {
         // this is blocking until processing of this tick has finished
         newTrigger = doActivity(activationMessage.tick());
@@ -93,7 +93,7 @@ public abstract class ExtSimulation implements Runnable {
    * @param tick The current tick
    * @return The next tick at which this external simulation wants to be triggered, if applicable.
    */
-  protected abstract Optional<Long> doActivity(long tick);
+  protected abstract OptionalLong doActivity(long tick);
 
   /**
    * This method is called when the main simulation wants to terminate.

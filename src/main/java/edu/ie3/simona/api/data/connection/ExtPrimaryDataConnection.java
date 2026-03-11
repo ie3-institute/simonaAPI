@@ -9,10 +9,7 @@ package edu.ie3.simona.api.data.connection;
 import edu.ie3.datamodel.models.value.Value;
 import edu.ie3.simona.api.ontology.primary.PrimaryDataMessageFromExt;
 import edu.ie3.simona.api.ontology.primary.ProvidePrimaryData;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import org.slf4j.Logger;
 
 /** Enables data connection of primary data between SIMONA and SimonaAPI */
@@ -47,7 +44,7 @@ public final class ExtPrimaryDataConnection
    * @param log logger
    */
   public void sendPrimaryData(
-      long tick, Map<UUID, Value> primaryData, Optional<Long> maybeNextTick, Logger log) {
+      long tick, Map<UUID, Value> primaryData, OptionalLong maybeNextTick, Logger log) {
     if (primaryData.isEmpty()) {
       log.debug("No primary data found! Sending no primary data to SIMONA for tick {}.", tick);
     } else {
