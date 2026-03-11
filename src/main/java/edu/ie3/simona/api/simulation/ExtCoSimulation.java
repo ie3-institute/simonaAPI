@@ -51,7 +51,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
       OptionalLong maybeNextTick = OptionalLong.empty();
       boolean run = true;
 
-      while (run && continueActivity(tick)) {
+      do {
         OptionalLong newTickOption =
             switch (externalCoSimFramework.getStatus(tick)) {
               case ExtCoSimFramework.HasData(ExtInputContainer container) -> {
@@ -85,7 +85,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
 
         maybeNextTick = getNextTickOption(maybeNextTick, newTickOption);
         log.debug("Updated next tick option: {}", maybeNextTick);
-      }
+      } while (run && continueActivity(tick));
 
       log.info(
           "++++++++++++++++++++++ Activities in External simulation finished for tick {}. Next tick option: {} ++++++++++++++++++++++",

@@ -34,9 +34,9 @@ public interface ExtCoSimFramework<I extends ExtCoSimFramework.InitData> {
    *
    * @param simonaTick The current tick of SIMONA.
    * @return The current status of the external framework.
-   * @throws Exception If a problem occurs.
+   * @throws InterruptedException If a problem occurs.
    */
-  Status getStatus(long simonaTick) throws Exception;
+  Status getStatus(long simonaTick) throws InterruptedException;
 
   /**
    * Method to provide new output data from SIMONA to the external co-simulation framework.

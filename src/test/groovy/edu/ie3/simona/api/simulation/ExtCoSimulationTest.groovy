@@ -3,10 +3,15 @@ package edu.ie3.simona.api.simulation
 import edu.ie3.datamodel.models.value.PValue
 import edu.ie3.datamodel.models.value.SValue
 import edu.ie3.datamodel.models.value.Value
+import edu.ie3.simona.api.data.connection.ExtDataConnection
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
+import edu.ie3.simona.api.data.container.ExtInputContainer
+import edu.ie3.simona.api.data.container.ExtOutputContainer
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException
 import edu.ie3.simona.api.mapping.DataType
 import edu.ie3.simona.api.mapping.ExtEntityMapping
+import edu.ie3.simona.api.simulation.ExtCoSimFramework.Status
+import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Shared
@@ -16,6 +21,148 @@ class ExtCoSimulationTest extends Specification {
 
     @Shared
     private static final Logger log = LoggerFactory.getLogger(ExtCoSimulationTest)
+
+    @Shared
+    private ActorTestKit testKit
+
+    def setupSpec() {
+        testKit = ActorTestKit.create()
+    }
+
+    def cleanupSpec() {
+        testKit.shutdownTestKit()
+        testKit = null
+    }
+
+    /**
+     * Test simulation.
+     */
+    private class TestSimulation extends ExtCoSimulation<ExtCoSimFramework.InitData> {
+
+        TestSimulation(ExtCoSimFramework framework) {
+            super("TestSimulation", framework)
+        }
+
+        @Override
+        protected long initialize() {
+            return 0L
+        }
+
+
+        @Override
+        Set<ExtDataConnection> getDataConnections() {
+            return []
+        }
+
+        @Override
+        ExtOutputContainer handleExternalData(ExtInputContainer inputData) throws Exception {
+            return new ExtOutputContainer(inputData.getTick(), inputData.getMaybeNextTick())
+        }
+
+        @Override
+        ExtOutputContainer handleNoExternalData(long tick) throws Exception {
+            return new ExtOutputContainer(tick, OptionalLong.of(tick + 900))
+        }
+
+        @Override
+        void finishSimulation(long tick) throws Exception {
+
+        }
+
+        @Override
+        long determineNextTick(long tick) {
+            return 0
+        }
+
+        @Override
+        boolean continueActivity(long tick) {
+            return false
+        }
+    }
+
+    private static ExtCoSimFramework buildDummyFramework(Status returnStatus) {
+        return new ExtCoSimFramework() {
+            @Override
+            String getName() {
+                return "dummy"
+            }
+
+            @Override
+            void setInitDataQueue(Queue initDataQueue) {
+
+            }
+
+            @Override
+            Status getStatus(long simonaTick) throws InterruptedException {
+                return returnStatus
+            }
+
+            @Override
+            void provideOutputData(ExtOutputContainer outputData) {
+
+            }
+
+            @Override
+            void goToNextTick(long simonaTick) {
+
+            }
+        }
+    }
+
+    def "An ExtCoSimulation should handle HasData status correctly"() {
+        given:
+        def inputData = new ExtInputContainer(0L, 900L)
+
+        def framework = buildDummyFramework(new ExtCoSimFramework.HasData(inputData))
+
+        def extSim = new TestSimulation(framework)
+
+        when:
+        def maybeNextTick = extSim.doActivity(0L)
+
+        then:
+        maybeNextTick == OptionalLong.of(900L)
+    }
+
+    def "An ExtCoSimulation should handle SimonaIsBehind status correctly"() {
+        given:
+        def framework = buildDummyFramework(new ExtCoSimFramework.SimonaIsBehind(800L))
+
+        def extSim = new TestSimulation(framework)
+
+        when:
+        def maybeNextTick = extSim.doActivity(0L)
+
+        then:
+        maybeNextTick == OptionalLong.of(800L)
+    }
+
+    def "An ExtCoSimulation should handle SimonaIsAhead status correctly"() {
+        given:
+        def framework = buildDummyFramework(new ExtCoSimFramework.SimonaIsAhead())
+
+        def extSim = new TestSimulation(framework)
+
+        when:
+        def maybeNextTick = extSim.doActivity(900L)
+
+        then:
+        maybeNextTick == OptionalLong.empty()
+    }
+
+    def "An ExtCoSimulation should handle Finished status correctly"() {
+        given:
+        def framework = buildDummyFramework(new ExtCoSimFramework.Finished())
+
+        def extSim = new TestSimulation(framework)
+
+        when:
+        def maybeNextTick = extSim.doActivity(0L)
+
+        then:
+        maybeNextTick == OptionalLong.empty()
+    }
+
 
     def "An ExtCoSimulation can build a primary data connection correctly"() {
         given:
