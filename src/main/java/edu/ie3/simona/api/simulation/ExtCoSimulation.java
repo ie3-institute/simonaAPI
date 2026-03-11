@@ -42,7 +42,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
   }
 
   @Override
-  protected final Optional<Long> doActivity(long tick) {
+  protected final OptionalLong doActivity(long tick) {
     try {
       log.info(
           "+++++++++++++++++++++++++++ Activities in External simulation: Tick {} has been triggered. +++++++++++++++++++++++++++",
@@ -92,7 +92,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
           tick,
           maybeNextTick);
 
-      return maybeNextTick.isPresent() ? Optional.of(maybeNextTick.getAsLong()) : Optional.empty();
+      return maybeNextTick;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

@@ -40,10 +40,10 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
         def primaryData = Map.of(inputUuid, pValue as Value)
 
         when:
-        extPrimaryDataConnection.sendPrimaryData(0L, primaryData, Optional.of(900L), log)
+        extPrimaryDataConnection.sendPrimaryData(0L, primaryData, OptionalLong.of(900L), log)
 
         then:
-        dataService.expectMessage(new ProvidePrimaryData(0L, primaryData, Optional.of(900L)))
+        dataService.expectMessage(new ProvidePrimaryData(0L, primaryData, OptionalLong.of(900L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 
@@ -59,7 +59,7 @@ class ExtPrimaryDataConnectionTest extends Specification implements DataServiceT
         def inputDataMap = [:]
 
         when:
-        extPrimaryDataConnection.sendPrimaryData(0L, inputDataMap, Optional.empty(), log)
+        extPrimaryDataConnection.sendPrimaryData(0L, inputDataMap, OptionalLong.empty(), log)
 
         then:
         dataService.expectNoMessage()
