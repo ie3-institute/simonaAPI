@@ -18,7 +18,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   private final long tick;
 
   /** The next tick, when data will be provided, if available. */
-  private final Optional<Long> maybeNextTick;
+  private final OptionalLong maybeNextTick;
 
   // mapping for primary data
   /** Map uuid to primary input value for SIMONA. */
@@ -45,12 +45,12 @@ public final class ExtInputContainer implements ExtDataContainer {
    */
   public ExtInputContainer(long tick, long nextTick) {
     this.tick = tick;
-    this.maybeNextTick = Optional.of(nextTick);
+    this.maybeNextTick = OptionalLong.of(nextTick);
   }
 
   public ExtInputContainer(long tick) {
     this.tick = tick;
-    this.maybeNextTick = Optional.empty();
+    this.maybeNextTick = OptionalLong.empty();
   }
 
   @Override
@@ -68,7 +68,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   }
 
   /** Returns an option for the next tick, when data will be provided. */
-  public Optional<Long> getMaybeNextTick() {
+  public OptionalLong getMaybeNextTick() {
     return maybeNextTick;
   }
 

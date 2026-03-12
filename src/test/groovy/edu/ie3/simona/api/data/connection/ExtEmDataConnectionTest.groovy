@@ -206,7 +206,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def sendMsg = new EmCompletion(Optional.of(900L))
+        def sendMsg = new EmCompletion(OptionalLong.of(900L))
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
@@ -216,11 +216,11 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
         def response = extEmDataConnection.requestCompletion(0L, 1000L)
 
         then:
-        dataService.expectMessage(new RequestEmCompletion(0L, Optional.of(1000L)))
+        dataService.expectMessage(new RequestEmCompletion(0L, OptionalLong.of(1000L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
 
         // we received tick 900 as next, because we need an activation for this tick
-        response == Optional.of(900L)
+        response == OptionalLong.of(900L)
         response == sendMsg.maybeNextTick()
     }
 

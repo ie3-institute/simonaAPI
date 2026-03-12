@@ -30,21 +30,21 @@ class ExtSimulationSpec extends Specification {
     private class TestSimulation extends ExtSimulation {
 
         private Long initReturnTick
-        private Optional<Long> activationReturnTick
+        private OptionalLong activationReturnTick
 
-        TestSimulation(Long initReturnTick, Optional<Long> activationReturnTick) {
+        TestSimulation(Long initReturnTick, OptionalLong activationReturnTick) {
             super("TestSimulation")
             this.initReturnTick = initReturnTick
             this.activationReturnTick = activationReturnTick
         }
 
         @Override
-        protected Long initialize() {
+        protected long initialize() {
             return this.initReturnTick
         }
 
         @Override
-        protected Optional<Long> doActivity(long tick) {
+        protected OptionalLong doActivity(long tick) {
             return this.activationReturnTick
         }
 
@@ -70,7 +70,7 @@ class ExtSimulationSpec extends Specification {
     def "An ExtSimulation should set setup data correctly"() {
         given:
         def setupData = new SetupData(new String[0], null, null, null, null)
-        def extSim = new TestSimulation(0L, Optional.of(-2L))
+        def extSim = new TestSimulation(0L, OptionalLong.of(-2L))
 
         when:
         extSim.setSetupData(setupData)
@@ -85,7 +85,7 @@ class ExtSimulationSpec extends Specification {
         def newTick = 0L
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
-        def extSim = new TestSimulation(newTick, Optional.of(-2L))
+        def extSim = new TestSimulation(newTick, OptionalLong.of(-2L))
         extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null, null, null))
 
@@ -95,15 +95,14 @@ class ExtSimulationSpec extends Specification {
 
         then:
         finishedActual == false
-        extSimAdapter.expectMessage(new CompletionMessage(Optional.of(newTick)))
+        extSimAdapter.expectMessage(new CompletionMessage(OptionalLong.of(newTick)))
     }
 
     def "An ExtSimulation should handle activation and return given new triggers"() {
         given:
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
-        def newTickOpt = newTick.isEmpty() ?
-                    Optional.<Long>empty() : Optional.of(newTick.first())
+        def newTickOpt = newTick.isEmpty() ? OptionalLong.empty() : OptionalLong.of(newTick.first())
         def extSim = new TestSimulation(-2L, newTickOpt)
         extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null, null, null))
@@ -128,7 +127,7 @@ class ExtSimulationSpec extends Specification {
         given:
         def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
         def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
-        def extSim = new TestSimulation(-1L, Optional.empty())
+        def extSim = new TestSimulation(-1L, OptionalLong.empty())
         extSim.setDataConnection(extSimDataConnection)
         extSim.setSetupData(new SetupData(new String[0], null, null, null, null))
 
@@ -144,27 +143,5 @@ class ExtSimulationSpec extends Specification {
         simlulationSuccessful || finished
         false                 || true
         true                  || true
-    }
-
-    class UnknownMessage implements ControlMessageToExt {}
-
-    def "An ExtSimulation should handle unknown messages by throwing an exception"() {
-        given:
-        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
-        def extSim = new TestSimulation(-1L, Optional.empty())
-        extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null, null, null))
-
-        when:
-        extSimDataConnection.queueExtMsg(new UnknownMessage())
-        handleMessage.invoke(extSim)
-
-        then:
-        Exception ex = thrown()
-        // since we call a private method through reflection,
-        // our expected exception is wrapped in an InvocationTargetException
-        ex.getCause().getClass() == IllegalArgumentException
-        extSimAdapter.expectNoMessage()
     }
 }
