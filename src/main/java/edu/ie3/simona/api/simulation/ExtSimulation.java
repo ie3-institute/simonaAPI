@@ -9,15 +9,20 @@ package edu.ie3.simona.api.simulation;
 import edu.ie3.simona.api.data.SetupData;
 import edu.ie3.simona.api.data.connection.ExtDataConnection;
 import edu.ie3.simona.api.data.connection.ExtSimDataConnection;
+import edu.ie3.simona.api.exceptions.ExtSimException;
 import edu.ie3.simona.api.ontology.simulation.*;
 import java.util.OptionalLong;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Every external simulation must extend this class in order to get triggered by the main
  * simulation.
  */
 public abstract class ExtSimulation implements Runnable {
+
+  protected final Logger log;
 
   protected String simulationName;
 
@@ -27,6 +32,7 @@ public abstract class ExtSimulation implements Runnable {
 
   protected ExtSimulation(String simulationName) {
     this.simulationName = simulationName;
+    this.log = LoggerFactory.getLogger(simulationName);
   }
 
   public void run() {
@@ -36,7 +42,10 @@ public abstract class ExtSimulation implements Runnable {
       while (!simulationFinished) {
         simulationFinished = takeAndHandleMessage();
       }
-    } catch (InterruptedException ie) {
+    } catch (InterruptedException | ExtSimException ie) {
+      // Printing the error message
+      log.error("Exception thrown in external simulation!", ie);
+
       // This is the topmost method in the thread call stack,
       // so we handle the exception ourselves
       Thread.currentThread().interrupt();
@@ -50,33 +59,32 @@ public abstract class ExtSimulation implements Runnable {
    * @throws InterruptedException if the thread running this has been interrupted (possibly during
    *     blocking)
    */
-  private boolean takeAndHandleMessage() throws InterruptedException {
+  private boolean takeAndHandleMessage() throws ExtSimException, InterruptedException {
     // take() will block until an object is ready for us
     final ControlMessageToExt msg = dataConnection.receive();
 
-    if (msg.getClass().equals(ActivationMessage.class)) {
-      final ActivationMessage activationMessage = (ActivationMessage) msg;
-      OptionalLong newTrigger;
+    return switch (msg) {
+      case ActivationMessage(long tick) -> {
+        OptionalLong newTrigger;
 
-      if (activationMessage.tick() == -1L) {
-        // this is blocking until initialization has finished
-        newTrigger = OptionalLong.of(initialize());
-      } else {
-        // this is blocking until processing of this tick has finished
-        newTrigger = doActivity(activationMessage.tick());
+        if (tick == -1L) {
+          // this is blocking until initialization has finished
+          newTrigger = OptionalLong.of(initialize());
+        } else {
+          // this is blocking until processing of this tick has finished
+          newTrigger = doActivity(tick);
+        }
+        dataConnection.send(new CompletionMessage(newTrigger));
+
+        yield newTrigger.isEmpty();
       }
-      dataConnection.send(new CompletionMessage(newTrigger));
+      case TerminationMessage(boolean simulationSuccessful) -> {
+        terminate(simulationSuccessful);
+        dataConnection.send(new TerminationCompleted());
 
-      return newTrigger.isEmpty();
-    } else if (msg.getClass().equals(TerminationMessage.class)) {
-      final TerminationMessage terminationMsg = (TerminationMessage) msg;
-      terminate(terminationMsg.simulationSuccessful());
-      dataConnection.send(new TerminationCompleted());
-
-      return true;
-    } else {
-      throw new IllegalArgumentException("Invalid message " + msg + " received.");
-    }
+        yield true;
+      }
+    };
   }
 
   /**
@@ -92,8 +100,12 @@ public abstract class ExtSimulation implements Runnable {
    *
    * @param tick The current tick
    * @return The next tick at which this external simulation wants to be triggered, if applicable.
+   * @throws ExtSimException if any exception was thrown in the external simulation
+   * @throws InterruptedException if the thread running this has been interrupted (possibly during
+   *     blocking)
    */
-  protected abstract OptionalLong doActivity(long tick);
+  protected abstract OptionalLong doActivity(long tick)
+      throws ExtSimException, InterruptedException;
 
   /**
    * This method is called when the main simulation wants to terminate.

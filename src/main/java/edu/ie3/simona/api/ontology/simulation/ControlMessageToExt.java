@@ -7,4 +7,4 @@
 package edu.ie3.simona.api.ontology.simulation;
 
 /** Interface for control messages from the SIMONA to the external simulation */
-public interface ControlMessageToExt {}
+public sealed interface ControlMessageToExt permits ActivationMessage, TerminationMessage {}
