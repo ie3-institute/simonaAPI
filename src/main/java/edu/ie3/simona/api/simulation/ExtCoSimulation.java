@@ -64,15 +64,16 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
                 result = handleExternalData(container);
               }
 
-              externalCoSimFramework.provideOutputData(result);
-              yield result.getMaybeNextTick();
-            }
-            case ExtCoSimFramework.SimonaIsBehind(long extTick) -> {
-              run = false;
-              yield OptionalLong.of(extTick);
-            }
-            case ExtCoSimFramework.SimonaIsAhead() -> {
-              externalCoSimFramework.goToNextTick(tick);
+                externalCoSimFramework.provideOutputData(result);
+                yield result.getMaybeNextTick();
+              }
+              case ExtCoSimFramework.SimonaIsBehind(long extTick) -> {
+                run = false;
+                handleSimonaIsBehind(tick, extTick);
+                yield OptionalLong.of(extTick);
+              }
+              case ExtCoSimFramework.SimonaIsAhead() -> {
+                externalCoSimFramework.goToNextTick(tick);
 
               yield maybeNextTick;
             }
@@ -133,6 +134,16 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    */
   public abstract ExtOutputContainer handleNoExternalData(long tick)
       throws ExtSimException, InterruptedException;
+
+  /**
+   * Method that is called if {@link ExtCoSimFramework} is providing SimonaIBehind as status for the tick..
+   * @param tick Of SIMONA.
+   * @param extTick Of the external framework.
+   * @throws InterruptedException If the thread is interrupted.
+   */
+  public void handleSimonaIsBehind(long tick, long extTick) throws InterruptedException {
+    // only necessary if the framework does not support dynamic step sizes
+  }
 
   /**
    * Method that is called if the {@link ExtCoSimFramework} sends a finishing message.
