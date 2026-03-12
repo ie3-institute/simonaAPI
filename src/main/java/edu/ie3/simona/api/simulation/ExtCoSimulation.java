@@ -13,11 +13,14 @@ import edu.ie3.simona.api.data.connection.ExtResultDataConnection;
 import edu.ie3.simona.api.data.container.ExtInputContainer;
 import edu.ie3.simona.api.data.container.ExtOutputContainer;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
+import edu.ie3.simona.api.exceptions.ExtSimException;
 import edu.ie3.simona.api.simulation.ExtCoSimFramework.InitData;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for an external co-simulation with bidirectional communication with SIMONA.
@@ -27,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation {
 
-  protected final Logger log;
-
   /** The external co-simulation framework. */
   protected final ExtCoSimFramework<I> externalCoSimFramework;
 
@@ -36,66 +37,61 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
 
   protected ExtCoSimulation(String simulationName, ExtCoSimFramework<I> extCoSimFramework) {
     super(simulationName);
-    log = LoggerFactory.getLogger(simulationName);
     this.externalCoSimFramework = extCoSimFramework;
     externalCoSimFramework.setInitDataQueue(initDataQueue);
   }
 
   @Override
-  protected final OptionalLong doActivity(long tick) {
-    try {
-      log.info(
-          "+++++++++++++++++++++++++++ Activities in External simulation: Tick {} has been triggered. +++++++++++++++++++++++++++",
-          tick);
+  protected final OptionalLong doActivity(long tick) throws ExtSimException, InterruptedException {
+    log.info(
+        "+++++++++++++++++++++++++++ Activities in External simulation: Tick {} has been triggered. +++++++++++++++++++++++++++",
+        tick);
 
-      OptionalLong maybeNextTick = OptionalLong.empty();
-      boolean run = true;
+    OptionalLong maybeNextTick = OptionalLong.empty();
+    boolean run = true;
 
-      do {
-        OptionalLong newTickOption =
-            switch (externalCoSimFramework.getStatus(tick)) {
-              case ExtCoSimFramework.HasData(ExtInputContainer container) -> {
-                ExtOutputContainer result;
+    do {
+      OptionalLong newTickOption =
+          switch (externalCoSimFramework.getStatus(tick)) {
+            case ExtCoSimFramework.HasData(ExtInputContainer container) -> {
+              ExtOutputContainer result;
 
-                if (container.isEmpty()) {
-                  // handle no data provided
-                  result = handleNoExternalData(container.getTick());
-                } else {
-                  // handle external data
-                  result = handleExternalData(container);
-                }
-
-                externalCoSimFramework.provideOutputData(result);
-                yield result.getMaybeNextTick();
+              if (container.isEmpty()) {
+                // handle no data provided
+                result = handleNoExternalData(container.getTick());
+              } else {
+                // handle external data
+                result = handleExternalData(container);
               }
-              case ExtCoSimFramework.SimonaIsBehind(long extTick) -> {
-                run = false;
-                yield OptionalLong.of(extTick);
-              }
-              case ExtCoSimFramework.SimonaIsAhead() -> {
-                externalCoSimFramework.goToNextTick(tick);
 
-                yield maybeNextTick;
-              }
-              case ExtCoSimFramework.Finished() -> {
-                finishSimulation(tick);
-                yield OptionalLong.empty();
-              }
-            };
+              externalCoSimFramework.provideOutputData(result);
+              yield result.getMaybeNextTick();
+            }
+            case ExtCoSimFramework.SimonaIsBehind(long extTick) -> {
+              run = false;
+              yield OptionalLong.of(extTick);
+            }
+            case ExtCoSimFramework.SimonaIsAhead() -> {
+              externalCoSimFramework.goToNextTick(tick);
 
-        maybeNextTick = getNextTickOption(maybeNextTick, newTickOption);
-        log.debug("Updated next tick option: {}", maybeNextTick);
-      } while (run && continueActivity(tick));
+              yield maybeNextTick;
+            }
+            case ExtCoSimFramework.Finished() -> {
+              finishSimulation(tick);
+              yield OptionalLong.empty();
+            }
+          };
 
-      log.info(
-          "++++++++++++++++++++++ Activities in External simulation finished for tick {}. Next tick option: {} ++++++++++++++++++++++",
-          tick,
-          maybeNextTick);
+      maybeNextTick = getNextTickOption(maybeNextTick, newTickOption);
+      log.debug("Updated next tick option: {}", maybeNextTick);
+    } while (run && continueActivity(tick));
 
-      return maybeNextTick;
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    log.info(
+        "++++++++++++++++++++++ Activities in External simulation finished for tick {}. Next tick option: {} ++++++++++++++++++++++",
+        tick,
+        maybeNextTick);
+
+    return maybeNextTick;
   }
 
   /**
@@ -125,7 +121,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    * @throws InterruptedException If the thread is interrupted.
    */
   public abstract ExtOutputContainer handleExternalData(ExtInputContainer inputData)
-      throws InterruptedException;
+      throws ExtSimException, InterruptedException;
 
   /**
    * Method that is called if the {@link ExtCoSimFramework} is providing no input data for the tick.
@@ -135,7 +131,8 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    *     co-simulation.
    * @throws InterruptedException If the thread is interrupted.
    */
-  public abstract ExtOutputContainer handleNoExternalData(long tick) throws InterruptedException;
+  public abstract ExtOutputContainer handleNoExternalData(long tick)
+      throws ExtSimException, InterruptedException;
 
   /**
    * Method that is called if the {@link ExtCoSimFramework} sends a finishing message.
@@ -143,7 +140,7 @@ public abstract class ExtCoSimulation<I extends InitData> extends ExtSimulation 
    * @param tick For which operations needs to be performed.
    * @throws InterruptedException If the thread is interrupted.
    */
-  public abstract void finishSimulation(long tick) throws InterruptedException;
+  public abstract void finishSimulation(long tick) throws ExtSimException, InterruptedException;
 
   /**
    * Method to determine the next tick for SIMONA.

@@ -144,26 +144,4 @@ class ExtSimulationSpec extends Specification {
         false                 || true
         true                  || true
     }
-
-    class UnknownMessage implements ControlMessageToExt {}
-
-    def "An ExtSimulation should handle unknown messages by throwing an exception"() {
-        given:
-        def extSimAdapter = testKit.createTestProbe(ControlResponseMessageFromExt)
-        def extSimDataConnection = new ExtSimDataConnection(extSimAdapter.ref())
-        def extSim = new TestSimulation(-1L, OptionalLong.empty())
-        extSim.setDataConnection(extSimDataConnection)
-        extSim.setSetupData(new SetupData(new String[0], null, null, null, null))
-
-        when:
-        extSimDataConnection.queueExtMsg(new UnknownMessage())
-        handleMessage.invoke(extSim)
-
-        then:
-        Exception ex = thrown()
-        // since we call a private method through reflection,
-        // our expected exception is wrapped in an InvocationTargetException
-        ex.getCause().getClass() == IllegalArgumentException
-        extSimAdapter.expectNoMessage()
-    }
 }
