@@ -6,5 +6,11 @@
 
 package edu.ie3.simona.api.data.model.em;
 
+import java.util.UUID;
+
 /** Interface that is extended by all em data models. */
-public interface EmData {}
+public interface EmData {
+
+  /** Returns the receiver of this em data. */
+  UUID receiver();
+}

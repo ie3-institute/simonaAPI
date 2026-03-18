@@ -9,13 +9,10 @@ import tech.units.indriya.quantity.Quantities
 
 import javax.measure.quantity.Power
 
-class EmSetPointTest extends Specification {
+class SetPointTest extends Specification {
 
     @Shared
     private UUID receiverUuid = UUID.fromString("978554e5-32cc-4221-bd39-84beac60f327")
-
-    @Shared
-    private UUID sender = UUID.randomUUID()
 
     @Shared
     private ComparableQuantity<Power> power = Quantities.getQuantity(10, PowerSystemUnits.KILOWATT)
@@ -23,7 +20,7 @@ class EmSetPointTest extends Specification {
 
     def "An empty EmSetPoint can be constructed correctly"() {
         when:
-        def setPoint = new EmSetPoint(receiverUuid)
+        def setPoint = new SetPoint.AggregatedSetPoint(receiverUuid)
 
         then:
         setPoint.receiver == receiverUuid
@@ -35,8 +32,8 @@ class EmSetPointTest extends Specification {
         def pValue = new PValue(power)
 
         when:
-        def setPoint1 = new EmSetPoint(receiverUuid, power)
-        def setPoint2 = new EmSetPoint(receiverUuid, pValue)
+        def setPoint1 = new SetPoint.AggregatedSetPoint(receiverUuid, power)
+        def setPoint2 = new SetPoint.AggregatedSetPoint(receiverUuid, pValue)
 
         then:
         setPoint1.receiver == receiverUuid

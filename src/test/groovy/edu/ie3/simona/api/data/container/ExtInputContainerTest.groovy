@@ -1,11 +1,7 @@
 package edu.ie3.simona.api.data.container
 
 import edu.ie3.datamodel.models.value.PValue
-import edu.ie3.simona.api.data.model.em.EmSetPoint
-import edu.ie3.simona.api.data.model.em.FlexOptionRequest
-import edu.ie3.simona.api.data.model.em.MultiFlexOptions
-import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
-import spock.lang.Shared
+import edu.ie3.simona.api.data.model.em.*
 import spock.lang.Specification
 import tech.units.indriya.quantity.Quantities
 
@@ -103,12 +99,13 @@ class ExtInputContainerTest extends Specification {
         def flexOptions = new PowerLimitFlexOptions(receiver, sender, Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(2d, KILOWATT), Quantities.getQuantity(5d, KILOWATT))
 
         def container = new ExtInputContainer(0L)
+        def option = new DisaggregatedFlexOptions(receiver, [(sender): flexOptions])
 
         when:
-        container.addFlexOptions(new MultiFlexOptions(receiver, [(sender): flexOptions]))
+        container.addFlexOptions(option)
 
         then:
-        container.flexOptions == [(receiver): [flexOptions]]
+        container.flexOptions == [(receiver): [option]]
     }
 
     def "An ExtInputContainer should add set point data correctly"() {
@@ -122,7 +119,7 @@ class ExtInputContainerTest extends Specification {
         container.addSetPoint(receiver, power)
 
         then:
-        container.setPoints == [(receiver): new EmSetPoint(receiver, power)]
+        container.setPoints == [(receiver): new SetPoint.AggregatedSetPoint(receiver, power)]
     }
 
     def "An ExtInputContainer should extract primary data correctly"() {
@@ -249,7 +246,7 @@ class ExtInputContainerTest extends Specification {
 
         then:
         extracted.size() == 1
-        extracted == [(emAsset): new EmSetPoint(emAsset, power)]
+        extracted == [(emAsset): new SetPoint.AggregatedSetPoint(emAsset, power)]
 
         container.primaryData.size() == 1
         container.flexRequests.size() == 1
