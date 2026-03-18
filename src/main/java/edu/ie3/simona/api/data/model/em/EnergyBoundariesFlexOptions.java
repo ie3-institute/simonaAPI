@@ -7,61 +7,59 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.util.interval.ClosedInterval;
-import java.util.HashMap;
+import edu.ie3.util.quantities.PowerSystemUnits;
+import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 import java.util.UUID;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Energy boundaries flex options that can represent various flex option types.
  *
+ * @param receiver Of the flex options.
  * @param model That is providing this flex options.
- * @param flexType The type of the flex options.
- * @param pMin The minimal power.
- * @param pMax The maximal power.
- * @param etaCharge The charging losses in percent.
- * @param etaDischarge The discharging losses in percent.
- * @param tickToEnergyLimits A map: tick to energy limits.
- * @param disaggregated A map: uuid to disaggregated flex options.
+ * @param energyBoundaries The energy boundaries.
  */
 public record EnergyBoundariesFlexOptions(
-    UUID receiver,
-    UUID model,
-    String flexType,
-    ComparableQuantity<Power> pMin,
-    ComparableQuantity<Power> pMax,
-    ComparableQuantity<Dimensionless> etaCharge,
-    ComparableQuantity<Dimensionless> etaDischarge,
-    Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits,
-    Map<UUID, FlexOptions> disaggregated)
+    UUID receiver, UUID model, List<AssetEnergyBoundaries> energyBoundaries)
     implements FlexOptions {
 
-  public EnergyBoundariesFlexOptions(
-      UUID receiver,
-      UUID model,
-      String flexType,
-      ComparableQuantity<Power> pMin,
-      ComparableQuantity<Power> pMax,
+  /**
+   * Energy boundaries for an asset. The energy limits (valid for the interval from tick to the
+   * next) constitute the boundaries between which flexibility can be used.
+   *
+   * @param energyLimits Energy limits that signify the potential upwards and downwards flexibility
+   *     potential for the respective tick. The energy limits for all ticks relate to the energy
+   *     potential at the current tick (which is defined to be zero).
+   * @param powerLimits The power limits, which limit the power of the complete asset for all time
+   *     steps. If energy limits (upper and lower) are the same at some time step, power limits are
+   *     ignored.
+   * @param etaCharge The charging efficiency.
+   * @param etaDischarge The discharging efficiency.
+   * @param tickDisconnect Optionally, the tick at which the storage will be disconnected, thus the
+   *     upward or downward energy potential can not be used beyond this tick.
+   */
+  public record AssetEnergyBoundaries(
+      Map<Long, ClosedInterval<ComparableQuantity<Energy>>> energyLimits,
+      ClosedInterval<ComparableQuantity<Power>> powerLimits,
       ComparableQuantity<Dimensionless> etaCharge,
       ComparableQuantity<Dimensionless> etaDischarge,
-      Map<Long, ClosedInterval<ComparableQuantity<Energy>>> tickToEnergyLimits) {
-    this(
-        receiver,
-        model,
-        flexType,
-        pMin,
-        pMax,
-        etaCharge,
-        etaDischarge,
-        tickToEnergyLimits,
-        new HashMap<>());
-  }
+      OptionalLong tickDisconnect) {
 
-  @Override
-  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
-    disaggregated.put(model, flexOptions);
+    public AssetEnergyBoundaries(
+        Map<Long, ClosedInterval<ComparableQuantity<Energy>>> energyLimits,
+        ClosedInterval<ComparableQuantity<Power>> powerLimits) {
+      this(
+          energyLimits,
+          powerLimits,
+          Quantities.getQuantity(1d, PowerSystemUnits.PU),
+          Quantities.getQuantity(1d, PowerSystemUnits.PU),
+          OptionalLong.empty());
+    }
   }
 }

@@ -2,9 +2,9 @@ package edu.ie3.simona.api.data.connection
 
 import edu.ie3.simona.api.data.connection.ExtEmDataConnection.EmMode
 import edu.ie3.simona.api.data.model.em.EmCommunicationMessage
-import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.FlexOptionRequest
 import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
+import edu.ie3.simona.api.data.model.em.SetPoint
 import edu.ie3.simona.api.ontology.DataMessageFromExt
 import edu.ie3.simona.api.ontology.ScheduleDataServiceMessage
 import edu.ie3.simona.api.ontology.em.*
@@ -122,7 +122,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
                 extSimAdapter.ref()
         )
 
-        def emData = Map.of(inputUuid, new EmSetPoint(inputUuid, power))
+        def emData = Map.of(inputUuid, new SetPoint.AggregatedSetPoint(inputUuid, power))
 
         when:
         def wasSent = extEmDataConnection.sendEmData(0L, [:], [:], emData)

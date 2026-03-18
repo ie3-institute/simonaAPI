@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.ontology.em;
 
 import edu.ie3.simona.api.data.model.em.EmCommunicationMessage;
-import edu.ie3.simona.api.data.model.em.EmData;
 import java.util.Collection;
 
 /**
@@ -17,6 +16,5 @@ import java.util.Collection;
  * @param tick of the message
  * @param messages the communication messages that should be sent
  */
-public record EmCommunicationMessages(
-    long tick, Collection<EmCommunicationMessage<? extends EmData>> messages)
+public record EmCommunicationMessages(long tick, Collection<EmCommunicationMessage> messages)
     implements EmDataMessageFromExt, EmDataResponseMessageToExt {}

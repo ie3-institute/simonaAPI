@@ -32,10 +32,10 @@ public final class ExtInputContainer implements ExtDataContainer {
   private final Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
 
   /** Map uuid to em set points. */
-  private final Map<UUID, EmSetPoint> setPoints = new HashMap<>();
+  private final Map<UUID, SetPoint> setPoints = new HashMap<>();
 
   /** List of em communication messages. */
-  private final List<EmCommunicationMessage<?>> emMessages = new ArrayList<>();
+  private final List<EmCommunicationMessage> emMessages = new ArrayList<>();
 
   /**
    * Container class for input data for SIMONA which can be read by SimonaAPI
@@ -97,7 +97,7 @@ public final class ExtInputContainer implements ExtDataContainer {
     primaryData.put(asset, value);
   }
 
-  public void addFlexComMessage(EmCommunicationMessage<?> message) {
+  public void addFlexComMessage(EmCommunicationMessage message) {
     emMessages.add(message);
   }
 
@@ -108,7 +108,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param receiver the uuid of the agent, that will receive the request
    */
   public void addRequest(UUID receiver) {
-    flexRequests.put(receiver, new FlexOptionRequest(receiver, false));
+    addRequest(new FlexOptionRequest(receiver));
   }
 
   /**
@@ -123,22 +123,10 @@ public final class ExtInputContainer implements ExtDataContainer {
   /**
    * Method for adding flex options to a given receiver.
    *
-   * @param multiFlexOptions that will be added to this container
+   * @param flexOption that will be added to this container
    */
-  public void addFlexOptions(MultiFlexOptions multiFlexOptions) {
-    flexOptions
-        .computeIfAbsent(multiFlexOptions.receiver(), k -> new ArrayList<>())
-        .addAll(multiFlexOptions.disaggregated().values());
-  }
-
-  /**
-   * Method for adding flex options to a given receiver.
-   *
-   * @param receiver that will receive the flex options
-   * @param flexOption that will be added
-   */
-  public void addFlexOptions(UUID receiver, FlexOptions flexOption) {
-    flexOptions.computeIfAbsent(receiver, k -> new ArrayList<>()).add(flexOption);
+  public void addFlexOptions(FlexOptions flexOption) {
+    flexOptions.computeIfAbsent(flexOption.receiver(), k -> new ArrayList<>()).add(flexOption);
   }
 
   /**
@@ -158,7 +146,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    * @param power of the set point
    */
   public void addSetPoint(UUID asset, PValue power) {
-    setPoints.put(asset, new EmSetPoint(asset, power));
+    setPoints.put(asset, new SetPoint.AggregatedSetPoint(asset, power));
   }
 
   /**
@@ -166,7 +154,7 @@ public final class ExtInputContainer implements ExtDataContainer {
    *
    * @param setPoint given set point
    */
-  public void addSetPoint(EmSetPoint setPoint) {
+  public void addSetPoint(SetPoint setPoint) {
     setPoints.put(setPoint.receiver(), setPoint);
   }
 
@@ -195,14 +183,14 @@ public final class ExtInputContainer implements ExtDataContainer {
   /**
    * Extracts the set point input data from this container. All other input data remains the same.
    */
-  public Map<UUID, EmSetPoint> extractSetPoints() {
+  public Map<UUID, SetPoint> extractSetPoints() {
     return copyAndClear(setPoints);
   }
 
   /**
    * Extracts the em message input data from this container. All other input data remains the same.
    */
-  public List<EmCommunicationMessage<?>> extractEmMessages() {
+  public List<EmCommunicationMessage> extractEmMessages() {
     return copyAndClear(emMessages);
   }
 
