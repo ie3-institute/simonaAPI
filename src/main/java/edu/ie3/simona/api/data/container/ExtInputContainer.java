@@ -140,7 +140,7 @@ public final class ExtInputContainer implements ExtDataContainer {
   }
 
   /**
-   * Method for adding an em set point for a given asset.
+   * Method for adding a set point for a given asset.
    *
    * @param asset that will receive the set point
    * @param power of the set point

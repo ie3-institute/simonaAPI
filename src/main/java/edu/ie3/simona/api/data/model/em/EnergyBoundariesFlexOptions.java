@@ -7,7 +7,6 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.util.interval.ClosedInterval;
-import edu.ie3.util.quantities.PowerSystemUnits;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
@@ -16,7 +15,6 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
-import tech.units.indriya.quantity.Quantities;
 
 /**
  * Energy boundaries flex options that can represent various flex option types.
@@ -49,17 +47,5 @@ public record EnergyBoundariesFlexOptions(
       ClosedInterval<ComparableQuantity<Power>> powerLimits,
       ComparableQuantity<Dimensionless> etaCharge,
       ComparableQuantity<Dimensionless> etaDischarge,
-      OptionalLong tickDisconnect) {
-
-    public AssetEnergyBoundaries(
-        Map<Long, ClosedInterval<ComparableQuantity<Energy>>> energyLimits,
-        ClosedInterval<ComparableQuantity<Power>> powerLimits) {
-      this(
-          energyLimits,
-          powerLimits,
-          Quantities.getQuantity(1d, PowerSystemUnits.PU),
-          Quantities.getQuantity(1d, PowerSystemUnits.PU),
-          OptionalLong.empty());
-    }
-  }
+      OptionalLong tickDisconnect) {}
 }
