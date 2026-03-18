@@ -14,14 +14,9 @@ import java.util.*;
  * @param receiver that should receive the flex options
  * @param disaggregated flex options
  */
-public record MultiFlexOptions(UUID receiver, Map<UUID, FlexOptions> disaggregated)
-    implements FlexOptions {
-  public MultiFlexOptions(UUID receiver) {
+public record DisaggregatedFlexOptions<F extends FlexOptions>(
+    UUID receiver, Map<UUID, F> disaggregated) implements FlexOptions {
+  public DisaggregatedFlexOptions(UUID receiver) {
     this(receiver, new HashMap<>());
-  }
-
-  @Override
-  public void addDisaggregated(UUID model, FlexOptions flexOptions) {
-    disaggregated.put(model, flexOptions);
   }
 }

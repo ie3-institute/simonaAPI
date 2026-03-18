@@ -72,7 +72,7 @@ public final class ExtEmDataConnection
       long tick,
       Map<UUID, FlexOptionRequest> flexRequests,
       Map<UUID, List<FlexOptions>> flexOptions,
-      Map<UUID, EmSetPoint> setPoints) {
+      Map<UUID, SetPoint> setPoints) {
     // send message only if at least one value is present
     if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
       sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints));
@@ -90,7 +90,7 @@ public final class ExtEmDataConnection
    * @return true, if data was sent
    */
   public boolean sendCommunicationMessage(
-      long tick, List<EmCommunicationMessage<?>> emCommunicationMessages) {
+      long tick, List<EmCommunicationMessage> emCommunicationMessages) {
     // send message only if at least one value is present
     if (!emCommunicationMessages.isEmpty()) {
       sendExtMsg(new EmCommunicationMessages(tick, emCommunicationMessages));
