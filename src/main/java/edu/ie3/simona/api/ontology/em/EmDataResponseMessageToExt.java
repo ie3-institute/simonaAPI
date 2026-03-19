@@ -9,4 +9,5 @@ package edu.ie3.simona.api.ontology.em;
 import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
 
 /** Messages that are sent from SIMONA to the external simulation that needs em data. */
-public interface EmDataResponseMessageToExt extends DataResponseMessageToExt {}
+public sealed interface EmDataResponseMessageToExt extends DataResponseMessageToExt
+    permits EmCommunicationMessages, EmCompletion, EmResultResponse, FlexOptionsResponse {}
