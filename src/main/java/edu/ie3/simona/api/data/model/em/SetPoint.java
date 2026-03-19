@@ -13,7 +13,7 @@ import java.util.UUID;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
 
-public sealed interface SetPoint extends EmData
+public sealed interface SetPoint extends EmData, EmMessageContent
     permits SetPoint.AggregatedSetPoint, SetPoint.DisaggregatedSetPoints {
 
   /**
