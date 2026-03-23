@@ -8,11 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Introduced base input directory to `SetupData` [#445](https://github.com/ie3-institute/simonaAPI/issues/445)
+- Added missing method to `ExtCoSimulation` [455](https://github.com/ie3-institute/simonaAPI/issues/455)
 
 ### Changed
 - Enhancing and refactoring of `ExtCoSimulation` [#237](https://github.com/ie3-institute/simonaAPI/issues/237)
 - Converted `Optional<Long>` to `OptionalLong` [#451](https://github.com/ie3-institute/simonaAPI/issues/451)
 - Aligned flex options with SIMONA [#452](https://github.com/ie3-institute/simonaAPI/issues/452)
+- Sealing interfaces to prevent unwanted implementations [#456](https://github.com/ie3-institute/simonaAPI/issues/456)
 
 ### Fixed
 
