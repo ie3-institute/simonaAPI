@@ -7,4 +7,5 @@
 package edu.ie3.simona.api.data.model.em;
 
 /** Interface that defines flex options. */
-public interface FlexOptions extends EmData, EmMessageContent {}
+public sealed interface FlexOptions extends EmData, EmMessageContent
+    permits DisaggregatedFlexOptions, EnergyBoundariesFlexOptions, PowerLimitFlexOptions {}
