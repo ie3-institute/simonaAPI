@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sealing interfaces to prevent unwanted implementations [#456](https://github.com/ie3-institute/simonaAPI/issues/456)
 
 ### Fixed
-
+- Fixed type of content in `EmCommunicationMessage` [#462](https://github.com/ie3-institute/simonaAPI/issues/462)
 
 ## [0.13.0] - 2026-02-26
 
