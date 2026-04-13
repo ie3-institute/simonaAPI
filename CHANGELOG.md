@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed type of content in `EmCommunicationMessage` [#462](https://github.com/ie3-institute/simonaAPI/issues/462)
 
+### Updated
+- Updated PSDM to version `9.0.0` [#466](https://github.com/ie3-institute/simonaAPI/issues/466)
+
 ## [0.13.0] - 2026-02-26
 
 ### Added

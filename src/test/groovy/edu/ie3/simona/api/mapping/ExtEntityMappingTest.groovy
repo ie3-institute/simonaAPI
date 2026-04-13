@@ -4,6 +4,7 @@ import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme
 import edu.ie3.datamodel.models.input.AssetInput
 import edu.ie3.datamodel.models.input.EmInput
 import edu.ie3.datamodel.models.input.NodeInput
+import edu.ie3.datamodel.models.input.container.EnergyManagementUnits
 import edu.ie3.datamodel.models.input.container.GraphicElements
 import edu.ie3.datamodel.models.input.container.RawGridElements
 import edu.ie3.datamodel.models.input.container.SubGridContainer
@@ -58,6 +59,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
+                new EnergyManagementUnits([]),
                 new GraphicElements([])
         )
 
@@ -96,6 +98,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
+                new EnergyManagementUnits([]),
                 new GraphicElements([])
         )
         def mapping = new ExtEntityMapping(grid)
@@ -187,6 +190,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
+                new EnergyManagementUnits([]),
                 new GraphicElements([])
         )
 

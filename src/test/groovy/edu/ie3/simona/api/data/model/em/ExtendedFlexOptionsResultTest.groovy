@@ -1,6 +1,6 @@
 package edu.ie3.simona.api.data.model.em
 
-import edu.ie3.datamodel.models.result.system.FlexOptionsResult
+import edu.ie3.datamodel.models.result.system.PowerLimitFlexOptionsResult
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
 import spock.lang.Specification
@@ -47,8 +47,8 @@ class ExtendedFlexOptionsResultTest extends Specification {
         def dis2 = UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")
 
         def disaggregated = [
-                (dis1): new FlexOptionsResult(time, dis1, pRef, pMin, pMax),
-                (dis2): new FlexOptionsResult(time, dis2, pMin, pMin, pMin)
+                (dis1): new PowerLimitFlexOptionsResult(time, dis1, pRef, pMin, pMax),
+                (dis2): new PowerLimitFlexOptionsResult(time, dis2, pMin, pMin, pMin)
         ]
 
         when:
@@ -74,8 +74,8 @@ class ExtendedFlexOptionsResultTest extends Specification {
         diagregatedMap | expectedResult
         [:] as Map     | false
         [
-            (UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")): new FlexOptionsResult(time, UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65"), pRef, pMin, pMax),
-            (UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")): new FlexOptionsResult(time, UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed"), pMin, pMin, pMin)
+            (UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")): new PowerLimitFlexOptionsResult(time, UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65"), pRef, pMin, pMax),
+            (UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")): new PowerLimitFlexOptionsResult(time, UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed"), pMin, pMin, pMin)
         ]              | true
     }
 
@@ -85,8 +85,8 @@ class ExtendedFlexOptionsResultTest extends Specification {
         def inferiorUuid1 = UUID.fromString("a246eee3-405c-4af1-9ad2-69ecad2bfb65")
         def inferiorUuid2 = UUID.fromString("78676121-f154-4f70-ad50-4384ddf8deed")
 
-        def inferiorOptions1 = new FlexOptionsResult(time, inferiorUuid1, pRef, pMin, pMax)
-        def inferiorOptions2 = new FlexOptionsResult(time, inferiorUuid2, pMin, pMin, pMin)
+        def inferiorOptions1 = new PowerLimitFlexOptionsResult(time, inferiorUuid1, pRef, pMin, pMax)
+        def inferiorOptions2 = new PowerLimitFlexOptionsResult(time, inferiorUuid2, pMin, pMin, pMin)
 
         when:
         result.addDisaggregated(inferiorUuid1, inferiorOptions1)
