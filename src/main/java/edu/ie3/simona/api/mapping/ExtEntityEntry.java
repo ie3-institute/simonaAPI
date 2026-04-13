@@ -8,6 +8,8 @@ package edu.ie3.simona.api.mapping;
 
 import edu.ie3.datamodel.io.naming.timeseries.ColumnScheme;
 import edu.ie3.datamodel.models.input.InputEntity;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,5 +26,10 @@ public record ExtEntityEntry(
     implements InputEntity {
   public ExtEntityEntry(UUID uuid, String id, DataType dataType) {
     this(uuid, id, Optional.empty(), dataType);
+  }
+
+  @Override
+  public Map<String, String> getAdditionalInformation() {
+    return Collections.emptyMap();
   }
 }

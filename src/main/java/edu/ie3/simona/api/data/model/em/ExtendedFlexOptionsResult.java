@@ -7,6 +7,7 @@
 package edu.ie3.simona.api.data.model.em;
 
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult;
+import edu.ie3.datamodel.models.result.system.PowerLimitFlexOptionsResult;
 import java.time.ZonedDateTime;
 import java.util.*;
 import javax.measure.quantity.Power;
@@ -16,7 +17,7 @@ import tech.units.indriya.ComparableQuantity;
  * Extended {@link FlexOptionsResult}, that contains the receiver of the flex options. This models
  * may also contain a disaggregation of the total flex options.
  */
-public final class ExtendedFlexOptionsResult extends FlexOptionsResult {
+public final class ExtendedFlexOptionsResult extends PowerLimitFlexOptionsResult {
 
   /** The disaggregated flex option results. */
   private final Map<UUID, FlexOptionsResult> disaggregated;
