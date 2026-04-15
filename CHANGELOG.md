@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.14.0] - 2026-04-15
+
 ### Added
 - Introduced base input directory to `SetupData` [#445](https://github.com/ie3-institute/simonaAPI/issues/445)
 - Added missing method to `ExtCoSimulation` [455](https://github.com/ie3-institute/simonaAPI/issues/455)
@@ -156,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/ie3-institute/simonaapi/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...0.11.0
