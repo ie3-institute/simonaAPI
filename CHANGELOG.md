@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.14.0] - 2026-04-15
+
+### Added
+- Introduced base input directory to `SetupData` [#445](https://github.com/ie3-institute/simonaAPI/issues/445)
+- Added missing method to `ExtCoSimulation` [455](https://github.com/ie3-institute/simonaAPI/issues/455)
+
+### Changed
+- Enhancing and refactoring of `ExtCoSimulation` [#237](https://github.com/ie3-institute/simonaAPI/issues/237)
+- Converted `Optional<Long>` to `OptionalLong` [#451](https://github.com/ie3-institute/simonaAPI/issues/451)
+- Aligned flex options with SIMONA [#452](https://github.com/ie3-institute/simonaAPI/issues/452)
+- Sealing interfaces to prevent unwanted implementations [#456](https://github.com/ie3-institute/simonaAPI/issues/456)
+
+### Fixed
+- Fixed type of content in `EmCommunicationMessage` [#462](https://github.com/ie3-institute/simonaAPI/issues/462)
+
+### Updated
+- Updated PSDM to version `9.0.0` [#466](https://github.com/ie3-institute/simonaAPI/issues/466)
+
 ## [0.13.0] - 2026-02-26
 
 ### Added
@@ -140,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/ie3-institute/simonaapi/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/ie3-institute/simonaapi/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/ie3-institute/simonaapi/compare/0.10.0...0.11.0

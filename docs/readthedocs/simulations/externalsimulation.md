@@ -47,5 +47,5 @@ Bidirectional connections can use both structures.
 ## Co-simulations
 
 This API provides an extension to the class `edu.ie3.simona.api.simulation.ExtSimulation` in the form of 
-`edu.ie3.simona.api.simulation.ExtCoSimulation`. This class contains some methods to simplify the definition of external
-co-simulations.
+`edu.ie3.simona.api.simulation.ExtCoSimulation`. This class contains some methods to simplify the connection to external
+co-simulations frameworks.

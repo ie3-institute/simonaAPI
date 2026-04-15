@@ -8,4 +8,5 @@ package edu.ie3.simona.api.ontology.ev;
 
 import edu.ie3.simona.api.ontology.DataMessageFromExt;
 
-public interface EvDataMessageFromExt extends DataMessageFromExt {}
+public sealed interface EvDataMessageFromExt extends DataMessageFromExt
+    permits ProvideArrivingEvs, RequestCurrentPrices, RequestDepartingEvs, RequestEvcsFreeLots {}

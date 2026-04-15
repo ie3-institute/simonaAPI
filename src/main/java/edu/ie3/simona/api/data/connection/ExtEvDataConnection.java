@@ -10,7 +10,7 @@ import edu.ie3.simona.api.data.model.ev.EvModel;
 import edu.ie3.simona.api.ontology.ev.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.UUID;
 
 public final class ExtEvDataConnection
@@ -73,7 +73,7 @@ public final class ExtEvDataConnection
    * @param maybeNextTick the next tick at which new arrivals are expected, or empty if simulation
    *     is about to end
    */
-  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals, Optional<Long> maybeNextTick) {
+  public void provideArrivingEvs(Map<UUID, List<EvModel>> arrivals, OptionalLong maybeNextTick) {
     sendExtMsg(new ProvideArrivingEvs(arrivals, maybeNextTick));
   }
 }

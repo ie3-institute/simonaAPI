@@ -6,7 +6,10 @@
 
 package edu.ie3.simona.api.ontology.em;
 
-import edu.ie3.simona.api.data.model.em.*;
+import edu.ie3.simona.api.data.model.em.EmData;
+import edu.ie3.simona.api.data.model.em.FlexOptionRequest;
+import edu.ie3.simona.api.data.model.em.FlexOptions;
+import edu.ie3.simona.api.data.model.em.SetPoint;
 import java.util.*;
 import org.slf4j.Logger;
 
@@ -15,13 +18,13 @@ public record ProvideEmData(
     long tick,
     Map<UUID, FlexOptionRequest> flexRequests,
     Map<UUID, List<FlexOptions>> flexOptions,
-    Map<UUID, EmSetPoint> setPoints)
+    Map<UUID, SetPoint> setPoints)
     implements EmDataMessageFromExt {
 
   public static ProvideEmData create(long tick, Map<UUID, ? extends EmData> emData, Logger log) {
     Map<UUID, FlexOptionRequest> flexRequests = new HashMap<>();
     Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
-    Map<UUID, EmSetPoint> setPoints = new HashMap<>();
+    Map<UUID, SetPoint> setPoints = new HashMap<>();
 
     emData.forEach(
         (uuid, emDataItem) -> {
@@ -29,7 +32,7 @@ public record ProvideEmData(
             case FlexOptionRequest r -> flexRequests.put(uuid, r);
             case FlexOptions r ->
                 flexOptions.computeIfAbsent(uuid, receiver -> new ArrayList<>()).add(r);
-            case EmSetPoint r -> setPoints.put(uuid, r);
+            case SetPoint r -> setPoints.put(uuid, r);
             default -> log.warn("Received unsupported em data: {}", emDataItem);
           }
         });

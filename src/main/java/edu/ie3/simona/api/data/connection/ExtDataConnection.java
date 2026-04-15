@@ -7,4 +7,5 @@
 package edu.ie3.simona.api.data.connection;
 
 /** Interface that defines a data connection between SIMONA and an external simulation. */
-public interface ExtDataConnection {}
+public sealed interface ExtDataConnection
+    permits ExtInputDataConnection, ExtOutputDataConnection, ExtSimDataConnection {}

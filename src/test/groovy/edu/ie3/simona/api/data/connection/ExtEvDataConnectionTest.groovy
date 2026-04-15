@@ -101,10 +101,10 @@ class ExtEvDataConnectionTest extends Specification {
         arrivingEvs.put(UUID.randomUUID(), new ArrayList<EvModel>())
 
         when:
-        extEvDataConnection.provideArrivingEvs(arrivingEvs, Optional.of(60L))
+        extEvDataConnection.provideArrivingEvs(arrivingEvs, OptionalLong.of(60L))
 
         then:
-        dataService.expectMessage(new ProvideArrivingEvs(arrivingEvs, Optional.of(60L)))
+        dataService.expectMessage(new ProvideArrivingEvs(arrivingEvs, OptionalLong.of(60L)))
         extSimAdapter.expectMessage(new ScheduleDataServiceMessage(dataService.ref()))
     }
 

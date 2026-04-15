@@ -9,4 +9,5 @@ package edu.ie3.simona.api.ontology.ev;
 import edu.ie3.simona.api.ontology.DataResponseMessageToExt;
 
 /** Messages that are sent from SIMONA to the external ev simulation */
-public interface EvDataResponseMessageToExt extends DataResponseMessageToExt {}
+public sealed interface EvDataResponseMessageToExt extends DataResponseMessageToExt
+    permits ProvideCurrentPrices, ProvideDepartingEvs, ProvideEvcsFreeLots {}

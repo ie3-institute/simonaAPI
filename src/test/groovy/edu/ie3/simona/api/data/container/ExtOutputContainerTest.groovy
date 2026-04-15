@@ -4,8 +4,8 @@ import edu.ie3.datamodel.models.StandardUnits
 import edu.ie3.datamodel.models.result.NodeResult
 import edu.ie3.datamodel.models.result.system.FlexOptionsResult
 import edu.ie3.datamodel.models.result.system.LoadResult
-import edu.ie3.simona.api.data.model.em.EmSetPoint
 import edu.ie3.simona.api.data.model.em.PowerLimitFlexOptions
+import edu.ie3.simona.api.data.model.em.SetPoint
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import edu.ie3.util.quantities.PowerSystemUnits
 import spock.lang.Shared
@@ -32,7 +32,7 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def container = new ExtOutputContainer(900L)
 
         UUID receiver1 = UUID.randomUUID()
-        def setPoint = new EmSetPoint(receiver1)
+        def setPoint = new SetPoint.AggregatedSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
         def options = new PowerLimitFlexOptions(receiver2, UUID.randomUUID(), null, null, null)
@@ -55,8 +55,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
     def "ExtResultContainer should return all results correctly"() {
         given:
         def expected = [
-                (nodeUuid): nodeResult,
-                (inputUuid): loadResult
+                (nodeUuid): [nodeResult],
+                (inputUuid): [loadResult]
         ]
 
         def container = new ExtOutputContainer(0L)
@@ -92,7 +92,7 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
         def container = new ExtOutputContainer(900L)
 
         UUID receiver1 = UUID.randomUUID()
-        def setPoint = new EmSetPoint(receiver1)
+        def setPoint = new SetPoint.AggregatedSetPoint(receiver1)
 
         UUID receiver2 = UUID.randomUUID()
         def options = new PowerLimitFlexOptions(receiver2, UUID.randomUUID(), null, null, null)
@@ -120,8 +120,8 @@ class ExtOutputContainerTest extends Specification implements DataServiceTestDat
 
     def "ExtResultContainer should return the next tick option correctly"() {
         expect:
-        new ExtOutputContainer(900L).maybeNextTick == Optional.empty()
-        new ExtOutputContainer(900L, Optional.empty()).maybeNextTick == Optional.empty()
-        new ExtOutputContainer(900L, Optional.of(1800L)).maybeNextTick == Optional.of(1800L)
+        new ExtOutputContainer(900L).maybeNextTick == OptionalLong.empty()
+        new ExtOutputContainer(900L, OptionalLong.empty()).maybeNextTick == OptionalLong.empty()
+        new ExtOutputContainer(900L, OptionalLong.of(1800L)).maybeNextTick == OptionalLong.of(1800L)
     }
 }

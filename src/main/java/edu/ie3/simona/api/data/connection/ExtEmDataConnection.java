@@ -72,7 +72,7 @@ public final class ExtEmDataConnection
       long tick,
       Map<UUID, FlexOptionRequest> flexRequests,
       Map<UUID, List<FlexOptions>> flexOptions,
-      Map<UUID, EmSetPoint> setPoints) {
+      Map<UUID, SetPoint> setPoints) {
     // send message only if at least one value is present
     if (!flexRequests.isEmpty() || !flexOptions.isEmpty() || !setPoints.isEmpty()) {
       sendExtMsg(new ProvideEmData(tick, flexRequests, flexOptions, setPoints));
@@ -90,7 +90,7 @@ public final class ExtEmDataConnection
    * @return true, if data was sent
    */
   public boolean sendCommunicationMessage(
-      long tick, List<EmCommunicationMessage<?>> emCommunicationMessages) {
+      long tick, List<EmCommunicationMessage> emCommunicationMessages) {
     // send message only if at least one value is present
     if (!emCommunicationMessages.isEmpty()) {
       sendExtMsg(new EmCommunicationMessages(tick, emCommunicationMessages));
@@ -124,8 +124,8 @@ public final class ExtEmDataConnection
    * @param tick for which the em service should stop
    * @return an option for the next tick in SIMONA
    */
-  public Optional<Long> requestCompletion(long tick, long nextTick) throws InterruptedException {
-    sendExtMsg(new RequestEmCompletion(tick, Optional.of(nextTick)));
+  public OptionalLong requestCompletion(long tick, long nextTick) throws InterruptedException {
+    sendExtMsg(new RequestEmCompletion(tick, OptionalLong.of(nextTick)));
     return receiveWithType(EmCompletion.class).maybeNextTick();
   }
 

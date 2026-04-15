@@ -19,9 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @param <M> type of message to SIMONA
  * @param <R> type of response messages to ext
  */
-public abstract non-sealed class BiDirectional<
+public abstract sealed class BiDirectional<
         M extends DataMessageFromExt, R extends DataResponseMessageToExt>
-    extends ExtInputDataConnection<M> implements ExtOutputDataConnection<R> {
+    extends ExtInputDataConnection<M> implements ExtOutputDataConnection<R>
+    permits ExtEmDataConnection, ExtEvDataConnection, ExtResultDataConnection {
 
   /** Data message queue containing messages from SIMONA */
   public final LinkedBlockingQueue<R> receiveTriggerQueue = new LinkedBlockingQueue<>();

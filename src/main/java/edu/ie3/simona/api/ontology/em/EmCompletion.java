@@ -6,11 +6,11 @@
 
 package edu.ie3.simona.api.ontology.em;
 
-import java.util.Optional;
+import java.util.OptionalLong;
 
 /**
  * Response send from SIMONA after the em service is finished for the current tick.
  *
  * @param maybeNextTick option for the next tick in SIMONA
  */
-public record EmCompletion(Optional<Long> maybeNextTick) implements EmDataResponseMessageToExt {}
+public record EmCompletion(OptionalLong maybeNextTick) implements EmDataResponseMessageToExt {}

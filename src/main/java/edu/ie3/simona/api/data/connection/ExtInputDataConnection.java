@@ -15,8 +15,8 @@ import org.apache.pekko.actor.typed.ActorRef;
  * Abstract base class for a connection between SIMONA and an external simulation with data flow
  * from external to SIMONA.
  */
-public abstract class ExtInputDataConnection<M extends DataMessageFromExt>
-    implements ExtDataConnection {
+public abstract sealed class ExtInputDataConnection<M extends DataMessageFromExt>
+    implements ExtDataConnection permits BiDirectional, ExtPrimaryDataConnection {
 
   /** Actor reference to service that handles data within SIMONA */
   private ActorRef<DataMessageFromExt> dataService;

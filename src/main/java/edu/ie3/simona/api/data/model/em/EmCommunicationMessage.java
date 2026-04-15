@@ -15,10 +15,9 @@ import java.util.UUID;
  * @param sender of the data
  * @param msgId the message id of this message
  * @param content the actual em data that is sent
- * @param <D> type of the em data
  */
-public record EmCommunicationMessage<D extends EmData>(
-    UUID receiver, UUID sender, UUID msgId, D content) implements EmData {
+public record EmCommunicationMessage(
+    UUID receiver, UUID sender, UUID msgId, EmMessageContent content) implements EmData {
 
   /**
    * Constructor for {@link EmCommunicationMessage} that will generate a random message id.
@@ -27,7 +26,7 @@ public record EmCommunicationMessage<D extends EmData>(
    * @param sender of the data
    * @param content the actual em data that is sent
    */
-  public EmCommunicationMessage(UUID receiver, UUID sender, D content) {
+  public EmCommunicationMessage(UUID receiver, UUID sender, EmMessageContent content) {
     this(receiver, sender, UUID.randomUUID(), content);
   }
 }

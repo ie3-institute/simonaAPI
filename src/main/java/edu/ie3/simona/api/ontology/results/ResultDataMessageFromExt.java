@@ -9,4 +9,5 @@ package edu.ie3.simona.api.ontology.results;
 import edu.ie3.simona.api.ontology.DataMessageFromExt;
 
 /** Messages that are sent from an external simulation to the SIMONA */
-public interface ResultDataMessageFromExt extends DataMessageFromExt {}
+public sealed interface ResultDataMessageFromExt extends DataMessageFromExt
+    permits RequestResultEntities {}

@@ -9,4 +9,5 @@ package edu.ie3.simona.api.ontology.primary;
 import edu.ie3.simona.api.ontology.DataMessageFromExt;
 
 /** Messages that are sent from an external primary data simulation to SIMONA */
-public interface PrimaryDataMessageFromExt extends DataMessageFromExt {}
+public sealed interface PrimaryDataMessageFromExt extends DataMessageFromExt
+    permits ProvidePrimaryData {}
