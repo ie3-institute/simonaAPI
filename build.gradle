@@ -49,7 +49,7 @@ repositories {
 
 dependencies{
 
-  implementation 'tech.units:indriya:2.2.3' // quantities
+  implementation 'tech.units:indriya:2.2.4' // quantities
 
   implementation 'com.github.spotbugs:spotbugs-annotations:4.9.8' // java annotations
 
