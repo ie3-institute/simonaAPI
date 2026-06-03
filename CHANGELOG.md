@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Adapted `EnergyBoundariesFlexOptions` [#489](https://github.com/ie3-institute/simonaAPI/issues/489)
+
 ## [0.14.0] - 2026-04-15
 
 ### Added

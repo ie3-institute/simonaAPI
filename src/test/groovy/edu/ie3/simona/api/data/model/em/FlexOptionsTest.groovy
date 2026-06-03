@@ -6,9 +6,12 @@ import spock.lang.Specification
 import tech.units.indriya.ComparableQuantity
 import tech.units.indriya.quantity.Quantities
 
+import javax.measure.Quantity
+import javax.measure.quantity.Energy
 import javax.measure.quantity.Power
 
 import static edu.ie3.util.quantities.PowerSystemUnits.KILOWATT
+import static edu.ie3.util.quantities.PowerSystemUnits.KILOWATTHOUR
 import static tech.units.indriya.unit.Units.PERCENT
 
 class FlexOptionsTest extends Specification {
@@ -43,10 +46,13 @@ class FlexOptionsTest extends Specification {
     def "GeneralFlexOptions can be constructed correctly"() {
         given:
         UUID receiver = UUID.randomUUID()
+        Map<Long, ClosedInterval<ComparableQuantity<Energy>>> energyLimits =
+                [0L:new ClosedInterval(Quantities.getQuantity(0d, KILOWATTHOUR), Quantities.getQuantity(20d, KILOWATTHOUR))]
 
         when:
         def assetEnergyBoundary = new EnergyBoundariesFlexOptions.AssetEnergyBoundaries(
-                [:],
+                Quantities.getQuantity(5d, KILOWATTHOUR),
+                energyLimits,
                 new ClosedInterval(Quantities.getQuantity(0d, KILOWATT), Quantities.getQuantity(10d, KILOWATT)),
                 Quantities.getQuantity(95d, PERCENT),
                 Quantities.getQuantity(95d, PERCENT),
@@ -60,7 +66,8 @@ class FlexOptionsTest extends Specification {
         )
 
         then:
-        assetEnergyBoundary.energyLimits == [:]
+        assetEnergyBoundary.currentEnergy == Quantities.getQuantity(5d, KILOWATTHOUR)
+        assetEnergyBoundary.energyLimits == energyLimits
         assetEnergyBoundary.powerLimits.lower == Quantities.getQuantity(0d, KILOWATT)
         assetEnergyBoundary.powerLimits.upper == Quantities.getQuantity(10d, KILOWATT)
         assetEnergyBoundary.etaCharge == Quantities.getQuantity(95d, PERCENT)
