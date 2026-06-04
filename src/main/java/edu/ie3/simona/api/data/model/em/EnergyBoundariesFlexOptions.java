@@ -31,18 +31,20 @@ public record EnergyBoundariesFlexOptions(
    * Energy boundaries for an asset. The energy limits (valid for the interval from tick to the
    * next) constitute the boundaries between which flexibility can be used.
    *
-   * @param energyLimits Energy limits that signify the potential upwards and downwards flexibility
-   *     potential for the respective tick. The energy limits for all ticks relate to the energy
-   *     potential at the current tick (which is defined to be zero).
+   * @param currentEnergy The current state of energy.
+   * @param energyLimits Energy limits that signify the minimum and maximum state of energy for the
+   *     respective tick.
    * @param powerLimits The power limits, which limit the power of the complete asset for all time
    *     steps. If energy limits (upper and lower) are the same at some time step, power limits are
    *     ignored.
    * @param etaCharge The charging efficiency.
    * @param etaDischarge The discharging efficiency.
    * @param tickDisconnect Optionally, the tick at which the storage will be disconnected, thus the
-   *     upward or downward energy potential can not be used beyond this tick.
+   *     upward or downward energy potential of the tick before {@code tickDisconnect} can not be
+   *     used afterwards.
    */
   public record AssetEnergyBoundaries(
+      ComparableQuantity<Energy> currentEnergy,
       Map<Long, ClosedInterval<ComparableQuantity<Energy>>> energyLimits,
       ClosedInterval<ComparableQuantity<Power>> powerLimits,
       ComparableQuantity<Dimensionless> etaCharge,

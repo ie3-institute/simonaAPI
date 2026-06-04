@@ -5,7 +5,6 @@ import edu.ie3.datamodel.models.input.AssetInput
 import edu.ie3.datamodel.models.input.EmInput
 import edu.ie3.datamodel.models.input.NodeInput
 import edu.ie3.datamodel.models.input.container.EnergyManagementUnits
-import edu.ie3.datamodel.models.input.container.GraphicElements
 import edu.ie3.datamodel.models.input.container.RawGridElements
 import edu.ie3.datamodel.models.input.container.SubGridContainer
 import edu.ie3.datamodel.models.input.container.SystemParticipants
@@ -59,8 +58,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
-                new EnergyManagementUnits([]),
-                new GraphicElements([])
+                new EnergyManagementUnits([])
         )
 
         when:
@@ -98,8 +96,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
-                new EnergyManagementUnits([]),
-                new GraphicElements([])
+                new EnergyManagementUnits([])
         )
         def mapping = new ExtEntityMapping(grid)
 
@@ -190,8 +187,7 @@ class ExtEntityMappingTest extends Specification {
                 1,
                 new RawGridElements(gridAssets),
                 new SystemParticipants(participantInputs),
-                new EnergyManagementUnits([]),
-                new GraphicElements([])
+                new EnergyManagementUnits([])
         )
 
         when:
