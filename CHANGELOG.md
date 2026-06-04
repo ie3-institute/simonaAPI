@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Adapted `EnergyBoundariesFlexOptions` [#489](https://github.com/ie3-institute/simonaAPI/issues/489)
 
+### Updated
+- Updated PSDM to version `9.1.0`
+- Updated PSU to version `3.2.1`
+
 ## [0.14.0] - 2026-04-15
 
 ### Added
