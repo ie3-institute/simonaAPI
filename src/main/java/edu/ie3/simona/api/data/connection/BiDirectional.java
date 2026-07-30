@@ -31,12 +31,22 @@ public abstract sealed class BiDirectional<
     super();
   }
 
+
   @Override
-  public final void queueExtResponseMsg(R msg) throws InterruptedException {
+  public final void handleResponseMsg(R msg) throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
 
-  @Override
+  /**
+   * Waits until a message of given type is added to the queue. All messages that extends the given
+   * type can be received. This method blocks until having received a response from SIMONA.
+   *
+   * <p>To receive only specific types of messages, use {@link #receiveWithType(Class)} instead.
+   *
+   * @return a message of the given type
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
+   */
   public final R receiveAny() throws InterruptedException {
     return receiveTriggerQueue.take();
   }
@@ -48,7 +58,15 @@ public abstract sealed class BiDirectional<
     return result;
   }
 
-  @Override
+  /**
+   * Waits until a message of given type is added to the queue. If the message has a different type,
+   * a RuntimeException is thrown. This method blocks until having received a response from SIMONA.
+   *
+   * @param expectedMessageClass the expected class of the message to be received
+   * @return a message of the expected type once it has been received
+   * @throws InterruptedException if the thread running this has been interrupted during the
+   *     blocking operation
+   */
   @SuppressWarnings("unchecked")
   public final <T extends R> T receiveWithType(Class<T> expectedMessageClass)
       throws InterruptedException {
