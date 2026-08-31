@@ -40,7 +40,7 @@ class ExtResultDataConnectionTest extends Specification implements DataServiceTe
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extResultDataConnection.queueExtResponseMsg(sentMsg)
+        extResultDataConnection.handleResponseMsg(sentMsg)
         def receivedResults = extResultDataConnection.requestResults(0L, false)
 
         then:

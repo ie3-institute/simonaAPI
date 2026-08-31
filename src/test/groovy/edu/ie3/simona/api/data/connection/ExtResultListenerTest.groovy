@@ -6,14 +6,16 @@ import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt
 import edu.ie3.simona.api.test.common.DataServiceTestData
 import spock.lang.Specification
 
+import java.util.concurrent.LinkedBlockingQueue
+
 class ExtResultListenerTest extends Specification implements DataServiceTestData {
 
     class BasicListener extends ExtResultListener {
-        List<ResultDataResponseMessageToExt> results = new ArrayList<>()
+        LinkedBlockingQueue<ResultDataResponseMessageToExt> results = new LinkedBlockingQueue<>()
 
         @Override
         void processResponse(ResultDataResponseMessageToExt msg) {
-            results.add(msg)
+            results.put(msg)
         }
 
         @Override
@@ -28,7 +30,7 @@ class ExtResultListenerTest extends Specification implements DataServiceTestData
         listener.handleResponseMsg(new ProvideResultEntities([loadResult]))
 
         then:
-        ProvideResultEntities message = listener.results.getFirst()
+        ProvideResultEntities message = listener.results.take()
 
         message.results() == [(inputUuid): [loadResult]]
     }
