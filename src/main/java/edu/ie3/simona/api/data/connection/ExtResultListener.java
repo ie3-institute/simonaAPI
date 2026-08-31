@@ -24,21 +24,22 @@ public abstract non-sealed class ExtResultListener
   private final Thread thread;
 
   protected ExtResultListener() {
-    Runnable run =
-        () -> {
-          while (!Thread.currentThread().isInterrupted()) {
-            try {
-              ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
-              processResponse(msg);
-            } catch (InterruptedException ie) {
-              throw new ExtDataConnectionException(
-                  "An exception occurred while processing the result.", ie);
-            }
-          }
-        };
-
-    this.thread = new Thread(run);
+    this.thread = new Thread(this::run);
     this.thread.start();
+  }
+
+  /** Method that is run in the thread. */
+  private void run() {
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        processResponse(receiveTriggerQueue.take());
+      } catch (InterruptedException ie) {
+        Thread.currentThread().interrupt();
+
+        throw new ExtDataConnectionException(
+            "An exception occurred while processing the result.", ie);
+      }
+    }
   }
 
   @Override
@@ -48,8 +49,8 @@ public abstract non-sealed class ExtResultListener
 
   /** Stops the current listener. */
   public final void stop() {
-    thread.interrupt();
     close();
+    thread.interrupt();
   }
 
   /**
