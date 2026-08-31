@@ -33,5 +33,8 @@ class ExtResultListenerTest extends Specification implements DataServiceTestData
         ProvideResultEntities message = listener.results.take()
 
         message.results() == [(inputUuid): [loadResult]]
+
+        // stops the listener
+        listener.stop()
     }
 }

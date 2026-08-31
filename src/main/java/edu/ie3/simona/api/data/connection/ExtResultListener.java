@@ -6,6 +6,7 @@
 
 package edu.ie3.simona.api.data.connection;
 
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,14 +23,16 @@ public abstract non-sealed class ExtResultListener
 
   private final Thread thread;
 
-  public ExtResultListener() {
+  protected ExtResultListener() {
     Runnable run =
         () -> {
           while (!Thread.currentThread().isInterrupted()) {
             try {
               ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
               processResponse(msg);
-            } catch (Exception ignored) {
+            } catch (InterruptedException ie) {
+              throw new ExtDataConnectionException(
+                  "An exception occurred while processing the result.", ie);
             }
           }
         };
