@@ -21,6 +21,8 @@ public abstract non-sealed class ExtResultListener
   private final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
+  private boolean stopFlag = false;
+
   private final Thread thread;
 
   protected ExtResultListener() {
@@ -36,8 +38,11 @@ public abstract non-sealed class ExtResultListener
       } catch (InterruptedException ie) {
         Thread.currentThread().interrupt();
 
-        throw new ExtDataConnectionException(
-            "An exception occurred while processing the result.", ie);
+        if (!stopFlag) {
+          // to prevent exception after successful termination
+          throw new ExtDataConnectionException(
+              "An exception occurred while processing the result.", ie);
+        }
       }
     }
   }
@@ -49,6 +54,7 @@ public abstract non-sealed class ExtResultListener
 
   /** Stops the current listener. */
   public final void stop() {
+    stopFlag = true;
     close();
     thread.interrupt();
   }
