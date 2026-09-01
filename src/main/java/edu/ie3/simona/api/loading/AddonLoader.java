@@ -59,7 +59,7 @@ public abstract sealed class AddonLoader permits JarLoader {
    * @throws IOException - if an I/O error occurs
    */
   private ProvidedData loadAddons(Path extSimDir, SetupData setupData) throws IOException {
-    Iterable<File> files = scanDirectory(extSimDir);
+    Iterable<File> files = scanDirectory(extSimDir, allowedExtensions);
     ProvidedData data = ProvidedData.empty();
 
     for (File file : files) {
@@ -94,25 +94,39 @@ public abstract sealed class AddonLoader permits JarLoader {
    */
   private ProvidedData setUpExtLinks(File file, SetupData setupData) throws IOException {
     Iterable<ExtLinkInterface> extLinks = load(file);
-
     ProvidedData data = ProvidedData.empty();
 
     for (ExtLinkInterface extLink : extLinks) {
-      // set up the addon
-      extLink.setup(setupData);
-
-      // loads the data
-      if (extLink instanceof ExtSimulationProvider provider) {
-        data.add(provider.getExtSimulation());
-      }
-
-      if (extLink instanceof ExtListenerProvider provider) {
-        data.add(provider.getResultListeners());
-      }
+      data.add(setUpExtLink(extLink, setupData));
     }
 
     // some log statement
     log.info("Loaded file '{}' with: {}", file, data);
+
+    return data;
+  }
+
+  /**
+   * Set up the {@link ExtLinkInterface}s.
+   *
+   * @param extLink external link interface.
+   * @param setupData for setting up the addon
+   * @return all loaded data
+   */
+  private static ProvidedData setUpExtLink(ExtLinkInterface extLink, SetupData setupData) {
+    ProvidedData data = ProvidedData.empty();
+
+    // set up the addon
+    extLink.setup(setupData);
+
+    // loads the data
+    if (extLink instanceof ExtSimulationProvider provider) {
+      data.add(provider.getExtSimulation());
+    }
+
+    if (extLink instanceof ExtListenerProvider provider) {
+      data.add(provider.getResultListeners());
+    }
 
     return data;
   }
@@ -124,7 +138,7 @@ public abstract sealed class AddonLoader permits JarLoader {
    * @return the absolute path as a file
    * @throws IOException - if an I/O error occurs
    */
-  private File buildDir(Path path) throws IOException {
+  private static File buildDir(Path path) throws IOException {
     if (path.isAbsolute()) {
       return path.toFile();
     }
@@ -144,7 +158,8 @@ public abstract sealed class AddonLoader permits JarLoader {
    * @return all loaded data
    * @throws IOException - if an I/O error occurs
    */
-  private Iterable<File> scanDirectory(Path extSimDir) throws IOException {
+  private static List<File> scanDirectory(Path extSimDir, Set<String> allowedExtensions)
+      throws IOException {
     File dir = buildDir(extSimDir);
 
     if (!dir.isDirectory()) {
