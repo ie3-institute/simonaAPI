@@ -6,7 +6,7 @@
 
 package edu.ie3.simona.api.data.connection;
 
-import edu.ie3.simona.api.exceptions.UnexpectedResponseMessageException;
+import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,43 +14,58 @@ import java.util.concurrent.LinkedBlockingQueue;
  * External result listener. This listener is similar to the {@link ExtResultDataConnection}, but is
  * not able to request results from SIMONA.
  */
-public non-sealed class ExtResultListener
+public abstract non-sealed class ExtResultListener
     implements ExtOutputDataConnection<ResultDataResponseMessageToExt> {
 
   /** Data message queue containing messages from SIMONA */
-  public final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
+  private final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
 
-  public ExtResultListener() {
-    super();
+  private boolean stopFlag = false;
+
+  private final Thread thread;
+
+  protected ExtResultListener() {
+    this.thread = new Thread(this::run);
+    this.thread.start();
+  }
+
+  /** Method that is run in the thread. */
+  private void run() {
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        processResponse(receiveTriggerQueue.take());
+      } catch (InterruptedException ie) {
+        Thread.currentThread().interrupt();
+
+        if (!stopFlag) {
+          // to prevent exception after successful termination
+          throw new ExtDataConnectionException(
+              "An exception occurred while processing the result.", ie);
+        }
+      }
+    }
   }
 
   @Override
-  public final void queueExtResponseMsg(ResultDataResponseMessageToExt msg)
-      throws InterruptedException {
+  public void handleResponseMsg(ResultDataResponseMessageToExt msg) throws InterruptedException {
     receiveTriggerQueue.put(msg);
   }
 
-  @Override
-  public final ResultDataResponseMessageToExt receiveAny() throws InterruptedException {
-    return receiveTriggerQueue.take();
+  /** Stops the current listener. */
+  public final void stop() {
+    stopFlag = true;
+    close();
+    thread.interrupt();
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public final <T extends ResultDataResponseMessageToExt> T receiveWithType(
-      Class<T> expectedMessageClass) throws InterruptedException {
-    // blocks until actor puts something here
-    ResultDataResponseMessageToExt msg = receiveTriggerQueue.take();
+  /**
+   * Method to handle the message.
+   *
+   * @param msg To handle.
+   */
+  public abstract void processResponse(ResultDataResponseMessageToExt msg);
 
-    if (msg.getClass().equals(expectedMessageClass)) {
-      return (T) msg;
-    } else
-      throw new UnexpectedResponseMessageException(
-          "Received unexpected message '"
-              + msg
-              + "', expected type '"
-              + expectedMessageClass
-              + "'");
-  }
+  /** Method to implement some clean up operations. */
+  public abstract void close();
 }

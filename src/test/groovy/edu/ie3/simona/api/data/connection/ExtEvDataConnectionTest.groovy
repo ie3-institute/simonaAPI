@@ -39,7 +39,7 @@ class ExtEvDataConnectionTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEvDataConnection.queueExtResponseMsg(sentMsg)
+        extEvDataConnection.handleResponseMsg(sentMsg)
         def actualReceivedEvcs = extEvDataConnection.requestAvailablePublicEvcs()
 
         then:
@@ -59,7 +59,7 @@ class ExtEvDataConnectionTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEvDataConnection.queueExtResponseMsg(sentMsg)
+        extEvDataConnection.handleResponseMsg(sentMsg)
         def actualReceivedPrices = extEvDataConnection.requestCurrentPrices()
 
         then:
@@ -81,7 +81,7 @@ class ExtEvDataConnectionTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEvDataConnection.queueExtResponseMsg(sentMsg)
+        extEvDataConnection.handleResponseMsg(sentMsg)
         def actualReceivedEvs = extEvDataConnection.requestDepartingEvs(requestedDepartingEvs)
 
         then:
@@ -119,7 +119,7 @@ class ExtEvDataConnectionTest extends Specification {
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEvDataConnection.queueExtResponseMsg(unexpectedMsg)
+        extEvDataConnection.handleResponseMsg(unexpectedMsg)
         extEvDataConnection.requestAvailablePublicEvcs()
 
         then:
