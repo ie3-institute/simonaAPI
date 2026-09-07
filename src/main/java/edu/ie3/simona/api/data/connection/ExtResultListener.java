@@ -9,6 +9,8 @@ package edu.ie3.simona.api.data.connection;
 import edu.ie3.simona.api.exceptions.ExtDataConnectionException;
 import edu.ie3.simona.api.ontology.results.ResultDataResponseMessageToExt;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * External result listener. This listener is similar to the {@link ExtResultDataConnection}, but is
@@ -17,9 +19,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract non-sealed class ExtResultListener
     implements ExtOutputDataConnection<ResultDataResponseMessageToExt> {
 
+  private static final Logger log = LoggerFactory.getLogger(ExtResultListener.class);
+
   /** Data message queue containing messages from SIMONA */
   private final LinkedBlockingQueue<ResultDataResponseMessageToExt> receiveTriggerQueue =
       new LinkedBlockingQueue<>();
+
+  private boolean stopFlag = false;
 
   private final Thread thread;
 
@@ -30,27 +36,46 @@ public abstract non-sealed class ExtResultListener
 
   /** Method that is run in the thread. */
   private void run() {
-    while (!Thread.currentThread().isInterrupted()) {
+    boolean finished = receiveTriggerQueue.isEmpty() && stopFlag;
+
+    while (!finished) {
       try {
         processResponse(receiveTriggerQueue.take());
       } catch (InterruptedException ie) {
         Thread.currentThread().interrupt();
 
-        throw new ExtDataConnectionException(
-            "An exception occurred while processing the result.", ie);
+        if (!stopFlag) {
+          // to prevent exception after successful termination
+          throw new ExtDataConnectionException(
+              "An exception occurred while processing the result.", ie);
+        }
       }
+
+      finished = receiveTriggerQueue.isEmpty() && stopFlag;
     }
   }
 
   @Override
   public void handleResponseMsg(ResultDataResponseMessageToExt msg) throws InterruptedException {
-    receiveTriggerQueue.put(msg);
+    if (!stopFlag) {
+      receiveTriggerQueue.put(msg);
+    } else {
+      log.warn(
+          "Cannot process result message, because the listener is already terminated. Msg: {}",
+          msg);
+    }
   }
 
   /** Stops the current listener. */
   public final void stop() {
-    close();
-    thread.interrupt();
+    stopFlag = true;
+    try {
+      close();
+    } catch (Throwable t) {
+      log.error("An error occurred while closing the listener.", t);
+    } finally {
+      thread.interrupt();
+    }
   }
 
   /**
