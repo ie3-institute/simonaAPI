@@ -74,5 +74,48 @@ class ProvidedDataTest extends Specification {
         data.dataConnections() == [listener] as Set
     }
 
+    def "A ProvidedData can be added to a ProvidedData correctly"() {
+        given:
+        def data = new ProvidedData()
+        def connection = new ExtResultDataConnection(null)
 
+        ExtSimulation extSim = new ExtSimulation("dummy") {
+            @Override
+            protected long initialize() {
+                return 0
+            }
+
+            @Override
+            protected OptionalLong doActivity(long tick) throws ExtSimException, InterruptedException {
+                return null
+            }
+
+            @Override
+            Set<ExtDataConnection> getDataConnections() {
+                return Set.of(connection)
+            }
+        }
+
+        ExtResultListener listener = new ExtResultListener() {
+            @Override
+            void processResponse(ResultDataResponseMessageToExt msg) {}
+
+            @Override
+            void close() {}
+        }
+
+        when:
+        data.add(extSim)
+        data.add([listener])
+
+        def result = new ProvidedData()
+        result.add(data)
+
+        then:
+        result.extSimulations().size() == 1
+        result.extSimulations() == [extSim] as Set
+
+        result.dataConnections().size() == 2
+        result.dataConnections() == [connection, listener] as Set
+    }
 }

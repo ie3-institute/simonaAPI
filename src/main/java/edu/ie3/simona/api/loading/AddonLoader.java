@@ -60,18 +60,27 @@ public abstract sealed class AddonLoader permits JarLoader {
    */
   private ProvidedData loadAddons(Path extSimDir, SetupData setupData) throws IOException {
     Iterable<File> files = scanDirectory(extSimDir, allowedExtensions);
-    ProvidedData data = ProvidedData.empty();
+    ProvidedData allData = ProvidedData.empty();
 
     for (File file : files) {
-      // loads and sets up the addons
-      ProvidedData current = setUpExtLinks(file, setupData);
+      ProvidedData currentData = ProvidedData.empty();
+
+      // loads the addons
+      Iterable<ExtLinkInterface> extLinks = load(file);
+
+      for (ExtLinkInterface extLink : extLinks) {
+        currentData.add(setUpExtLink(extLink, setupData));
+      }
+
+      // some log statement
+      log.info("Loaded file '{}' with: {}", file, currentData);
 
       // add to overall addons
-      data.add(current);
+      allData.add(currentData);
     }
 
     // return all provided data
-    return data;
+    return allData;
   }
 
   /**
@@ -83,28 +92,6 @@ public abstract sealed class AddonLoader permits JarLoader {
    * @throws IOException - if an I/O error occurs
    */
   protected abstract Iterable<ExtLinkInterface> load(File file) throws IOException;
-
-  /**
-   * Sets up all {@link ExtLinkInterface}s.
-   *
-   * @param file the file with the external links.
-   * @param setupData for setting up the addon
-   * @return all loaded data
-   * @throws IOException - if an I/O error occurs
-   */
-  private ProvidedData setUpExtLinks(File file, SetupData setupData) throws IOException {
-    Iterable<ExtLinkInterface> extLinks = load(file);
-    ProvidedData data = ProvidedData.empty();
-
-    for (ExtLinkInterface extLink : extLinks) {
-      data.add(setUpExtLink(extLink, setupData));
-    }
-
-    // some log statement
-    log.info("Loaded file '{}' with: {}", file, data);
-
-    return data;
-  }
 
   /**
    * Set up the {@link ExtLinkInterface}s.

@@ -1,6 +1,13 @@
 package edu.ie3.simona.api.loading
 
-
+import edu.ie3.datamodel.models.input.UniqueInputEntity
+import edu.ie3.datamodel.models.input.container.EnergyManagementUnits
+import edu.ie3.datamodel.models.input.container.GridContainer
+import edu.ie3.datamodel.models.input.container.InputContainer
+import edu.ie3.datamodel.models.input.container.JointGridContainer
+import edu.ie3.datamodel.models.input.container.RawGridElements
+import edu.ie3.datamodel.models.input.container.SubGridContainer
+import edu.ie3.datamodel.models.input.container.SystemParticipants
 import edu.ie3.simona.api.ExtListenerProvider
 import edu.ie3.simona.api.ExtSimulationProvider
 import edu.ie3.simona.api.data.SetupData
@@ -61,6 +68,19 @@ class AddonLoaderTest extends Specification {
         ExtSimulation getExtSimulation() {
             return extSim
         }
+    }
+
+    def "The AddonLoader should load no Jars correctly"() {
+        given:
+        def path = Path.of(getClass().getResource("_no-jars").toURI())
+        def setupData = new SetupData(null, null, null, null, null)
+
+        when:
+        def provided = AddonLoader.load(path, setupData)
+
+        then:
+        provided.extSimulations().size() == 0
+
     }
 
     def "The AddonLoader sets up an addon correctly"() {
