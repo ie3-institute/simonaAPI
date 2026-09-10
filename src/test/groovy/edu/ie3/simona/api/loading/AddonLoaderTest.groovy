@@ -76,7 +76,7 @@ class AddonLoaderTest extends Specification {
         def setupData = new SetupData(null, null, null, null, null)
 
         when:
-        def provided = AddonLoader.load(path, setupData)
+        def provided = new JarLoader().load(path, setupData)
 
         then:
         provided.extSimulations().size() == 0

@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Addon loader for SIMONA addons. */
-public abstract sealed class AddonLoader permits JarLoader {
+abstract class AddonLoader {
 
   protected static final Logger log = LoggerFactory.getLogger(AddonLoader.class);
 
@@ -29,28 +29,6 @@ public abstract sealed class AddonLoader permits JarLoader {
   }
 
   /**
-   * Method that uses all registered {@link AddonLoader} to load all available addons in the given
-   * directory.
-   *
-   * @param extSimDir directory containing files with addons
-   * @param setupData used for setting up addons
-   * @return all provided data
-   * @throws IOException - if an I/O error occurs
-   */
-  public static ProvidedData load(Path extSimDir, SetupData setupData) throws IOException {
-    ProvidedData data = ProvidedData.empty();
-
-    // all registered loaders
-    List<AddonLoader> loaders = List.of(new JarLoader());
-
-    for (AddonLoader loader : loaders) {
-      data.add(loader.loadAddons(extSimDir, setupData));
-    }
-
-    return data;
-  }
-
-  /**
    * Loads the addons at the given path.
    *
    * @param extSimDir the directory containing external simulations
@@ -58,7 +36,7 @@ public abstract sealed class AddonLoader permits JarLoader {
    * @return all provided data
    * @throws IOException - if an I/O error occurs
    */
-  private ProvidedData loadAddons(Path extSimDir, SetupData setupData) throws IOException {
+  public final ProvidedData load(Path extSimDir, SetupData setupData) throws IOException {
     Iterable<File> files = scanDirectory(extSimDir, allowedExtensions);
     ProvidedData allData = ProvidedData.empty();
 
