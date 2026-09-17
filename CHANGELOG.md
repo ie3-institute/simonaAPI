@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added proper support for external listeners [#523](https://github.com/ie3-institute/simonaAPI/issues/523)
+- Added addon loader functionality [#528](https://github.com/ie3-institute/simonaAPI/issues/528)
 
 ### Changed
 - Adapted `EnergyBoundariesFlexOptions` [#489](https://github.com/ie3-institute/simonaAPI/issues/489)

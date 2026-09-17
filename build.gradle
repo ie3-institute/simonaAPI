@@ -1,6 +1,7 @@
 plugins {
   id 'groovy' // groovy support
   id 'java' // java support
+  id 'scala' // scala support
   id 'com.diffplug.spotless' version '8.10.2'//code format
   id 'pmd' // code check, working on source code
   id 'com.github.spotbugs' version '6.5.11' // code check, working on byte code
@@ -10,6 +11,7 @@ plugins {
   id 'jacoco' // java code coverage plugin
   id 'net.thauvin.erik.gradle.semver' version '1.0.4' // semantic versioning
   id 'kr.motd.sphinx' version '2.10.1' // documentation generation
+  id 'com.gradleup.shadow' version '9.6.1' // fat jar
 }
 
 ext {
@@ -18,8 +20,19 @@ ext {
 
   // required for pekko
   scalaVersion = '3'
-  scalaBinaryVersion = '3.9.0'
+  scalaBinaryVersion = '3.8.4'
   pekkoVersion = "1.7.0"
+  scapegoatVersion = '3.3.6'
+
+  scala3compilerOptions = [
+    "-print-tasty",
+    "-feature",
+    "-language:implicitConversions",
+    "-language:existentials",
+    "-Wunused:all",
+    "-Xmax-inlines:128",
+    "-Xunchecked-java-output-version:21"
+  ]
 }
 
 group = 'com.github.ie3-institute'
@@ -42,6 +55,10 @@ apply from: scriptsLocation + 'jacoco.gradle'
 apply from: scriptsLocation + 'documentation.gradle'
 apply from: scriptsLocation + 'test.gradle'
 apply from: scriptsLocation + 'branchName.gradle'
+
+configurations {
+  scalaCompilerPlugin
+}
 
 repositories {
   mavenCentral()
@@ -81,12 +98,49 @@ dependencies{
   // pekko
   implementation "org.apache.pekko:pekko-actor-typed_${scalaVersion}:${pekkoVersion}"
 
-  testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
+  /* Scala compiler plugin for static code analysis */
+  implementation "com.sksamuel.scapegoat:scalac-scapegoat-plugin_${scalaBinaryVersion}:${scapegoatVersion}"
+  scalaCompilerPlugin "com.sksamuel.scapegoat:scalac-scapegoat-plugin_${scalaBinaryVersion}:${scapegoatVersion}"
 
   // TESTING
+  testImplementation "org.scalatest:scalatest_${scalaVersion}:3.2.20"
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   testImplementation 'org.apache.groovy:groovy:5.1.2'
   testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
+  testImplementation "org.apache.pekko:pekko-actor-testkit-typed_${scalaVersion}:${pekkoVersion}" // pekko typed testkit
+}
+
+tasks.shadowJar {
+  zip64 = true
+  archiveBaseName = 'simonaAPI'
+}
+
+// scapegoat hook configuration
+// Configure Scapegoat compiler plugin for all Scala compile tasks.
+// see https://docs.gradle.org/current/userguide/scala_plugin.html#sec:configure_scala_classpath for details
+tasks.withType(ScalaCompile).configureEach {
+  scalaCompileOptions.additionalParameters = scala3compilerOptions + [
+    "-Xplugin:" + configurations.scalaCompilerPlugin.asPath,
+    "-P:scapegoat:dataDir:" + project.layout.buildDirectory.get().asFile.absolutePath + "/reports/scapegoat/src/",
+    "-P:scapegoat:disabledInspections:TryGet:ComparingFloatingPointTypes"
+  ]
+  scalaCompileOptions.forkOptions.jvmArgs = [
+    '-Xss2m',
+    '-XX:-UseGCOverheadLimit',
+    '-Xmx4g'
+  ]
+}
+
+// separate scapegoat report for test classes
+compileTestScala {
+  scalaCompileOptions.additionalParameters = scalaCompileOptions.additionalParameters + [
+    "-P:scapegoat:dataDir:" + project.layout.buildDirectory.get().asFile.absolutePath + "/reports/scapegoat/testsrc/"
+  ]
+  scalaCompileOptions.forkOptions.jvmArgs = [
+    '-Xss2m',
+    '-XX:-UseGCOverheadLimit',
+    '-Xmx4g'
+  ]
 }
 
 tasks.register('printVersion') {
