@@ -20,9 +20,9 @@ ext {
 
   // required for pekko
   scalaVersion = '3'
-  scalaBinaryVersion = '3.8.4'
+  scalaBinaryVersion = '3.9.0'
   pekkoVersion = "1.7.0"
-  scapegoatVersion = '3.3.6'
+  scapegoatVersion = '3.4.0'
 
   scala3compilerOptions = [
     "-print-tasty",
