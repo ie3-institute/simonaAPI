@@ -16,7 +16,7 @@ class ProvidedDataTest extends Specification {
 
         then:
         data.extSimulations().empty
-        data.dataConnections().empty
+        data.extListeners().empty
     }
 
     def "An external simulation can be added to a ProvidedData correctly"() {
@@ -48,8 +48,8 @@ class ProvidedDataTest extends Specification {
         data.extSimulations().size() == 1
         data.extSimulations() == [extSim] as Set
 
-        data.dataConnections().size() == 1
-        data.dataConnections() == [connection] as Set
+        data.extListeners().size() == 0
+        data.extListeners() == [] as Set
     }
 
     def "An external result listener can be added to a ProvidedData correctly"() {
@@ -70,8 +70,8 @@ class ProvidedDataTest extends Specification {
         then:
         data.extSimulations().empty
 
-        data.dataConnections().size() == 1
-        data.dataConnections() == [listener] as Set
+        data.extListeners().size() == 1
+        data.extListeners() == [listener] as Set
     }
 
     def "A ProvidedData can be added to a ProvidedData correctly"() {
@@ -115,7 +115,7 @@ class ProvidedDataTest extends Specification {
         result.extSimulations().size() == 1
         result.extSimulations() == [extSim] as Set
 
-        result.dataConnections().size() == 2
-        result.dataConnections() == [connection, listener] as Set
+        result.extListeners().size() == 1
+        result.extListeners() == [listener] as Set
     }
 }
