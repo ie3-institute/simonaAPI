@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.16.0] - 2026-09-23
+
 ### Added
 - Added proper support for external listeners [#523](https://github.com/ie3-institute/simonaAPI/issues/523)
 - Added addon loader functionality [#528](https://github.com/ie3-institute/simonaAPI/issues/528)
@@ -174,7 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed messages to ease understanding [#62](https://github.com/ie3-institute/simonaAPI/issues/62)
 - Separating departures and arrivals in message protocol, properly handling exceptions [#77](https://github.com/ie3-institute/simonaAPI/issues/77)
 
-[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.15.0...HEAD
+[Unreleased/Snapshot]: https://github.com/ie3-institute/simonaapi/compare/0.16.0...HEAD
+[0.16.0]: https://github.com/ie3-institute/simonaapi/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/ie3-institute/simonaapi/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/ie3-institute/simonaapi/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/ie3-institute/simonaapi/compare/0.12.0...0.13.0
