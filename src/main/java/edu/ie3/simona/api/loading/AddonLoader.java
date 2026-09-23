@@ -10,6 +10,7 @@ import edu.ie3.simona.api.ExtLinkInterface;
 import edu.ie3.simona.api.ExtListenerProvider;
 import edu.ie3.simona.api.ExtSimulationProvider;
 import edu.ie3.simona.api.data.SetupData;
+import edu.ie3.simona.api.simulation.ExtSimulation;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Addon loader for SIMONA addons. */
-abstract class AddonLoader {
+public abstract class AddonLoader {
 
   protected static final Logger log = LoggerFactory.getLogger(AddonLoader.class);
 
@@ -47,7 +48,7 @@ abstract class AddonLoader {
       Iterable<ExtLinkInterface> extLinks = load(file);
 
       for (ExtLinkInterface extLink : extLinks) {
-        currentData.add(setUpExtLink(extLink, setupData));
+        currentData.add(setupExtLink(extLink, setupData));
       }
 
       // some log statement
@@ -78,7 +79,7 @@ abstract class AddonLoader {
    * @param setupData for setting up the addon
    * @return all loaded data
    */
-  private static ProvidedData setUpExtLink(ExtLinkInterface extLink, SetupData setupData) {
+  private static ProvidedData setupExtLink(ExtLinkInterface extLink, SetupData setupData) {
     ProvidedData data = ProvidedData.empty();
 
     // set up the addon
@@ -86,7 +87,11 @@ abstract class AddonLoader {
 
     // loads the data
     if (extLink instanceof ExtSimulationProvider provider) {
-      data.add(provider.getExtSimulation());
+      ExtSimulation extSim = provider.getExtSimulation();
+
+      // set the setup data
+      extSim.setSetupData(setupData);
+      data.add(extSim);
     }
 
     if (extLink instanceof ExtListenerProvider provider) {

@@ -18,7 +18,6 @@ import java.util.Set;
  */
 public final class ProvidedData {
   private final Set<ExtSimulation> extSimulations = new HashSet<>();
-  private final Set<ExtDataConnection> dataConnections = new HashSet<>();
   private final Set<ExtResultListener> listeners = new HashSet<>();
 
   public static ProvidedData empty() {
@@ -29,24 +28,20 @@ public final class ProvidedData {
     return new HashSet<>(extSimulations);
   }
 
-  public Set<ExtDataConnection> dataConnections() {
-    Set<ExtDataConnection> connections = new HashSet<>(dataConnections);
-    connections.addAll(listeners);
-    return connections;
+  public Set<ExtResultListener> extListeners() {
+    return new HashSet<>(this.listeners);
   }
 
   void add(ExtSimulation extSimulation) {
     extSimulations.add(extSimulation);
-    dataConnections.addAll(extSimulation.getDataConnections());
   }
 
   void add(Collection<ExtResultListener> extListeners) {
     listeners.addAll(extListeners);
   }
 
-  void add(ProvidedData that) {
+  public void add(ProvidedData that) {
     extSimulations.addAll(that.extSimulations);
-    dataConnections.addAll(that.dataConnections);
     listeners.addAll(that.listeners);
   }
 }

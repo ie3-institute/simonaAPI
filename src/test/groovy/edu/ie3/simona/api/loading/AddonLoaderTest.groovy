@@ -88,13 +88,13 @@ class AddonLoaderTest extends Specification {
         def setupData = new SetupData(null, null, null, null, null)
 
         when:
-        def data = AddonLoader.setUpExtLink(new Provider(), setupData)
+        def data = AddonLoader.setupExtLink(new Provider(), setupData)
 
         then:
         data.extSimulations().size() == 1
         data.extSimulations() == [extSim] as Set
-        data.dataConnections().size() == 2
-        data.dataConnections() == [connection, listener] as Set
+        data.extListeners().size() == 1
+        data.extListeners() == [listener] as Set
     }
 
     def "The AddonLoader builds the directory correctly"() {
