@@ -186,7 +186,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEmDataConnection.queueExtResponseMsg(sendMsg)
+        extEmDataConnection.handleResponseMsg(sendMsg)
 
         def response = extEmDataConnection.requestEmFlexResults(0L, [inputUuid], false)
 
@@ -210,7 +210,7 @@ class ExtEmDataConnectionTest extends Specification implements DataServiceTestDa
 
         when:
         // we need to queue the msg beforehand because the receive method is blocking
-        extEmDataConnection.queueExtResponseMsg(sendMsg)
+        extEmDataConnection.handleResponseMsg(sendMsg)
 
         // we request tick 1000 as next tick
         def response = extEmDataConnection.requestCompletion(0L, 1000L)
