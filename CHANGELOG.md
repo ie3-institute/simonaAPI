@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Small changes to addon loader code [#537](https://github.com/ie3-institute/simonaAPI/issues/537)
 
+### Updated
+- Updated PSU to version `3.2.3`
+
 ## [0.15.0] - 2026-06-03
 
 ### Changed
