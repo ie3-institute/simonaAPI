@@ -19,10 +19,17 @@ on:
     branches:
       - main
       - dev
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
 
 jobs:
   buildAndTest:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout Source
@@ -84,7 +91,11 @@ jobs:
 
       #Deployment
       - name: Deploy
-        if: github.ref == 'refs/heads/main'
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          (github.actor == 'sebastian-peter' || github.actor == 'danielfeismann')
+            
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVENCENTRAL_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVENCENTRAL_SIGNINGPASS }}
@@ -108,7 +119,10 @@ jobs:
 
       #MavenCentral Staging
       - name: MavenCentral Staging
-        if: github.ref == 'refs/heads/main'
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' &&
+          (github.actor == 'sebastian-peter' || github.actor == 'danielfeismann')
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVENCENTRAL_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVENCENTRAL_SIGNINGPASS }}
