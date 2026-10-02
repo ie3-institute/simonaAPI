@@ -18,21 +18,10 @@ On [Maven central](https://search.maven.org/artifact/com.github.ie3-institute/si
 <dependency>
   <groupId>com.github.ie3-institute</groupId>
   <artifactId>simonaAPI</artifactId>
-  <version>0.13.0</version>
+  <version>0.16.0</version>
 </dependency>
 ```
 
-### Snapshot releases
-
-There are currently no snapshot releases.
-
 ## Important changes
 
-With the release of version `0.6.0` there were major changes in the way external simulations are
-set up. Therefore, older simulations no longer work with the version `0.6.0`.
-
-With the release of version `0.10.0` there was a lot of refactoring, which breaks compatibility with older simulations.
-
-Additional breaking changes in version `0.11.0`.
-
-Breaking changes due to refactoring of external simulation setup in version `0.13.0`.
+There can be breaking changes in each new release.
