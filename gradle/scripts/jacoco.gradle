@@ -28,9 +28,9 @@ jacocoTestReport {
   ]
 
   getClassDirectories().setFrom(fileTree(
-      dir: layout.buildDirectory.dir("classes"),
-      excludes: excludes
-      ))
+          dir: layout.buildDirectory.dir("classes"),
+          excludes: excludes
+          ))
 
   //	sourceSets sourceSets.main
   executionData check // include integration tests in jacoco reports

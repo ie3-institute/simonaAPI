@@ -17,7 +17,11 @@ public class ExtDataConnectionException extends RuntimeException {
             + "' could not be build!");
   }
 
-  public ExtDataConnectionException(final String message) {
+  public ExtDataConnectionException(String message) {
     super(message);
+  }
+
+  public ExtDataConnectionException(String message, Throwable throwable) {
+    super(message, throwable);
   }
 }
