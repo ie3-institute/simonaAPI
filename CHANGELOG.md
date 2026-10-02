@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [0.16.0] - 2026-09-23
+## [0.16.0] - 2026-10-01
 
 ### Added
 - Added proper support for external listeners [#523](https://github.com/ie3-institute/simonaAPI/issues/523)
