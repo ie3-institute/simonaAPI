@@ -9,7 +9,7 @@ echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
 
 parse_version() {
     local SOURCE=$1
-    local PROPS MAJOR MINOR PATCH VERSION
+    local PROPS MAJOR MINOR PATCH
 
     PROPS=$(tr -d '\r')
     MAJOR=$(sed -n 's/^version\.major=//p' <<< "$PROPS")
@@ -34,17 +34,15 @@ get_branch_version() {
     local BRANCH_NAME=$1
     local BRANCH_VERSION
 
-    git clone --depth 1 --branch "$BRANCH_NAME" "$REPO_URL" "$DIR_NAME"
-    cd "$DIR_NAME"
+    git fetch --quiet origin "+refs/heads/$BRANCH_NAME:refs/remotes/origin/$BRANCH_NAME"
 
     echo "Fetching version from $BRANCH_NAME branch..."
+
     BRANCH_VERSION=$(git show "origin/$BRANCH_NAME:version.properties" | parse_version "$BRANCH_NAME")
 
     echo "${BRANCH_NAME^^}_VERSION=$BRANCH_VERSION"
     echo "export ${BRANCH_NAME^^}_VERSION=$BRANCH_VERSION" >> versions.env
     echo "${BRANCH_NAME^^}_VERSION=$BRANCH_VERSION" >> "$GITHUB_ENV"
-
-    rm -rf "$DIR_NAME"
 }
 
 
