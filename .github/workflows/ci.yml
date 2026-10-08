@@ -111,6 +111,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       #Deployment
       - name: Deploy
         env:
