@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Updated ci.yml and get_versions.sh [#545](https://github.com/ie3-institute/simonaAPI/issues/545)
+
 ## [0.16.0] - 2026-10-01
 
 ### Added
@@ -14,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Small changes to addon loader code [#537](https://github.com/ie3-institute/simonaAPI/issues/537)
-- Updated ci.yml and get_versions.sh [#545](https://github.com/ie3-institute/simonaAPI/issues/545)
 
 ### Updated
 - Updated PSU to version `3.2.3`
