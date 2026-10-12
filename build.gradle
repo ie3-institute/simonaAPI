@@ -15,7 +15,7 @@ plugins {
 }
 
 ext {
-  javaVersion = JavaVersion.VERSION_21
+  javaVersion = JavaVersion.VERSION_25
   scriptsLocation = 'gradle' + File.separator + 'scripts' + File.separator // location of script plugins
 
   // required for pekko
@@ -30,7 +30,7 @@ ext {
     "-language:existentials",
     "-Wunused:all",
     "-Xmax-inlines:128",
-    "-Xunchecked-java-output-version:21"
+    "-Xunchecked-java-output-version:25"
   ]
 }
 
