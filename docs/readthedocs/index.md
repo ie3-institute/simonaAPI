@@ -11,7 +11,7 @@ One example are external simulations, that can be used in co-simulations with SI
 
 gettingstarted
 structure
-createextsims
+createextensions
 extlinkinterface
 
 simulations/externalsimulation
@@ -24,11 +24,9 @@ data/setupdata
 
 If you feel, something this missing, wrong or misleading, please contact one of our main contributors:
 
-> - [@t-ober](https://github.com/t-ober)
+> - [@staudtMarius](https://github.com/staudtMarius)
 > - [@danielfeismann](https://github.com/danielfeismann)
 > - [@sebastian-peter](https://github.com/sebastian-peter)
-> - [@jo-bao](https://github.com/jo-bao)
-> - [@staudtMarius](https://github.com/staudtMarius)
 
 Hat tip to all other contributors!
 

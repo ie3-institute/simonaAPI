@@ -14,7 +14,7 @@ import java.net.{URL, URLClassLoader}
 import java.util
 import java.util.ServiceLoader
 
-final class JarLoader extends AddonLoader(util.Set.of("jar")) {
+final class JarLoader extends ExtensionLoader(util.Set.of("jar")) {
 
   override protected def load(file: File): Iterable[ExtLinkInterface] = {
     val classLoader = new URLClassLoader(Array[URL](file.toURI.toURL))
