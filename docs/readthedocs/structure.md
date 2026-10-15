@@ -35,7 +35,7 @@ All messages that can be exchanged between SIMONA and an extension are placed in
 
 The simulation package contains the class [ExtSimulation](/simulations/externalsimulation), which is the base class for all external simulations,
 as well as some extensions. These other simulations provide additional methods. The external simulation class will be provided to SIMONA via
-an [ExtSimulationProvider](/extlinkinterface#external-simulation-provider).
+an `ExtSimulationProvider` (see: [](/extlinkinterface)).
 
 
 ## External link interface

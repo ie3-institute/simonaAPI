@@ -1,7 +1,7 @@
 # External link interface
 
 The external link interface, or short `ExtLinkInterface`, is used to provide SIMONA with all methods necessary to load
-extensions. The interface itself contains a [setup](#setting-up-the-external-simulation) method, while all other methods are
+extensions. The interface itself contains a [setup](#setting-up-the-extensions) method, while all other methods are
 defined in the implementations or extensions of the base interface.
 
 There are currently two interfaces that extend `ExtLinkInterface`:
