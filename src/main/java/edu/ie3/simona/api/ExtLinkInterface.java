@@ -9,16 +9,16 @@ package edu.ie3.simona.api;
 import edu.ie3.simona.api.data.SetupData;
 
 /**
- * Every addon for SIMONA has to provide a class which implements one of the sub-interfaces of this
- * interface.
+ * Every extension for SIMONA has to provide a class which implements one of the sub-interfaces of
+ * this interface.
  */
 public sealed interface ExtLinkInterface permits ExtListenerProvider, ExtSimulationProvider {
 
   /**
-   * Method to set up an addon. Everything that needs to be set up before an external simulation or
-   * external listeners can be retrieved should be done here.
+   * Method to set up an extension. Everything that needs to be set up before an external simulation
+   * or external listeners can be retrieved should be done here.
    *
-   * @param data used for setting up the addon.
+   * @param data used for setting up the extension.
    */
   void setup(SetupData data);
 }

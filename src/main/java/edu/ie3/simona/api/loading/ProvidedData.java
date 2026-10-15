@@ -14,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Container class for all {@link ExtSimulation}s and {@link ExtDataConnection}s provided by addons.
+ * Container class for all {@link ExtSimulation}s and {@link ExtDataConnection}s provided by
+ * extensions.
  */
 public final class ProvidedData {
   private final Set<ExtSimulation> extSimulations = new HashSet<>();
