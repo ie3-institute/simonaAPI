@@ -1,13 +1,5 @@
 package edu.ie3.simona.api.loading
 
-import edu.ie3.datamodel.models.input.UniqueInputEntity
-import edu.ie3.datamodel.models.input.container.EnergyManagementUnits
-import edu.ie3.datamodel.models.input.container.GridContainer
-import edu.ie3.datamodel.models.input.container.InputContainer
-import edu.ie3.datamodel.models.input.container.JointGridContainer
-import edu.ie3.datamodel.models.input.container.RawGridElements
-import edu.ie3.datamodel.models.input.container.SubGridContainer
-import edu.ie3.datamodel.models.input.container.SystemParticipants
 import edu.ie3.simona.api.ExtListenerProvider
 import edu.ie3.simona.api.ExtSimulationProvider
 import edu.ie3.simona.api.data.SetupData
@@ -22,7 +14,7 @@ import spock.lang.Specification
 
 import java.nio.file.Path
 
-class AddonLoaderTest extends Specification {
+class ExtensionLoaderTest extends Specification {
 
     @Shared
     private ExtResultDataConnection connection = new ExtResultDataConnection(null)
@@ -70,7 +62,7 @@ class AddonLoaderTest extends Specification {
         }
     }
 
-    def "The AddonLoader should load no Jars correctly"() {
+    def "The ExtensionLoader should load no Jars correctly"() {
         given:
         def path = Path.of(getClass().getResource("_no-jars").toURI())
         def setupData = new SetupData(null, null, null, null, null)
@@ -83,12 +75,12 @@ class AddonLoaderTest extends Specification {
 
     }
 
-    def "The AddonLoader sets up an addon correctly"() {
+    def "The ExtensionLoader sets up an extension correctly"() {
         given:
         def setupData = new SetupData(null, null, null, null, null)
 
         when:
-        def data = AddonLoader.setupExtLink(new Provider(), setupData)
+        def data = ExtensionLoader.setupExtLink(new Provider(), setupData)
 
         then:
         data.extSimulations().size() == 1
@@ -97,23 +89,23 @@ class AddonLoaderTest extends Specification {
         data.extListeners() == [listener] as Set
     }
 
-    def "The AddonLoader builds the directory correctly"() {
+    def "The ExtensionLoader builds the directory correctly"() {
         given:
         Path path = Path.of(".")
 
         when:
-        def absolutePath = AddonLoader.buildDir(path)
+        def absolutePath = ExtensionLoader.buildDir(path)
 
         then:
         absolutePath == path.toAbsolutePath().toFile()
     }
 
-    def "The AddonLoader scans a directory correctly"() {
+    def "The ExtensionLoader scans a directory correctly"() {
         given:
         Path path = Path.of("src", "test", "resources", "edu", "ie3", "simona", "api", "simulation", "mapping")
 
         when:
-        def files = AddonLoader.scanDirectory(path, ["csv"] as Set).collect { it -> it.getName() }
+        def files = ExtensionLoader.scanDirectory(path, ["csv"] as Set).collect { it -> it.getName() }
 
         then:
         files == ["ext_entity_mapping.csv"]

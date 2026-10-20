@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated ci.yml and get_versions.sh [#545](https://github.com/ie3-institute/simonaAPI/issues/545)
+- Enhanced the documentation to include the changes in version `0.16.0` [#234](https://github.com/ie3-institute/simonaAPI/issues/234)
+- Renaming `addon` to `extension` [#556](https://github.com/ie3-institute/simonaAPI/issues/556)
 
 ## [0.16.0] - 2026-10-01
 
