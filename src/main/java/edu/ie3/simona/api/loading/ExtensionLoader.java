@@ -18,33 +18,33 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Addon loader for SIMONA addons. */
-public abstract class AddonLoader {
+/** Loader for SIMONA extensions. */
+public abstract class ExtensionLoader {
 
-  protected static final Logger log = LoggerFactory.getLogger(AddonLoader.class);
+  protected static final Logger log = LoggerFactory.getLogger(ExtensionLoader.class);
 
-  private final Set<String> allowedExtensions;
+  private final Set<String> allowedFileExtensions;
 
-  protected AddonLoader(Set<String> allowedExtensions) {
-    this.allowedExtensions = allowedExtensions;
+  protected ExtensionLoader(Set<String> allowedFileExtensions) {
+    this.allowedFileExtensions = allowedFileExtensions;
   }
 
   /**
-   * Loads the addons at the given path.
+   * Loads the extensions at the given path.
    *
-   * @param extSimDir the directory containing external simulations
-   * @param setupData used for setting up addons
+   * @param extSimDir the directory containing extensions
+   * @param setupData used for setting up extensions
    * @return all provided data
    * @throws IOException - if an I/O error occurs
    */
   public final ProvidedData load(Path extSimDir, SetupData setupData) throws IOException {
-    Iterable<File> files = scanDirectory(extSimDir, allowedExtensions);
+    Iterable<File> files = scanDirectory(extSimDir, allowedFileExtensions);
     ProvidedData allData = ProvidedData.empty();
 
     for (File file : files) {
       ProvidedData currentData = ProvidedData.empty();
 
-      // loads the addons
+      // loads the extensions
       Iterable<ExtLinkInterface> extLinks = load(file);
 
       for (ExtLinkInterface extLink : extLinks) {
@@ -54,7 +54,7 @@ public abstract class AddonLoader {
       // some log statement
       log.info("Loaded file '{}' with: {}", file, currentData);
 
-      // add to overall addons
+      // add the extensions
       allData.add(currentData);
     }
 
@@ -64,9 +64,9 @@ public abstract class AddonLoader {
 
   /**
    * Method that loads all {@link ExtLinkInterface}s of the given file based on the {@link
-   * AddonLoader} used.
+   * ExtensionLoader} used.
    *
-   * @param file that contains addons
+   * @param file that contains extensions
    * @return all loaded links
    * @throws IOException - if an I/O error occurs
    */
@@ -76,13 +76,13 @@ public abstract class AddonLoader {
    * Set up the {@link ExtLinkInterface}s.
    *
    * @param extLink external link interface.
-   * @param setupData for setting up the addon
+   * @param setupData for setting up the extension
    * @return all loaded data
    */
   private static ProvidedData setupExtLink(ExtLinkInterface extLink, SetupData setupData) {
     ProvidedData data = ProvidedData.empty();
 
-    // set up the addon
+    // set up the extension
     extLink.setup(setupData);
 
     // loads the data
