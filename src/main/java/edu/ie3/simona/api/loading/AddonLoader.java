@@ -8,8 +8,11 @@ package edu.ie3.simona.api.loading;
 
 import edu.ie3.simona.api.ExtLinkInterface;
 import edu.ie3.simona.api.ExtListenerProvider;
+import edu.ie3.simona.api.ExtModuleProvider;
 import edu.ie3.simona.api.ExtSimulationProvider;
 import edu.ie3.simona.api.data.SetupData;
+import edu.ie3.simona.api.module.ExtModule;
+import edu.ie3.simona.api.module.ModuleType;
 import edu.ie3.simona.api.simulation.ExtSimulation;
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +97,11 @@ public abstract class AddonLoader {
       data.add(extSim);
     }
 
+    if (extLink instanceof ExtModuleProvider provider) {
+      EnumMap<ModuleType, ExtModule> modules = provider.getModules();
+      data.add(modules);
+    }
+    
     if (extLink instanceof ExtListenerProvider provider) {
       data.add(provider.getResultListeners());
     }
