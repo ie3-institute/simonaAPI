@@ -29,7 +29,7 @@ the mapping.
 
 ## Ontology
 
-All messages that can be exchanged between SIMONA and an extension are placed in this package.
+All messages that can be exchanged between SIMONA and an addon are placed in this package.
 
 
 ## Simulation
@@ -41,5 +41,5 @@ an `ExtSimulationProvider` (see: [](/extlinkinterface)).
 
 ## External link interface
 
-The [ExtLinkInterface](/extlinkinterface) is the base interface used for providing extensions, such as external simulations,
+The [ExtLinkInterface](/extlinkinterface) is the base interface used for providing addons, such as external simulations,
 to SIMONA. This interface and its sub-interfaces are not part of any category, due to their special function.

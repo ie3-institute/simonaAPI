@@ -1,6 +1,6 @@
 # Setup data
 
-The setup data contains all information that is needed to set up an extension. This class is provided to the
+The setup data contains all information that is needed to set up an addon. This class is provided to the
 `setup` method of the [ExtLinkInterface](/extlinkinterface). Additionally, this data is also added to all external simulations
 by SIMONA.
 

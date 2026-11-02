@@ -1,6 +1,6 @@
-# How to create extensions for SIMONA
+# How to create addons for SIMONA
 
-This page contains all information that are needed to create an extension for SIMONA. An extension can contain one or more
+This page contains all information that are needed to create an addon for SIMONA. An addon can contain one or more
 of the following elements:
 
 - External Simulation
@@ -12,7 +12,7 @@ of the following elements:
 Here are some steps to perform in order to create an extension:
 
 1. Create a project in a Java-compatible language and add this API as a dependency.
-2. Create the external simulations, listeners, etc. that should be provided by the extension.
+2. Create the external simulations, listeners, etc. that should be provided by the addon.
 3. Add a class that implements all needed sub-interfaces of [ExtLinkInterface](/extlinkinterface).
 4. Optionally: implement the `setup` method to set up all the external simulations, listeners, etc.
 5. Implement the methods that are defined by the sub-interfaces of [ExtLinkInterface](/extlinkinterface).
@@ -23,17 +23,18 @@ Here are some steps to perform in order to create an extension:
 
 ## Defining the service
 
-To define a service for an external simulation you need to create the following path inside your project:
+To define a service for an addon you need to create the following path inside your project:
 `resources/META-INF/services/edu.ie3.simona.api.ExtLinkInterface`. Inside this file you need to add the path to your implementation
 of `ExtLinkInterface`.
 
 
 ## Project with multiple external simulations
+
 Your project could contain multiple external simulations by creating multiple implementations of the `ExtLinkInterface`
 and adding them to the same service file.
 
 
-## Limitations to consider when creating extensions
+## Limitations to consider when creating addons
 
 There is some limitations to this approach.
 

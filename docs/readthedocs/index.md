@@ -11,7 +11,7 @@ One example are external simulations, that can be used in co-simulations with SI
 
 gettingstarted
 structure
-createextensions
+createaddons
 extlinkinterface
 
 simulations/externalsimulation

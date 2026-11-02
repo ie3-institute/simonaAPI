@@ -14,7 +14,7 @@ import spock.lang.Specification
 
 import java.nio.file.Path
 
-class ExtensionLoaderTest extends Specification {
+class AddonLoaderTest extends Specification {
 
     @Shared
     private ExtResultDataConnection connection = new ExtResultDataConnection(null)
@@ -62,7 +62,7 @@ class ExtensionLoaderTest extends Specification {
         }
     }
 
-    def "The ExtensionLoader should load no Jars correctly"() {
+    def "The AddonLoader should load no Jars correctly"() {
         given:
         def path = Path.of(getClass().getResource("_no-jars").toURI())
         def setupData = new SetupData(null, null, null, null, null)
@@ -75,12 +75,12 @@ class ExtensionLoaderTest extends Specification {
 
     }
 
-    def "The ExtensionLoader sets up an extension correctly"() {
+    def "The AddonLoader sets up an addon correctly"() {
         given:
         def setupData = new SetupData(null, null, null, null, null)
 
         when:
-        def data = ExtensionLoader.setupExtLink(new Provider(), setupData)
+        def data = AddonLoader.setupExtLink(new Provider(), setupData)
 
         then:
         data.extSimulations().size() == 1
@@ -89,23 +89,23 @@ class ExtensionLoaderTest extends Specification {
         data.extListeners() == [listener] as Set
     }
 
-    def "The ExtensionLoader builds the directory correctly"() {
+    def "The AddonLoader builds the directory correctly"() {
         given:
         Path path = Path.of(".")
 
         when:
-        def absolutePath = ExtensionLoader.buildDir(path)
+        def absolutePath = AddonLoader.buildDir(path)
 
         then:
         absolutePath == path.toAbsolutePath().toFile()
     }
 
-    def "The ExtensionLoader scans a directory correctly"() {
+    def "The AddonLoader scans a directory correctly"() {
         given:
         Path path = Path.of("src", "test", "resources", "edu", "ie3", "simona", "api", "simulation", "mapping")
 
         when:
-        def files = ExtensionLoader.scanDirectory(path, ["csv"] as Set).collect { it -> it.getName() }
+        def files = AddonLoader.scanDirectory(path, ["csv"] as Set).collect { it -> it.getName() }
 
         then:
         files == ["ext_entity_mapping.csv"]
