@@ -8,7 +8,7 @@ There are currently two interfaces that extend `ExtLinkInterface`:
 1. [ExtSimulationProvider](#external-simulation-provider)
 2. [ExtListenerProvider](#external-listener-provider)
 
-The addon needs to provide at least one class that implements at least one of these interfaces. It is possible to extend
+An addon needs to provide at least one class that implements at least one of these interfaces. It is possible to extend
 all implementations at the same time.
 
 To make the class available to SIMONA, the full classpath needs to be put into the file `../resources/META-INF/services/edu.ie3.simona.api.ExtLinkInterface`.
@@ -17,10 +17,12 @@ To make the class available to SIMONA, the full classpath needs to be put into t
 ## Setting up the external simulation
 
 Before calling a method of a provider, SIMONA will first call the `setup` method. This method receives a
-[setup data](/data/setupdata) that contains all needed information for setting up the external simulation. The method
-can use these data, if necessary, to set up the external simulation.
+[setup data](/data/setupdata) that contains all needed information for setting up an addon. Implementing the method
+is optional. If no setup is needed, there is no need to implement this method.
 
-If no setup is needed, there is no need to implement this method.
+External simulations have a method `setSetupData`. This method is automatically called while loading an addon.
+Therefore, there is no need call this method in the `setup` method.
+
 
 ## External simulation provider
 

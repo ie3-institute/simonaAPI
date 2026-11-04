@@ -18,7 +18,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Addon loader for SIMONA addons. */
+/** Loader for SIMONA addons. */
 public abstract class AddonLoader {
 
   protected static final Logger log = LoggerFactory.getLogger(AddonLoader.class);
@@ -32,7 +32,7 @@ public abstract class AddonLoader {
   /**
    * Loads the addons at the given path.
    *
-   * @param extSimDir the directory containing external simulations
+   * @param extSimDir the directory containing addons
    * @param setupData used for setting up addons
    * @return all provided data
    * @throws IOException - if an I/O error occurs
