@@ -21,7 +21,7 @@ ext {
   // required for pekko
   scalaVersion = '3'
   scalaBinaryVersion = '3.10.0'
-  pekkoVersion = "1.7.1"
+  pekkoVersion = "2.0.0"
   scapegoatVersion = '3.4.1'
 
   scala3compilerOptions = [
