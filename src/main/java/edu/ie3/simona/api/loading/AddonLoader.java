@@ -147,14 +147,13 @@ public abstract class AddonLoader {
     }
 
     return Arrays.stream(files)
-        .filter(
-            file -> {
-              String name = file.getName();
-              return file.canRead()
-                  && name.contains(".")
-                  && allowedExtensions.contains(
-                      name.substring(name.lastIndexOf('.') + 1).toLowerCase());
-            })
+        .filter(file -> {
+          String name = file.getName();
+          return file.canRead()
+              && name.contains(".")
+              && allowedExtensions.contains(
+                  name.substring(name.lastIndexOf('.') + 1).toLowerCase());
+        })
         .toList();
   }
 }
