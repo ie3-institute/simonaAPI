@@ -7,6 +7,7 @@
 package edu.ie3.simona.api.data.model.ev;
 
 import java.util.UUID;
+import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
 import tech.units.indriya.ComparableQuantity;
@@ -46,6 +47,16 @@ public interface EvModel {
    * @return the current energy charge of this ev's battery
    */
   ComparableQuantity<Energy> getStoredEnergy();
+
+  /**
+   * @return The efficiency of charging operations.
+   */
+  ComparableQuantity<Dimensionless> getEtaCharging();
+
+  /**
+   * @return The efficiency of discharging (V2G) operations.
+   */
+  ComparableQuantity<Dimensionless> getEtaDischarging();
 
   /**
    * @return the departure tick of this ev
