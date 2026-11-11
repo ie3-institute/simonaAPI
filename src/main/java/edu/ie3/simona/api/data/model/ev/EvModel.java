@@ -51,12 +51,12 @@ public interface EvModel {
   /**
    * @return The efficiency of charging operations.
    */
-  public ComparableQuantity<Dimensionless> getEtaCharging();
+  ComparableQuantity<Dimensionless> getEtaCharging();
 
   /**
-   * @return The efficiency of discharging operations.
+   * @return The efficiency of discharging (V2G) operations.
    */
-  public ComparableQuantity<Dimensionless> getEtaDischarging();
+  ComparableQuantity<Dimensionless> getEtaDischarging();
 
   /**
    * @return the departure tick of this ev
