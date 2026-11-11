@@ -26,16 +26,15 @@ public record ProvideEmData(
     Map<UUID, List<FlexOptions>> flexOptions = new HashMap<>();
     Map<UUID, SetPoint> setPoints = new HashMap<>();
 
-    emData.forEach(
-        (uuid, emDataItem) -> {
-          switch (emDataItem) {
-            case FlexOptionRequest r -> flexRequests.put(uuid, r);
-            case FlexOptions r ->
-                flexOptions.computeIfAbsent(uuid, receiver -> new ArrayList<>()).add(r);
-            case SetPoint r -> setPoints.put(uuid, r);
-            default -> log.warn("Received unsupported em data: {}", emDataItem);
-          }
-        });
+    emData.forEach((uuid, emDataItem) -> {
+      switch (emDataItem) {
+        case FlexOptionRequest r -> flexRequests.put(uuid, r);
+        case FlexOptions r ->
+            flexOptions.computeIfAbsent(uuid, receiver -> new ArrayList<>()).add(r);
+        case SetPoint r -> setPoints.put(uuid, r);
+        default -> log.warn("Received unsupported em data: {}", emDataItem);
+      }
+    });
 
     return new ProvideEmData(tick, flexRequests, flexOptions, setPoints);
   }

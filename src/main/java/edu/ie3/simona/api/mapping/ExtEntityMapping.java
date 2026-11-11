@@ -27,22 +27,19 @@ public class ExtEntityMapping {
   private final Map<String, UUID> idToUuid = new HashMap<>();
 
   public ExtEntityMapping(List<ExtEntityEntry> entries) {
-    entries.forEach(
-        entry -> {
-          DataType dataType = entry.dataType();
-          UUID uuid = entry.uuid();
-          String id = entry.id();
+    entries.forEach(entry -> {
+      DataType dataType = entry.dataType();
+      UUID uuid = entry.uuid();
+      String id = entry.id();
 
-          entry
-              .columnScheme()
-              .ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
+      entry.columnScheme().ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
 
-          // override mappings
-          uuidToId.put(uuid, id);
-          idToUuid.put(id, uuid);
+      // override mappings
+      uuidToId.put(uuid, id);
+      idToUuid.put(id, uuid);
 
-          extAssets.computeIfAbsent(dataType, k -> new HashSet<>()).add(uuid);
-        });
+      extAssets.computeIfAbsent(dataType, k -> new HashSet<>()).add(uuid);
+    });
   }
 
   /**
@@ -54,65 +51,61 @@ public class ExtEntityMapping {
     // handling of grid assets
     grid.getRawGrid()
         .allEntitiesAsList()
-        .forEach(
-            asset -> {
-              UUID uuid = asset.getUuid();
-              String id = asset.getId();
+        .forEach(asset -> {
+          UUID uuid = asset.getUuid();
+          String id = asset.getId();
 
-              // add to mappings
-              uuidToId.put(uuid, id);
-              idToUuid.put(id, uuid);
+          // add to mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
 
-              // add to asset list
-              gridAssets.add(asset.getUuid());
-            });
+          // add to asset list
+          gridAssets.add(asset.getUuid());
+        });
 
     Set<EmInput> emInputs = new HashSet<>();
 
     // handling of participants and ems
     grid.getSystemParticipants()
         .allEntitiesAsList()
-        .forEach(
-            participant -> {
-              UUID uuid = participant.getUuid();
-              String id = participant.getId();
+        .forEach(participant -> {
+          UUID uuid = participant.getUuid();
+          String id = participant.getId();
 
-              // add to mappings
-              uuidToId.put(uuid, id);
-              idToUuid.put(id, uuid);
+          // add to mappings
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
 
-              // add to asset list
-              participants.add(participant.getUuid());
+          // add to asset list
+          participants.add(participant.getUuid());
 
-              // add ems
-              participant
-                  .getControllingEm()
-                  .ifPresent(
-                      em -> {
-                        UUID emUuid = em.getUuid();
-                        String emId = em.getId();
+          // add ems
+          participant
+              .getControllingEm()
+              .ifPresent(em -> {
+                UUID emUuid = em.getUuid();
+                String emId = em.getId();
 
-                        // add to mappings
-                        uuidToId.put(emUuid, emId);
-                        idToUuid.put(emId, emUuid);
+                // add to mappings
+                uuidToId.put(emUuid, emId);
+                idToUuid.put(emId, emUuid);
 
-                        // add to asset list
-                        ems.add(emUuid);
-                        emInputs.add(em);
-                      });
-            });
+                // add to asset list
+                ems.add(emUuid);
+                emInputs.add(em);
+              });
+        });
 
     handleEMs(emInputs)
-        .forEach(
-            em -> {
-              UUID uuid = em.getUuid();
-              String id = em.getId();
+        .forEach(em -> {
+          UUID uuid = em.getUuid();
+          String id = em.getId();
 
-              uuidToId.put(uuid, id);
-              idToUuid.put(id, uuid);
+          uuidToId.put(uuid, id);
+          idToUuid.put(id, uuid);
 
-              ems.add(uuid);
-            });
+          ems.add(uuid);
+        });
   }
 
   private Set<EmInput> handleEMs(Set<EmInput> givenSet) {
@@ -190,22 +183,19 @@ public class ExtEntityMapping {
    * @param included a list of entries
    */
   private void includeEntries(List<ExtEntityEntry> included) {
-    included.forEach(
-        entry -> {
-          DataType dataType = entry.dataType();
-          UUID uuid = entry.uuid();
-          String id = entry.id();
+    included.forEach(entry -> {
+      DataType dataType = entry.dataType();
+      UUID uuid = entry.uuid();
+      String id = entry.id();
 
-          entry
-              .columnScheme()
-              .ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
+      entry.columnScheme().ifPresent(scheme -> primaryMapping.put(uuid, scheme.getValueClass()));
 
-          // override mappings
-          uuidToId.put(uuid, id);
-          idToUuid.put(id, uuid);
+      // override mappings
+      uuidToId.put(uuid, id);
+      idToUuid.put(id, uuid);
 
-          addExtEntities(dataType, included.stream().map(ExtEntityEntry::uuid).toList());
-        });
+      addExtEntities(dataType, included.stream().map(ExtEntityEntry::uuid).toList());
+    });
   }
 
   /**
